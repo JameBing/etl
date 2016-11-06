@@ -1,0 +1,247 @@
+<div class="row"  ng-controller="JdOrderCtrl">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">在线订单中心</h3>
+            </div>
+            <div class="box-body">
+                <form role="form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">物料Id</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control input-sm  input-sm " ng-model="skuId" placeholder="SkuId">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">订单Id</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control input-sm  input-sm " ng-model="orderId" placeholder="OrderId">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">订单状态</label>
+                                <div class="col-sm-9">
+                                    <select ng-model="selected" ng-options="m.status for m in orderStatus" class="form-control input-sm " ng-click="showStatus()">
+                                        <option value="" ng-show="select_status">所有状态</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">物料名称</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control input-sm " ng-model="productName" placeholder="ProductName">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">联系电话</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control input-sm " ng-model="telephone" placeholder="Telephone">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">时间区间</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-clock-o"></i>
+                                        </div>
+                                        <input type="text" class="form-control input-sm  pull-right" id="reservationtime">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button type="button" class="btn btn-info pull-right" ng-click="queryJdOrder();">查询</button>
+                    </div>
+                </form>
+            </div>
+            <div class="overlay" ng-show="overlayStatus">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+            <div class="alert alert-warning" ng-show="status" style="text-align: center;"><!--错误警告-->
+                <strong>{{msg}}</strong>
+            </div>
+            <style>
+                th{
+                    white-space:nowrap;
+                }
+                td{
+                    white-space:nowrap;
+                }
+            </style>
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-striped table-bordered table-hover" id="datatable_reviews">
+                    <thead>
+                    <!--<tr>
+                        <th>京东订单</th>
+                        <th>物料信息</th>
+
+                        &lt;!&ndash;<th colspan = "6">收货人基本信息</th>&ndash;&gt;
+                        <th>姓名</th>
+                        <th>电话</th>
+                        <th>省</th>
+                        <th>市</th>
+                        <th>区</th>
+                        <th>详细地址</th>
+
+                        <th>订单来源</th>
+                        <th>支付方式</th>
+                        <th>订单总金额</th>
+                        <th>商家优惠金额</th>
+                        <th>订单货款金额</th>
+                        <th>商品的运费</th>
+                        <th>用户应付金额</th>
+                        <th>订单状态</th>
+                        <th>下单时间</th>
+
+                        <th>订单更新时间</th>
+                        <th>发票信息</th>
+                        <th>送货（日期）类型</th>
+                        <th>优惠详细信息</th>
+                        <th>买家下单时订单备注</th>
+                    </tr>-->
+                    <tr>
+                        <th>订单Id</th>
+                        <th>订单状态</th>
+                        <th>物料信息</th>
+                        <!--<th colspan = "6">收货人基本信息</th>-->
+                        <th>收货人</th>
+                        <th>联系电话</th>
+                        <th>省</th>
+                        <th>市</th>
+                        <th>区</th>
+                        <th>详细地址</th>
+
+                        <th>订单来源</th>
+                        <th>支付类型</th>
+                        <th>订单总额</th>
+                        <th>优惠金额</th>
+                        <th>货款金额</th>
+                        <th>运费</th>
+                        <th>应付金额</th>
+
+                        <th>下单时间</th>
+
+                        <th>更新时间</th>
+                        <th>发票信息</th>
+                        <th>送货(日期)类型</th>
+                        <th>优惠详细信息</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <!--<tr>
+                        <th bgcolor="#EEEEEE"><div >姓名</div></th>
+                        <th bgcolor="#EEEEEE"><div >电话</div></th>
+                        <th bgcolor="#EEEEEE"><div >省</div></th>
+                        <th bgcolor="#EEEEEE"><div >市</div></th>
+                        <th bgcolor="#EEEEEE"><div >区</div></th>
+                        <th bgcolor="#EEEEEE"><div >详细地址</div></th>
+                    </tr>-->
+                    <tbody>
+                    <tr ng-repeat="order_info in oderList track by $index">
+                        <td align="right"><strong>{{order_info.order_id}}</strong></td><!--京东订单Id-->
+                        <td style="font-weight: bold;" ng-show="order_info.orderstate == 'WAIT_SELLER_STOCK_OUT'">等待出库</td><!--订单状态（中文）-->
+                        <td style="font-weight: bold;" ng-show="order_info.orderstate == 'WAIT_GOODS_RECEIVE_CONFIRM'">等待确认收货</td><!--订单状态（中文）-->
+                        <td style="font-weight: bold;" ng-show="order_info.orderstate == 'FINISHED_L'">已完成</td><!--订单状态（中文）-->
+                        <td style="font-weight: bold;" ng-show="order_info.orderstate == 'TRADE_CANCELED'">已取消</td><!--订单状态（中文）-->
+                        <td style="font-weight: bold;" ng-show="order_info.orderstate == 'LOCKED'">已锁定</td><!--订单状态（中文）-->
+                        <td style="font-weight: bold;" ng-show="order_info.orderstate == 'PAUSE'">暂停</td><!--订单状态（中文）-->
+                        <td><!--物料信息-->
+                            <div ng-repeat="item_info in order_info.item_info_list track by $index" style="margin:2px 4px;background: #EAEAEA;">
+                                <table>
+                                    <tr >
+                                        <!--<td><span>{{$index+1}}.</span></td>-->
+                                        <td><span><strong>{{item_info.skuId}}</strong></span><strong ng-show="item_info.outerSkuId">/</strong></td>
+                                        <td><span ng-show="item_info.outerSkuId"><strong>{{item_info.outerSkuId}}</strong></span></td>
+                                        <td colspan="2"><span><strong>&nbsp;:&nbsp;</strong>{{item_info.skuName}}</span></td>
+                                    </tr>
+                                    <!--<tr>
+                                        <td></td>
+                                        <td colspan="2"><span><strong>商品名称:</strong>{{item_info.skuName}}</span></td>
+                                    </tr>-->
+                                </table>
+                            </div>
+                        </td>
+                        <td>{{order_info.fullname}}</td><!--姓名-->
+                        <td align="right">{{order_info.mobile}}</td><!--电话-->
+                        <td>{{order_info.province}}</td><!--省-->
+                        <td>{{order_info.city}}</td><!--市-->
+                        <td>{{order_info.county}}</td><!--区-->
+                        <td>{{order_info.full_address}}</td><!--详细地址-->
+
+                        <td>{{order_info.order_source}}</td><!--订单来源 -->
+                        <td>{{order_info.pay_type}}</td><!--订单类型-->
+
+                        <td align="right">{{order_info.order_total_price | currency:'￥'}}</td><!--订单总金额-->
+                        <td align="right">{{order_info.seller_discount | currency:'￥'}}</td><!--商家优惠金额-->
+                        <td align="right">{{order_info.order_seller_price | currency:'￥'}}</td><!--订单货款金额-->
+                        <td align="right">{{order_info.freight_price | currency:'￥'}}</td><!--商品的运费-->
+                        <td align="right">{{order_info.order_payment | currency:'￥'}}</td><!--用户应付金额-->
+
+                        <td>{{order_info.order_start_time | date:'yyyy-MM-dd HH:mm:ss'}}</td><!--下单时间-->
+
+                        <td>{{order_info.modified}}</td><!--订单更新时间-->
+                        <td>{{order_info.invoice_info}}</td><!--发票信息-->
+                        <td>{{order_info.delivery_type}}</td><!--送货（日期）类型-->
+                        <td>
+                            <div ng-repeat="coupon_detail in order_info.coupon_detail_list track by $index" style="margin:2px 4px;background: #EAEAEA;background: #EAEAEA;" ng-show="coupon_detail.sku_id">
+                                <table>
+                                    <tr >
+                                        <td><span>{{$index+1}}.</span></td>
+                                        <td>
+                                            <span ng-show="coupon_detail.skuId"><strong>京东sku:</strong>{{coupon_detail.skuId}}</span>
+                                            <span ng-show="coupon_detail.couponType"><strong>优惠类型:</strong>{{coupon_detail.couponType}}</span>
+                                            <span ng-show="coupon_detail.couponPrice"><strong>优惠金额:</strong>{{coupon_detail.couponPrice | currency:'￥'}}</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td><!--优惠详细信息-->
+                        <td>{{order_info.order_remark}}</td><!--买家下单时订单备注-->
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="box-footer clearfix">
+                <ul class="form-control col-sm-11 pagination pagination-sm no-margin pull-left" style="visibility: visible;">
+                    <li class="pull-left">
+                        <select name="example2_length" aria-controls="example2" class="input-sm ng-pristine ng-valid" ng-model="pageSizeNum" ng-change="pageLength()">
+                            <option value="10">10</option>
+                            <option value="20" selected="selected">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </li>
+                    <li ng-class="viewIndex == 1 ? 'prev disabled' : 'prev'" class="prev"><a href="javascript:void(0);" title="HomePage" ng-click="prevPage();"><i class="fa fa-angle-double-left"></i></a></li>
+                    <li ng-class="viewIndex == 1 ? 'prev disabled' : 'prev'" class="prev"><a href="javascript:void(0);" title="PreviousPage" ng-click="pageUp();"><i class="fa fa-angle-left"></i></a></li>
+                    <li ng-class="pageSize == viewIndex ? 'next disabled' : 'next'" class="next"><a href="javascript:void(0);" title="NextPage" ng-click="pageDown();"><i class="fa fa-angle-right"></i></a></li>
+                    <li ng-class="pageSize == viewIndex ? 'next disabled' : 'next'" class="next"><a href="javascript:void(0);" title="EndPage" ng-disabled="is" ng-click="nextPage();"><i class="fa fa-angle-double-right"></i></a></li>
+                    <li><label style="font-weight:400" class="control-label input-sm  input-sm ng-binding">Total&nbsp;{{totalSize}}&nbsp;&nbsp;&nbsp;{{currentPage}}/{{totalPages}}</label></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page script -->
+<script>
+    $(function () {
+        //Date range picker with time picker
+        $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'YYYY-MM-DD HH:mm'});
+    });
+</script>

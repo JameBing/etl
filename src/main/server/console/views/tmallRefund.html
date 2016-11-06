@@ -1,0 +1,473 @@
+<div class="row"  ng-controller="TmallRefundCtrl" id="storeTable_portlet_body">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">退款订单中心</h3>
+            </div>
+            <div class="box-body">
+                <form role="form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">订单Id</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control input-sm  input-sm " ng-model="tId" placeholder="订单Id">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">退款单号</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control input-sm  input-sm " ng-model="refundId" placeholder="退款单号">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">退款状态</label>
+                                <div class="col-sm-9">
+                                    <select ng-model="selected" ng-options="m.status for m in refundStatus" class="form-control input-sm " ng-click="showStatus()">
+                                        <option value="" ng-show="select_status">所有状态</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">商品标题</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control input-sm " ng-model="title" placeholder="商品标题">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">退货运单号</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control input-sm " ng-model="sid" placeholder="退货运单号">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label input-sm ">时间区间</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-clock-o"></i>
+                                        </div>
+                                        <input type="text" class="form-control input-sm  pull-right" id="reservationtime">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button type="button" class="btn btn-info pull-right" ng-click="queryTmallRefund();">查询</button>
+                    </div>
+                </form>
+            </div>
+            <div class="overlay" ng-show="overlayStatus">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+            <div class="alert alert-warning" ng-show="status" style="text-align: center;"><!--错误警告-->
+                <strong>{{msg}}</strong>
+            </div>
+            <style>
+                th{
+                    white-space:nowrap;
+                }
+                td{
+                    white-space:nowrap;
+                }
+                a:hover {color: #367FA9}
+                a:active {color: #0000FF}
+            </style>
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-striped table-bordered table-hover" id="datatable_reviews">
+                    <thead>
+                    <tr>
+                        <th>订单Id</th>
+                        <th>退款单号</th>
+                        <th>退款状态</th>
+                        <th>货物状态</th>
+                        <th>买家昵称</th>
+                        <th>卖家昵称</th>
+                        <th>交易金额</th>
+                        <th>退还金额</th>
+                        <th>商品标题</th>
+
+                        <th>订单交易状态</th>
+                        <th>退款申请时间</th>
+                        <th>更新时间</th>
+                        <th>退货时间</th>
+                        <th>物流方式</th>
+                        <th>物流公司名称</th>
+
+                        <th>退货运单号</th>
+                        <th>卖家收货地址</th>
+                        <th>退款原因</th>
+                        <th>退款说明</th>
+
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="refund_info in oderList track by $index">
+                        <td align="right"><strong>{{refund_info.tid}}</strong></td>
+                        <td ng-show="refund_info.refund_id != 0">{{refund_info.refund_id}}</td>
+                        <td ng-show="refund_info.refund_id == 0"></td>
+                        <td>{{refund_info.status}}</td>
+                        <td>{{refund_info.good_status}}</td>
+                        <td>{{refund_info.buyer_nick}}</td><!--买家昵称-->
+                        <td>{{refund_info.seller_nick}}</td><!--卖家昵称-->
+                        <td align="right">{{refund_info.total_fee | currency:'￥'}}</td><!--交易金额-->
+                        <td align="right">{{refund_info.refund_fee | currency:'￥'}}</td><!--退还金额-->
+                        <td>{{refund_info.title}}</td><!--商品标题-->
+
+                        <td>{{refund_info.order_status}}</td><!--订单交易状态-->
+                        <td>{{refund_info.created | date:'yyyy-MM-dd HH:mm:ss'}}</td><!--退款申请时间-->
+                        <td>{{refund_info.modified | date:'yyyy-MM-dd HH:mm:ss'}}</td><!--更新时间-->
+                        <td>{{refund_info.good_return_time | date:'yyyy-MM-dd HH:mm:ss'}}</td><!--退货时间-->
+                        <td>{{refund_info.shipping_type}}</td><!--物流方式-->
+                        <td>{{refund_info.company_name}}</td><!--物流公司名称-->
+                        <td align="right">{{refund_info.sid}}</td><!--退货运单号-->
+
+                        <td>{{refund_info.address}}</td><!--卖家收货地址-->
+                        <td>{{refund_info.reason}}</td><!--退款原因-->
+                        <td>{{refund_info.desc}}</td><!--退款说明 -->
+
+                        <td>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <span ng-show="refund_info.status=='买家已经申请退款'">未审核 |</span>
+                                    <span ng-show="false">已审核 |</span>
+                                    <span ng-show="false">审核已失效 |</span>
+                                    <a data-toggle="modal" data-target="#toExamine"
+                                       ng-click="refundAuditingDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);" style="cursor:pointer" ng-show="refund_info.status=='买家已经申请退款'">审核</a>
+                                    <a ng-show="false">取消</a>
+
+                                    <a ng-show="refund_info.status=='买家已经申请退款'"   data-toggle="modal" data-target="#refundAgreeDiv" style="cursor:pointer;margin-left: 15px;"
+                                       ng-click="refundAgreeDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version, refund_info.refund_fee);">同意退款</a>
+                                    <a ng-show="refund_info.status=='买家已经申请退款' && refund_info.has_goods_return=='true'"  data-toggle="modal" data-target="#returnGoodsAddr"  style="cursor:pointer"
+                                       ng-click="returnGoodsAgreeDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);">同意退货</a>
+                                    <a ng-show="(refund_info.status=='买家已经申请退款'||refund_info.status=='买家已经退货') && (refund_info.order_status!='等待发货' && refund_info.reason!='7天无理由退换货')"   style="cursor:pointer;margin-left: 10px;"
+                                       data-toggle="modal" data-target="#refundRefuseDiv" ng-click="refundRefuseDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);">拒绝退款</a>
+                                    <a ng-show="(refund_info.status=='买家已经申请退款'||refund_info.status=='买家已经退货') && (refund_info.order_status!='等待发货' && refund_info.reason!='7天无理由退换货') && refund_info.has_goods_return=='true'"   style="cursor:pointer"
+                                       data-toggle="modal" data-target="#returnGoodsRefuseDiv" ng-click="returnGoodsRefuseDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);">拒绝退货</a>
+                            <!--<a class="btn btn-default btn-sm btn-block" style="display:inline-block" style="display:inline-block"
+                               ng-click="refundAgree(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version, refund_info.refund_fee);">同意退款</a>
+                            <a class="btn btn-default btn-sm btn-block" data-toggle="modal" data-target="#returnGoodsAddr" style="display:inline-block"
+                               ng-click="returnGoodsAgreeDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);">同意退货</a>
+                            <a class="btn btn-default btn-sm btn-block" data-toggle="modal" data-target="#refundRefuseDiv" style="display:inline-block"
+                               ng-click="refundRefuseDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);">拒绝退款</a>
+                            <a class="btn btn-default btn-sm btn-block" data-toggle="modal" data-target="#returnGoodsRefuseDiv" style="display:inline-block"
+                               ng-click="returnGoodsRefuseDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);">拒绝退货</a>-->
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="box-footer clearfix">
+                <ul class="col-sm-11 pagination pagination-sm no-margin pull-left" style="visibility: visible;">
+                    <li class="pull-left">
+                        <select name="example2_length" aria-controls="example2" class="form-control input-sm  ng-pristine ng-valid" ng-model="pageSizeNum" ng-change="pageLength()">
+                            <option value="10">10</option>
+                            <option value="20" selected="selected">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </li>
+                    <li ng-class="viewIndex == 1 ? 'prev disabled' : 'prev'" class="prev"><a href="javascript:void(0);" title="HomePage" ng-click="prevPage();"><i class="fa fa-angle-double-left"></i></a></li>
+                    <li ng-class="viewIndex == 1 ? 'prev disabled' : 'prev'" class="prev"><a href="javascript:void(0);" title="PreviousPage" ng-click="pageUp();"><i class="fa fa-angle-left"></i></a></li>
+                    <li ng-class="pageSize == viewIndex ? 'next disabled' : 'next'" class="next"><a href="javascript:void(0);" title="NextPage" ng-click="pageDown();"><i class="fa fa-angle-right"></i></a></li>
+                    <li ng-class="pageSize == viewIndex ? 'next disabled' : 'next'" class="next"><a href="javascript:void(0);" title="EndPage" ng-disabled="is" ng-click="nextPage();"><i class="fa fa-angle-double-right"></i></a></li>
+                    <li><label style="font-weight:400" class="control-label input-sm  input-sm ng-binding">Total&nbsp;{{totalSize}}&nbsp;&nbsp;&nbsp;{{currentPage}}/{{totalPages}}</label></li>
+                </ul>
+            </div>
+
+            <style>
+                .btn-element{
+                    color: #fff;
+                    background-color:#286090;
+                    border-color: #122B40;
+                }
+                .btn-element:hover {
+                    color: #fff;
+                    background-color: #3C8DBC;
+                    border-color: #367FA9;
+                }
+            </style>
+
+            <!--/.box 确认审核-->
+            <div class="modal fade" id="toExamine" tabindex="-1" role="basic" aria-hidden="true">
+                <div class="modal-dialog modal-normal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                            <h4 class="modal-title">确认审核</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="alert alert-warning" ng-show="refundAuditingStatus" style="text-align: center;"><!--错误警告-->
+                                <strong>{{refundAuditingMsg}}</strong>
+                            </div>
+                            <form name="cardForm" class="form-horizontal form-row-seperated ng-dirty ng-valid ng-valid-required" novalidate="novalidate">
+                                <input type="hidden" ng-model="refundId5">
+                                <input type="hidden" ng-model="refundPhase5">
+                                <input type="hidden" ng-model="refundVersion5">
+                                <div class="form-group">
+                                    <label class="col-md-7">我已确认过订单可以进行退款，故标识为已审核</label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-7">审核人员:<label ng-model="operator">{{operator}}</label></label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-7">审核留言:<label ng-model="message">{{message}}</label></label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-element" ng-click="refundAuditing()">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--/.box 同意退款-->
+            <div class="modal fade" id="refundAgreeDiv" tabindex="-1" role="basic" aria-hidden="true">
+                <div class="modal-dialog modal-normal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                            <h4 class="modal-title">同意退款</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="alert alert-warning" ng-show="agreeRefundStatus" style="text-align: center;"><!--错误警告-->
+                                <strong>{{agreeRefundMsg}}</strong>
+                            </div>
+                            <form name="cardForm" class="form-horizontal form-row-seperated ng-dirty ng-valid ng-valid-required" novalidate="novalidate">
+                                <input type="hidden" ng-model="refundId6">
+                                <input type="hidden" ng-model="refundPhase6">
+                                <input type="hidden" ng-model="refundVersion6">
+                                <input type="hidden" ng-model="amount6">
+                                <div class="form-group">
+                                    <label class="col-md-7">你确定要退款吗？</label>
+                                </div>
+                                <div class="form-group" ng-show="isVerification">
+                                    <label class="col-md-3">短信验证码<span class="required"> * </span></label>
+                                    <div class="col-md-6">
+                                        <input class="form-control input" ng-model="code6" size="6" placeholder="请输入短信验证码" type="text">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-element" ng-click="refundAgree()">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- /.box 同意退货-->
+            <div class="modal fade" id="returnGoodsAddr" tabindex="-1" role="basic" aria-hidden="true">
+                <div class="modal-dialog modal-normal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                            <h4 class="modal-title">同意退货</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="alert alert-warning" ng-show="addrStatus" style="text-align: center;"><!--错误警告-->
+                                <strong>{{addrMsg}}</strong>
+                            </div>
+                            <form name="cardForm" class="form-horizontal form-row-seperated ng-dirty ng-valid ng-valid-required" novalidate="novalidate">
+                                <input type="hidden" ng-model="refundId2">
+                                <input type="hidden" ng-model="refundPhase2">
+                                <input type="hidden" ng-model="refundVersion2">
+                                <div class="form-group">
+                                    <label class="col-md-3">退货地址<span class="required"> * </span></label>
+                                    <div class="col-md-6">
+                                        <select ng-model="addrSelected" class="form-control">
+                                            <option value="{{m}}" ng-repeat="m in addrList">{{m.contact_name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3">退货说明<span class="required"> * </span></label>
+                                    <div class="col-md-6">
+                                        <input class="form-control input" ng-model="returnRemark" size="200" placeholder="请输入退货说明" type="text">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-element" ng-click="returnGoodsAgree()">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .sl-custom-file {
+                    width: 130px;
+                    text-align: left;
+                    position: relative;
+                    display: inline-block;
+                    zoom: 1;
+                    cursor: pointer;
+                    overflow: hidden;
+                    vertical-align: middle;
+                }
+
+                .ui-input-file {
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    _zoom: 30;
+                    font-size: 300px\9;
+                    height: 100%;
+                    _height: auto;
+                    opacity: 0;
+                    filter: alpha(opacity=0);
+                    -ms-filter: "alpha(opacity=0)";
+                    cursor: pointer;
+                }
+
+                .img-size {
+                    width: 300px;
+                    height: 200px;
+                    text-align: center;
+                    padding-left: 10px;
+                }
+            </style>
+
+
+
+            <!-- /.box 拒绝退款-->
+            <div class="modal fade" id="refundRefuseDiv" tabindex="-1" role="basic" aria-hidden="true">
+                <div class="modal-dialog modal-normal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                            <h4 class="modal-title">拒绝退款</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="alert alert-warning" ng-show="refuseStatus" style="text-align: center;"><!--错误警告-->
+                                <strong>{{refuseMsg}}</strong>
+                            </div>
+                            <form name="cardForm" class="form-horizontal form-row-seperated ng-dirty ng-valid ng-valid-required" novalidate="novalidate">
+                                <input type="hidden" ng-model="refundId3">
+                                <input type="hidden" ng-model="refundPhase3">
+                                <input type="hidden" ng-model="refundVersion3">
+                                <div class="form-group">
+                                    <label class="col-md-3">拒绝原因<span class="required"> * </span></label>
+                                    <div class="col-md-6">
+                                        <select ng-model="reasonSelected" class="form-control">
+                                            <option value="{{m.reason_id}}" ng-repeat="m in reasonList">{{m.reason_text}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3">拒绝说明<span class="required"> * </span></label>
+                                    <div class="col-md-6">
+                                        <input class="form-control input" ng-model="returnMessage" size="200" placeholder="请输入拒绝说明" type="text">
+                                        <!--<textarea id="editor1" name="editor1" rows="3" cols="60" ng-model="returnMessage" size="200" placeholder="请输入拒绝说明" onpropertychange="if(value.length>10) value=value.substr(0,10)"></textarea>-->
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3">上传凭证<span class="required"> * </span></label>
+                                    <div class="col-md-6">
+                                        <!--<input type="file" id="one-input" accept="image/*" file-model="images" onchange="angular.element(this).scope().img_upload(this.files)"/>-->
+                                        <span class="sl-custom-file">
+                                            <button  style="width: 130px;">选择图片</button>
+                                            <input type="file" id="one-input" class="ui-input-file"  accept="image/*" file-model="images" onchange="angular.element(this).scope().img_upload(this.files,'refund')"/>
+                                        </span>
+                                        <div ng-repeat="item in thumb">
+                                            <label>
+                                                <img  id="refundImg" style="max-height: 200px;max-width: 300px;" ng-src="{{item.imgSrc}}"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-element" ng-click="refundRefuse()">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- /.box 拒绝退货-->
+            <div class="modal fade" id="returnGoodsRefuseDiv" tabindex="-1" role="basic" aria-hidden="true">
+                <div class="modal-dialog modal-normal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                            <h4 class="modal-title">拒绝退货</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="alert alert-warning" ng-show="returnGoodsStatus" style="text-align: center;"><!--错误警告-->
+                                <strong>{{returnGoodsMsg}}</strong>
+                            </div>
+                            <form name="cardForm" class="form-horizontal form-row-seperated ng-dirty ng-valid ng-valid-required" novalidate="novalidate">
+                                <input type="hidden" ng-model="refundId4">
+                                <input type="hidden" ng-model="refundPhase4">
+                                <input type="hidden" ng-model="refundVersion4">
+                                <div class="form-group">
+                                    <label class="col-md-3">拒绝原因<span class="required"> * </span></label>
+                                    <div class="col-md-6">
+                                        <select ng-model="reasonSelected4" class="form-control">
+                                            <option value="{{m.reason_id}}" ng-repeat="m in reasonList">{{m.reason_text}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                   <label class="col-md-3">上传凭证<span class="required"> * </span></label>
+                                    <div class="col-md-6">
+                                        <!--<input type="file" id="one-input" accept="image/*" file-model="images" onchange="angular.element(this).scope().img_upload(this.files)"/>-->
+                                        <span class="sl-custom-file">
+                                            <button  style="width: 130px;">选择图片</button>
+                                            <input type="file" id="one-input4" class="ui-input-file"  accept="image/*" file-model="images" onchange="angular.element(this).scope().img_upload(this.files,'returnGoods')"/>
+                                        </span>
+                                        <div ng-repeat="item in thumb">
+                                            <label>
+                                                <img  id="returnGoodsImg" style="max-height: 200px;max-width: 300px;" ng-src="{{item.imgSrc}}"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-element" ng-click="returnGoodsRefuse()">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page script -->
+<script>
+    $(function () {
+        //Date range picker with time picker
+        $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'YYYY-MM-DD HH:mm'});
+    });
+</script>

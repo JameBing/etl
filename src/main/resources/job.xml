@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/data/mongo
+       http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+       http://www.springframework.org/schema/data/repository
+       http://www.springframework.org/schema/data/repository/spring-repository-1.5.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
+
+    <bean id="threadPoolTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="${timer.sync.threads.min}"/>
+        <property name="maxPoolSize" value="${timer.sync.threads.max}"/>
+        <property name="keepAliveSeconds" value="${timer.sync.threads.keepAliveSeconds}"/>
+        <property name="queueCapacity" value="${timer.sync.threads.queueCapacity}"/>
+    </bean>
+    <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" scope="singleton">
+        <property name="taskExecutor" ref="threadPoolTaskExecutor"/>
+        <property name="autoStartup" value="false"/>
+    </bean>
+
+    <!-- ========================================================================================================= -->
+
+    <!--<bean id="syncOrderJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">-->
+        <!--<property name="targetObject" ref="jdScheduleJob" />-->
+        <!--<property name="targetMethod" value="syncOrder" />-->
+        <!--<property name="concurrent" value="false" />-->
+    <!--</bean>-->
+    <!--<bean id="syncOrderTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">-->
+        <!--<property name="jobDetail" ref="syncOrderJob" />-->
+        <!--<property name="startDelay" value="${timer.sync.jd.order.startDelay}" />-->
+        <!--<property name="repeatInterval" value="${timer.sync.jd.order.repeatInterval}" />-->
+    <!--</bean>-->
+
+    <!--<bean id="syncPartyJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">-->
+        <!--<property name="targetObject" ref="jdScheduleJob" />-->
+        <!--<property name="targetMethod" value="syncParty" />-->
+        <!--<property name="concurrent" value="false" />-->
+    <!--</bean>-->
+    <!--<bean id="syncPartyTrigger"  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">-->
+        <!--<property name="jobDetail" ref="syncPartyJob" />-->
+        <!--<property name="startDelay" value="${timer.sync.jd.order.startDelay}" />-->
+        <!--<property name="repeatInterval" value="${timer.sync.jd.order.repeatInterval}" />-->
+    <!--</bean>-->
+
+    <!--<bean id="springJobSchedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">-->
+        <!--<property name="taskExecutor" ref="threadPoolTaskExecutor"/>-->
+        <!--<property name="autoStartup" value="false"/>-->
+        <!--<property name="triggers">-->
+            <!--<list>-->
+                <!--<ref bean="syncOrderTrigger"/>-->
+                <!--&lt;!&ndash;<ref bean="syncPartyTrigger"/>&ndash;&gt;-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+</beans>

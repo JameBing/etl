@@ -1,0 +1,25 @@
+<assembly>
+    <id>assembly</id> <!-- release -->
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}/${project.build.finalName}</directory>
+            <outputDirectory>/</outputDirectory>
+            <fileMode>0755</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/apidocs</directory>
+            <outputDirectory>/docs/apidocs</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <outputDirectory>dist</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

@@ -1,0 +1,78 @@
+<style>
+    td {vertical-align: middle;}
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-hover table-bordered">
+                    <tbody>
+                    <tr>
+                        <th>Opr Name</th>
+                        <th width="25%">Opr Work</th>
+                        <th width="25%">Opr Result</th>
+                        <th>Comments</th>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: middle;">启动监听</td>
+                        <td ng-show="!startup">
+                            <button data-container="body" data-toggle="popover" data-placement="right" type="button" class="btn play btn-info btn-sm" ng-click="startListening();">启动</button>
+                        </td>
+                        <td ng-show="startup">
+                            <button data-container="body" data-toggle="popover" data-placement="right" type="button" class="btn stop btn-info btn-sm" ng-click="stopListening();">停止</button>
+                            <img src="../dist/img/loading.gif" style="margin-left: 10px"/>
+                        </td>
+                        <td style="text-align:left;color:grey;vertical-align: middle;">{{result}}</td>
+                        <td style="text-align:left;color:grey;vertical-align: middle;"><i class="fa fa-question-circle"></i> 点击监听按钮后将会开启同步折800订单</td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: middle;">在线补单</td>
+                        <td>
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-clock-o"></i>
+                                </div>
+                                <input type="text" class="form-control input-sm  pull-right" placeholder="选择需要补单的时间范围" id="reservationtime">
+                                <span class="input-group-btn">
+                                  <button type="button" class="btn btn-info btn-flat" ng-click="fixOrder();" ng-disabled="disabled">执行</button>
+                                  <img src="../dist/img/loading.gif" ng-show="loading" style="margin-left: 15px"/>
+                                </span>
+                            </div>
+                        </td>
+                        <td style="text-align:left;color:grey;vertical-align: middle;">{{message}}</td>
+                        <td style="text-align:left;color:grey;vertical-align: middle;"><i class="fa fa-question-circle"></i> 选择时间维度进行差异化补单操作</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+    <!-- /.col -->
+</div>
+<!-- /.row -->
+
+<script>
+    $(function () {
+        //Date range picker with time picker
+        $('#reservationtime').daterangepicker({
+            timePicker: true, timePickerIncrement: 60, format: 'YYYY-MM-DD HH:mm', opens: 'right',
+            showDropdowns : true,
+            dateLimit : { days : 30 },  // 起止时间的最大间隔
+            separator : ' 至 ',
+            buttonClasses : [ 'btn btn-default' ],
+            applyClass : 'btn-sm',
+            cancelClass : 'btn-sm',
+            locale : {
+                applyLabel : '确定',
+                cancelLabel : '取消',
+                fromLabel : '起始时间',
+                toLabel : '结束时间',
+                customRangeLabel : '自定义',
+                daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ],
+                monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                firstDay : 1
+            }
+        });
+    });
+</script>

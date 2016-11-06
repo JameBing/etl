@@ -1,0 +1,158 @@
+    <style>
+        .grayImg { -webkit-filter: grayscale(1); filter:gray; filter: grayscale(1); }
+        .icheck-inline img { cursor: pointer; }
+        .icheck-inline label { cursor: pointer; }
+    </style>
+<div class="row" ng-controller="ConfigureCtrl">
+    <div class="col-xs-12">
+        <div ng-show="successMsg" class="alert alert-success alert-dismissible" style="padding: 5px;">
+            <h6><i class="icon fa fa-ban"></i> {{successMsg}}</h6>
+        </div>
+        <div class="box">
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+                    <thead>
+                    <th style="width:10%;">平台名称</th>
+                    <th style="width:15%;">应用Key</th>
+                    <th style="width:15%;">应用Secret</th>
+                    <th style="width:20%;">可选字段</th>
+                    <th style="width:20%;">回调地址</th>
+                    <th style="width:15%;">通知方式</th>
+                    <th style="width:15%;">操作</th>
+                    </thead>
+                    <tr ng-repeat="platformList in platformList">
+                        <td ng-show="platformList.platform == 'jd'">京东</td>
+                        <td ng-show="platformList.platform == 'tmall'">天猫</td>
+                        <td ng-show="platformList.platform == 'jp'">卷皮</td>
+                        <td ng-show="platformList.platform == 'z8'">折八百</td>
+                        <td ng-show="platformList.platform == 'meituan'">美团</td>
+                        <td ng-show="platformList.platform == 'nuomi'">糯米</td>
+                        <td contenteditable="true" ng-blur="editPlat(platformList.platform, platformList.appKey, platformList.appSecret, platformList.optionField, $event, $index,'appKey');">{{platformList.appKey}}</td>
+                        <td contenteditable="true" ng-blur="editPlat(platformList.platform, platformList.appKey, platformList.appSecret, platformList.optionField, $event, $index,'appSecret');">{{platformList.appSecret}}</td>
+                        <td contenteditable="true" ng-blur="editPlat(platformList.platform, platformList.appKey, platformList.appSecret, platformList.optionField, $event, $index,'optionField');">{{platformList.optionField}}</td>
+                        <td>{{platformList.callback}}</td>
+                        <td>{{platformList.notify.addr}}</td>
+                        <td><button class="fa fa-trash-o" style="float: right;" ng-click="delPlatform(platformList.platform,platformList.appKey,platformList.appSecret,platformList.optionField);"></button></td>
+                    </tr>
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <div style="text-align: right;">
+            <a style="margin-right: 20px;" class="btn btn-default btn-sm btn-block" data-toggle="modal" data-target="#addPlatform">新增平台</a>
+        </div>
+        <!-- /.box -->
+        <div class="modal fade" id="addPlatform" tabindex="-1" role="basic" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div ng-show="errMsg" class="alert alert-danger alert-dismissible" style="padding: 5px;">
+                    <h6><i class="icon fa fa-ban"></i> {{errMsg}}</h6>
+                </div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <h4 class="modal-title">新增平台</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form name="cardForm" class="form-horizontal form-row-seperated ng-dirty ng-valid ng-valid-required" novalidate="novalidate">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">第三方平台类型 <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <div class="icheck-inline">
+                                            <label class="" onclick="changeColor(this);" ng-click="platform = 'jd'">
+                                                <img src="../dist/img/jd.jpg" class="grayImg" height="80" width="80">
+                                                <div style="position: relative;" class="iradio_minimal-grey"><input style="position: absolute; opacity: 0;" name="radio1" class="icheck ng-pristine ng-valid" type="radio"><ins style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;" class="iCheck-helper"></ins></div>
+                                            </label>
+                                            <label class="" onclick="changeColor(this);" ng-click="platform = 'tmall'">
+                                                <img src="../dist/img/tmall.jpg" class="grayImg" height="80" width="80">
+                                                <div style="position: relative;" class="iradio_minimal-grey"><input style="position: absolute; opacity: 0;" name="radio1" class="icheck ng-pristine ng-valid" type="radio"><ins style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;" class="iCheck-helper"></ins></div>
+                                            </label>
+                                            <label class="" onclick="changeColor(this);" ng-click="platform = 'jp'">
+                                                <img src="../dist/img/juanpi.jpg" class="grayImg" height="80" width="80">
+                                                <div style="position: relative;" class="iradio_minimal-grey"><input style="position: absolute; opacity: 0;" name="radio1" class="icheck ng-pristine ng-valid" type="radio"><ins style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;" class="iCheck-helper"></ins></div>
+                                            </label>
+                                            <label class="" onclick="changeColor(this);" ng-click="platform = 'z8'">
+                                                <img src="../dist/img/z8.png" class="grayImg" height="80" width="80">
+                                                <div style="position: relative;" class="iradio_minimal-grey"><input style="position: absolute; opacity: 0;" name="radio1" class="icheck ng-pristine ng-valid" type="radio"><ins style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;" class="iCheck-helper"></ins></div>
+                                            </label>
+                                            <label class="" onclick="changeColor(this);" ng-click="platform = 'meituan'">
+                                                <img src="../dist/img/meituan.png" class="grayImg" height="80" width="80">
+                                                <div style="position: relative;" class="iradio_minimal-grey"><input style="position: absolute; opacity: 0;" name="radio1" class="icheck ng-pristine ng-valid" type="radio"><ins style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;" class="iCheck-helper"></ins></div>
+                                            </label>
+                                            <label class="" onclick="changeColor(this);" ng-click="platform = 'nuomi'">
+                                                <img src="../dist/img/nuomi.jpg" class="grayImg" height="80" width="80">
+                                                <div style="position: relative;" class="iradio_minimal-grey checked"><input style="position: absolute; opacity: 0;" name="radio1" class="icheck ng-pristine ng-valid" type="radio"><ins style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;" class="iCheck-helper"></ins></div>
+                                            </label>
+                                            <label class="" onclick="changeColor(this);" ng-click="platform = 'elm'">
+                                                <img src="../dist/img/elm.jpg" class="grayImg" height="80" width="80">
+                                                <div style="position: relative;" class="iradio_minimal-grey"><input style="position: absolute; opacity: 0;" name="radio1" class="icheck ng-pristine ng-valid" type="radio"><ins style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255) none repeat scroll 0% 0%; border: 0px none; opacity: 0;" class="iCheck-helper"></ins></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">应用Key<span class="required"> * </span></label>
+                                <div class="col-md-4">
+                                    <input class="form-control input" ng-model="appKey" size="15" placeholder="请输入应用Key" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">应用Secret<span class="required"> * </span></label>
+                                <div class="col-md-4">
+                                    <input class="form-control input" ng-model="appSecret" size="15" placeholder="请输入应用Secret" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="platform == 'jp'">
+                                <label class="col-md-2 control-label">商户Key<span class="required"> * </span></label>
+                                <div class="col-md-4">
+                                    <input class="form-control input" ng-model="optionField" size="15" placeholder="请输入商户Key" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">通知方式<span class="required"> * </span></label>
+                                <div class="radio col-md-2">
+                                    <label ng-click="notifyType = 'message'">
+                                        <input name="message" ng-model="notifyType" checked="" value="message"  type="radio">消息地址
+                                    </label>
+                                </div>
+                                <div class="radio col-md-2">
+                                    <label ng-click="notifyType = 'notify'">
+                                        <input name="notify" ng-model="notifyType" checked=""  value="notify" type="radio">通知地址
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="notifyType == 'message'">
+                                <label class="col-md-2 control-label">消息地址：</label>
+                                <div class="col-md-6">
+                                    <input class="form-control input" ng-model="notifyAddr" placeholder="{{activeMQ}}" type="text" disabled="true">
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="notifyType == 'notify'">
+                                <label class="col-md-2 control-label">通知地址：</label>
+                                <div class="col-md-6">
+                                    <input class="form-control input" ng-model="notifyAddr" placeholder="请输入通知地址" type="text">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-danger" ng-click="addPlatform()">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeColor(obj) {
+        $("img").addClass("grayImg");
+        $(obj).find("img").removeClass("grayImg");
+    }
+
+</script>
+
