@@ -147,13 +147,13 @@ public class MenuController {
 
             Menu storeMenu = new Menu("控制台", "#/jdControl");
             Menu orderMenu = new Menu("在线订单", "#/jdOrder");
-            Menu fixOrderMenu = new Menu("离线补单", "#/jdFixOrder");
+            //Menu fixOrderMenu = new Menu("离线补单", "#/jdFixOrder");
             Menu partyMenu = new Menu("会员列表", "#/jdParty");
 
             List<Menu> jdMenus = new ArrayList<>();
             jdMenus.add(storeMenu);
             jdMenus.add(orderMenu);
-            jdMenus.add(fixOrderMenu);
+            //jdMenus.add(fixOrderMenu);
             jdMenus.add(partyMenu);
 
             jdMenu.setMenu(jdMenus);

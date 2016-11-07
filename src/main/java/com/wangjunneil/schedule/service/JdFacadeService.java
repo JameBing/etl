@@ -4,31 +4,27 @@ import com.alibaba.fastjson.JSONObject;
 import com.jd.open.api.sdk.JdException;
 import com.jd.open.api.sdk.domain.crm.CrmMemberService.CrmMember;
 import com.jd.open.api.sdk.domain.crm.CrmMemberService.CrmMemberResult;
-import com.jd.open.api.sdk.domain.order.OrderSearchInfo;
 import com.jd.open.api.sdk.domain.seller.ShopSafService.ShopJosResult;
 import com.jd.open.api.sdk.request.order.OrderSopOutstorageRequest;
 import com.jd.open.api.sdk.response.crm.CrmMemberSearchResponse;
-import com.jd.open.api.sdk.response.order.OrderSearchResponse;
 import com.jd.open.api.sdk.response.order.OrderSopOutstorageResponse;
 import com.jd.open.api.sdk.response.seller.SellerVenderInfoGetResponse;
 import com.jd.open.api.sdk.response.seller.VenderShopQueryResponse;
 import com.wangjunneil.schedule.activemq.QueueMessageProducer;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
-import com.wangjunneil.schedule.entity.sys.*;
 import com.wangjunneil.schedule.entity.jd.*;
+import com.wangjunneil.schedule.entity.sys.Cfg;
+import com.wangjunneil.schedule.entity.sys.Page;
 import com.wangjunneil.schedule.service.jd.JdApiService;
 import com.wangjunneil.schedule.service.jd.JdInnerService;
 import com.wangjunneil.schedule.service.jd.JobService;
 import com.wangjunneil.schedule.service.sys.SysInnerService;
-import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
-import com.wangjunneil.schedule.entity.jd.JdCrmOrder;
-import com.wangjunneil.schedule.entity.jd.JdOrderRequest;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -286,12 +282,13 @@ public class JdFacadeService {
 
         int size = needSupplementOrders.size();
         if (size != 0)
-            jdInnerService.addSyncOrders(needSupplementOrders);
+//            jdInnerService.addSyncOrders(needSupplementOrders);
+            jdInnerService.addSyncOrder(needSupplementOrders);//防止同步任务异常时，补单重复
 
         if (log.isInfoEnabled())
             log.info("End supplement order operation, need supplement sum " + size + ", need send msg sum " + needSendMsgList.size() + ", waste time "+ stopWatch.getTotalTimeSeconds() + " second");
 
 //        return size;
-        return needSendMsgList.size();//TODO 暂时修改为实际发送的消息数
+        return needSendMsgList.size();//实际发送的消息数
     }
 }
