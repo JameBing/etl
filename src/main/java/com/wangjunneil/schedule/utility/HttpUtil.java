@@ -45,36 +45,43 @@ public final class HttpUtil {
     }
 
     /**
-     * post方式请求，参数不转码
+     * post方式请求，参数默认不转码
      * @param urlStr
-     * @param param
+     * @param param  注意顺序 [参数,格式，timeout,readtime]
      * @return
      */
-    public static String post(String urlStr, String param) {
+    public static String post(String urlStr, String... param) {
         try {
             URL url = new URL(urlStr);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             con.setDoInput(true);
             con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            con.setRequestProperty("Content-Type",(param.length>1)?param[1]:"application/x-www-form-urlencoded");
+            con.setConnectTimeout((param.length > 2) ? Integer.parseInt(param[2]) : 60 * 1000);
+            con.setReadTimeout((param.length>3)?Integer.parseInt(param[3]):60*1000);
             con.connect();
 
             DataOutputStream dos=new DataOutputStream(con.getOutputStream());
-            dos.writeBytes(param);
+            dos.writeBytes(param[0]);
             dos.flush();
             dos.close();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            StringBuffer sb = new StringBuffer();
-            String line = br.readLine();
-            while (line != null) {
-                sb.append(line);
-                line = br.readLine();
-            }
-            br.close();
-            return sb.toString();
-
+            int responseCode = con.getResponseCode();
+//            if(responseCode == HttpURLConnection.HTTP_OK||responseCode == HttpURLConnection.HTTP_ACCEPTED||responseCode == HttpURLConnection.HTTP_CREATED)
+//            {
+                BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                StringBuffer sb = new StringBuffer();
+                String line = br.readLine();
+                while (line != null) {
+                    sb.append(line);
+                    line = br.readLine();
+                }
+                br.close();
+                return sb.toString();
+//            }else {
+//                //
+//            }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
