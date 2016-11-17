@@ -8,24 +8,24 @@ import java.util.Date;
 /**
  *
  * Created by wangjun on 7/28/16.
- */
-@Document(collection = "sync.multi.token")
-public class JdAccessToken {
 
-    private String platform = Constants.PLATFORM_JD;
+    */
+    @Document(collection = "sync.multi.token")
+    public class JdAccessToken {
 
-    private String username;
+        private String platform = Constants.PLATFORM_JD;
 
-    private String access_token;
+        private String username;
 
-    private int expires_in;
+        private String access_token;
 
-    private String refresh_token;
+        private int expires_in;
 
-    private String token_type;
+        private String refresh_token;
 
-    private String time;
+        private String token_type;
 
+        private String time;
     private String uid;
 
     private String user_nick;

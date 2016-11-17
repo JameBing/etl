@@ -15,6 +15,8 @@ public final class Constants {
     public static final String PLATFORM_JP = "jp";
     public static final String PLATFORM_TM = "tmall";
     public static final String PLATFORM_Z800 = "z8";
+    public static final String PLATFORM_WAIMAI_BAIDU = "baidu";
+    public static final String PLATFORM_WAIMAI_JDHOME ="jdhome";
 
 
 
@@ -122,4 +124,13 @@ public final class Constants {
     public static final String Z8_REQUEST_TOKEN_URL = "https://openapi.zhe800.com/oauth/token";//测试环境host配置：1.202.245.246=>openapi.zhe800.com，生产环境不需要配置
 
     public static final String Z8_URL = "https://openapi.zhe800.com/api/erp/v2/";
+
+   //region 外卖平台相关
+
+    //百度外卖
+    public static final  String BAIDU_URL = "http://api.waimai.baidu.com";
+    public static final  int BAIDU_SOURCE = 65514;
+
+
+   //endregion
 }
