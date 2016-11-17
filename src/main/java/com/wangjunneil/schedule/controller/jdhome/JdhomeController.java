@@ -92,7 +92,7 @@ public class JdHomeController {
         resp.setContentType("text/html;charset=utf-8");
         ShopCategory shopCategory = new ShopCategory();
         shopCategory.setId(111L);
-        shopCategory.setShopCategoryName("cc");
+        shopCategory.setShopCategoryName("ccc");
         String returnJson = jdHomeFacadeService.updateShopCategory(shopCategory);
         out.println(returnJson);
         out.close();
@@ -152,7 +152,7 @@ public class JdHomeController {
         return null;
     }
 
-    @RequestMapping(value = "/test",method = RequestMethod.GET)
+    @RequestMapping(value = "/testAddOrder",method = RequestMethod.GET)
     public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
         String json = jdHomeFacadeService.newOrder("", "", "");
