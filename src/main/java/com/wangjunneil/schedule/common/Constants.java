@@ -19,8 +19,6 @@ public final class Constants {
     public static final String PLATFORM_WAIMAI_JDHOME ="jdhome";
 
 
-
-
     /**
      * 京东授权连接
      */
