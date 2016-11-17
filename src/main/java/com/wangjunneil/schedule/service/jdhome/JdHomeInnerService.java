@@ -19,6 +19,7 @@ public class JdHomeInnerService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    //批量插入订单
     public void addSyncOrders(List<OrderInfoDTO> orders) {
         mongoTemplate.insertAll(orders);
     }

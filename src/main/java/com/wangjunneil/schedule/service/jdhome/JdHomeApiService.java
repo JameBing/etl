@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.service.jdhome;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.entity.baidu.Shop;
+import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.ShopCategory;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
@@ -56,7 +57,7 @@ public class JdHomeApiService {
         }catch (Exception e){
             throw new Exception("签名失败");
         }
-        System.out.println("Params"+StringUtil.getUrlParamsByMap(param));
+        log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
         return HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
     }
 
@@ -77,7 +78,7 @@ public class JdHomeApiService {
         }catch (Exception e){
             throw new Exception("签名失败");
         }
-        System.out.println("Params"+StringUtil.getUrlParamsByMap(param));
+        log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
         return HttpUtil.post(URL.URL_ADD_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
     }
 
@@ -96,7 +97,7 @@ public class JdHomeApiService {
         }catch (Exception e){
             throw new Exception("签名失败");
         }
-        System.out.println("Params"+StringUtil.getUrlParamsByMap(param));
+        log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
         return HttpUtil.post(URL.URL_UPDATE_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
     }
 
@@ -113,7 +114,7 @@ public class JdHomeApiService {
         }catch (Exception e){
             throw new Exception("签名失败");
         }
-        System.out.println("Params"+StringUtil.getUrlParamsByMap(param));
+        log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
         return HttpUtil.post(URL.URL_DELETE_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
     }
 
@@ -130,7 +131,26 @@ public class JdHomeApiService {
         }catch (Exception e){
             throw new Exception("签名失败");
         }
+        log.info("======Params:"+StringUtil.getUrlParamsByMap(param)+"======");
         return HttpUtil.post(URL.URL_NEW_ORDER,StringUtil.getUrlParamsByMap(param));
+    }
+
+    //商家确认/取消接单接口
+    public String orderAcceptOperate(OrderAcceptOperate acceptOperate)throws Exception{
+        Map<String,Object> param = getSysMap();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("orderId",acceptOperate.getOrderId());
+        jsonObject.put("isAgreed", acceptOperate.getIsAgreed());
+        jsonObject.put("operator", acceptOperate.getOperator());
+        param.put("jd_param_json",jsonObject);
+        try {
+            sign = SignUtils.getSign(param,appSecret);
+            param.put("sign",sign);
+        }catch (Exception e){
+            throw new Exception("签名失败");
+        }
+        log.info("======Params:"+StringUtil.getUrlParamsByMap(param)+"======");
+        return HttpUtil.post(URL.URL_ORDER_ACCEPT_OPERATE,StringUtil.getUrlParamsByMap(param));
     }
 
 

@@ -23,4 +23,7 @@ public final class URL {
     //京东到家新增推送订单
     public static final String URL_NEW_ORDER =  "https://openo2o.jd.com/djapi/order/es/query";
 
+    //京东到家商家确认接单接口
+    public static final String URL_ORDER_ACCEPT_OPERATE ="https://openo2o.jd.com/djapi/ocs/orderAcceptOperate";
+
 }

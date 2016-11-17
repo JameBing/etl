@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.controller.jdhome;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.ShopCategory;
 import com.wangjunneil.schedule.service.JdHomeFacadeService;
@@ -78,6 +79,14 @@ public class JdHomeController {
         return  null;
     }
 
+    /**
+     * 修改商品分类
+     * @param out
+     * @param req
+     * @param resp
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/updateShopCategory", method=RequestMethod.GET)
     public String updateShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
@@ -90,6 +99,14 @@ public class JdHomeController {
         return  null;
     }
 
+    /**
+     * 删除商品分类
+     * @param out
+     * @param req
+     * @param resp
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/deleteShopCategory", method=RequestMethod.GET)
     public String deleteShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
@@ -114,4 +131,34 @@ public class JdHomeController {
         String rtnJson = jdHomeFacadeService.newOrder(billId,statusId,timestamp);
         return  null;
     }
+
+    /**
+     * 商家确认接单接口
+     * @param out
+     * @param req
+     * @param resp
+     * @return
+     */
+    @RequestMapping(value = "/orderAcceptOperate",method = RequestMethod.GET)
+    public String orderAcceptOperate(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
+        resp.setContentType("text/html;charset=utf-8");
+        OrderAcceptOperate acceptOperate = new OrderAcceptOperate();
+        acceptOperate.setOrderId("100001016163464");
+        acceptOperate.setIsAgreed(true);
+        acceptOperate.setOperator("yang");
+        String json = jdHomeFacadeService.orderAcceptOperate(acceptOperate);
+        out.println(json);
+        out.close();
+        return null;
+    }
+
+    @RequestMapping(value = "/test",method = RequestMethod.GET)
+    public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
+        resp.setContentType("text/html;charset=utf-8");
+        String json = jdHomeFacadeService.newOrder("", "", "");
+        out.println(json);
+        out.close();
+        return null;
+    }
+
 }
