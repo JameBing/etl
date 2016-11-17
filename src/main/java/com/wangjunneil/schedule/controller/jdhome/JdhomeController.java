@@ -26,7 +26,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/jdHome")
-public class JdHomeController {
+public class JdHomeController{
 
     private static Logger log = Logger.getLogger(JdHomeController.class.getName());
 
