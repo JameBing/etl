@@ -1,6 +1,7 @@
 package com.wangjunneil.schedule.service.jdhome;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wangjunneil.schedule.common.JdHomeException;
 import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
@@ -13,6 +14,7 @@ import o2o.openplatform.sdk.util.SignUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +57,7 @@ public class JdHomeApiService {
             sign = SignUtils.getSign(param,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
-            throw new Exception("签名失败");
+            throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
         return HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
@@ -76,7 +78,7 @@ public class JdHomeApiService {
             sign = SignUtils.getSign(param,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
-            throw new Exception("签名失败");
+            throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
         return HttpUtil.post(URL.URL_ADD_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
@@ -89,13 +91,12 @@ public class JdHomeApiService {
         jsonObject.put("id",shopCategory.getId());
         jsonObject.put("shopCategoryName",shopCategory.getShopCategoryName());
         jd_param_json = jsonObject.toJSONString();
-        param.put("jd_param_json",jd_param_json);
-        System.out.println("BBBBBB"+param.toString());
+        param.put("jd_param_json", jd_param_json);
         try {
             sign = SignUtils.getSign(param,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
-            throw new Exception("签名失败");
+            throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
         return HttpUtil.post(URL.URL_UPDATE_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
@@ -112,7 +113,7 @@ public class JdHomeApiService {
             sign = SignUtils.getSign(param,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
-            throw new Exception("签名失败");
+            throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
         return HttpUtil.post(URL.URL_DELETE_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
@@ -129,7 +130,7 @@ public class JdHomeApiService {
             sign = SignUtils.getSign(param,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
-            throw new Exception("签名失败");
+            throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:"+StringUtil.getUrlParamsByMap(param)+"======");
         return HttpUtil.post(URL.URL_NEW_ORDER,StringUtil.getUrlParamsByMap(param));
@@ -147,10 +148,11 @@ public class JdHomeApiService {
             sign = SignUtils.getSign(param,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
-            throw new Exception("签名失败");
+            throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:"+StringUtil.getUrlParamsByMap(param)+"======");
         return HttpUtil.post(URL.URL_ORDER_ACCEPT_OPERATE,StringUtil.getUrlParamsByMap(param));
+
     }
 
 

@@ -6,6 +6,6 @@ package com.wangjunneil.schedule.common;
 public class JdHomeException extends Exception {
 
     public JdHomeException(String message,Exception ex){
-        super();
+        super(message);
     }
 }

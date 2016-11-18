@@ -126,7 +126,7 @@ public class StringUtil {
     }
 
     //map对象转字符串
-    public static String getUrlParamsByMap(Map<String, Object> map) throws IOException {
+    public static String getUrlParamsByMap(Map<String, Object> map)throws Exception{
 
         if (map == null || map.isEmpty()) {
             return null;
