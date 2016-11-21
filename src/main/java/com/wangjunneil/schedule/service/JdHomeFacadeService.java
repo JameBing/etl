@@ -3,6 +3,7 @@ package com.wangjunneil.schedule.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.wangjunneil.schedule.common.JdHomeException;
 import com.wangjunneil.schedule.entity.jdhome.*;
 import com.wangjunneil.schedule.service.jdhome.JdHomeApiService;
 import com.wangjunneil.schedule.service.jdhome.JdHomeInnerService;
@@ -33,9 +34,13 @@ public class JdHomeFacadeService {
      * @param stockRequests 商品列表
      * @return
      */
-    public String updateAllStockOn(List<QueryStockRequest> stockRequests) throws Exception{
-        String json = jdHomeApiService.updateAllStockOn(stockRequests);
-        return  json;
+    public String updateAllStockOn(List<QueryStockRequest> stockRequests) throws JdHomeException{
+        try{
+            String json = jdHomeApiService.updateAllStockOn(stockRequests);
+            return json;
+        }catch (Exception ex){
+            throw new JdHomeException("message",ex);
+        }
     }
 
     /**
@@ -43,9 +48,13 @@ public class JdHomeFacadeService {
      * @param shopCategory
      * @return
      */
-    public String addShopCategory(ShopCategory shopCategory)throws Exception{
-        String json = jdHomeApiService.addShopCategory(shopCategory);
-        return json;
+    public String addShopCategory(ShopCategory shopCategory)throws JdHomeException{
+        try {
+            String json = jdHomeApiService.addShopCategory(shopCategory);
+            return json;
+        }catch (Exception e){
+            throw new JdHomeException("message",e);
+        }
     }
 
     /**
@@ -54,9 +63,13 @@ public class JdHomeFacadeService {
      * @return
      * @throws Exception
      */
-    public String updateShopCategory(ShopCategory shopCategory)throws Exception{
-        String json = jdHomeApiService.updateShopCategory(shopCategory);
-        return  json;
+    public String updateShopCategory(ShopCategory shopCategory)throws JdHomeException{
+        try {
+            String json = jdHomeApiService.updateShopCategory(shopCategory);
+            return  json;
+        }catch (Exception e){
+            throw new JdHomeException("message",e);
+        }
     }
 
     /**
@@ -65,9 +78,14 @@ public class JdHomeFacadeService {
      * @return
      * @throws Exception
      */
-    public String deleteShopCategory(ShopCategory shopCategory)throws Exception{
-        String json = jdHomeApiService.deleteShopCategory(shopCategory);
-        return json;
+    public String deleteShopCategory(ShopCategory shopCategory)throws JdHomeException{
+        try{
+            String json = jdHomeApiService.deleteShopCategory(shopCategory);
+            return json;
+        }catch (Exception e){
+            throw new JdHomeException("message",e);
+        }
+
     }
 
     //新增推送订单
@@ -87,7 +105,7 @@ public class JdHomeFacadeService {
             "\t\t\t\"totalCount\": \"100\",\n" +
             "\t\t\t\"resultList\": [\n" +
             "\t\t\t\t{\n" +
-            "\t\t\t\t\t\"orderId\": \"100001036354906\",\n" +
+            "\t\t\t\t\t\"orderId\": \"10000103688888\",\n" +
             "\t\t\t\t\t\"srcOrderId\": \"100001036354906\",\n" +
             "\t\t\t\t\t\"srcInnerType\": \"0\",\n" +
             "\t\t\t\t\t\"srcInnerOrderId\": \"0\",\n" +
@@ -102,7 +120,7 @@ public class JdHomeFacadeService {
             "\t\t\t\t\t\"orderCancelTime\": \"2016-07-09 18:34:07\",\n" +
             "\t\t\t\t\t\"orderCancelRemark\": \"其它\",\n" +
             "\t\t\t\t\t\"orgCode\": \"71948\",\n" +
-            "\t\t\t\t\t\"buyerFullName\": \"王小明\",\n" +
+            "\t\t\t\t\t\"buyerFullName\": \"张小明\",\n" +
             "\t\t\t\t\t\"buyerFullAddress\": \"上海市徐汇区乐山路19号广元西路乐山路，乐山路19号\",\n" +
             "\t\t\t\t\t\"buyerTelephone\": \"18816912316\",\n" +
             "\t\t\t\t\t\"buyerMobile\": \"18816912316\",\n" +
@@ -203,7 +221,7 @@ public class JdHomeFacadeService {
                 order.setSrcInnerOrderId(jsonOrder.getLong("srcInnerOrderId"));
                 order.setOrderType(jsonOrder.getInteger("orderType"));
                 order.setOrderStatus(jsonOrder.getInteger("orderStatus"));
-                order.setOrderStartTime(jsonOrder.getDate("orderStatusTime"));
+                order.setOrderStatusTime(jsonOrder.getDate("orderStatusTime"));
                 order.setOrderStartTime(jsonOrder.getDate("orderStartTime"));
                 order.setOrderPurchaseTime(jsonOrder.getDate("orderPurchaseTime"));
                 order.setOrderAgingType(jsonOrder.getInteger("orderAgingType"));
@@ -247,7 +265,7 @@ public class JdHomeFacadeService {
             if(orders !=null && orders.size()>0){
                 log.info("=====MongoDb insert Order start====");
                 try {
-                    jdHomeInnerService.addSyncOrders(orders);
+                    jdHomeInnerService.addOrUpdateSyncOrder(orders);
                 }catch (Exception e){
                     return "{\"code\":\"2\",\"msg\":\"failure\",\"data\":\"{}\"}";
                 }
@@ -330,9 +348,12 @@ public class JdHomeFacadeService {
     }
 
     //商家确认/取消接单接口
-    public String orderAcceptOperate(OrderAcceptOperate acceptOperate)throws Exception{
-        String json = jdHomeApiService.orderAcceptOperate(acceptOperate);
-        return json;
+    public String orderAcceptOperate(OrderAcceptOperate acceptOperate)throws JdHomeException{
+        try {
+            String json = jdHomeApiService.orderAcceptOperate(acceptOperate);
+            return json;
+        }catch (Exception e){
+            throw new JdHomeException("message",e);
+        }
     }
-
 }
