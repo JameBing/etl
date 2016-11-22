@@ -1,5 +1,6 @@
 package com.wangjunneil.schedule.service.jdhome;
 
+import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +76,15 @@ public class JdHomeInnerService {
                 .set("discountList",order.getDiscountList());
             mongoTemplate.upsert(query,update,OrderInfoDTO.class);
         }
+    }
+
+    //修改订单状态
+    public void updateStatus(OrderAcceptOperate operate,int code){
+        if(operate.getOrderId()==null || operate.getIsAgreed()==null){
+            return;
+        }
+        Query query = new Query(Criteria.where("orderId").is(operate.getOrderId()));
+        Update update = new Update().set("orderStatus",code);
+        mongoTemplate.upsert(query,update,OrderInfoDTO.class);
     }
 }
