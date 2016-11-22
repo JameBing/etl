@@ -126,7 +126,7 @@ public class StringUtil {
     }
 
     //map对象转字符串
-    public static String getUrlParamsByMap(Map<String, Object> map)throws Exception{
+    public static String getUrlParamsByMap(Map<String, Object> map) throws Exception{
 
         if (map == null || map.isEmpty()) {
             return null;
@@ -149,5 +149,21 @@ public class StringUtil {
             }
         }
         return query.toString();
+    }
+
+    //list内置分页
+    public static <T> List<T> setListPageData(Integer begin, Integer end, List<T> list) {
+        List<T> pageList = null;
+        // 设置内置分页数据
+        if (list != null && begin != null && end != null) {
+            Integer maxSize = end;
+            Integer dataSize = list.size();
+            if (maxSize < dataSize) {
+                pageList = list.subList(begin, maxSize);
+            } else {
+                pageList = list.subList(begin, list.size());
+            }
+        }
+        return pageList;
     }
 }
