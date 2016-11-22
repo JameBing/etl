@@ -15,12 +15,12 @@ import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 /**
- * Created by liuxin on 2016-11-17.
+ * @author liuxin
+ * @since 2016-11-17.
  */
 @Controller
 @RequestMapping("/mt")
 public class MtController {
-
 
     private static Logger log = Logger.getLogger(MtController.class.getName());
 
@@ -48,6 +48,5 @@ public class MtController {
         String rtnJson = mtFacadeService.newOrder(orderId,status);
         return  null;
     }
-
 
 }

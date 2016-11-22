@@ -8,25 +8,17 @@ import com.wangjunneil.schedule.entity.mt.ExtrasInfo;
 import com.wangjunneil.schedule.entity.mt.OrderInfo;
 import com.wangjunneil.schedule.service.mt.MtApiService;
 import com.wangjunneil.schedule.service.mt.MtInnerService;
-import com.wangjunneil.schedule.utility.MD5Util;
-import org.apache.http.HttpClientConnection;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
 /**
  * <code>MtFacadeService</code>类美团接口API的调用
- * @author liuxin on 2016-11-10.
- *
+ * @author liuxin
+ * @since 2016-11-10.
  */
 @Service
 public class MtFacadeService {
@@ -88,8 +80,7 @@ public class MtFacadeService {
 
 
 
-//region 订单相关
-
+    //region 订单相关
 
 
     /**
@@ -284,11 +275,5 @@ public class MtFacadeService {
 //endregion
 
 
-
-/*
-    public static void main(String[] args) {
-        System.out.println(("12233"));
-    }
-*/
 
 }
