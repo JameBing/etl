@@ -57,7 +57,7 @@ public class MtApiService {
     //门店开业
     public String openShop(String code)
     {
-        String params = "app_id" + app_id + "&app_poi_code=" + code + "timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
+        String params = "app_id=" + app_id + "&app_poi_code=" + code + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
         String url = OPEN_SHOP_URL + "?" + params;
         String sig = MD5Util.encrypt32(url);
         params = params+"& sig="+sig;
@@ -96,7 +96,7 @@ public class MtApiService {
     {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("order_id",orderid);
-        String params = "app_id" + app_id + "&order_id=" + jsonObject.toJSONString() + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
+        String params = "app_id=" + app_id + "&order_id=" + jsonObject.toJSONString() + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
         String url = ORDER_CONFIRM_URL + "?" + params;
         String sig = MD5Util.encrypt32(url);
         params = params+"& sig="+sig;
@@ -106,7 +106,7 @@ public class MtApiService {
     //商家取消订单
     public String getCancelOrder(int orderid,String reason,String reasoncode)
     {
-        String params = "app_id" + app_id + "&order_id=" + orderid + "&reason=" + reason + "&reason_code=" + reasoncode + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
+        String params = "app_id=" + app_id + "&order_id=" + orderid + "&reason=" + reason + "&reason_code=" + reasoncode + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
         String url = ORDER_CANCEL_URL + "?" + params;
         String sig = MD5Util.encrypt32(url);
         params = params+"& sig="+sig;
@@ -116,7 +116,7 @@ public class MtApiService {
     //订单推送(已支付)
     public String newOrder(String orderId,String status)
     {
-        String params = "app_id" + app_id + "&order_id=" + orderId + "&status=" + status + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
+        String params = "app_id=" + app_id + "&order_id=" + orderId + "&status=" + status + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
         String url = ORDER_DETAIL_URL + "?" + params;
         String sig = MD5Util.encrypt32(url);
         params = params+"& sig="+sig;
