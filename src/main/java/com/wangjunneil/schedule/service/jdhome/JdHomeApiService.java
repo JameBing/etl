@@ -1,8 +1,8 @@
 package com.wangjunneil.schedule.service.jdhome;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.JdHomeException;
-import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.ShopCategory;
@@ -14,7 +14,6 @@ import o2o.openplatform.sdk.util.SignUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -50,17 +49,34 @@ public class JdHomeApiService {
     public String updateAllStockOn(List<QueryStockRequest> stockRequests)throws Exception{
         Map<String,Object> param = getSysMap(); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
-        jsonObject.put("listBaseStockCenterRequest",stockRequests);
-        jd_param_json = jsonObject.toJSONString();
-        param.put("jd_param_json",jd_param_json);
-        try {
-            sign = SignUtils.getSign(param,appSecret);
-            param.put("sign",sign);
-        }catch (Exception e){
-            throw new JdHomeException("签名失败",e);
+        String rtnStr = "";
+        int page = 1;
+        int pageSize = Constants.STOCK_REQUEST_COUNT;// 配置参数
+        int begin = 0;
+        int end = pageSize;
+        for (int i = 0; i <= stockRequests.size() / pageSize; i++) {
+            List<QueryStockRequest> list = StringUtil.setListPageData(begin, end, stockRequests);
+            if (list != null) {
+                jsonObject.put("listBaseStockCenterRequest",list);
+                jd_param_json = jsonObject.toJSONString();
+                param.put("jd_param_json",jd_param_json);
+                try {
+                    sign = SignUtils.getSign(param,appSecret);
+                    param.put("sign",sign);
+                }catch (Exception e){
+                    throw new JdHomeException("签名失败",e);
+                }
+                log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
+                rtnStr = rtnStr + HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+",";
+                begin = pageSize * page;
+                end = pageSize * (page + 1);
+                page++;
+            }
         }
-        log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-        return HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
+        if(rtnStr.length()>0){
+            return rtnStr.substring(0,rtnStr.length()-1);
+        }
+        return rtnStr;
     }
 
     //新增商品分类
@@ -152,7 +168,6 @@ public class JdHomeApiService {
         }
         log.info("======Params:"+StringUtil.getUrlParamsByMap(param)+"======");
         return HttpUtil.post(URL.URL_ORDER_ACCEPT_OPERATE,StringUtil.getUrlParamsByMap(param));
-
     }
 
 

@@ -3,7 +3,8 @@ package com.wangjunneil.schedule.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.wangjunneil.schedule.common.JdHomeException;
+import com.wangjunneil.schedule.common.*;
+import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.entity.jdhome.*;
 import com.wangjunneil.schedule.service.jdhome.JdHomeApiService;
 import com.wangjunneil.schedule.service.jdhome.JdHomeInnerService;
@@ -39,7 +40,7 @@ public class JdHomeFacadeService {
             String json = jdHomeApiService.updateAllStockOn(stockRequests);
             return json;
         }catch (Exception ex){
-            throw new JdHomeException("message",ex);
+           return "{lg:,plat:,rtn:{}}";
         }
     }
 
@@ -53,7 +54,7 @@ public class JdHomeFacadeService {
             String json = jdHomeApiService.addShopCategory(shopCategory);
             return json;
         }catch (Exception e){
-            throw new JdHomeException("message",e);
+            return "";
         }
     }
 
@@ -68,7 +69,7 @@ public class JdHomeFacadeService {
             String json = jdHomeApiService.updateShopCategory(shopCategory);
             return  json;
         }catch (Exception e){
-            throw new JdHomeException("message",e);
+            return "";
         }
     }
 
@@ -83,7 +84,7 @@ public class JdHomeFacadeService {
             String json = jdHomeApiService.deleteShopCategory(shopCategory);
             return json;
         }catch (Exception e){
-            throw new JdHomeException("message",e);
+            return "";
         }
 
     }
@@ -351,9 +352,22 @@ public class JdHomeFacadeService {
     public String orderAcceptOperate(OrderAcceptOperate acceptOperate)throws JdHomeException{
         try {
             String json = jdHomeApiService.orderAcceptOperate(acceptOperate);
+            //返回成功/失败 若成功修改mongodb订单状态
+            JSONObject jsonObject = JSONObject.parseObject(json);
+            if("0".equals(jsonObject.equals(jsonObject.getString("code")))){
+               int status = 0;
+               if(!acceptOperate.getIsAgreed()){
+                   status = Enum.GetEnumDesc(Enum.OrderStatusJdHome.OrderReceived,Enum.OrderStatusJdHome.OrderReceived.toString()).getInteger("code");
+               }
+               if(acceptOperate.getIsAgreed()){
+                   status = Enum.GetEnumDesc(Enum.OrderStatusJdHome.OrderSysCancelled,Enum.OrderStatusJdHome.OrderSysCancelled.toString()).getInteger("code");
+               }
+               jdHomeInnerService.updateStatus(acceptOperate,status);
+            }
             return json;
         }catch (Exception e){
-            throw new JdHomeException("message",e);
+            return "";
         }
     }
 }
+

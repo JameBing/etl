@@ -130,5 +130,8 @@ public final class Constants {
     public static final  int BAIDU_SOURCE = 65514;
 
 
+    //京东到家
+    public static final int STOCK_REQUEST_COUNT = 50; //一次商品上下架最大数量
+
    //endregion
 }
