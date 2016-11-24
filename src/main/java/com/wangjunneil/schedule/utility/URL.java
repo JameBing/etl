@@ -26,4 +26,22 @@ public final class URL {
     //京东到家商家确认接单接口
     public static final String URL_ORDER_ACCEPT_OPERATE ="https://openo2o.jd.com/djapi/ocs/orderAcceptOperate";
 
+    /*************************************************************************************************************************/
+    /**
+     * 饿了吗接口url
+     */
+    //饿了么商家开关电
+    public static final String URL_ELEME_SHOP_ON = "http://v2.openapi.ele.me/restaurant/{0}/business_status/";
+    //饿了么查询新订单
+    public static final String URL_ELENE_NEW_ORDER = "http://v2.openapi.ele.me/order/new/";
+    //饿了么拉取新订单
+    public static final String URL_ELEME_PULL_NEW_ORDER = "http://v2.openapi.ele.me/order/pull/new/";
+    //获取订单详情
+    public static final String URL_ELEME_GET_ORDER = "http://v2.openapi.ele.me/order/{0}/";
+    //取消订单
+    public static final String URL_ELEME_CANCEL_ORDER = "http://v2.openapi.ele.me/order/{0}/status/";
+    //添加食物
+    public static final String URL_ELEME_ADD_FOODS = "http://v2.openapi.ele.me/food/";
+
+
 }
