@@ -2,7 +2,7 @@ package com.wangjunneil.schedule.utility;
 
 /**
  * @author yangyongbing
- * @since2016/11/15.
+ * @since 2016/11/15.
  */
 public final class URL {
     /**
