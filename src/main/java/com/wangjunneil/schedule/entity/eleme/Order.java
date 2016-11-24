@@ -24,7 +24,7 @@ public class Order {
     @SerializedName("description")
     private String description;
     @SerializedName("detail")
-    private Detail detail;
+    private Body detail;
     @SerializedName("invoice")
     private String invoice;
     @SerializedName("is_book")
@@ -147,11 +147,11 @@ public class Order {
         this.description = description;
     }
 
-    public Detail getDetail() {
+    public Body getDetail() {
         return detail;
     }
 
-    public void setDetail(Detail detail) {
+    public void setDetail(Body detail) {
         this.detail = detail;
     }
 

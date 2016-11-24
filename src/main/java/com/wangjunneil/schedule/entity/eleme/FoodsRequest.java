@@ -1,5 +1,6 @@
 package com.wangjunneil.schedule.entity.eleme;
 
+
 /**
  * Created by admin on 2016/11/23.
  */
@@ -8,16 +9,9 @@ public class FoodsRequest {
     private String name;
     private String price;
     private String description;
-    private String max_stock;
-    private String stock;
-    private String tp_food_id;
     private String image_hash;
-    private String is_new;
-    private String is_featured;
-    private String is_gum;
-    private String is_spicy;
-    private String packing_fee;
-    private String sort_order;
+    private String labels;
+    private String specs;
 
     public String getFood_category_id() {
         return food_category_id;
@@ -51,30 +45,6 @@ public class FoodsRequest {
         this.description = description;
     }
 
-    public String getMax_stock() {
-        return max_stock;
-    }
-
-    public void setMax_stock(String max_stock) {
-        this.max_stock = max_stock;
-    }
-
-    public String getStock() {
-        return stock;
-    }
-
-    public void setStock(String stock) {
-        this.stock = stock;
-    }
-
-    public String getTp_food_id() {
-        return tp_food_id;
-    }
-
-    public void setTp_food_id(String tp_food_id) {
-        this.tp_food_id = tp_food_id;
-    }
-
     public String getImage_hash() {
         return image_hash;
     }
@@ -83,51 +53,19 @@ public class FoodsRequest {
         this.image_hash = image_hash;
     }
 
-    public String getIs_new() {
-        return is_new;
+    public String getLabels() {
+        return labels;
     }
 
-    public void setIs_new(String is_new) {
-        this.is_new = is_new;
+    public void setLabels(String labels) {
+        this.labels = labels;
     }
 
-    public String getIs_featured() {
-        return is_featured;
+    public String getSpecs() {
+        return specs;
     }
 
-    public void setIs_featured(String is_featured) {
-        this.is_featured = is_featured;
-    }
-
-    public String getIs_gum() {
-        return is_gum;
-    }
-
-    public void setIs_gum(String is_gum) {
-        this.is_gum = is_gum;
-    }
-
-    public String getIs_spicy() {
-        return is_spicy;
-    }
-
-    public void setIs_spicy(String is_spicy) {
-        this.is_spicy = is_spicy;
-    }
-
-    public String getPacking_fee() {
-        return packing_fee;
-    }
-
-    public void setPacking_fee(String packing_fee) {
-        this.packing_fee = packing_fee;
-    }
-
-    public String getSort_order() {
-        return sort_order;
-    }
-
-    public void setSort_order(String sort_order) {
-        this.sort_order = sort_order;
+    public void setSpecs(String specs) {
+        this.specs = specs;
     }
 }

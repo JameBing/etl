@@ -1,6 +1,5 @@
 package com.wangjunneil.schedule.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.*;
@@ -49,7 +48,7 @@ public class JdHomeFacadeService {
      * @param shopCategory
      * @return
      */
-    public String addShopCategory(ShopCategory shopCategory)throws JdHomeException{
+    public String addShopCategory(shopCategory shopCategory)throws JdHomeException{
         try {
             String json = jdHomeApiService.addShopCategory(shopCategory);
             return json;
@@ -64,7 +63,7 @@ public class JdHomeFacadeService {
      * @return
      * @throws Exception
      */
-    public String updateShopCategory(ShopCategory shopCategory)throws JdHomeException{
+    public String updateShopCategory(shopCategory shopCategory)throws JdHomeException{
         try {
             String json = jdHomeApiService.updateShopCategory(shopCategory);
             return  json;
@@ -79,7 +78,7 @@ public class JdHomeFacadeService {
      * @return
      * @throws Exception
      */
-    public String deleteShopCategory(ShopCategory shopCategory)throws JdHomeException{
+    public String deleteShopCategory(shopCategory shopCategory)throws JdHomeException{
         try{
             String json = jdHomeApiService.deleteShopCategory(shopCategory);
             return json;
