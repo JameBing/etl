@@ -145,12 +145,10 @@ public class EleMeApiService {
 
 //    public static void main(String[] arg0) throws ElemaException {
 //        FoodsRequest foodsRequest = new FoodsRequest();
-//        foodsRequest.setFood_category_id("123123");
-//        foodsRequest.setName("测试");
+//        foodsRequest.setFood_category_id("123456");
+//        foodsRequest.setName("水中心");
 //        foodsRequest.setPrice("20.0");
 //        foodsRequest.setDescription("测试");
-//        foodsRequest.setMax_stock("1000");
-//        foodsRequest.setStock("10");
 //        System.out.println(addFoods(foodsRequest));
 //    }
 

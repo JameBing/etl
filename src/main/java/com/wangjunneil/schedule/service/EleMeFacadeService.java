@@ -110,7 +110,7 @@ public class EleMeFacadeService {
         try {
             Gson gson = new GsonBuilder().registerTypeAdapter(Result.class, new ResultSerializer())
                 .registerTypeAdapter(Order.class, new OrderSerializer())
-                .registerTypeAdapter(Detail.class, new DetailSerializer())
+                .registerTypeAdapter(Body.class, new BodySerializer())
                 .serializeNulls()
                 .disableHtmlEscaping()
                 .create();
@@ -128,84 +128,67 @@ public class EleMeFacadeService {
      * @return
      * @throws ElemaException
      */
-    private String foodsDetailPost(String params) throws ElemaException {
+    public String foodsDetailPost(String params) throws ElemaException {
         String requeststr = "{\n" +
-             "   \"code\": 200,\n" +
-             "   \"data\": {\n" +
-             "   \"foods\": [\n" +
-             "   {\n" +
-             "       \"description\": \"\",\n" +
-             "       \"food_id\": 1000,\n" +
-             "       \"food_name\": \"猪肉饭\",\n" +
-             "       \"has_activity\": 0,\n" +
-             "       \"is_featured\": 0,\n" +
-             "       \"is_gum\": 0,\n" +
-             "       \"is_new\": 0,\n" +
-             "       \"is_spicy\": 0,\n" +
-             "       \"is_valid\": 1,\n" +
-             "       \"num_ratings\": [\n" +
-             "       0,\n" +
-             "           0,\n" +
-             "           0,\n" +
-             "           0,\n" +
-             "           2\n" +
-             "       ],\n" +
-             "       \"price\": 19,\n" +
-             "       \"recent_popularity\": 2,\n" +
-             "       \"recent_rating\": 5,\n" +
-             "       \"restaurant_id\": 11,\n" +
-             "       \"restaurant_name\": \"麦当劳\",\n" +
-             "       \"stock\": 99999,\n" +
-             "       \"image_url\": \"http://www.ele.me/demo.jpg\",\n" +
-             "       \"packing_fee\": 1.5,\n" +
-             "       \"sort_order\": 100\n" +
-             "   },\n" +
-             "   {\n" +
-             "       \"description\": \" \",\n" +
-             "       \"food_id\": 2000,\n" +
-             "       \"food_name\": \"猪肉饭\",\n" +
-             "       \"has_activity\": 1,\n" +
-             "       \"is_featured\": 0,\n" +
-             "       \"is_gum\": 0,\n" +
-             "       \"is_new\": 1,\n" +
-             "       \"is_spicy\": 0,\n" +
-             "       \"is_valid\": 1,\n" +
-             "       \"num_ratings\": [\n" +
-             "       0,\n" +
-             "           1,\n" +
-             "           0,\n" +
-             "           0,\n" +
-             "           2\n" +
-             "       ],\n" +
-             "       \"price\": 20,\n" +
-             "       \"recent_popularity\": 3,\n" +
-             "       \"recent_rating\": 6,\n" +
-             "       \"restaurant_id\": 12,\n" +
-             "       \"restaurant_name\": \"肯德基\",\n" +
-             "       \"stock\": 99999,\n" +
-             "       \"image_url\": \"http://www.ele.me/aaa.jpg\",\n" +
-             "       \"packing_fee\": 2,\n" +
-             "       \"sort_order\": 200\n" +
-             "   }\n" +
-             "   ],\n" +
-             "   \"get_failed\": {\n" +
-             "       \"18755176\": \"invalid food\"\n" +
-             "   }\n" +
-             "       },\n" +
-             "           \"message\": \"ok\",\n" +
-             "           \"request_id\": \"335bc4a55e3c4e9eaf3f1a111a3e7561\"\n" +
-             "       }";
+              "      \"code\":200,\n" +
+              "      \"data\":{\n" +
+              "      \"food\":{\n" +
+              "          \"description\":\" \",\n" +
+              "              \"food_id\":1000,\n" +
+              "              \"name\":\"猪肉饭\",\n" +
+              "              \"is_valid\":1,\n" +
+              "              \"recent_popularity\":2,\n" +
+              "              \"restaurant_id\":11,\n" +
+              "              \"food_category_id\":389337,\n" +
+              "              \"restaurant_name\":\"麦当劳\",\n" +
+              "              \"on_shelf\": 1,\n" +
+              "              \"image_url\":\"http://www.ele.me/demo.jpg\",\n" +
+              "              \"labels\":{\n" +
+              "              \"is_featured\":0,\n" +
+              "                  \"is_gum\":0,\n" +
+              "                  \"is_new\":0,\n" +
+              "                  \"is_spicy\":0\n" +
+              "          },\n" +
+              "          \"specs\":[\n" +
+              "          {\n" +
+              "              \"spec_id\":18473393,\n" +
+              "              \"name\":\"大份\",\n" +
+              "              \"price\":19.9,\n" +
+              "              \"stock\":1000,\n" +
+              "              \"max_stock\":100000,\n" +
+              "              \"packing_fee\":1,\n" +
+              "              \"tp_food_id\": \"1294739dhdjdsk\",\n" +
+              "              \"on_shelf\": 1\n" +
+              "          },\n" +
+              "          {\n" +
+              "              \"spec_id\":18473393,\n" +
+              "              \"name\":\"小份\",\n" +
+              "              \"price\":19.9,\n" +
+              "              \"stock\":1000,\n" +
+              "              \"max_stock\":100000,\n" +
+              "              \"packing_fee\":1,\n" +
+              "              \"tp_food_id\": \"1297398dhdjdsk\",\n" +
+              "              \"on_shelf\": 1\n" +
+              "          }\n" +
+              "          ]\n" +
+              "      }\n" +
+              "  },\n" +
+              "  \"message\":\"ok\",\n" +
+              "      \"request_id\":\"115bc4a55e3c4e9eaf3f1a111a3e7271\"\n" +
+              "  }";
         requeststr.replace("/","\\/");
         try {
             Gson gson = new GsonBuilder().registerTypeAdapter(Result.class, new ResultSerializer())
-                .registerTypeAdapter(FoodsDetail.class, new FoodsDetailSerializer())
                 .registerTypeAdapter(Foods.class, new FoodsSerializer())
-                .registerTypeAdapter(Failed.class, new FailedSerializer())
+                .registerTypeAdapter(Labels.class, new LabelsSerializer())
+                .registerTypeAdapter(Specs.class, new SpecsSerializer())
+                .registerTypeAdapter(Body.class, new BodySerializer())
                 .serializeNulls()
                 .disableHtmlEscaping()
                 .create();
             Result result = gson.fromJson(requeststr, Result.class);
-            FoodsDetail foodsDetail = gson.fromJson(gson.toJson(result.getData()).toString(), FoodsDetail.class);
+            Body body = gson.fromJson(gson.toJson(result.getData()).toString(), Body.class);
+            System.out.println(body.getFood().getName());
         }catch (Exception ex) {
             throw new ElemaException("",ex);
         }

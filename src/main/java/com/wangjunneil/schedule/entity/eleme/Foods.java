@@ -12,63 +12,42 @@ public class Foods {
     private String description;
     @SerializedName("food_id")
     private int foodid;
-    @SerializedName("food_name")
-    private String foodname;
-    @SerializedName("has_activity")
-    private int hasactivity;
-    @SerializedName("is_featured")
-    private int isfeatured;
-    @SerializedName("is_gum")
-    private int isgum;
-    @SerializedName("is_new")
-    private int isnew;
-    @SerializedName("is_spicy")
-    private int isspicy;
+    @SerializedName("name")
+    private String name;
     @SerializedName("is_valid")
     private int isvalid;
-    @SerializedName("numratings")
-    private List numratings;
-    @SerializedName("price")
-    private double price;
     @SerializedName("recent_popularity")
     private int recentpopularity;
-    @SerializedName("recent_rating")
-    private Double recentrating;
     @SerializedName("restaurant_id")
     private int restaurantid;
+    @SerializedName("food_category_id")
+    private int foodcategoryid;
     @SerializedName("restaurant_name")
     private String restaurantname;
-    @SerializedName("stock")
-    private Long stock;
+    @SerializedName("on_shelf")
+    private int onshelf;
     @SerializedName("image_url")
     private String imageurl;
-    @SerializedName("packing_fee")
-    private Double packingfee;
-    @SerializedName("sortorder")
-    private int sortorder;
+    @SerializedName("labels")
+    private Object labels;
+    @SerializedName("specs")
+    private List<Specs> specs;
 
     @Override
     public String toString() {
         return "Foods{" +
             "description='" + description + '\'' +
             ", foodid=" + foodid +
-            ", foodname='" + foodname + '\'' +
-            ", hasactivity=" + hasactivity +
-            ", isfeatured=" + isfeatured +
-            ", isgum=" + isgum +
-            ", isnew=" + isnew +
-            ", isspicy=" + isspicy +
+            ", name='" + name + '\'' +
             ", isvalid=" + isvalid +
-            ", numratings=" + numratings +
-            ", price=" + price +
             ", recentpopularity=" + recentpopularity +
-            ", recentrating=" + recentrating +
             ", restaurantid=" + restaurantid +
+            ", foodcategoryid=" + foodcategoryid +
             ", restaurantname='" + restaurantname + '\'' +
-            ", stock=" + stock +
+            ", onshelf=" + onshelf +
             ", imageurl='" + imageurl + '\'' +
-            ", packingfee=" + packingfee +
-            ", sortorder=" + sortorder +
+            ", labels=" + labels +
+            ", specs=" + specs +
             '}';
     }
 
@@ -88,52 +67,12 @@ public class Foods {
         this.foodid = foodid;
     }
 
-    public String getFoodname() {
-        return foodname;
+    public String getName() {
+        return name;
     }
 
-    public void setFoodname(String foodname) {
-        this.foodname = foodname;
-    }
-
-    public int getHasactivity() {
-        return hasactivity;
-    }
-
-    public void setHasactivity(int hasactivity) {
-        this.hasactivity = hasactivity;
-    }
-
-    public int getIsfeatured() {
-        return isfeatured;
-    }
-
-    public void setIsfeatured(int isfeatured) {
-        this.isfeatured = isfeatured;
-    }
-
-    public int getIsgum() {
-        return isgum;
-    }
-
-    public void setIsgum(int isgum) {
-        this.isgum = isgum;
-    }
-
-    public int getIsnew() {
-        return isnew;
-    }
-
-    public void setIsnew(int isnew) {
-        this.isnew = isnew;
-    }
-
-    public int getIsspicy() {
-        return isspicy;
-    }
-
-    public void setIsspicy(int isspicy) {
-        this.isspicy = isspicy;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getIsvalid() {
@@ -144,36 +83,12 @@ public class Foods {
         this.isvalid = isvalid;
     }
 
-    public List getNumratings() {
-        return numratings;
-    }
-
-    public void setNumratings(List numratings) {
-        this.numratings = numratings;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
     public int getRecentpopularity() {
         return recentpopularity;
     }
 
     public void setRecentpopularity(int recentpopularity) {
         this.recentpopularity = recentpopularity;
-    }
-
-    public Double getRecentrating() {
-        return recentrating;
-    }
-
-    public void setRecentrating(Double recentrating) {
-        this.recentrating = recentrating;
     }
 
     public int getRestaurantid() {
@@ -184,6 +99,14 @@ public class Foods {
         this.restaurantid = restaurantid;
     }
 
+    public int getFoodcategoryid() {
+        return foodcategoryid;
+    }
+
+    public void setFoodcategoryid(int foodcategoryid) {
+        this.foodcategoryid = foodcategoryid;
+    }
+
     public String getRestaurantname() {
         return restaurantname;
     }
@@ -192,12 +115,12 @@ public class Foods {
         this.restaurantname = restaurantname;
     }
 
-    public Long getStock() {
-        return stock;
+    public int getOnshelf() {
+        return onshelf;
     }
 
-    public void setStock(Long stock) {
-        this.stock = stock;
+    public void setOnshelf(int onshelf) {
+        this.onshelf = onshelf;
     }
 
     public String getImageurl() {
@@ -208,19 +131,19 @@ public class Foods {
         this.imageurl = imageurl;
     }
 
-    public Double getPackingfee() {
-        return packingfee;
+    public Object getLabels() {
+        return labels;
     }
 
-    public void setPackingfee(Double packingfee) {
-        this.packingfee = packingfee;
+    public void setLabels(Object labels) {
+        this.labels = labels;
     }
 
-    public int getSortorder() {
-        return sortorder;
+    public List<Specs> getSpecs() {
+        return specs;
     }
 
-    public void setSortorder(int sortorder) {
-        this.sortorder = sortorder;
+    public void setSpecs(List<Specs> specs) {
+        this.specs = specs;
     }
 }

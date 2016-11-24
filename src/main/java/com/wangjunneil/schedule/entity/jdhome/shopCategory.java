@@ -4,7 +4,7 @@ package com.wangjunneil.schedule.entity.jdhome;
  * @author yangyongbing
  * @since 2016/11/15.
  */
-public class ShopCategory {
+public class shopCategory {
     Long id;//店内分类id
     Long pid;//父分类ID
     String shopCategoryName;

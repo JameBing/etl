@@ -18,23 +18,16 @@ public class FoodsSerializer implements JsonSerializer<Foods> {
         JsonObject object = new JsonObject();
         object.add("description",jsonSerializationContext.serialize(foods.getDescription()));
         object.add("food_id",jsonSerializationContext.serialize(foods.getFoodid()));
-        object.add("food_name",jsonSerializationContext.serialize(foods.getFoodname()));
-        object.add("has_activity",jsonSerializationContext.serialize(foods.getHasactivity()));
-        object.add("is_featured",jsonSerializationContext.serialize(foods.getIsfeatured()));
-        object.add("is_gum",jsonSerializationContext.serialize(foods.getIsgum()));
-        object.add("is_new",jsonSerializationContext.serialize(foods.getIsnew()));
-        object.add("is_spicy",jsonSerializationContext.serialize(foods.getIsspicy()));
+        object.add("name",jsonSerializationContext.serialize(foods.getName()));
         object.add("is_valid",jsonSerializationContext.serialize(foods.getIsvalid()));
-        object.add("numratings",jsonSerializationContext.serialize(foods.getNumratings()));
-        object.add("price",jsonSerializationContext.serialize(foods.getPrice()));
-        object.add("recent_popularity",jsonSerializationContext.serialize(foods.getRecentpopularity()));
-        object.add("recent_rating",jsonSerializationContext.serialize(foods.getRecentrating()));
+        object.add("recent_popularity", jsonSerializationContext.serialize(foods.getRecentpopularity()));
         object.add("restaurant_id",jsonSerializationContext.serialize(foods.getRestaurantid()));
+        object.add("food_category_id",jsonSerializationContext.serialize(foods.getFoodcategoryid()));
         object.add("restaurant_name",jsonSerializationContext.serialize(foods.getRestaurantname()));
-        object.add("stock",jsonSerializationContext.serialize(foods.getStock()));
+        object.add("on_shelf",jsonSerializationContext.serialize(foods.getOnshelf()));
         object.add("image_url",jsonSerializationContext.serialize(foods.getImageurl()));
-        object.add("packing_fee",jsonSerializationContext.serialize(foods.getPackingfee()));
-        object.add("sortorder",jsonSerializationContext.serialize(foods.getSortorder()));
+        object.add("labels",jsonSerializationContext.serialize(foods.getLabels()));
+        object.add("specs",jsonSerializationContext.serialize(foods.getSpecs()));
         return object;
     }
 }
