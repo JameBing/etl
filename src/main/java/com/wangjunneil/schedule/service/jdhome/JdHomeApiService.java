@@ -55,7 +55,7 @@ public class JdHomeApiService {
         int begin = 0;
         int end = pageSize;
         for (int i = 0; i <= stockRequests.size() / pageSize; i++) {
-            List<QueryStockRequest> list = StringUtil.setListPageData(begin, end, stockRequests);
+            List<QueryStockRequest> list = StringUtil.setListPageDate(begin, end, stockRequests);
             if (list != null) {
                 jsonObject.put("listBaseStockCenterRequest",list);
                 jd_param_json = jsonObject.toJSONString();
@@ -70,7 +70,7 @@ public class JdHomeApiService {
                 rtnStr = rtnStr + HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+",";
                 begin = pageSize * page;
                 end = pageSize * (page + 1);
-                page++;
+                 page++;
             }
         }
         if(rtnStr.length()>0){
