@@ -5,7 +5,7 @@ import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.JdHomeException;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
-import com.wangjunneil.schedule.entity.jdhome.ShopCategory;
+import com.wangjunneil.schedule.entity.jdhome.shopCategory;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -80,7 +80,7 @@ public class JdHomeApiService {
     }
 
     //新增商品分类
-    public String addShopCategory(ShopCategory shopCategory)throws Exception{
+    public String addShopCategory(shopCategory shopCategory)throws Exception{
         Map<String,Object> param = getSysMap();//系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         jsonObject.put("pid",shopCategory.getPid());
@@ -101,7 +101,7 @@ public class JdHomeApiService {
     }
 
     //修改商品分类
-    public String updateShopCategory(ShopCategory shopCategory) throws Exception{
+    public String updateShopCategory(shopCategory shopCategory) throws Exception{
         Map<String,Object> param = getSysMap();//系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         jsonObject.put("id",shopCategory.getId());
@@ -119,7 +119,7 @@ public class JdHomeApiService {
     }
 
     //删除商品分类
-    public String deleteShopCategory(ShopCategory shopCategory) throws Exception{
+    public String deleteShopCategory(shopCategory shopCategory) throws Exception{
         Map<String,Object> param = getSysMap();//系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         jsonObject.put("id",shopCategory.getId());
