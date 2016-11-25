@@ -2,15 +2,21 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.wangjunneil.schedule.common.*;
+import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
+import com.wangjunneil.schedule.common.JdHomeException;
+import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.*;
+import com.wangjunneil.schedule.entity.sys.Cfg;
 import com.wangjunneil.schedule.service.jdhome.JdHomeApiService;
 import com.wangjunneil.schedule.service.jdhome.JdHomeInnerService;
+import com.wangjunneil.schedule.service.sys.SysInnerService;
+import com.wangjunneil.schedule.utility.HttpUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +34,9 @@ public class JdHomeFacadeService {
 
     @Autowired
     private JdHomeInnerService jdHomeInnerService;
+
+    @Autowired
+    private SysInnerService sysInnerService;
 
     /**
      * 批量修改商品上下架
@@ -367,6 +376,28 @@ public class JdHomeFacadeService {
         }catch (Exception e){
             return "";
         }
+    }
+
+    /**
+    * 京东授权回调处理,接受京东传入的code,换取有效的token信息
+    * @param code  回调code码
+    * @param state 续传state
+    */
+    public void callback(String code, String state) {
+        Cfg cfg = sysInnerService.findCfg(Constants.PLATFORM_WAIMAI_JDHOME);
+        String appKey = cfg.getAppKey();
+        String appSecret = cfg.getAppSecret();
+        String callbackUrl = cfg.getCallback();
+
+        // 拼接请求地址
+        String tokenUrl = MessageFormat.format(Constants.JD_REQUEST_TOKEN_URL, appKey, callbackUrl, code, state, appSecret);
+        // Get请求获取token
+        String returnJson = HttpUtil.get(tokenUrl);
+
+        // token入库
+        JdAccessToken jdAccessToken = JSONObject.parseObject(returnJson, JdAccessToken.class);
+        jdAccessToken.setUsername(state);
+        jdHomeInnerService.addAccessToken(jdAccessToken);
     }
 }
 

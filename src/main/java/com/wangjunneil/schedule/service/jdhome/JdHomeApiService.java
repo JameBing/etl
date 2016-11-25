@@ -70,7 +70,7 @@ public class JdHomeApiService {
                 rtnStr = rtnStr + HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+",";
                 begin = pageSize * page;
                 end = pageSize * (page + 1);
-                page++;
+                 page++;
             }
         }
         if(rtnStr.length()>0){

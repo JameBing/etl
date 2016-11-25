@@ -1,7 +1,11 @@
 package com.wangjunneil.schedule.service.jdhome;
 
+import com.wangjunneil.schedule.common.Constants;
+import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
+import com.wangjunneil.schedule.entity.sys.Cfg;
+import com.wangjunneil.schedule.utility.DateTimeUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -10,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -86,5 +91,32 @@ public class JdHomeInnerService {
         Query query = new Query(Criteria.where("orderId").is(operate.getOrderId()));
         Update update = new Update().set("orderStatus",code);
         mongoTemplate.upsert(query,update,OrderInfoDTO.class);
+    }
+
+    public void addAccessToken(JdAccessToken jdAccessToken) {
+        // 计算token到期时间
+        long time = Long.parseLong(jdAccessToken.getTime());
+        int expire_in = jdAccessToken.getExpires_in();
+        Date expireDate = DateTimeUtil.getExpireDate(time, expire_in);
+        jdAccessToken.setExpire_Date(expireDate);
+
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+        Update update = new Update()
+            .set("access_token", jdAccessToken.getAccess_token())
+            .set("expires_in", jdAccessToken.getExpires_in())
+            .set("refresh_token", jdAccessToken.getRefresh_token())
+            .set("token_type", jdAccessToken.getToken_type())
+            .set("time", jdAccessToken.getTime())
+            .set("uid", jdAccessToken.getUid())
+            .set("user_nick", jdAccessToken.getUser_nick())
+            .set("expire_Date", jdAccessToken.getExpire_Date())
+            .set("username", jdAccessToken.getUsername());
+        mongoTemplate.upsert(query, update, JdAccessToken.class);
+    }
+
+    public Cfg getJdCfg() {
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+        Cfg cfg = mongoTemplate.findOne(query, Cfg.class);
+        return cfg;
     }
 }
