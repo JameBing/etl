@@ -6,20 +6,28 @@ import com.google.gson.annotations.SerializedName;
  * Created by admin on 2016/11/24.
  */
 public class Specs {
+    //规格id
     @SerializedName("spec_id")
     private String specid;
+    //规格名字
     @SerializedName("name")
     private String name;
+    //规格价格
     @SerializedName("price")
     private Double price;
+    //库存
     @SerializedName("stock")
     private String stock;
+    //最大库存
     @SerializedName("max_stock")
     private String maxstock;
+    //包装
     @SerializedName("packing_fee")
     private int packingfee;
+    //第三方食物id
     @SerializedName("tp_food_id")
     private String tpfoodid;
+    //是否上架
     @SerializedName("on_shelf")
     private int onshelf;
 

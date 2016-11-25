@@ -4,9 +4,11 @@ package com.wangjunneil.schedule.entity.eleme;
  * Created by admin on 2016/11/22.
  */
 public class CancelStatus {
-    //取消订单
+    //取消订单id
     private  String eleme_order_id;
+    //状态
     private  int status;
+    //原因
     private  String reason;
 
     public String getEleme_order_id() {

@@ -195,7 +195,29 @@ public class EleMeFacadeService {
         return "";
     }
 
+    public String getShop(String params) throws ElemaException {
+        try {
+            BusinessStatus businessStatus = new BusinessStatus();
+            businessStatus.setRestaurant_id(params);
+            String resultstr = eleMeApiService.getShop(businessStatus);
+            Gson gson = new GsonBuilder().registerTypeAdapter(Result.class, new ResultSerializer())
+                .registerTypeAdapter(Restaurant.class, new RestaurantSerializer())
+                .registerTypeAdapter(Body.class, new BodySerializer())
+                .serializeNulls()
+                .disableHtmlEscaping()
+                .create();
+            Result result = gson.fromJson(resultstr, Result.class);
+            Body body = gson.fromJson(gson.toJson(result.getData()).toString(), Body.class);
+            System.out.println(body.getRestaurant().getAddresstext());
+            return "";
+        }catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            throw new ElemaException("", ex);
+        }
+    }
+
 //    public static void main(String[] arg) throws ElemaException {
-//        foodsDetailPost("");
+//        EleMeFacadeService eleMeFacadeService = new EleMeFacadeService();
+//        eleMeFacadeService.getShop("2063064");
 //    }
 }

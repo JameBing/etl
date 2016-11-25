@@ -8,28 +8,40 @@ import java.util.List;
  * Created by admin on 2016/11/23.
  */
 public class Foods {
+    //描述
     @SerializedName("description")
     private String description;
+    //食物Id
     @SerializedName("food_id")
     private int foodid;
+    //食物名字
     @SerializedName("name")
     private String name;
+    //是否有效
     @SerializedName("is_valid")
     private int isvalid;
+    //最近热门程度
     @SerializedName("recent_popularity")
     private int recentpopularity;
+    //餐厅id
     @SerializedName("restaurant_id")
     private int restaurantid;
+    //食物分类id
     @SerializedName("food_category_id")
     private int foodcategoryid;
+    //餐厅名
     @SerializedName("restaurant_name")
     private String restaurantname;
+    //是否上架
     @SerializedName("on_shelf")
     private int onshelf;
+    //食物图片
     @SerializedName("image_url")
     private String imageurl;
+    //口味
     @SerializedName("labels")
     private Object labels;
+    //规格
     @SerializedName("specs")
     private List<Specs> specs;
 

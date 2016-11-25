@@ -9,38 +9,54 @@ import java.util.List;
  * Created by admin on 2016/11/21.
  */
 public class Order {
+    //配送地址
     @SerializedName("address")
     private String address;
+    //客人名
     @SerializedName("consignee")
     private String consignee;
+    //创建时间
     @SerializedName("created_at")
     private Date createdat;
+    //最快配送时间
     @SerializedName("active_at")
     private Date activeat;
+    //需配送时间
     @SerializedName("deliver_fee")
     private String deliverfee;
+    //配送时间
     @SerializedName("deliver_time")
     private Date delivertime;
+    //秒速
     @SerializedName("description")
     private String description;
+    //详情
     @SerializedName("detail")
     private Body detail;
+    //是否开发票
     @SerializedName("invoice")
     private String invoice;
     @SerializedName("is_book")
     private int isbook;
+    //是否在线支付
     @SerializedName("is_online_paid")
     private int isonlinepaid;
+    //订单号
     @SerializedName("order_id")
     private String orderid;
+    //联系方式
     @SerializedName("phone_list")
     private List phonelist;
+    //第三方餐馆id
     @SerializedName("tp_restaurant_id")
     private String tprestaurantid;
+    //餐馆id
     @SerializedName("restaurant_id")
     private String restaurantid;
+    //内部id
     @SerializedName("inner_id")
     private String innerid;
+    //餐馆名字
     @SerializedName("restaurant_name")
     private String restaurantname;
     @SerializedName("restaurant_number")
@@ -53,10 +69,13 @@ public class Order {
     private int totalprice;
     @SerializedName("original_price")
     private int originalprice;
+    //用户id
     @SerializedName("user_id")
     private String userid;
+    //用户名
     @SerializedName("user_name")
     private String username;
+    //经纬度
     @SerializedName("delivery_geo")
     private String deliverygeo;
 

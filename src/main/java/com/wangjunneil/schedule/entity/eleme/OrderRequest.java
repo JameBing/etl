@@ -4,7 +4,9 @@ package com.wangjunneil.schedule.entity.eleme;
  * Created by admin on 2016/11/22.
  */
 public class OrderRequest {
+    //订单id
     private String eleme_order_id;
+    //第三方订单id
     private String tp_id;
 
     public String getEleme_order_id() {

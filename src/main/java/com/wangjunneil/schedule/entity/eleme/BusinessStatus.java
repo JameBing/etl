@@ -7,14 +7,15 @@ package com.wangjunneil.schedule.entity.eleme;
  */
 public class BusinessStatus {
     //开关店铺
-    private int is_open;
+    private String is_open;
+    //商家id
     private String restaurant_id;
 
-    public int getIs_open() {
+    public String getIs_open() {
         return is_open;
     }
 
-    public void setIs_open(int is_open) {
+    public void setIs_open(String is_open) {
         this.is_open = is_open;
     }
 
