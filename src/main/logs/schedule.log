@@ -4590,3 +4590,33 @@ Caused by: java.net.ConnectException: Connection refused: connect
 2016-11-24 20:17:12,386 | INFO  | Started ServerConnector@255eaa6b{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
 2016-11-24 20:17:12,386 | INFO  | Started @3580ms | org.eclipse.jetty.server.Server | main
 >>>>>>> 4fe81bb20d153cfb1a1549d1eedb062d4ddd8651
+2016-11-25 18:28:28,402 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-11-25 18:28:28,435 | INFO  | Logging initialized @241ms | org.eclipse.jetty.util.log | main
+2016-11-25 18:28:28,513 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-11-25 18:28:28,703 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-11-25 18:28:29,624 | INFO  | Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-25 18:28:29,700 | INFO  | Opened connection [connectionId{localValue:1, serverValue:5}] to 127.0.0.1:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='5838124d7b3fed1b100073bb', description='null'}-127.0.0.1:27017
+2016-11-25 18:28:29,701 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 0, 7]}, minWireVersion=0, maxWireVersion=3, maxDocumentSize=16777216, roundTripTimeNanos=437167} | org.mongodb.driver.cluster | cluster-ClusterId{value='5838124d7b3fed1b100073bb', description='null'}-127.0.0.1:27017
+2016-11-25 18:28:51,331 | INFO  | Opened connection [connectionId{localValue:2, serverValue:6}] to 127.0.0.1:27017 | org.mongodb.driver.connection | main
+2016-11-25 18:28:51,384 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-11-25 18:28:51,524 | INFO  | Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-25 18:28:51,527 | INFO  | Opened connection [connectionId{localValue:3, serverValue:7}] to 127.0.0.1:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583812637b3fed1b100073bc', description='null'}-127.0.0.1:27017
+2016-11-25 18:28:51,531 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 0, 7]}, minWireVersion=0, maxWireVersion=3, maxDocumentSize=16777216, roundTripTimeNanos=3370003} | org.mongodb.driver.cluster | cluster-ClusterId{value='583812637b3fed1b100073bc', description='null'}-127.0.0.1:27017
+2016-11-25 18:29:12,764 | INFO  | Started o.e.j.w.WebAppContext@69adf72c{/,file:///D:/zhongtai/etl/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-11-25 18:29:12,814 | INFO  | Started ServerConnector@3a80515c{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-11-25 18:29:12,814 | INFO  | Started @44627ms | org.eclipse.jetty.server.Server | main
+2016-11-25 18:29:31,887 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-11-25 18:29:31,940 | INFO  | Logging initialized @305ms | org.eclipse.jetty.util.log | main
+2016-11-25 18:29:32,041 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-11-25 18:29:32,248 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-11-25 18:29:33,476 | INFO  | Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-25 18:29:33,563 | INFO  | Opened connection [connectionId{localValue:1, serverValue:8}] to 127.0.0.1:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='5838128d7b3fed14a47c0499', description='null'}-127.0.0.1:27017
+2016-11-25 18:29:33,564 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 0, 7]}, minWireVersion=0, maxWireVersion=3, maxDocumentSize=16777216, roundTripTimeNanos=342228} | org.mongodb.driver.cluster | cluster-ClusterId{value='5838128d7b3fed14a47c0499', description='null'}-127.0.0.1:27017
+2016-11-25 18:29:55,141 | INFO  | Opened connection [connectionId{localValue:2, serverValue:9}] to 127.0.0.1:27017 | org.mongodb.driver.connection | main
+2016-11-25 18:29:55,201 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-11-25 18:29:55,360 | INFO  | Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-25 18:29:55,456 | INFO  | Opened connection [connectionId{localValue:3, serverValue:10}] to 127.0.0.1:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583812a37b3fed14a47c049a', description='null'}-127.0.0.1:27017
+2016-11-25 18:29:55,458 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 0, 7]}, minWireVersion=0, maxWireVersion=3, maxDocumentSize=16777216, roundTripTimeNanos=1142151} | org.mongodb.driver.cluster | cluster-ClusterId{value='583812a37b3fed14a47c049a', description='null'}-127.0.0.1:27017
+2016-11-25 18:30:16,689 | INFO  | Started o.e.j.w.WebAppContext@7bc44ce8{/,file:///D:/zhongtai/etl/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-11-25 18:30:16,781 | INFO  | Started ServerConnector@6cf0a747{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-11-25 18:30:16,781 | INFO  | Started @45157ms | org.eclipse.jetty.server.Server | main

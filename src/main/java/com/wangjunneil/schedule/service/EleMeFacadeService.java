@@ -197,9 +197,9 @@ public class EleMeFacadeService {
 
     public String getShop(String params) throws ElemaException {
         try {
-            BusinessStatus businessStatus = new BusinessStatus();
-            businessStatus.setRestaurant_id(params);
-            String resultstr = eleMeApiService.getShop(businessStatus);
+            RestaurantRequest restaurantRequest = new RestaurantRequest();
+            restaurantRequest.setRestaurant_id(params);
+            String resultstr = eleMeApiService.getShop(restaurantRequest);
             Gson gson = new GsonBuilder().registerTypeAdapter(Result.class, new ResultSerializer())
                 .registerTypeAdapter(Restaurant.class, new RestaurantSerializer())
                 .registerTypeAdapter(Body.class, new BodySerializer())

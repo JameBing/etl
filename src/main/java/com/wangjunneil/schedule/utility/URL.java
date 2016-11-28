@@ -42,6 +42,10 @@ public final class URL {
     public static final String URL_ELEME_CANCEL_ORDER = "http://v2.openapi.ele.me/order/{0}/status/";
     //添加食物
     public static final String URL_ELEME_ADD_FOODS = "http://v2.openapi.ele.me/food/";
+    //获取店铺信息
+    public static final String URL_ELEME_SHOP_INFO = "http://v2.openapi.ele.me/restaurant/{0}/";
+    //获取所属餐厅Id
+    public static final String URL_ELEME_SHOP_ID = "http://v2.openapi.ele.me/restaurant/own/";
 
 
 }
