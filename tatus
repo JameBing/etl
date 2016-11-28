@@ -1,0 +1,175 @@
+[1mdiff --git a/src/main/java/com/wangjunneil/schedule/controller/jdhome/JdhomeController.java b/src/main/java/com/wangjunneil/schedule/controller/jdhome/JdhomeController.java[m
+[1mindex 1aab840..d61ab9a 100644[m
+[1m--- a/src/main/java/com/wangjunneil/schedule/controller/jdhome/JdhomeController.java[m
+[1m+++ b/src/main/java/com/wangjunneil/schedule/controller/jdhome/JdhomeController.java[m
+[36m@@ -1,164 +1,164 @@[m
+[31m-package com.wangjunneil.schedule.controller.jdhome;[m
+[31m-[m
+[31m-[m
+[31m-import com.alibaba.fastjson.JSONObject;[m
+[31m-import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;[m
+[31m-import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;[m
+[31m-import com.wangjunneil.schedule.entity.jdhome.ShopCategory;[m
+[31m-import com.wangjunneil.schedule.service.JdHomeFacadeService;[m
+[31m-import org.apache.log4j.Logger;[m
+[31m-import org.springframework.beans.factory.annotation.Autowired;[m
+[31m-import org.springframework.stereotype.Controller;[m
+[31m-import org.springframework.web.bind.annotation.RequestBody;[m
+[31m-import org.springframework.web.bind.annotation.RequestMapping;[m
+[31m-import org.springframework.web.bind.annotation.RequestMethod;[m
+[31m-import org.springframework.web.bind.annotation.ResponseBody;[m
+[31m-[m
+[31m-import javax.servlet.http.HttpServletRequest;[m
+[31m-import javax.servlet.http.HttpServletResponse;[m
+[31m-import java.io.PrintWriter;[m
+[31m-import java.util.ArrayList;[m
+[31m-import java.util.List;[m
+[31m-[m
+[31m-/**[m
+[31m- * @author yangyongbing[m
+[31m- * @since 2016/11/15.[m
+[31m- */[m
+[31m-@Controller[m
+[31m-@RequestMapping("/jdHome")[m
+[31m-public class JdHomeController {[m
+[31m-[m
+[31m-    private static Logger log = Logger.getLogger(JdHomeController.class.getName());[m
+[31m-[m
+[31m-    @Autowired[m
+[31m-    private JdHomeFacadeService jdHomeFacadeService;[m
+[31m-[m
+[31m-    /**[m
+[31m-     * 门店/歇业开业[m
+[31m-     * @param out[m
+[31m-     * @param req[m
+[31m-     * @param resp[m
+[31m-     * @return[m
+[31m-     */[m
+[31m-    @RequestMapping(value = "/openStore",method = RequestMethod.GET)[m
+[31m-    public String openStore(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{[m
+[31m-        resp.setContentType("text/html;charset=utf-8");[m
+[31m-        //应用参数[m
+[31m-        List<QueryStockRequest> listBaseStockCenterRequest = new ArrayList<QueryStockRequest>();[m
+[31m-        QueryStockRequest queryStockRequest = new QueryStockRequest();[m
+[31m-        // 测试数据[m
+[31m-        queryStockRequest.setStationNo("10006172");[m
+[31m-        queryStockRequest.setSkuId(1997342L);[m
+[31m-        queryStockRequest.setDoSale(0);[m
+[31m-        listBaseStockCenterRequest.add(queryStockRequest);[m
+[31m-        String returnJson = jdHomeFacadeService.updateAllStockOn(listBaseStockCenterRequest);[m
+[31m-        out.println(returnJson);[m
+[31m-        out.close();[m
+[31m-        return  null;[m
+[31m-    }[m
+[31m-[m
+[31m-    /**[m
+[31m-     * 新增商品分类[m
+[31m-     * @param out[m
+[31m-     * @param req[m
+[31m-     * @param resp[m
+[31m-     * @return[m
+[31m-     */[m
+[31m-    @RequestMapping(value = "/addShopCategory", method=RequestMethod.GET)[m
+[31m-    public String addShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{[m
+[31m-        resp.setContentType("text/html;charset=utf-8");[m
+[31m-        ShopCategory shopCategory = new ShopCategory();[m
+[31m-        shopCategory.setPid(000L);[m
+[31m-        shopCategory.setShopCategoryLevel(0);[m
+[31m-       // shopCategory.setCreatePin("aaa");//[m
+[31m-        shopCategory.setSort(1);[m
+[31m-        shopCategory.setShopCategoryName("bb");[m
+[31m-        String returnJson = jdHomeFacadeService.addShopCategory(shopCategory);[m
+[31m-        out.println(returnJson);[m
+[31m-        out.close();[m
+[31m-        return  null;[m
+[31m-    }[m
+[31m-[m
+[31m-    /**[m
+[31m-     * 修改商品分类[m
+[31m-     * @param out[m
+[31m-     * @param req[m
+[31m-     * @param resp[m
+[31m-     * @return[m
+[31m-     * @throws Exception[m
+[31m-     */[m
+[31m-    @RequestMapping(value = "/updateShopCategory", method=RequestMethod.GET)[m
+[31m-    public String updateShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{[m
+[31m-        resp.setContentType("text/html;charset=utf-8");[m
+[31m-        ShopCategory shopCategory = new ShopCategory();[m
+[31m-        shopCategory.setId(111L);[m
+[31m-        shopCategory.setShopCategoryName("ccc");[m
+[31m-        String returnJson = jdHomeFacadeService.updateShopCategory(shopCategory);[m
+[31m-        out.println(returnJson);[m
+[31m-        out.close();[m
+[31m-        return  null;[m
+[31m-    }[m
+[31m-[m
+[31m-    /**[m
+[31m-     * 删除商品分类[m
+[31m-     * @param out[m
+[31m-     * @param req[m
+[31m-     * @param resp[m
+[31m-     * @return[m
+[31m-     * @throws Exception[m
+[31m-     */[m
+[31m-    @RequestMapping(value = "/deleteShopCategory", method=RequestMethod.GET)[m
+[31m-    public String deleteShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{[m
+[31m-        resp.setContentType("text/html;charset=utf-8");[m
+[31m-        ShopCategory shopCategory = new ShopCategory();[m
+[31m-        shopCategory.setId(111L);[m
+[31m-        String returnJson = jdHomeFacadeService.deleteShopCategory(shopCategory);[m
+[31m-        out.println(returnJson);[m
+[31m-        out.close();[m
+[31m-        return  null;[m
+[31m-    }[m
+[31m-[m
+[31m-    @ResponseBody[m
+[31m-    @RequestMapping(value = "/djsw/newOrder",method = RequestMethod.GET)[m
+[31m-    public JSONObject newOrder(@RequestBody JSONObject jsonObject)throws Exception{[m
+[31m-        if(jsonObject == null){[m
+[31m-            return jsonObject;[m
+[31m-        }[m
+[31m-        JSONObject json = jsonObject.getJSONObject("jd_param_json");[m
+[31m-        String billId = json.getString("billId");[m
+[31m-        String statusId = json.getString("statusId");[m
+[31m-        String timestamp = json.getString("timestamp");[m
+[31m-        String rtnJson = jdHomeFacadeService.newOrder(billId,statusId,timestamp);[m
+[31m-        return  null;[m
+[31m-    }[m
+[31m-[m
+[31m-    /**[m
+[31m-     * 商家确认接单接口[m
+[31m-     * @param out[m
+[31m-     * @param req[m
+[31m-     * @param resp[m
+[31m-     * @return[m
+[31m-     */[m
+[31m-    @RequestMapping(value = "/orderAcceptOperate",method = RequestMethod.GET)[m
+[31m-    public String orderAcceptOperate(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{[m
+[31m-        resp.setContentType("text/html;charset=utf-8");[m
+[31m-        OrderAcceptOperate acceptOperate = new OrderAcceptOperate();[m
+[31m-        acceptOperate.setOrderId("100001016163464");[m
+[31m-        acceptOperate.setIsAgreed(true);[m
+[31m-        acceptOperate.setOperator("yang");[m
+[31m-        String json = jdHomeFacadeService.orderAcceptOperate(acceptOperate);[m
+[31m-        out.println(json);[m
+[31m-        out.close();[m
+[31m-        return null;[m
+[31m-    }[m
+[31m-[m
+[31m-    @RequestMapping(value = "/testAddOrder",method = RequestMethod.GET)[m
+[31m-    public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{[m
+[31m-        resp.setContentType("text/html;charset=utf-8");[m
+[31m-        String json = jdHomeFacadeService.newOrder("", "", "");[m
+[31m-        out.println(json);[m
+[31m-        out.close();[m
+[31m-        return null;[m
+[31m-    }[m
+[31m-[m
+[31m-}[m
+[32m+[m[32m//package com.wangjunneil.schedule.controller.jdhome;[m
+[32m+[m[32m//[m
+[32m+[m[32m//[m
+[32m+[m[32m//import com.alibaba.fastjson.JSONObject;[m
+[32m+[m[32m//import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;[m
+[32m+[m[32m//import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;[m

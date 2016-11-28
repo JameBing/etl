@@ -4,7 +4,7 @@ package com.wangjunneil.schedule.controller.jdhome;
 import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
-import com.wangjunneil.schedule.entity.jdhome.ShopCategory;
+import com.wangjunneil.schedule.entity.jdhome.shopCategory;
 import com.wangjunneil.schedule.service.JdHomeFacadeService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class JdHomeController {
     @RequestMapping(value = "/addShopCategory", method=RequestMethod.GET)
     public String addShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-        ShopCategory shopCategory = new ShopCategory();
+        shopCategory shopCategory = new shopCategory();
         shopCategory.setPid(000L);
         shopCategory.setShopCategoryLevel(0);
        // shopCategory.setCreatePin("aaa");//
@@ -90,7 +90,7 @@ public class JdHomeController {
     @RequestMapping(value = "/updateShopCategory", method=RequestMethod.GET)
     public String updateShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-        ShopCategory shopCategory = new ShopCategory();
+        shopCategory shopCategory = new shopCategory();
         shopCategory.setId(111L);
         shopCategory.setShopCategoryName("ccc");
         String returnJson = jdHomeFacadeService.updateShopCategory(shopCategory);
@@ -110,7 +110,7 @@ public class JdHomeController {
     @RequestMapping(value = "/deleteShopCategory", method=RequestMethod.GET)
     public String deleteShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-        ShopCategory shopCategory = new ShopCategory();
+        shopCategory shopCategory = new shopCategory();
         shopCategory.setId(111L);
         String returnJson = jdHomeFacadeService.deleteShopCategory(shopCategory);
         out.println(returnJson);
