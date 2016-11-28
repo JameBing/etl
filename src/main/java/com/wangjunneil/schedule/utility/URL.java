@@ -38,6 +38,8 @@ public final class URL {
     public static final String URL_ELENE_NEW_ORDER = "http://v2.openapi.ele.me/order/new/";
     //饿了么拉取新订单
     public static final String URL_ELEME_PULL_NEW_ORDER = "http://v2.openapi.ele.me/order/pull/new/";
+    //饿了么拉取新订单
+    public static final String URL_ELEME_PULL_FIRM_ORDER = "http://v2.openapi.ele.me/order/{0}/status/";
 //    //获取订单详情
 //    public static final String URL_ELEME_GET_ORDER = "http://v2.openapi.ele.me/order/{0}/";
 //    //取消订单

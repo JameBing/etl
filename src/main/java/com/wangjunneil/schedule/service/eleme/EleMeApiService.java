@@ -70,18 +70,6 @@ public class EleMeApiService {
         String url = getSystemUrl(URL.URL_ELEME_ADD_FOODS, obj);
         return HttpUtil.post(url, StringUtil.getUrlParamsByObject(obj));
     }
-    ///////////////////////////////////////////////////////////////////
-    /**
-     * 查询新订单
-     * @param obj
-     * @return
-     * @throws ElemaException
-     */
-    public String getNewOrder(OrderRequest obj) throws ElemaException{
-        String url = getSystemUrl(URL.URL_ELENE_NEW_ORDER, obj);
-        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByObject(obj));
-        return HttpUtil.elmGet(requstUrl);
-    }
 
     /**
      * 拉取新订单
@@ -89,24 +77,40 @@ public class EleMeApiService {
      * @return
      * @throws ElemaException
      */
-    public String pullNewOrder(OrderPushRequest obj) throws ElemaException{
+    public String pullNewOrder(OrderRequest obj) throws ElemaException{
         String url = getSystemUrl(URL.URL_ELEME_PULL_NEW_ORDER, obj);
         String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByObject(obj));
         return HttpUtil.elmGet(requstUrl);
     }
-    //////////////////////////////////////////////////////////////////////
+
+    /**
+     * 确定订单
+     * @param obj
+     * @return
+     * @throws ElemaException
+     */
+    public String firmOrder(OrderRequest obj) throws ElemaException {
+        String pathURL = MessageFormat.format(URL.URL_ELEME_PULL_FIRM_ORDER, obj.getEleme_order_id().toString());
+        obj.setEleme_order_id("");
+        String url = getSystemUrl(pathURL, obj);
+        return HttpUtil.elmPut(url, StringUtil.getUrlParamsByObject(obj));
+    }
 
 
     public static void main(String[] arg) throws ElemaException {
-        OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
-        oldFoodsRequest.setFood_category_id(18424637);
-        oldFoodsRequest.setName("测试商品");
-        oldFoodsRequest.setPrice(0.01f);
-        oldFoodsRequest.setDescription("测试商品");
-        oldFoodsRequest.setMax_stock(1000);
-        oldFoodsRequest.setStock(100);
+//        OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
+//        oldFoodsRequest.setFood_category_id(18424637);
+//        oldFoodsRequest.setName("测试商品");
+//        oldFoodsRequest.setPrice(0.01f);
+//        oldFoodsRequest.setDescription("测试商品");
+//        oldFoodsRequest.setMax_stock(1000);
+//        oldFoodsRequest.setStock(100);
+        OrderRequest orderRequest = new OrderRequest();
+        orderRequest.setRestaurant_id(RESTAURANTID);
+        orderRequest.setStatus(2);
+        orderRequest.setEleme_order_id("101619479623393171");
         EleMeApiService eleMeApiService = new EleMeApiService();
-        System.out.println(eleMeApiService.addFoods(oldFoodsRequest));
+        System.out.println(eleMeApiService.firmOrder(orderRequest));
 
     }
 

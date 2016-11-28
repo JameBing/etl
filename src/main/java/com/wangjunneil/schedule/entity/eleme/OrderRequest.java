@@ -7,14 +7,18 @@ public class OrderRequest {
     /********************共有属性*************************/
     //eleme订单id
     private String eleme_order_id;
+    //状态
+    private  int status;
     /*****************查询订单详情属性********************/
     //第三方订单id
     private String tp_id;
     /******************取消订单属性***********************/
-    //状态
-    private  String status;
     //原因
     private  String reason;
+    /******************拉取新订单请求参数***********************/
+    //商户可管理商家id
+    private String restaurant_id;
+
 
     public String getEleme_order_id() {
         return eleme_order_id;
@@ -32,11 +36,11 @@ public class OrderRequest {
         this.tp_id = tp_id;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -47,4 +51,14 @@ public class OrderRequest {
     public void setReason(String reason) {
         this.reason = reason;
     }
+
+    public String getRestaurant_id() {
+        return restaurant_id;
+    }
+
+    public void setRestaurant_id(String restaurant_id) {
+        this.restaurant_id = restaurant_id;
+    }
+
+
 }

@@ -14,10 +14,6 @@ public class OrderPushRequestSerializer implements JsonSerializer<OrderPushReque
     @Override
     public JsonElement serialize(OrderPushRequest orderPushRequest, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject object = new JsonObject();
-
-        object.add("push_action",jsonSerializationContext.serialize(orderPushRequest.getPush_action()));
-        object.add("restaurant_id",jsonSerializationContext.serialize(orderPushRequest.getRestaurant_id()));
-        object.add("order_ids",jsonSerializationContext.serialize(orderPushRequest.getOrder_ids()));
         return object;
     }
 }
