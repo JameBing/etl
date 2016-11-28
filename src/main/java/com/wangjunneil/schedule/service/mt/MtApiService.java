@@ -122,7 +122,7 @@ public class MtApiService {
         params = params+"& sig="+sig;
         return HttpUtil.post(ORDER_DETAIL_URL,params);
     }
-    
+
     //endregion
 
 
