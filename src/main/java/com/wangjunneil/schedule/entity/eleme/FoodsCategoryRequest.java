@@ -16,6 +16,8 @@ public class FoodsCategoryRequest {
     /*******************创建食物分类属性*******************/
     //商家id
     private String restaurant_id;
+    //权重
+    private String weight;
     private List<DisplayAttribute> display_attribute;
 
 
@@ -50,5 +52,13 @@ public class FoodsCategoryRequest {
 
     public void setDisplay_attribute(List<DisplayAttribute> display_attribute) {
         this.display_attribute = display_attribute;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
     }
 }

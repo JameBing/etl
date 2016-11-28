@@ -10,11 +10,10 @@ import java.lang.reflect.Type;
 /**
  * Created by admin on 2016/11/28.
  */
-public class RestaurantRequestSerializer implements JsonSerializer<RestaurantRequest> {
+public class OldFoodsRequestSerializer implements JsonSerializer<OldFoodsRequest> {
     @Override
-    public JsonElement serialize(RestaurantRequest restaurantRequest, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(OldFoodsRequest oldFoodsRequest, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject object = new JsonObject();
-        //注意：此处必须按照字母顺序依次加入元素
-        return null;
+        return object;
     }
 }
