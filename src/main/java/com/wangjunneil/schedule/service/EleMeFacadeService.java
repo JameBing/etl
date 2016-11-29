@@ -19,108 +19,108 @@ public class EleMeFacadeService {
     @Autowired
     private EleMeInnerService eleMeInnerService;
 
-    /**
-     * 获取订单详情
-     * @param params
-     * @return
-     * @throws ElemaException
-     */
-    public String orderDetailPost(OrderRequest params) throws ElemaException {
-        String requeststr = eleMeApiService.getOrderDetail(params);
-        requeststr = "{\n" +
-         "   \"code\":200,\n" +
-         "   \"data\": {\n"+
-         "       \"address\":\"Smart Garden 5A\",\n" +
-         "       \"consignee\":\"张三\",\n" +
-         "       \"created_at\":\"2013-09-24 12:31:24\",\n" +
-         "       \"active_at\":\"2013-09-24 12:40:21\",\n" +
-         "       \"deliver_fee\":20,\n" +
-         "       \"deliver_time\":\"1970-01-01 08:00:00\",\n" +
-         "       \"description\":\"\",\n" +
-         "       \"detail\":{\n" +
-         "       \"group\":[\n" +
-         "          [\n" +
-         "              {\n" +
-         "                  \"category_id\":1,\n" +
-         "                  \"name\":\"狗不理\",\n" +
-         "                  \"price\":100,\n" +
-         "                  \"garnish\":[],\n" +
-         "                  \"id\":1541311,\n" +
-         "                  \"quantity\":1,\n" +
-         "                  \"tp_food_id\":\"1312312\",\n" +
-         "                  \"specs\":[\"辣\",\"大份\"]\n" +
-         "              },\n" +
-         "              {\n" +
-         "                  \"category_id\":1,\n" +
-         "                  \"name\":\"牛肉盖浇饭\",\n" +
-         "                  \"price\":100,\n" +
-         "                  \"garnish\":[\n" +
-         "                        {\n" +
-         "                            \"category_id\":1,\n" +
-         "                            \"name\":\"荷包蛋\",\n" +
-         "                            \"price\":2,\n" +
-         "                            \"id\":1541313,\n" +
-         "                            \"quantity\":1,\n" +
-         "                            \"tp_food_id\":\"1312313\"\n" +
-         "                         }\n" +
-         "                  ],\n" +
-         "                  \"id\":1541312,\n" +
-         "                  \"quantity\":1,\n"+
-         "                  \"tp_food_id\":\"1312314\",\n" +
-         "                  \"specs\":[]\n" +
-         "              }\n" +
-         "          ]\n" +
-         "       ],\n" +
-         "       \"extra\": [\n" +
-         "          {\n" +
-         "              \"description\":\"\",\n" +
-         "              \"price\":20,\n" +
-         "              \"name\":\"配送费\",\n" +
-         "              \"category_id\":2,\n" +
-         "              \"id\":-10,\n" +
-         "              \"quantity\":1\n" +
-         "          }\n" +
-         "       ],\n" +
-         "       \"abandoned_extra\":null\n" +
-         "   },\n" +
-         "   \"invoice\":\"\",\n" +
-         "   \"is_book\":0,\n" +
-         "   \"is_online_paid\":0,\n" +
-         "   \"order_id\":\"12637645858619059\",\n" +
-         "   \"phone_list\":[\n" +
-         "      \"15216709049\"\n" +
-         "   ],\n" +
-         "   \"tp_restaurant_id\":\"1231231\",\n" +
-         "   \"restaurant_id\":72823931,\n" +
-         "   \"inner_id\":37932,\n" +
-         "   \"restaurant_name\":\"饿了么体验店\",\n"+
-         "   \"restaurant_number\":3,\n" +
-         "   \"status_code\":2,\n" +
-         "   \"refund_code\":6,\n" +
-         "   \"total_price\":120,\n" +
-         "   \"original_price\":120,\n" +
-         "   \"user_id\":481769,\n" +
-         "   \"user_name\":\"tester\",\n" +
-         "   \"delivery_geo\":\"31.2538,121.4185\"\n" +
-         "   },\n" +
-         "   \"message\":\"ok\",\n" +
-         "   \"request_id\":\"115bc4a55e3c4e9eaf3f1a111a3e7271\"\n" +
-         "}";
-        requeststr = requeststr.replace("/","\\/");
-        try {
-            Gson gson = new GsonBuilder().registerTypeAdapter(Result.class, new ResultSerializer())
-                .registerTypeAdapter(Order.class, new OrderSerializer())
-                .registerTypeAdapter(Body.class, new BodySerializer())
-                .serializeNulls()
-                .disableHtmlEscaping()
-                .create();
-            Result result = gson.fromJson(requeststr, Result.class);
-            Order order = gson.fromJson(gson.toJson(result.getData()).toString(), Order.class);
-        }catch (Exception ex) {
-            throw new ElemaException("",ex);
-        }
-        return "";
-    }
+//    /**
+//     * 获取订单详情
+//     * @param params
+//     * @return
+//     * @throws ElemaException
+//     */
+//    public String orderDetailPost(OrderRequest params) throws ElemaException {
+//        String requeststr = eleMeApiService.getOrderDetail(params);
+//        requeststr = "{\n" +
+//         "   \"code\":200,\n" +
+//         "   \"data\": {\n"+
+//         "       \"address\":\"Smart Garden 5A\",\n" +
+//         "       \"consignee\":\"张三\",\n" +
+//         "       \"created_at\":\"2013-09-24 12:31:24\",\n" +
+//         "       \"active_at\":\"2013-09-24 12:40:21\",\n" +
+//         "       \"deliver_fee\":20,\n" +
+//         "       \"deliver_time\":\"1970-01-01 08:00:00\",\n" +
+//         "       \"description\":\"\",\n" +
+//         "       \"detail\":{\n" +
+//         "       \"group\":[\n" +
+//         "          [\n" +
+//         "              {\n" +
+//         "                  \"category_id\":1,\n" +
+//         "                  \"name\":\"狗不理\",\n" +
+//         "                  \"price\":100,\n" +
+//         "                  \"garnish\":[],\n" +
+//         "                  \"id\":1541311,\n" +
+//         "                  \"quantity\":1,\n" +
+//         "                  \"tp_food_id\":\"1312312\",\n" +
+//         "                  \"specs\":[\"辣\",\"大份\"]\n" +
+//         "              },\n" +
+//         "              {\n" +
+//         "                  \"category_id\":1,\n" +
+//         "                  \"name\":\"牛肉盖浇饭\",\n" +
+//         "                  \"price\":100,\n" +
+//         "                  \"garnish\":[\n" +
+//         "                        {\n" +
+//         "                            \"category_id\":1,\n" +
+//         "                            \"name\":\"荷包蛋\",\n" +
+//         "                            \"price\":2,\n" +
+//         "                            \"id\":1541313,\n" +
+//         "                            \"quantity\":1,\n" +
+//         "                            \"tp_food_id\":\"1312313\"\n" +
+//         "                         }\n" +
+//         "                  ],\n" +
+//         "                  \"id\":1541312,\n" +
+//         "                  \"quantity\":1,\n"+
+//         "                  \"tp_food_id\":\"1312314\",\n" +
+//         "                  \"specs\":[]\n" +
+//         "              }\n" +
+//         "          ]\n" +
+//         "       ],\n" +
+//         "       \"extra\": [\n" +
+//         "          {\n" +
+//         "              \"description\":\"\",\n" +
+//         "              \"price\":20,\n" +
+//         "              \"name\":\"配送费\",\n" +
+//         "              \"category_id\":2,\n" +
+//         "              \"id\":-10,\n" +
+//         "              \"quantity\":1\n" +
+//         "          }\n" +
+//         "       ],\n" +
+//         "       \"abandoned_extra\":null\n" +
+//         "   },\n" +
+//         "   \"invoice\":\"\",\n" +
+//         "   \"is_book\":0,\n" +
+//         "   \"is_online_paid\":0,\n" +
+//         "   \"order_id\":\"12637645858619059\",\n" +
+//         "   \"phone_list\":[\n" +
+//         "      \"15216709049\"\n" +
+//         "   ],\n" +
+//         "   \"tp_restaurant_id\":\"1231231\",\n" +
+//         "   \"restaurant_id\":72823931,\n" +
+//         "   \"inner_id\":37932,\n" +
+//         "   \"restaurant_name\":\"饿了么体验店\",\n"+
+//         "   \"restaurant_number\":3,\n" +
+//         "   \"status_code\":2,\n" +
+//         "   \"refund_code\":6,\n" +
+//         "   \"total_price\":120,\n" +
+//         "   \"original_price\":120,\n" +
+//         "   \"user_id\":481769,\n" +
+//         "   \"user_name\":\"tester\",\n" +
+//         "   \"delivery_geo\":\"31.2538,121.4185\"\n" +
+//         "   },\n" +
+//         "   \"message\":\"ok\",\n" +
+//         "   \"request_id\":\"115bc4a55e3c4e9eaf3f1a111a3e7271\"\n" +
+//         "}";
+//        requeststr = requeststr.replace("/","\\/");
+//        try {
+//            Gson gson = new GsonBuilder().registerTypeAdapter(Result.class, new ResultSerializer())
+//                .registerTypeAdapter(Order.class, new OrderSerializer())
+//                .registerTypeAdapter(Body.class, new BodySerializer())
+//                .serializeNulls()
+//                .disableHtmlEscaping()
+//                .create();
+//            Result result = gson.fromJson(requeststr, Result.class);
+//            Order order = gson.fromJson(gson.toJson(result.getData()).toString(), Order.class);
+//        }catch (Exception ex) {
+//            throw new ElemaException("",ex);
+//        }
+//        return "";
+//    }
 
     /**
      * 获取食物详情
@@ -196,6 +196,7 @@ public class EleMeFacadeService {
     }
 
 //    public static void main(String[] arg) throws ElemaException {
-//        foodsDetailPost("");
+//        EleMeFacadeService eleMeFacadeService = new EleMeFacadeService();
+//        eleMeFacadeService.getShop("2063064");
 //    }
 }

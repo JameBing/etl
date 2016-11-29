@@ -17,12 +17,14 @@ public final class Constants {
     public static final String PLATFORM_Z800 = "z8";
     public static final String PLATFORM_WAIMAI_BAIDU = "baidu";
     public static final String PLATFORM_WAIMAI_JDHOME ="jdhome";
+    public static final String PLATFORM_WAIMAI_ELEME = "eleme";
+    public static final String PLATFORM_WAIMAI_MEITUAN = "meituan";
 
 
     /**
      * 京东授权连接
      */
-    public static final String JD_LINK_TOKEN_URL = "https://oauth.jd.com/oauth/authorize?response_type=code&client_id={0}&redirect_uri={1}&state={2}";
+    public static final String JD_LINK_TOKEN_URL = "https://oauth.j d.com/oauth/authorize?response_type=code&client_id={0}&redirect_uri={1}&state={2}";
 
     /**
      * 京东请求token连接
@@ -130,6 +132,9 @@ public final class Constants {
     public static final  int BAIDU_SOURCE = 65514;
 
 
+    public static final  String BOUNDARY = "--ZYETL1234567890--";
+    public static final String CONTENTTYPE_MULTIPART = "multipart/form-data";
+    
     //京东到家
     public static final int STOCK_REQUEST_COUNT = 50; //一次商品上下架最大数量
 

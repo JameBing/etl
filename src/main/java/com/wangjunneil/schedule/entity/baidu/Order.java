@@ -13,6 +13,10 @@ public class Order {
     @SerializedName("order_id")
     private String orderId;
 
+    //商家订单编号
+    @SerializedName("source_order_id")
+    private String sourceOrderId;
+
     //是否立即送餐，1 是 2 否
     @SerializedName("send_immediately")
     private int sendImmediately;
@@ -71,12 +75,22 @@ public class Order {
     @SerializedName("pay_status")
     private String payStatus;
 
+    private int status;
+
     public void setOrderId(String orderId){
         this.orderId = orderId;
     }
 
     public String getOrderId(){
-        return "14347012309352";
+        return this.orderId;
+    }
+
+    public void setSourceOrderId(String sourceOrderId){
+        this.sourceOrderId = sourceOrderId;
+    }
+
+    public String getSourceOrderId(){
+        return  this.sourceOrderId;
     }
 
     public void setSendImmediately(int sendImmediately){
@@ -197,5 +211,13 @@ public class Order {
 
     public String getPayStatus(){
         return this.payStatus;
+    }
+
+    public void setStatus(int status){
+        this.status = status;
+    }
+
+    public int getStatus(){
+        return this.status;
     }
 }

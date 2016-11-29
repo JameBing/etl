@@ -6,16 +6,22 @@ import com.google.gson.annotations.SerializedName;
  * Created by admin on 2016/11/22.
  */
 public class Extra {
+    //描述
     @SerializedName("description")
     private String description;
+    //价格
     @SerializedName("price")
     private Double price;
+    //额外增收名字
     @SerializedName("name")
     private String name;
+    //分类id
     @SerializedName("category_id")
     private String categoryid;
+    //id
     @SerializedName("id")
     private String id;
+    //数量
     @SerializedName("quantity")
     private String quantity;
 

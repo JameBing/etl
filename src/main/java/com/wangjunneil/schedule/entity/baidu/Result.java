@@ -5,17 +5,17 @@ package com.wangjunneil.schedule.entity.baidu;
  */
 public class Result {
 
-    private int errno;
+    private String errno;
 
     private String error;
 
     private Object data;
 
-    public void setErrno(int errno){
+    public void setErrno(String errno){
         this.errno = errno;
     }
 
-    public int getErrno(){
+    public String getErrno(){
         return this.errno;
     }
 

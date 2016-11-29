@@ -8,20 +8,26 @@ import java.util.List;
  * Created by admin on 2016/11/22.
  */
 public class Group {
+    //分类id
     @SerializedName("category_id")
     private String categoryid;
+    //名字
     @SerializedName("name")
     private String name;
+    //价格
     @SerializedName("price")
     private double price;
+    //搭配食品
     @SerializedName("garnish")
     private List<Garnish> garnish;
     @SerializedName("id")
     private String id;
+    //数量
     @SerializedName("quantity")
     private String quantity;
     @SerializedName("tp_food_id")
     private String tpfoodid;
+    //规格
     @SerializedName("specs")
     private List specs;
 

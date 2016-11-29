@@ -17,6 +17,8 @@ public class OrderRequestSerializer implements JsonSerializer<OrderRequest> {
         JsonObject object = new JsonObject();
         object.add("eleme_order_id",jsonSerializationContext.serialize(orderRequest.getEleme_order_id()));
         object.add("tp_id",jsonSerializationContext.serialize(orderRequest.getTp_id()));
+        object.add("status",jsonSerializationContext.serialize(orderRequest.getStatus()));
+        object.add("reason",jsonSerializationContext.serialize(orderRequest.getReason()));
         return object;
     }
 }

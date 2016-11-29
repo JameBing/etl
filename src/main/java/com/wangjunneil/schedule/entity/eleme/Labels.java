@@ -6,12 +6,16 @@ import com.google.gson.annotations.SerializedName;
  * Created by admin on 2016/11/24.
  */
 public class Labels {
+    //是否招牌菜
     @SerializedName("is_featured")
     private int isfeatured;
+    //是否配菜
     @SerializedName("is_gum")
     private int isgum;
+    //是否新菜
     @SerializedName("is_new")
     private int isnew;
+    //是否辣
     @SerializedName("is_spicy")
     private int isspicy;
 

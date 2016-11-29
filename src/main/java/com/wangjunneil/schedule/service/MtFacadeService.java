@@ -3,6 +3,7 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.wangjunneil.schedule.common.MtException;
 import com.wangjunneil.schedule.entity.mt.DetailInfo;
 import com.wangjunneil.schedule.entity.mt.ExtrasInfo;
 import com.wangjunneil.schedule.entity.mt.OrderInfo;
@@ -59,10 +60,14 @@ public class MtFacadeService {
      * 门店开业
      * @parama app_poi_code - APP方门店id
      */
-    public String openShop(String code)
+    public String openShop(String code)throws MtException
     {
-        String json = mtApiService.openShop(code);
-        return json;
+        try {
+            String json = mtApiService.openShop(code);
+            return json;
+        }catch (Exception e){
+            return "";
+        }
     }
 
 
@@ -70,10 +75,14 @@ public class MtFacadeService {
      * 门店歇业
      * @params app_poi_code - APP方门店id
      */
-    public String closeShop(String code)
+    public String closeShop(String code)throws MtException
     {
-        String json = mtApiService.closeShop(code);
-        return json;
+        try {
+            String json = mtApiService.closeShop(code);
+            return json;
+        }catch (Exception e){
+            return "";
+        }
     }
 
     //endregion
@@ -87,10 +96,13 @@ public class MtFacadeService {
      * 商家确认订单
      * @param orderid - 订单id
      */
-    public String getConfirmOrder(int orderid)
-    {
-        String json = mtApiService.getConfirmOrder(orderid);
-        return json;
+    public String getConfirmOrder(int orderid)throws MtException{
+        try {
+            String json = mtApiService.getConfirmOrder(orderid);
+            return json;
+        }catch (Exception e){
+            return "";
+        }
     }
 
 
@@ -98,10 +110,15 @@ public class MtFacadeService {
      * 商家取消订单
      * @param order_id - 订单id
      */
-    private String getCancelOrder(int order_id,String reason,String reason_code)
+    private String getCancelOrder(int order_id,String reason,String reason_code)throws MtException
     {
-        String json = mtApiService.getCancelOrder(order_id,reason,reason_code);
-        return json;
+        try {
+            String json = mtApiService.getCancelOrder(order_id, reason, reason_code);
+            return json;
+        }catch (Exception e)
+        {
+            return "";
+        }
     };
 
 

@@ -33,12 +33,4 @@ public class SysParams {
         this.sig = sig;
     }
 
-    @Override
-    public String toString() {
-        return "SysParams{" +
-            "consumer_key='" + consumer_key + '\'' +
-            ", timestamp=" + timestamp +
-            ", sig='" + sig + '\'' +
-            '}';
-    }
 }
