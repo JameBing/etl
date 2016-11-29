@@ -11,6 +11,7 @@ public class shopCategory {
     Integer shopCategoryLevel;
     Integer sort;
     String createPin;
+    String shopId;
 
     public Long getId() {
         return id;
@@ -58,5 +59,13 @@ public class shopCategory {
 
     public void setCreatePin(String createPin) {
         this.createPin = createPin;
+    }
+
+    public String getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(String shopId) {
+        this.shopId = shopId;
     }
 }

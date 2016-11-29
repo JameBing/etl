@@ -1,7 +1,7 @@
 package com.wangjunneil.schedule.service.jdhome;
 
 import com.wangjunneil.schedule.common.Constants;
-import com.wangjunneil.schedule.entity.jd.JdAccessToken;
+import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
 import com.wangjunneil.schedule.entity.sys.Cfg;
@@ -93,29 +93,42 @@ public class JdHomeInnerService {
         mongoTemplate.upsert(query,update,OrderInfoDTO.class);
     }
 
-    public void addAccessToken(JdAccessToken jdAccessToken) {
+    //添加/修改token
+    public void addAccessToken(JdHomeAccessToken jdHomeAccessToken) {
         // 计算token到期时间
-        long time = Long.parseLong(jdAccessToken.getTime());
-        int expire_in = jdAccessToken.getExpires_in();
+        long time = Long.parseLong(jdHomeAccessToken.getTime());
+        int expire_in = jdHomeAccessToken.getExpires_in();
         Date expireDate = DateTimeUtil.getExpireDate(time, expire_in);
-        jdAccessToken.setExpire_Date(expireDate);
+        jdHomeAccessToken.setExpire_Date(expireDate);
 
-        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(jdHomeAccessToken.getCompanyId()));
         Update update = new Update()
-            .set("access_token", jdAccessToken.getAccess_token())
-            .set("expires_in", jdAccessToken.getExpires_in())
-            .set("refresh_token", jdAccessToken.getRefresh_token())
-            .set("token_type", jdAccessToken.getToken_type())
-            .set("time", jdAccessToken.getTime())
-            .set("uid", jdAccessToken.getUid())
-            .set("user_nick", jdAccessToken.getUser_nick())
-            .set("expire_Date", jdAccessToken.getExpire_Date())
-            .set("username", jdAccessToken.getUsername());
-        mongoTemplate.upsert(query, update, JdAccessToken.class);
+            .set("access_token", jdHomeAccessToken.getAccess_token())
+            .set("expires_in", jdHomeAccessToken.getExpires_in())
+            .set("token_type", jdHomeAccessToken.getToken_type())
+            .set("time", jdHomeAccessToken.getTime())
+            .set("uid", jdHomeAccessToken.getUid())
+            .set("user_nick", jdHomeAccessToken.getUser_nick())
+            .set("expire_Date", jdHomeAccessToken.getExpire_Date())
+            .set("username", jdHomeAccessToken.getUsername())
+            .set("companyId",jdHomeAccessToken.getCompanyId())
+            .set("appKey",jdHomeAccessToken.getAppKey())
+            .set("appSecret",jdHomeAccessToken.getAppSecret())
+            .set("callback",jdHomeAccessToken.getCallback())
+            .set("shopIds",jdHomeAccessToken.getShopIds());
+        mongoTemplate.upsert(query, update, JdHomeAccessToken.class);
     }
 
-    public Cfg getJdCfg() {
-        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+    //获取token值
+    public JdHomeAccessToken getAccessToken(String shopId) {
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("shopIds").elemMatch(Criteria.where("shopId").is(shopId)));
+        JdHomeAccessToken jdHomeAccessToken = mongoTemplate.findOne(query, JdHomeAccessToken.class);
+        return jdHomeAccessToken;
+    }
+
+    //获取系统配置参数
+    public Cfg getJdCfg(String shopId) {
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("shopIds").elemMatch(Criteria.where("shopId").is(shopId)));
         Cfg cfg = mongoTemplate.findOne(query, Cfg.class);
         return cfg;
     }
