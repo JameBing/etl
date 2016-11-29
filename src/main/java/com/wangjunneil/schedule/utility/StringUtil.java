@@ -1,6 +1,16 @@
 package com.wangjunneil.schedule.utility;
 
+
+
+import com.wangjunneil.schedule.common.ElemaException;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -149,5 +159,51 @@ public class StringUtil {
             }
         }
         return query.toString();
+    }
+
+    //list内置分页
+    public static <T> List<T> setListPageDate(Integer begin, Integer end, List<T> list) {
+        List<T> pageList = null;
+        // 设置内置分页数据
+        if (list != null && begin != null && end != null) {
+            Integer maxSize = end;
+            Integer dataSize = list.size();
+            if (maxSize < dataSize) {
+                pageList = list.subList(begin, maxSize);
+            } else {
+                pageList = list.subList(begin, list.size());
+            }
+        }
+        return pageList;
+    }
+
+
+    //将obj转为map
+    public static Map getMap(Object obj) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
+        if(obj == null)
+            return null;
+        Map<String, String> map = new HashMap<String, String>();
+        BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
+        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        for (PropertyDescriptor property : propertyDescriptors) {
+            String key = property.getName();
+            if (key.compareToIgnoreCase("class") == 0) {
+                continue;
+            }
+            Method getter = property.getReadMethod();
+            Object value = getter!=null ? getter.invoke(obj) : null;
+            if (StringUtil.areNotEmpty(key, value)) {
+                map.put(key, value+"");
+            }
+        }
+        return map;
+    }
+
+    public static String getUrlParamsByObject(Object obj) throws ElemaException {
+        try {
+            return getUrlParamsByMap( getMap(obj));
+        }catch ( Exception ex) {
+            throw new ElemaException("数据转换出错!", ex);
+        }
     }
 }

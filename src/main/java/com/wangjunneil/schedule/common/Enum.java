@@ -30,6 +30,7 @@ public class Enum {
         R10
     }
 
+
     //错误码--百度外卖
     public enum ReturnCodeBaiDu{
     @EnumDescription(code = 0,desc = "success",remark = "成功")
@@ -48,8 +49,29 @@ public class Enum {
     R20113,
     @EnumDescription(code = 20114,desc = "签名不匹配",remark = "签名不匹配")
     R20114
-}
+    }
 
+<<<<<<< HEAD
+=======
+    //订单状态--京东到家
+    public enum OrderStatusJdHome{
+        @EnumDescription(code = 20010,desc = "锁定")
+        OrderLock,
+        @EnumDescription(code = 20020,desc = "用户取消")
+        OrderUserCancelled,
+        @EnumDescription(code = 20040,desc = "系统取消")
+        OrderSysCancelled,
+        @EnumDescription(code = 41000,desc = "待接单")
+        OrderWaiting,
+        @EnumDescription(code = 41010,desc = "已接单")
+        OrderReceived,
+        @EnumDescription(code = 33040,desc = "配送中")
+        OrderDelivering,
+        @EnumDescription(code = 33060,desc = "已妥投")
+        OrderConfirmed
+    }
+
+>>>>>>> 60c7926829de2186cf4f8eeced49bc5fc1f079d3
     //根据枚举类型值获取枚举注释
       public static JSONObject GetEnumDesc(Object obj,int code){
         JSONObject json = new JSONObject();
