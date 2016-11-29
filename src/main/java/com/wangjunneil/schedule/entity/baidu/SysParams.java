@@ -13,10 +13,11 @@ import  java.util.UUID;
 public class SysParams {
     private String cmd;      //命令
     private int timestamp;   //请求时间戳
-    private int version = 2; //api版本号,当前为2
+    private String version = "3.0"; //api版本号,当前为2
     private String ticket;   //请求唯一标识
     private  int source;     //合作方帐号
     private  String sign;    //签名
+    private String encrypt;  //是否加密,如AES,可为空
     private  Object body;    //请求参数
 
 
@@ -39,7 +40,7 @@ public class SysParams {
         this.timestamp = timestamp;
     }
 
-    public int getVersion(){
+    public String getVersion(){
         return  this.version;
     }
 
@@ -68,6 +69,14 @@ public class SysParams {
 
     public  String getSign(){
         return this.sign;
+    }
+
+    public void setEncrypt(String encrypt){
+        this.encrypt = encrypt;
+    }
+
+    public String getEncrypt(){
+        return this.encrypt;
     }
 
     public  void setBody(Object object){

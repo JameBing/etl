@@ -106,4 +106,8 @@ public class SysFacadeService {
     public void initializeReset(Status status){
         sysInnerService.initializeReset(status);
     }
+
+    public int getSerialNum(String date,String moudle){
+        return sysInnerService.getSerialNum(date,moudle);
+    }
 }

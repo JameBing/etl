@@ -1,11 +1,12 @@
 package com.wangjunneil.schedule.common;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
+import com.sun.java.util.jar.pack.*;
 import com.wangjunneil.schedule.common.EnumDescription;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.eclipse.jetty.util.Fields;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-
 
 /**
  * Created by yangwanbin on 2016-11-14.
@@ -49,13 +50,13 @@ public class Enum {
     R20114
 }
 
-
     //根据枚举类型值获取枚举注释
-      public static JSONObject GetEnumDesc(Object obj,String code){
+      public static JSONObject GetEnumDesc(Object obj,int code){
         JSONObject json = new JSONObject();
         java.lang.reflect.Field[] fields = obj.getClass().getDeclaredFields();
+        String[] names = obj.toString().split(".");
         for(Field f:fields){
-            if(f.getName().equals("R"+ code)){
+            if(f.getName().equals("R"+String.valueOf(code))){
              Annotation annotation = f.getAnnotations()[0];//注释只有一个，多个的话这里需要增强
              json.put("code",AnnotationUtils.getValue(annotation,"code"));
              json.put("desc",AnnotationUtils.getValue(annotation,"desc"));

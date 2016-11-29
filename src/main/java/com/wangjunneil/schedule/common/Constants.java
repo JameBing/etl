@@ -17,6 +17,8 @@ public final class Constants {
     public static final String PLATFORM_Z800 = "z8";
     public static final String PLATFORM_WAIMAI_BAIDU = "baidu";
     public static final String PLATFORM_WAIMAI_JDHOME ="jdhome";
+    public static final String PLATFORM_WAIMAI_ELEME = "eleme";
+    public static final String PLATFORM_WAIMAI_MEITUAN = "meituan";
 
 
     /**
@@ -128,6 +130,10 @@ public final class Constants {
     //百度外卖
     public static final  String BAIDU_URL = "http://api.waimai.baidu.com";
     public static final  int BAIDU_SOURCE = 65514;
+
+
+    public static final  String BOUNDARY = "--ZYETL1234567890--";
+    public static final String CONTENTTYPE_MULTIPART = "multipart/form-data";
 
 
    //endregion

@@ -1,5 +1,7 @@
 package com.wangjunneil.schedule.entity.baidu;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.jws.soap.SOAPBinding;
 import java.net.PortUnreachableException;
 import java.util.List;
@@ -7,8 +9,8 @@ import java.util.List;
 /**
  * Created by yangwanbin on 2016-11-17.
  */
+@Document(collection = "sync.baidu.order")
 public class Body {
-
     //shop
     private Shop shop;
 

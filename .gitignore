@@ -1,9 +1,10 @@
 *.iml
 *.swp
+*.properties
 .settings
 .DS_Store
 .idea
 .classpath
 .project
-log/*
+src/main/logs/*
 target/
