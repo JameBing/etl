@@ -39,7 +39,20 @@ public class WMFacadeService {
     private BaiDuFacadeService baiDuFacadeService;
 
     @Autowired
+    private JdHomeFacadeService jdHomeFacadeService;
+
+    @Autowired
+    private EleMeFacadeService eleMeFacadeService;
+
+
+    @Autowired
     private SysFacadeService sysFacadeService;
+
+    //回调地址入口处理方法
+    public String appReceiveCallBack(Map<String,String[]> stringMap,String platform){
+
+        return null;
+    }
 
     //门店开业
     public String startBusiness(Map<String,String[]> stringMap){

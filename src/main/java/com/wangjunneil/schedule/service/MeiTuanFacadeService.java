@@ -3,12 +3,13 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.wangjunneil.schedule.common.MtException;
+import com.wangjunneil.schedule.common.MeiTuanException;
+import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.mt.DetailInfo;
 import com.wangjunneil.schedule.entity.mt.ExtrasInfo;
 import com.wangjunneil.schedule.entity.mt.OrderInfo;
-import com.wangjunneil.schedule.service.mt.MtApiService;
-import com.wangjunneil.schedule.service.mt.MtInnerService;
+import com.wangjunneil.schedule.service.meituan.MeiTuanApiService;
+import com.wangjunneil.schedule.service.meituan.MeiTuanInnerService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ import java.util.*;
  * @since 2016-11-10.
  */
 @Service
-public class MtFacadeService {
+public class MeiTuanFacadeService {
 
     private static final String UTF8_CHARSET = "UTF-8";
 
@@ -44,10 +45,10 @@ public class MtFacadeService {
 
 
     @Autowired
-    private MtApiService mtApiService ;
+    private MeiTuanApiService mtApiService ;
 
     @Autowired
-    private MtInnerService mtInnerService;
+    private MeiTuanInnerService mtInnerService;
 
     //日志配置
     private static Logger log = Logger.getLogger(JdHomeFacadeService.class.getName());
@@ -60,7 +61,7 @@ public class MtFacadeService {
      * 门店开业
      * @parama app_poi_code - APP方门店id
      */
-    public String openShop(String code)throws MtException
+    public String openShop(String code)throws MeiTuanException
     {
         try {
             String json = mtApiService.openShop(code);
@@ -75,13 +76,13 @@ public class MtFacadeService {
      * 门店歇业
      * @params app_poi_code - APP方门店id
      */
-    public String closeShop(String code)throws MtException
+    public String closeShop(String code) throws ScheduleException
     {
         try {
             String json = mtApiService.closeShop(code);
             return json;
-        }catch (Exception e){
-            return "";
+        }catch (Exception ex){
+            throw  new ScheduleException("meituan",ex.getClass().getName(),"",code,new Throwable().getStackTrace());
         }
     }
 
@@ -96,7 +97,7 @@ public class MtFacadeService {
      * 商家确认订单
      * @param orderid - 订单id
      */
-    public String getConfirmOrder(int orderid)throws MtException{
+    public String getConfirmOrder(int orderid)throws MeiTuanException {
         try {
             String json = mtApiService.getConfirmOrder(orderid);
             return json;
@@ -110,7 +111,7 @@ public class MtFacadeService {
      * 商家取消订单
      * @param order_id - 订单id
      */
-    private String getCancelOrder(int order_id,String reason,String reason_code)throws MtException
+    private String getCancelOrder(int order_id,String reason,String reason_code)throws MeiTuanException
     {
         try {
             String json = mtApiService.getCancelOrder(order_id, reason, reason_code);

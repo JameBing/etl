@@ -1,10 +1,10 @@
-package com.wangjunneil.schedule.controller.mt;
+package com.wangjunneil.schedule.controller.meituan;
 
 import com.alibaba.fastjson.JSONObject;
-import com.wangjunneil.schedule.service.MtFacadeService;
+import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.service.MeiTuanFacadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,16 +20,16 @@ import java.util.logging.Logger;
  */
 @Controller
 @RequestMapping("/mt")
-public class MtController {
+public class MeiTuanController {
 
-    private static Logger log = Logger.getLogger(MtController.class.getName());
+    private static Logger log = Logger.getLogger(MeiTuanController.class.getName());
 
     @Autowired
-    private MtFacadeService mtFacadeService;
+    private MeiTuanFacadeService mtFacadeService;
 
 
     //测试关店接口
-    public String closeStore(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp){
+    public String closeStore(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws ScheduleException{
         resp.setContentType("text/html;charset=utf-8");
         String code = "22222";
         String params = mtFacadeService.closeShop(code);
