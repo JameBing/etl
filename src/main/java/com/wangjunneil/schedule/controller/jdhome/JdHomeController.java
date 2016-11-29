@@ -54,7 +54,7 @@ public class JdHomeController {
         List<QueryStockRequest> listBaseStockCenterRequest = new ArrayList<QueryStockRequest>();
         QueryStockRequest queryStockRequest = new QueryStockRequest();
         // 测试数据
-        String shopId = "20001";
+        String shopId = "10054394";
         queryStockRequest.setStationNo("10006172");
         queryStockRequest.setSkuId(1997342L);
         queryStockRequest.setDoSale(0);
