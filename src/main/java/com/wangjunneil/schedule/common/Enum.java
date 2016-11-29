@@ -51,8 +51,6 @@ public class Enum {
     R20114
     }
 
-<<<<<<< HEAD
-=======
     //订单状态--京东到家
     public enum OrderStatusJdHome{
         @EnumDescription(code = 20010,desc = "锁定")
@@ -70,20 +68,34 @@ public class Enum {
         @EnumDescription(code = 33060,desc = "已妥投")
         OrderConfirmed
     }
-
->>>>>>> 60c7926829de2186cf4f8eeced49bc5fc1f079d3
     //根据枚举类型值获取枚举注释
-      public static JSONObject GetEnumDesc(Object obj,int code){
+      public static JSONObject GetEnumDesc(Object obj,String name){
         JSONObject json = new JSONObject();
         java.lang.reflect.Field[] fields = obj.getClass().getDeclaredFields();
-        String[] names = obj.toString().split(".");
         for(Field f:fields){
-            if(f.getName().equals("R"+String.valueOf(code))){
+            if(f.getName().equals(name)){
              Annotation annotation = f.getAnnotations()[0];//注释只有一个，多个的话这里需要增强
              json.put("code",AnnotationUtils.getValue(annotation,"code"));
              json.put("desc",AnnotationUtils.getValue(annotation,"desc"));
              json.put("remark",AnnotationUtils.getValue(annotation,"remark"));
              break;
+            }
+        }
+        return json;
+    }
+
+    //根据枚举类型值获取枚举注释
+    public static JSONObject GetEnumDesc(Object obj,Object code){
+        JSONObject json = new JSONObject();
+        java.lang.reflect.Field[] fields = obj.getClass().getDeclaredFields();
+        String[] names = obj.toString().split(".");
+        for(Field f:fields){
+            if(f.getName().equals("R"+String.valueOf(code))){
+                Annotation annotation = f.getAnnotations()[0];//注释只有一个，多个的话这里需要增强
+                json.put("code",AnnotationUtils.getValue(annotation,"code"));
+                json.put("desc",AnnotationUtils.getValue(annotation,"desc"));
+                json.put("remark",AnnotationUtils.getValue(annotation,"remark"));
+                break;
             }
         }
         return json;

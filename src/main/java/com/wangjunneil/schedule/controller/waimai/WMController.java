@@ -31,8 +31,11 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import org.springframework.web.client.RestTemplate;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartRequest;
 /**
  * Created by yangwanbin on 2016-11-14.
  */
@@ -43,7 +46,35 @@ public class WMController {
     @Autowired
     private WMFacadeService wmFacadeService;
 
-
+    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan"})
+    public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
+        String result = "",platform = null;
+        Map<String,String[]> stringMap;
+        response.setContentType("application/json;charset=uft-8");
+        switch (request.getPathInfo().toLowerCase()){
+            case "/waimai/baidu":  //百度
+                platform = Constants.PLATFORM_WAIMAI_BAIDU;
+                stringMap = request.getParameterMap();
+                break;
+            case "/waimai/jdhome": //京东到家
+                platform = Constants.PLATFORM_WAIMAI_JDHOME;
+                stringMap = request.getParameterMap();
+                break;
+            case "/waimai/eleme":  //饿了么
+                platform = Constants.PLATFORM_WAIMAI_ELEME;
+                stringMap = request.getParameterMap();
+                break;
+            case "/waimai/meituan": //美团
+                platform = Constants.PLATFORM_WAIMAI_MEITUAN;
+                stringMap = request.getParameterMap();
+                break;
+            default:
+                stringMap = new HashMap<String,String[]>();
+                break;
+        }
+        out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
+        return  null;
+    }
 //region 商户
 
     /**
@@ -141,7 +172,7 @@ public class WMController {
     @RequestMapping(value = {"/baidu/order/new","/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
     public String orderPost(PrintWriter out, HttpServletRequest request,HttpServletResponse response) {
 
-        String platform =null;
+        String platform = null;
         switch (request.getPathInfo().toLowerCase()){
             case "/waimai/baidu/order/new": //百度
                 platform = Constants.PLATFORM_WAIMAI_BAIDU;
@@ -249,13 +280,12 @@ public class WMController {
             "}";
 
         String flowNum = "{\"date\":\"20161128\",\"moudle\":\"order\",\"flowNum\":2000}";//实例请求参数
-        out.println(HttpUtil.httpRest("http://127.0.0.1:9001/mark/waimai/test2","POST",flowNum,null));//运行方法，这里输出：
+        out.println(HttpUtil.post2("http://127.0.0.1:9001/mark/waimai/test2", "cmd=232323","multipart/form-data","utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU));//运行方法，这里输出：
         return null;
     }
 
-    @RequestMapping(value = "/test2",method = RequestMethod.POST,consumes = "application/json")
-    @ResponseBody
-    public String test2(@RequestBody FlowNum flowNum){
+    @RequestMapping(value = "/test2",method = RequestMethod.POST)
+    public String test2(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
 
         return null;
     }

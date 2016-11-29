@@ -82,17 +82,6 @@ public final class HttpUtil {
             dos.flush();
             dos.close();
             int responseCode = con.getResponseCode();
-<<<<<<< HEAD
-                BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                StringBuffer sb = new StringBuffer();
-                String line = br.readLine();
-                while (line != null) {
-                    sb.append(line);
-                    line = br.readLine();
-                }
-                br.close();
-                return sb.toString();
-=======
 //            if(responseCode == HttpURLConnection.HTTP_OK||responseCode == HttpURLConnection.HTTP_ACCEPTED||responseCode == HttpURLConnection.HTTP_CREATED)
 //            {
             BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -115,7 +104,7 @@ public final class HttpUtil {
         return null;
     }
     ////////////////////////////////////////////////////
-    public static String elmGet(String urlPath) {
+    public static String Get2(String urlPath) {
         StringBuffer sb = new StringBuffer();
         try {
             URL url = new URL(urlPath);
@@ -185,7 +174,6 @@ public final class HttpUtil {
 //            }else {
 //                //
 //            }
->>>>>>> 60c7926829de2186cf4f8eeced49bc5fc1f079d3
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -215,7 +203,6 @@ public final class HttpUtil {
             con.setUseCaches(false);
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type",(contentType.toLowerCase().equals("multipart/form-data")?("multipart/form-data;boundary="+ Constants.BOUNDARY):contentType) + ";" + charset);
-            con.setRequestProperty("contentType", "application/json");
             con.setConnectTimeout(timeout);
             con.setReadTimeout(readTimeout);
             con.connect();
@@ -287,7 +274,6 @@ public final class HttpUtil {
        RestTemplate restTemplate  = new RestTemplate();
        switch (method.toUpperCase()){
 
-<<<<<<< HEAD
            case "POST":
                //完整的方法签名为：postForObject(String url, Object request, Class<String> responseType, Object... uriVariables) ，最后的uriVariables用来拓展我们的请求参数内容。
                 result = restTemplate.postForObject(url,strEntity,String.class,uriVars==null?new HashMap<String, String>():uriVars);
@@ -307,7 +293,4 @@ public final class HttpUtil {
        }
        return  result;
    }
-=======
-
->>>>>>> 60c7926829de2186cf4f8eeced49bc5fc1f079d3
 }

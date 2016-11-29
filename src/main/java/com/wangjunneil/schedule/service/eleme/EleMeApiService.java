@@ -45,7 +45,7 @@ public class EleMeApiService {
      */
     public String getAffiliationShop() throws ElemaException {
         String url = getSystemUrl(URL.URL_ELEME_RESTAURANT_ID, null);
-        return HttpUtil.elmGet(url);
+        return HttpUtil.Get2(url);
     }
 
     /**
@@ -80,7 +80,7 @@ public class EleMeApiService {
     public String pullNewOrder(OrderRequest obj) throws ElemaException{
         String url = getSystemUrl(URL.URL_ELEME_PULL_NEW_ORDER, obj);
         String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByObject(obj));
-        return HttpUtil.elmGet(requstUrl);
+        return HttpUtil.Get2(requstUrl);
     }
 
     /**
