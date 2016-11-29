@@ -8,6 +8,7 @@ public class OrderAcceptOperate {
     private String orderId;
     private Boolean isAgreed; //true 接单 false不接单
     private String operator;
+    private String shopId;
 
     public String getOrderId() {
         return orderId;
@@ -31,5 +32,13 @@ public class OrderAcceptOperate {
 
     public void setOperator(String operator) {
         this.operator = operator;
+    }
+
+    public String getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(String shopId) {
+        this.shopId = shopId;
     }
 }

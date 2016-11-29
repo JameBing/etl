@@ -3,15 +3,18 @@ package com.wangjunneil.schedule.service.jdhome;
 import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.JdHomeException;
+import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.shopCategory;
+import com.wangjunneil.schedule.entity.sys.Cfg;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import com.wangjunneil.schedule.utility.URL;
 import o2o.openplatform.sdk.util.SignUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -44,10 +47,13 @@ public class JdHomeApiService {
 
     private String jd_param_json = "";
 
+    @Autowired
+    private JdHomeInnerService jdHomeInnerService;
+
 
     //批量修改商品上架
-    public String updateAllStockOn(List<QueryStockRequest> stockRequests)throws Exception{
-        Map<String,Object> param = getSysMap(); //系统参数
+    public String updateAllStockOn(List<QueryStockRequest> stockRequests,String shopId)throws Exception{
+        Map<String,Object> param = getSysMap(shopId); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         String rtnStr = "";
         int page = 1;
@@ -81,7 +87,7 @@ public class JdHomeApiService {
 
     //新增商品分类
     public String addShopCategory(shopCategory shopCategory)throws Exception{
-        Map<String,Object> param = getSysMap();//系统参数
+        Map<String,Object> param = getSysMap(shopCategory.getShopId());//系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         jsonObject.put("pid",shopCategory.getPid());
         jsonObject.put("shopCategoryName",shopCategory.getShopCategoryName());
@@ -102,7 +108,7 @@ public class JdHomeApiService {
 
     //修改商品分类
     public String updateShopCategory(shopCategory shopCategory) throws Exception{
-        Map<String,Object> param = getSysMap();//系统参数
+        Map<String,Object> param = getSysMap(shopCategory.getShopId());//系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         jsonObject.put("id",shopCategory.getId());
         jsonObject.put("shopCategoryName",shopCategory.getShopCategoryName());
@@ -120,7 +126,7 @@ public class JdHomeApiService {
 
     //删除商品分类
     public String deleteShopCategory(shopCategory shopCategory) throws Exception{
-        Map<String,Object> param = getSysMap();//系统参数
+        Map<String,Object> param = getSysMap(shopCategory.getShopId());//系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         jsonObject.put("id",shopCategory.getId());
         jd_param_json = jsonObject.toJSONString();
@@ -135,8 +141,8 @@ public class JdHomeApiService {
         return HttpUtil.post(URL.URL_DELETE_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
     }
 
-    public String newOrder(String billId,String statusId,String timestamp) throws Exception{
-        Map<String,Object> param = getSysMap();
+    public String newOrder(String billId,String statusId,String timestamp,String shopId) throws Exception{
+        Map<String,Object> param = getSysMap(shopId);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("orderId",billId);
         jsonObject.put("orderStatus",statusId);
@@ -154,7 +160,7 @@ public class JdHomeApiService {
 
     //商家确认/取消接单接口
     public String orderAcceptOperate(OrderAcceptOperate acceptOperate)throws Exception{
-        Map<String,Object> param = getSysMap();
+        Map<String,Object> param = getSysMap(acceptOperate.getShopId());
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("orderId",acceptOperate.getOrderId());
         jsonObject.put("isAgreed", acceptOperate.getIsAgreed());
@@ -172,10 +178,15 @@ public class JdHomeApiService {
 
 
     //获取系统参数map对象
-    private Map<String,Object> getSysMap(){
+    private Map<String,Object> getSysMap(String shopId){
+        JdHomeAccessToken jdHomeAccessToken = jdHomeInnerService.getAccessToken(shopId);
         Map<String ,Object> sysParam = new HashMap<String,Object>();
-        sysParam.put("token",token);
-        sysParam.put("app_key",app_key);
+        if(jdHomeAccessToken == null){
+            return sysParam;
+        }
+        appSecret = jdHomeAccessToken.getAppSecret();
+        sysParam.put("token",jdHomeAccessToken.getAccess_token());
+        sysParam.put("app_key",jdHomeAccessToken.getAppKey());
         sysParam.put("format",format);
         sysParam.put("v",v);
         sysParam.put("timestamp",DateTimeUtil.dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss"));
