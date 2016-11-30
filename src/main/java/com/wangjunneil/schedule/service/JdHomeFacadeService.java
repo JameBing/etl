@@ -2,9 +2,13 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.common.JdHomeException;
+import com.wangjunneil.schedule.entity.common.Rtn;
+import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.*;
 import com.wangjunneil.schedule.entity.sys.Cfg;
@@ -37,6 +41,25 @@ public class JdHomeFacadeService {
 
     @Autowired
     private SysInnerService sysInnerService;
+
+    public String startBusiness(String shopId,String platformShopId){
+        Rtn rtn = new Rtn();
+        rtn.setCode(1);
+        rtn.setDesc("error");
+        rtn.setRemark("京东未提供门店开/歇业接口,请登录京东到家APP进行开/歇操作");
+        rtn.setDynamic(shopId);
+        return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+    }
+
+    public String endBusiness(String shopId,String platformShopId){
+
+        Rtn rtn = new Rtn();
+        rtn.setCode(1);
+        rtn.setDesc("error");
+        rtn.setRemark("京东未提供门店开/歇业接口,请登录京东到家APP进行开/歇操作");
+        rtn.setDynamic(shopId);
+        return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+    }
 
     /**
      * 批量修改商品上下架

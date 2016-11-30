@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.service.baidu;
 
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.*;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.aspectj.apache.bcel.generic.RET;
 import org.springframework.http.HttpRequest;
@@ -11,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import java.lang.reflect.Field;
+import java.sql.Struct;
 import java.text.MessageFormat;
 
 /**
@@ -32,15 +34,22 @@ public class BaiDuApiService  {
                 SysParams sysParams = new SysParams();
                 sysParams.setCmd(cmd);
                 sysParams.setBody(obj);
-                String signJson = gson.toJson(sysParams);
-                //对所有的/进行转义
-                signJson = signJson.replace("/", "\\/");
-                //中文字符安转unicode
-                signJson = sysParams.chinaToUnicode(signJson);
+                String params = "body={0}&cmd={1}&timestamp={2}&version={3}&ticket={4}&source={5}&encrypt={6}";
 
-                sysParams.setSign(sysParams.getMD5(signJson));
-               // String requestJson = gson.toJson(sysParams);
-                return  MultipartPars(sysParams);
+                params =  String.format(params,gson.toJson(sysParams.getBody()),sysParams.getCmd(),sysParams.getTimestamp(),sysParams.getVersion(),sysParams.getTicket()
+                                              ,sysParams.getSource(),sysParams.getEncrypt());
+                params = StringUtil.retParamAsc(params);
+                String signStr = sysParams.chinaToUnicode(params);
+                return params.concat(String.format("&sign={0}",sysParams.getMD5(signStr)));
+//                String signJson = gson.toJson(sysParams);
+//                //对所有的/进行转义
+//                signJson = signJson.replace("/", "\\/");
+//                //中文字符安转unicode
+//                signJson = sysParams.chinaToUnicode(signJson);
+//
+//                sysParams.setSign(sysParams.getMD5(signJson));
+//               // String requestJson = gson.toJson(sysParams);
+//                return  MultipartPars(sysParams);
             }
             catch (Exception ex){
                 throw  new ScheduleException(Constants.PLATFORM_WAIMAI_BAIDU,ex.getClass().getName(),"计算签名过程异常",cmd+"\r\n"+new Gson().toJson(obj),new Throwable().getStackTrace());
@@ -244,6 +253,7 @@ public class BaiDuApiService  {
 
         return sb.toString();
     }
+
 
 }
 
