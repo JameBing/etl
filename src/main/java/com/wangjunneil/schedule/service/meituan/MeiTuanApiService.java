@@ -1,26 +1,21 @@
-package com.wangjunneil.schedule.service.mt;
+package com.wangjunneil.schedule.service.meituan;
 
 import com.alibaba.fastjson.JSONObject;
-import com.meituan.mos.sdk.common.SignedRequestsHelper;
-import com.sun.xml.internal.bind.v2.TODO;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.MD5Util;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import javax.xml.ws.ServiceMode;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author liuxin
  * @since 2016-11-14.
  */
 @Service
-public class MtApiService {
+public class MeiTuanApiService {
 
-    private static Logger log = Logger.getLogger(MtApiService.class.getName());
+    private static Logger log = Logger.getLogger(MeiTuanApiService.class.getName());
 
     private long timestamp =0l;
 

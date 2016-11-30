@@ -2,9 +2,13 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.common.JdHomeException;
+import com.wangjunneil.schedule.entity.common.Rtn;
+import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.*;
 import com.wangjunneil.schedule.entity.sys.Cfg;
@@ -38,14 +42,33 @@ public class JdHomeFacadeService {
     @Autowired
     private SysInnerService sysInnerService;
 
+    public String startBusiness(String shopId,String platformShopId){
+        Rtn rtn = new Rtn();
+        rtn.setCode(1);
+        rtn.setDesc("error");
+        rtn.setRemark("京东未提供门店开/歇业接口,请登录京东到家APP进行开/歇操作");
+        rtn.setDynamic(shopId);
+        return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+    }
+
+    public String endBusiness(String shopId,String platformShopId){
+
+        Rtn rtn = new Rtn();
+        rtn.setCode(1);
+        rtn.setDesc("error");
+        rtn.setRemark("京东未提供门店开/歇业接口,请登录京东到家APP进行开/歇操作");
+        rtn.setDynamic(shopId);
+        return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+    }
+
     /**
      * 批量修改商品上下架
      * @param stockRequests 商品列表
      * @return
      */
-    public String updateAllStockOn(List<QueryStockRequest> stockRequests) throws JdHomeException{
+    public String updateAllStockOn(List<QueryStockRequest> stockRequests ,String shopId) throws JdHomeException{
         try{
-            String json = jdHomeApiService.updateAllStockOn(stockRequests);
+            String json = jdHomeApiService.updateAllStockOn(stockRequests,shopId);
             return json;
         }catch (Exception ex){
            return "{lg:,plat:,rtn:{}}";
@@ -98,8 +121,8 @@ public class JdHomeFacadeService {
     }
 
     //新增推送订单
-    public String newOrder(String billId,String statusId,String timestamp)throws Exception{
-        /*String json  = jdHomeApiService.newOrder(billId,statusId,timestamp);*/
+    public String newOrder(String billId,String statusId,String timestamp,String shopId)throws Exception{
+        /*String json  = jdHomeApiService.newOrder(billId,statusId,timestamp,shopId);*/
 
         String json = "{\n" +
             "\t\"code\": \"0\",\n" +
@@ -364,11 +387,11 @@ public class JdHomeFacadeService {
             JSONObject jsonObject = JSONObject.parseObject(json);
             if("0".equals(jsonObject.equals(jsonObject.getString("code")))){
                int status = 0;
+                if(acceptOperate.getIsAgreed()){
+                    status = Enum.GetEnumDesc(Enum.OrderStatusJdHome.OrderReceived,Enum.OrderStatusJdHome.OrderReceived).getInteger("code");
+                }
                if(!acceptOperate.getIsAgreed()){
-                   status = Enum.GetEnumDesc(Enum.OrderStatusJdHome.OrderReceived,Enum.OrderStatusJdHome.OrderReceived.toString()).getInteger("code");
-               }
-               if(acceptOperate.getIsAgreed()){
-                   status = Enum.GetEnumDesc(Enum.OrderStatusJdHome.OrderSysCancelled,Enum.OrderStatusJdHome.OrderSysCancelled.toString()).getInteger("code");
+                   status = Enum.GetEnumDesc(Enum.OrderStatusJdHome.OrderSysCancelled,Enum.OrderStatusJdHome.OrderSysCancelled).getInteger("code");
                }
                jdHomeInnerService.updateStatus(acceptOperate,status);
             }
@@ -383,8 +406,8 @@ public class JdHomeFacadeService {
     * @param code  回调code码
     * @param state 续传state
     */
-    public void callback(String code, String state) {
-        Cfg cfg = sysInnerService.findCfg(Constants.PLATFORM_WAIMAI_JDHOME);
+    public void callback(String code, String state ,String companyId) {
+        Cfg cfg = jdHomeInnerService.getJdCfg(companyId);
         String appKey = cfg.getAppKey();
         String appSecret = cfg.getAppSecret();
         String callbackUrl = cfg.getCallback();
@@ -395,7 +418,7 @@ public class JdHomeFacadeService {
         String returnJson = HttpUtil.get(tokenUrl);
 
         // token入库
-        JdAccessToken jdAccessToken = JSONObject.parseObject(returnJson, JdAccessToken.class);
+        JdHomeAccessToken jdAccessToken = JSONObject.parseObject(returnJson, JdHomeAccessToken.class);
         jdAccessToken.setUsername(state);
         jdHomeInnerService.addAccessToken(jdAccessToken);
     }

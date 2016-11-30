@@ -2,12 +2,15 @@ package com.wangjunneil.schedule.service.sys;
 
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.common.FlowNum;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jp.JPAccessToken;
 import com.wangjunneil.schedule.entity.sys.Cfg;
 import com.wangjunneil.schedule.entity.sys.Status;
 import com.wangjunneil.schedule.entity.tm.TmallAccessToken;
 import com.wangjunneil.schedule.entity.z8.Z8AccessToken;
+import com.wangjunneil.schedule.utility.DateTimeUtil;
+import org.eclipse.jetty.util.security.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -166,6 +169,29 @@ public class SysInnerService {
             }
         }
 
+    }
+
+    //获取订单流水号
+    public int getSerialNum(String date,String module){
+        int intRresult = 1;
+        Query query = new Query();
+        Criteria criteria = new Criteria().where("date").is(date).where("module").is(module);
+        query.addCriteria(criteria);
+        List<FlowNum> list = mongoTemplate.find(query, FlowNum.class);
+        if (list.size()<1){
+            //新增
+//            FlowNum flowNum = new FlowNum();
+//            flowNum.setDate(DateTimeUtil.nowDateString("yyyyMMdd"));
+//            flowNum.setMoudle(module);
+//            flowNum.setFlowNum(1);
+            Update update = new Update().set("date",DateTimeUtil.nowDateString("yyyyMMdd"))
+                                        .set("module",module)
+                                        .set("flowNum",1);
+            mongoTemplate.upsert(query,update,FlowNum.class);
+        }else {
+            intRresult = list.get(0).getFlowNum();
+        }
+        return intRresult;
     }
 
 }

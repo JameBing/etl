@@ -1,5 +1,7 @@
 package com.wangjunneil.schedule.common;
 
+import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
+import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 
 /**
@@ -7,8 +9,19 @@ import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
  */
 public class BaiDuException extends Exception  {
 
+    public BaiDuException(){}
+    private String requestBody;
 
-    public BaiDuException(String message,Exception ex) {
+    private void setRequestBody(String requestBody){
+        this.requestBody = requestBody;
+    }
+
+    public String getRequestBody(){
+        return this.requestBody;
+    }
+
+    public BaiDuException(String message,String requestBody,Exception ex) {
          super(message);
+         this.requestBody = requestBody;
     }
 }

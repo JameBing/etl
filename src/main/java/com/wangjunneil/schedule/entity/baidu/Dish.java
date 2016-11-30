@@ -13,6 +13,9 @@ public class Dish {
    //合作方商户唯一 ID
    private String shopId;
 
+   //百度门店ID,与shop_id二选一
+   private String baiduShopId;
+
     //菜品唯一编号
    private String dishId;
 
@@ -52,7 +55,7 @@ public class Dish {
    //菜品属性
    private  List<Attr> attrsList;
 
-   //平台菜品ID
+   //百度菜品ID
    private String baiduDishId;
 
    private String wid;
@@ -67,6 +70,14 @@ public class Dish {
 
    public String getShopId(){
        return this.shopId;
+   }
+
+   public void setBaiduShopId(String baiduShopId){
+       this.baiduDishId = baiduShopId;
+   }
+
+   public String getBaiduShopId(){
+       return this.baiduShopId;
    }
 
    public void setDishId(String dishId){

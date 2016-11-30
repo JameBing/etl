@@ -10,7 +10,7 @@ import java.util.List;
  * @since 2016/11/17.
  * 订单实体OrderInfo
  */
-@Document(collection = "sync.mt.order")
+@Document(collection = "sync.meituan.order")
 public class OrderInfo {
 
     //订单ID(数据库中请用bigint(20)存储此字段)
