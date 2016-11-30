@@ -142,7 +142,7 @@ public final class HttpUtil {
      * @param param  注意顺序 [参数,格式，timeout,readtime]
      * @return
      */
-    public static String elmPut(String urlStr, String... param) {
+    public static String put(String urlStr, String... param) {
         try {
             URL url = new URL(urlStr);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
