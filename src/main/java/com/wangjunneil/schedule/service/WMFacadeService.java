@@ -87,7 +87,7 @@ public class WMFacadeService {
             result_meituan = null;
         result_baidu = baiDuFacadeService.startBusiness(parsFromPos.getBaidu().getShopId(),parsFromPos.getBaidu().getPlatformShopId());
         result_jdhome = jdHomeFacadeService.startBusiness(parsFromPos.getJdhome().getShopId(),parsFromPos.getJdhome().getPlatformShopId());
-        //result_eleme = eleMeFacadeService.
+        //result_eleme = eleMeFacadeService.pullNewOrder()
         return null;
     }
 

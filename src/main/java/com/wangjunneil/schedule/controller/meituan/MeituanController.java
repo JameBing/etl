@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 @RequestMapping("/mt")
 public class MeiTuanController {
 
-    private static Logger log = Logger.getLogger(MeiTuanController.class.getName());
 
     @Autowired
     private MeiTuanFacadeService mtFacadeService;
@@ -37,7 +36,7 @@ public class MeiTuanController {
         out.close();
         return null;
     }
- 
+
     //获取订单信息添加数据库
     @ResponseBody
     @RequestMapping(value = "/mtapi/newOrder",method = RequestMethod.GET)
