@@ -104,7 +104,7 @@ public final class HttpUtil {
         return null;
     }
     ////////////////////////////////////////////////////
-    public static String Get2(String urlPath) {
+    public static String get2(String urlPath) {
         StringBuffer sb = new StringBuffer();
         try {
             URL url = new URL(urlPath);
@@ -142,7 +142,7 @@ public final class HttpUtil {
      * @param param  注意顺序 [参数,格式，timeout,readtime]
      * @return
      */
-    public static String elmPut(String urlStr, String... param) {
+    public static String put(String urlStr, String... param) {
         try {
             URL url = new URL(urlStr);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();

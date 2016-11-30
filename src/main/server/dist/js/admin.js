@@ -1048,6 +1048,7 @@ adminLteApp.controller('TmallRefundCtrl', function ($scope, $http, $routeParams)
     //确认审核
     $scope.refundAuditing = function(){
         $scope.refundAuditingStatus = false;
+        $scope.successRefundAuditingStatus = false;
         var params = {
             refundId:$scope.refundId5,
             refundPhase:$scope.refundPhase5,
@@ -1058,11 +1059,15 @@ adminLteApp.controller('TmallRefundCtrl', function ($scope, $http, $routeParams)
         }
         $http({url:"/mark/tmall/refundReview.php", method:"POST", params:params})
             .success(function(data) {
-                //console.log(data);
-                if (null != data.status) {//失败
+                console.log(data);
+                if (null != data.status) {//失败提示
                     $scope.refundAuditingStatus = true;
-                    $scope.refundAuditingMsg = data.message;
+                    $scope.refundAuditingMsg = "审核失败！";
                     return;
+                }
+                if(data.rp_refund_review_response.is_success == true){//成功提示
+                    $scope.successRefundAuditingStatus = true;
+                    $scope.successRefundAuditingMsg = "审核成功！";
                 }
                 $scope.getListByPage();
             })

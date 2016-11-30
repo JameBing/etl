@@ -8116,3 +8116,126 @@ Caused by: com.wangjunneil.schedule.common.ScheduleException: Read timed out
 2016-11-30 10:36:43,570 | INFO  | Started o.e.j.w.WebAppContext@27be17c8{/,file:///D:/dev/ETL/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
 2016-11-30 10:36:43,631 | INFO  | Started ServerConnector@36c2d629{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
 2016-11-30 10:36:43,631 | INFO  | Started @45540ms | org.eclipse.jetty.server.Server | main
+2016-11-30 15:07:30,912 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-11-30 15:07:30,947 | INFO  | Logging initialized @298ms | org.eclipse.jetty.util.log | main
+2016-11-30 15:07:31,064 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-11-30 15:07:31,332 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-11-30 15:07:32,695 | INFO  | Cluster created with settings {hosts=[127.0.0.1:43221], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-30 15:07:33,770 | INFO  | Exception in monitor thread while connecting to server 127.0.0.1:43221 | org.mongodb.driver.cluster | cluster-ClusterId{value='583e7ab462d7402334bedc13', description='null'}-127.0.0.1:43221
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.connection.SocketStream.open(SocketStream.java:63)
+	at com.mongodb.connection.InternalStreamConnection.open(InternalStreamConnection.java:115)
+	at com.mongodb.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:116)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at com.mongodb.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:50)
+	at com.mongodb.connection.SocketStream.open(SocketStream.java:58)
+	... 3 more
+2016-11-30 15:07:49,306 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-11-30 15:07:49,342 | INFO  | Logging initialized @282ms | org.eclipse.jetty.util.log | main
+2016-11-30 15:07:49,473 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-11-30 15:07:49,727 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-11-30 15:07:51,057 | INFO  | Cluster created with settings {hosts=[127.0.0.1:43221], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-30 15:07:52,138 | INFO  | Exception in monitor thread while connecting to server 127.0.0.1:43221 | org.mongodb.driver.cluster | cluster-ClusterId{value='583e7ac762d740aa8c75f298', description='null'}-127.0.0.1:43221
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.connection.SocketStream.open(SocketStream.java:63)
+	at com.mongodb.connection.InternalStreamConnection.open(InternalStreamConnection.java:115)
+	at com.mongodb.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:116)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at com.mongodb.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:50)
+	at com.mongodb.connection.SocketStream.open(SocketStream.java:58)
+	... 3 more
+2016-11-30 15:08:13,043 | INFO  | No server chosen by ReadPreferenceServerSelector{readPreference=primary} from cluster description ClusterDescription{type=UNKNOWN, connectionMode=SINGLE, serverDescriptions=[ServerDescription{address=127.0.0.1:43221, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketOpenException: Exception opening socket}, caused by {java.net.ConnectException: Connection refused: connect}}]}. Waiting for 30000 ms before timing out | org.mongodb.driver.cluster | main
+2016-11-30 15:08:43,049 | WARN  | Failed startup of context o.e.j.w.WebAppContext@4cbc2e3b{/,file:///D:/dev/ETL/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.dao.DataAccessResourceFailureException: Timed out after 30000 ms while waiting for a server that matches ReadPreferenceServerSelector{readPreference=primary}. Client view of cluster state is {type=UNKNOWN, servers=[{address=127.0.0.1:43221, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketOpenException: Exception opening socket}, caused by {java.net.ConnectException: Connection refused: connect}}]; nested exception is com.mongodb.MongoTimeoutException: Timed out after 30000 ms while waiting for a server that matches ReadPreferenceServerSelector{readPreference=primary}. Client view of cluster state is {type=UNKNOWN, servers=[{address=127.0.0.1:43221, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketOpenException: Exception opening socket}, caused by {java.net.ConnectException: Connection refused: connect}}]
+	at org.springframework.data.mongodb.core.MongoExceptionTranslator.translateExceptionIfPossible(MongoExceptionTranslator.java:77)
+	at org.springframework.data.mongodb.core.MongoTemplate.potentiallyConvertRuntimeException(MongoTemplate.java:2114)
+	at org.springframework.data.mongodb.core.MongoTemplate.executeFindOneInternal(MongoTemplate.java:1904)
+	at org.springframework.data.mongodb.core.MongoTemplate.doFindOne(MongoTemplate.java:1712)
+	at org.springframework.data.mongodb.core.MongoTemplate.findOne(MongoTemplate.java:586)
+	at org.springframework.data.mongodb.core.MongoTemplate.findOne(MongoTemplate.java:581)
+	at com.wangjunneil.schedule.service.sys.SysInnerService.initializeReset(SysInnerService.java:150)
+	at com.wangjunneil.schedule.service.SysFacadeService.initializeReset(SysFacadeService.java:107)
+	at com.wangjunneil.schedule.bootstrap.Initialize.onApplicationEvent(Initialize.java:23)
+	at com.wangjunneil.schedule.bootstrap.Initialize.onApplicationEvent(Initialize.java:14)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:166)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:138)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:382)
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:336)
+	at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:877)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:544)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+Caused by: com.mongodb.MongoTimeoutException: Timed out after 30000 ms while waiting for a server that matches ReadPreferenceServerSelector{readPreference=primary}. Client view of cluster state is {type=UNKNOWN, servers=[{address=127.0.0.1:43221, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketOpenException: Exception opening socket}, caused by {java.net.ConnectException: Connection refused: connect}}]
+	at com.mongodb.connection.BaseCluster.createTimeoutException(BaseCluster.java:375)
+	at com.mongodb.connection.BaseCluster.selectServer(BaseCluster.java:104)
+	at com.mongodb.binding.ClusterBinding$ClusterBindingConnectionSource.<init>(ClusterBinding.java:75)
+	at com.mongodb.binding.ClusterBinding$ClusterBindingConnectionSource.<init>(ClusterBinding.java:71)
+	at com.mongodb.binding.ClusterBinding.getReadConnectionSource(ClusterBinding.java:63)
+	at com.mongodb.operation.OperationHelper.withConnection(OperationHelper.java:212)
+	at com.mongodb.operation.FindOperation.execute(FindOperation.java:483)
+	at com.mongodb.operation.FindOperation.execute(FindOperation.java:80)
+	at com.mongodb.Mongo.execute(Mongo.java:818)
+	at com.mongodb.Mongo$2.execute(Mongo.java:805)
+	at com.mongodb.DBCollection.findOne(DBCollection.java:777)
+	at com.mongodb.DBCollection.findOne(DBCollection.java:747)
+	at com.mongodb.DBCollection.findOne(DBCollection.java:694)
+	at org.springframework.data.mongodb.core.MongoTemplate$FindOneCallback.doInCollection(MongoTemplate.java:2143)
+	at org.springframework.data.mongodb.core.MongoTemplate$FindOneCallback.doInCollection(MongoTemplate.java:2127)
+	at org.springframework.data.mongodb.core.MongoTemplate.executeFindOneInternal(MongoTemplate.java:1901)
+	... 36 more
+2016-11-30 15:08:43,159 | INFO  | Started ServerConnector@77681ce4{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-11-30 15:08:43,159 | INFO  | Started @54108ms | org.eclipse.jetty.server.Server | main
+2016-11-30 15:09:02,667 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-11-30 15:09:02,712 | INFO  | Logging initialized @454ms | org.eclipse.jetty.util.log | main
+2016-11-30 15:09:02,840 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-11-30 15:09:03,114 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-11-30 15:09:04,601 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-30 15:09:04,684 | INFO  | Opened connection [connectionId{localValue:1, serverValue:142}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583e7b1062d740d6e8eb94b1', description='null'}-192.168.1.190:27017
+2016-11-30 15:09:04,685 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=430442} | org.mongodb.driver.cluster | cluster-ClusterId{value='583e7b1062d740d6e8eb94b1', description='null'}-192.168.1.190:27017
+2016-11-30 15:09:26,613 | INFO  | Opened connection [connectionId{localValue:2, serverValue:143}] to 192.168.1.190:27017 | org.mongodb.driver.connection | main
+2016-11-30 15:09:26,680 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-11-30 15:09:26,807 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-30 15:09:26,810 | INFO  | Opened connection [connectionId{localValue:3, serverValue:144}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583e7b2662d740d6e8eb94b2', description='null'}-192.168.1.190:27017
+2016-11-30 15:09:26,811 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=493499} | org.mongodb.driver.cluster | cluster-ClusterId{value='583e7b2662d740d6e8eb94b2', description='null'}-192.168.1.190:27017
+2016-11-30 15:09:48,011 | INFO  | Started o.e.j.w.WebAppContext@4fe533ff{/,file:///D:/dev/ETL/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-11-30 15:09:48,075 | INFO  | Started ServerConnector@2d760326{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-11-30 15:09:48,075 | INFO  | Started @45829ms | org.eclipse.jetty.server.Server | main

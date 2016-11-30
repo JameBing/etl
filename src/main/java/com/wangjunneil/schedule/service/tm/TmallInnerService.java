@@ -1,6 +1,5 @@
 package com.wangjunneil.schedule.service.tm;
 
-import com.taobao.api.domain.OrderMessage;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.sys.Cfg;
 import com.wangjunneil.schedule.entity.sys.Page;
