@@ -22,7 +22,7 @@ public class EleMeApiService {
     public static final String RESTAURANTID = "2063064";
 
 
-    public String getSystemUrl(String pathUrl, Object obj) throws ElemaException {
+    public static String getSystemUrl(String pathUrl, Object obj) throws ElemaException {
         try {
             SysParams sysParams = new SysParams();
             sysParams.setConsumer_key(KEY);
@@ -49,7 +49,7 @@ public class EleMeApiService {
     }
 
     /**
-     * 餐厅状态
+     * 餐厅状态(新)
      * @param obj 属性is_open ：1营业/0不营业
      * @return
      * @throws ElemaException
@@ -84,33 +84,78 @@ public class EleMeApiService {
     }
 
     /**
-     * 确定订单
-     * @param obj
+     * 食品上下架(旧) 食品上下架需先调用获取餐厅食物分类ID、获取餐厅食物ID 接口
+     * @param obj 属性stock ：大于0上架/0下架
      * @return
      * @throws ElemaException
      */
-    public String firmOrder(OrderRequest obj) throws ElemaException {
-        String pathURL = MessageFormat.format(URL.URL_ELEME_PULL_FIRM_ORDER, obj.getEleme_order_id().toString());
+    public String Upordownframe(OldFoodsRequest obj)throws ElemaException{
+        String pathURL = MessageFormat.format(URL.URL_ELEME_UPORDOWNFRAME_FOODS, obj.getFood_id().toString());
+        obj.setFood_id("");
+        String url = getSystemUrl(pathURL, obj);
+        return HttpUtil.elmPut(url, StringUtil.getUrlParamsByObject(obj));
+    }
+
+    /**
+     * 获取餐厅食物分类ID food_category_id
+     * @return
+     * @throws ElemaException
+     */
+
+    public String FoodsClassify()throws ElemaException{
+        String pathURL = MessageFormat.format(URL.URL_ELEME_CLASSIFY_FOODS, RESTAURANTID);
+        String url = getSystemUrl(pathURL, null);
+        return HttpUtil.elmGet(url);
+    }
+
+    /**
+     * 获取餐厅食物ID food_id
+     * @return
+     * @throws ElemaException
+     */
+
+    public String GetFoodsId(OldFoodsRequest obj)throws ElemaException{
+        String pathURL = MessageFormat.format(URL.URL_ELEME_GETFOODSID, obj.getFood_category_id().toString());
+        obj.setFood_category_id("");
+        String url = getSystemUrl(pathURL, null);
+        return HttpUtil.elmGet(url);
+    }
+
+    /**
+     * 查询订单详情
+     * @return
+     * @throws ElemaException
+     */
+
+    public static String OrderDetail(OrderRequest obj)throws ElemaException{
+        String pathURL = MessageFormat.format(URL.URL_ELEME_ORDER_DETAIL, obj.getEleme_order_id().toString());
+        obj.setEleme_order_id("");
+        String url = getSystemUrl(pathURL, null);
+        return HttpUtil.elmGet(url);
+    }
+
+    /**
+     * 订单状态变更  (确认取消订单)
+     * @return
+     * @throws ElemaException
+     */
+    public static String StateChange(OrderRequest obj) throws ElemaException {
+        String pathURL = MessageFormat.format(URL.URL_ELEME_STATE_CHANGE_ORDER, obj.getEleme_order_id().toString());
         obj.setEleme_order_id("");
         String url = getSystemUrl(pathURL, obj);
         return HttpUtil.elmPut(url, StringUtil.getUrlParamsByObject(obj));
     }
 
 
+
     public static void main(String[] arg) throws ElemaException {
+
 //        OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
-//        oldFoodsRequest.setFood_category_id(18424637);
-//        oldFoodsRequest.setName("测试商品");
-//        oldFoodsRequest.setPrice(0.01f);
-//        oldFoodsRequest.setDescription("测试商品");
-//        oldFoodsRequest.setMax_stock(1000);
-//        oldFoodsRequest.setStock(100);
+//        oldFoodsRequest.setFood_category_id("18447568");
         OrderRequest orderRequest = new OrderRequest();
-        orderRequest.setRestaurant_id(RESTAURANTID);
-        orderRequest.setStatus(2);
-        orderRequest.setEleme_order_id("101619479623393171");
-        EleMeApiService eleMeApiService = new EleMeApiService();
-        System.out.println(eleMeApiService.firmOrder(orderRequest));
+        orderRequest.setEleme_order_id("101628270346657683");
+//        orderRequest.setStatus(9);
+        System.out.println(EleMeApiService.OrderDetail(orderRequest));
 
     }
 

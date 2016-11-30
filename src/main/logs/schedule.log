@@ -4620,3 +4620,46 @@ Caused by: java.net.ConnectException: Connection refused: connect
 2016-11-25 18:30:16,689 | INFO  | Started o.e.j.w.WebAppContext@7bc44ce8{/,file:///D:/zhongtai/etl/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
 2016-11-25 18:30:16,781 | INFO  | Started ServerConnector@6cf0a747{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
 2016-11-25 18:30:16,781 | INFO  | Started @45157ms | org.eclipse.jetty.server.Server | main
+2016-11-29 09:35:15,137 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-11-29 09:35:15,170 | INFO  | Logging initialized @223ms | org.eclipse.jetty.util.log | main
+2016-11-29 09:35:15,268 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-11-29 09:35:15,550 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-11-29 09:35:16,941 | INFO  | Cluster created with settings {hosts=[127.0.0.1:43221], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-29 09:35:17,176 | INFO  | Opened connection [connectionId{localValue:1, serverValue:124}] to 127.0.0.1:43221 | org.mongodb.driver.connection | cluster-ClusterId{value='583cdb54907be52ac4aa02e6', description='null'}-127.0.0.1:43221
+2016-11-29 09:35:17,177 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:43221, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 0, 7]}, minWireVersion=0, maxWireVersion=3, maxDocumentSize=16777216, roundTripTimeNanos=390656} | org.mongodb.driver.cluster | cluster-ClusterId{value='583cdb54907be52ac4aa02e6', description='null'}-127.0.0.1:43221
+2016-11-29 09:35:39,180 | INFO  | Opened connection [connectionId{localValue:2, serverValue:125}] to 127.0.0.1:43221 | org.mongodb.driver.connection | main
+2016-11-29 09:35:39,430 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-11-29 09:35:40,771 | INFO  | Cluster created with settings {hosts=[127.0.0.1:43221], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-29 09:35:40,774 | INFO  | Opened connection [connectionId{localValue:3, serverValue:126}] to 127.0.0.1:43221 | org.mongodb.driver.connection | cluster-ClusterId{value='583cdb6c907be52ac4aa02e7', description='null'}-127.0.0.1:43221
+2016-11-29 09:35:40,774 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:43221, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 0, 7]}, minWireVersion=0, maxWireVersion=3, maxDocumentSize=16777216, roundTripTimeNanos=301491} | org.mongodb.driver.cluster | cluster-ClusterId{value='583cdb6c907be52ac4aa02e7', description='null'}-127.0.0.1:43221
+2016-11-29 09:36:02,259 | INFO  | Started o.e.j.w.WebAppContext@c1fca1e{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-11-29 09:36:02,311 | INFO  | Started ServerConnector@2d8f2f3a{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-11-29 09:36:02,311 | INFO  | Started @47372ms | org.eclipse.jetty.server.Server | main
+2016-11-29 09:36:26,421 | INFO  | Opened connection [connectionId{localValue:4, serverValue:127}] to 127.0.0.1:43221 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-37
+2016-11-29 09:43:19,242 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-11-29 09:43:19,278 | INFO  | Logging initialized @241ms | org.eclipse.jetty.util.log | main
+2016-11-29 09:43:19,366 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-11-29 09:43:19,551 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-11-29 09:43:20,513 | INFO  | Cluster created with settings {hosts=[127.0.0.1:43221], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-29 09:43:20,608 | INFO  | Opened connection [connectionId{localValue:1, serverValue:128}] to 127.0.0.1:43221 | org.mongodb.driver.connection | cluster-ClusterId{value='583cdd38907be523648f04ed', description='null'}-127.0.0.1:43221
+2016-11-29 09:43:20,610 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:43221, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 0, 7]}, minWireVersion=0, maxWireVersion=3, maxDocumentSize=16777216, roundTripTimeNanos=538836} | org.mongodb.driver.cluster | cluster-ClusterId{value='583cdd38907be523648f04ed', description='null'}-127.0.0.1:43221
+2016-11-29 09:43:42,128 | INFO  | Opened connection [connectionId{localValue:2, serverValue:129}] to 127.0.0.1:43221 | org.mongodb.driver.connection | main
+2016-11-29 09:43:42,254 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-11-29 09:43:42,378 | INFO  | Cluster created with settings {hosts=[127.0.0.1:43221], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-11-29 09:43:42,397 | INFO  | Opened connection [connectionId{localValue:3, serverValue:130}] to 127.0.0.1:43221 | org.mongodb.driver.connection | cluster-ClusterId{value='583cdd4e907be523648f04ee', description='null'}-127.0.0.1:43221
+2016-11-29 09:43:42,398 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:43221, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 0, 7]}, minWireVersion=0, maxWireVersion=3, maxDocumentSize=16777216, roundTripTimeNanos=274229} | org.mongodb.driver.cluster | cluster-ClusterId{value='583cdd4e907be523648f04ee', description='null'}-127.0.0.1:43221
+2016-11-29 09:44:03,614 | INFO  | Started o.e.j.w.WebAppContext@37d3d232{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-11-29 09:44:03,662 | INFO  | Started ServerConnector@47a64f7d{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-11-29 09:44:03,662 | INFO  | Started @44642ms | org.eclipse.jetty.server.Server | main
+2016-11-29 09:44:34,522 | INFO  | Opened connection [connectionId{localValue:4, serverValue:131}] to 127.0.0.1:43221 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-37
+2016-11-29 09:47:55,812 | INFO  | [127.0.0.1] request /mark/tmall/controlStatus.php params {} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-92
+2016-11-29 09:47:58,750 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-92
+2016-11-29 09:47:58,750 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-68
+2016-11-29 09:47:58,901 | INFO  | Opened connection [connectionId{localValue:5, serverValue:132}] to 127.0.0.1:43221 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-92
+2016-11-29 09:54:59,244 | INFO  | [127.0.0.1] request /mark/jd/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-210
+2016-11-29 09:54:59,249 | INFO  | [127.0.0.1] request /mark/jd/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-208
+2016-11-29 18:57:06,077 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-9207
+2016-11-29 18:57:06,077 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-344
+2016-11-30 10:18:18,667 | INFO  | [127.0.0.1] request /mark/tmall/controlStatus.php params {} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-24509
+2016-11-30 13:47:21,534 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-27980
+2016-11-30 13:47:21,535 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-9218

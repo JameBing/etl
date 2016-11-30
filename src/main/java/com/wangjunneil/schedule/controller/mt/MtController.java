@@ -32,8 +32,8 @@ public class MtController {
     public String closeStore(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp){
         resp.setContentType("text/html;charset=utf-8");
         String code = "22222";
-        String params = mtFacadeService.closeShop(code);
-        out.println(params);
+        //String params = mtFacadeService.closeShop(code);
+        //out.println(params);
         out.close();
         return null;
     }
