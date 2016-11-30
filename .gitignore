@@ -6,7 +6,6 @@
 .idea
 .classpath
 .project
-.src/main/logs/*
 *.properties
 log/*
 target/
