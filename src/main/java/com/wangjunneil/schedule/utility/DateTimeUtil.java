@@ -26,8 +26,12 @@ public final class DateTimeUtil {
     }
 
     public static String dateFormat(Date date, String format) {
-        SimpleDateFormat df = new SimpleDateFormat(format);
-        return df.format(date);
+        if (!StringUtil.isEmpty(date)) {
+            SimpleDateFormat df = new SimpleDateFormat(format);
+            return df.format(date);
+        } else {
+            return null;
+        }
     }
 
     public static String dateSetTimeZone(Date date, String format){

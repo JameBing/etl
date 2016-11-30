@@ -154,14 +154,14 @@ public class TmallFacadeService implements MessageListener {
                     }
                 }
                 if (isSend) {//TODO 只发测试商品的消息*/
-                    if (isSendMessage && null != tmallCrmOrder) {    // 订单消息发送到消息队列中
-                        String messageJson = JSONObject.toJSONString(tmallCrmOrder);
-                        messageProducer.sendTmallOrderMessage(messageJson);
-                    }
+                if (isSendMessage && null != tmallCrmOrder) {    // 订单消息发送到消息队列中
+                    String messageJson = JSONObject.toJSONString(tmallCrmOrder);
+                    messageProducer.sendTmallOrderMessage(messageJson);
+                }
 
                     /* 持久化 存储订单消息流 存储订单实体详情*/
-                    tmallInnerService.addOrderMessage(orderMessage);
-                    tmallInnerService.addSyncOrder(tmallCrmOrder);
+                tmallInnerService.addOrderMessage(orderMessage);
+                tmallInnerService.addSyncOrder(tmallCrmOrder);
 //                }
             } catch (Exception e) {
                 log.error(e.toString());
@@ -185,7 +185,7 @@ public class TmallFacadeService implements MessageListener {
             log.info("End the order local db query summary size { " + crmOrders.size() + " }");
 
         List<TmallCrmOrder> needSupplementOrders = new ArrayList<>();
-        List<TmallCrmOrder> needSendMsgList = new ArrayList<>();//统计需要发送的消息列表
+//        List<TmallCrmOrder> needSendMsgList = new ArrayList<>();//统计需要发送的消息列表
         orders.stream().forEach(t -> {
             long count = crmOrders.stream()
                 .filter(p -> t.getTid().equals(p.getTid()) && t.getStatus().equals(p.getStatus()))
@@ -196,11 +196,11 @@ public class TmallFacadeService implements MessageListener {
                 List<Long> refundIds = supplementRefund(cfg, t.getOrders());
 
                 //对订单状态限制，只向mq发送待发货，已发货待接收，已完成状态的订单 add by zhangfei 20160929
-                if ("WAIT_SELLER_SEND_GOODS,WAIT_BUYER_CONFIRM_GOODS,TRADE_FINISHED".contains(t.getStatus())) {
+                /*if ("WAIT_SELLER_SEND_GOODS,WAIT_BUYER_CONFIRM_GOODS,TRADE_FINISHED".contains(t.getStatus())) {
                     String messageJson = JSONObject.toJSONString(t);
                     messageProducer.sendTmallOrderMessage(messageJson);
                     needSendMsgList.add(t);
-                }
+                }*/
                 needSupplementOrders.add(t);
 
                 if (log.isInfoEnabled())  {
@@ -222,8 +222,26 @@ public class TmallFacadeService implements MessageListener {
         if (log.isInfoEnabled())
             log.info("End supplement order operation, need supplement sum " + size + ", waste time "+ stopWatch.getTotalTimeSeconds() + " second");
 
-//        return size;
-        return needSendMsgList.size();//TODO 暂时修改为实际发送的消息数
+        return size;
+//        return needSendMsgList.size();//TODO 暂时修改为实际发送的消息数
+    }
+
+    public int queryAllByCond(TmallOrderRequest orderRequest) throws ScheduleException {
+        List<TmallCrmOrder> crmOrders = tmallInnerService.historyOrder(orderRequest);
+        if (log.isInfoEnabled())
+            log.info("End the order local db query summary size { " + crmOrders.size() + " }");
+        //订单号，支付金额，发货时间，商品名称，商品外部skuid，实际销售价格，数量
+        log.info("\t订单号\t订单支付金额\t交易状态" +
+            "\t订单行信息\t运送方式\t发货时间\t快递单号\t快递公司\t商品名称\t外部skuId\t商品数量\t商品价格\t实付金额\t商品金额（商品价格乘以数量的总金额）\t");
+        crmOrders.stream().forEach(t -> {
+            List<Order> orders = t.getOrders();
+            orders.stream().forEach(p -> {
+                log.info("\t" + t.getTid().toString() + "\t" + t.getPayment() + "\t" + t.getStatus()
+                    + "\t订单行信息\t" + p.getShippingType() + "\t" + p.getConsignTime() + "\t" + p.getInvoiceNo() + "\t" + p.getLogisticsCompany() + "\t" + p.getTitle() + "\t" + p.getOuterSkuId() + "\t" + p.getNum().toString() + "\t" + p.getPrice() + "\t" + p.getPayment() + "\t" + p.getTotalFee() + "\t");
+            });
+
+        });
+        return crmOrders.size();
     }
 
     @Override
