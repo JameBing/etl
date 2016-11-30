@@ -104,7 +104,7 @@ public final class HttpUtil {
         return null;
     }
     ////////////////////////////////////////////////////
-    public static String Get2(String urlPath) {
+    public static String get2(String urlPath) {
         StringBuffer sb = new StringBuffer();
         try {
             URL url = new URL(urlPath);
