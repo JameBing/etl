@@ -6,12 +6,7 @@
 .idea
 .classpath
 .project
-<<<<<<< HEAD
-.src/main/logs/*
 *.properties
 log/*
-=======
 src/main/logs/*
->>>>>>> ca351cd22271d8b911bebd788b590c48f7586077
 target/
-
