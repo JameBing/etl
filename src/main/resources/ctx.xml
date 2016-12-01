@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
@@ -14,19 +13,14 @@
        http://www.springframework.org/schema/data/repository/spring-repository-1.5.xsd
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
-
     <context:component-scan base-package="com.wangjunneil.schedule"/>
-
     <bean class="com.wangjunneil.schedule.bootstrap.Initialize"></bean>
-
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location"><value>classpath:server.properties</value></property>
     </bean>
-
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="5242880"/><!--5M-->
     </bean>
-
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/tmall/**" />
@@ -38,17 +32,16 @@
             </bean>
         </mvc:interceptor>
         <!--<mvc:interceptor>-->
-            <!--<mvc:mapping path="/tmall/**" />-->
-            <!--<mvc:mapping path="/jd/**" />-->
-            <!--<mvc:mapping path="/cms/**" />-->
-            <!--<mvc:exclude-mapping path="/tmall/callback"/>-->
-            <!--<mvc:exclude-mapping path="/jd/callback"/>-->
-            <!--<mvc:exclude-mapping path="/cms/login.php"/>-->
-            <!--<bean  class="com.wangjunneil.schedule.interceptor.SessionController" />-->
+        <!--<mvc:mapping path="/tmall/**" />-->
+        <!--<mvc:mapping path="/jd/**" />-->
+        <!--<mvc:mapping path="/cms/**" />-->
+        <!--<mvc:exclude-mapping path="/tmall/callback"/>-->
+        <!--<mvc:exclude-mapping path="/jd/callback"/>-->
+        <!--<mvc:exclude-mapping path="/cms/login.php"/>-->
+        <!--<bean  class="com.wangjunneil.schedule.interceptor.SessionController" />-->
         <!--</mvc:interceptor>-->
     </mvc:interceptors>
-
-    <bean  class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+    <!--<bean  class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
     </bean>
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">
@@ -56,10 +49,8 @@
                 <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
             </list>
         </property>
-    </bean>
+    </bean>-->
     <!-- =================================== mongodb配置 =================================== -->
-
-
     <mongo:mongo host="${mongo.db.host}" port="${mongo.db.port}">
         <!--<mongo:options connections-per-host="100"/>-->
     </mongo:mongo>
@@ -67,23 +58,19 @@
         <constructor-arg ref="mongo"/>
         <constructor-arg name="databaseName" value="${mongo.db.name}"/>
     </bean>
-
     <!-- =================================== MQ消息配置 =================================== -->
     <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="${mq.host.url}" />
         <property name="userName" value="${mq.host.username}" />
         <property name="password" value="${mq.host.password}" />
     </bean>
-
     <bean id="cachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
         <property name="targetConnectionFactory" ref="connectionFactory"></property>
         <property name="sessionCacheSize" value="10"></property>
     </bean>
-
     <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="cachingConnectionFactory" />
     </bean>
-
     <bean id="jdOrderQueue" class="org.apache.activemq.command.ActiveMQQueue">
         <constructor-arg><value>${mq.queue.sync.jd}</value></constructor-arg>
     </bean>
@@ -99,7 +86,6 @@
     <bean id="z8OrderQueue" class="org.apache.activemq.command.ActiveMQQueue">
         <constructor-arg><value>${mq.queue.sync.z8}</value></constructor-arg>
     </bean>
-
     <bean id="QueueMessageProducer" class="com.wangjunneil.schedule.activemq.QueueMessageProducer">
         <property name="jdOrderQueue"       ref="jdOrderQueue"/>
         <property name="tmallOrderQueue"    ref="tmallOrderQueue"/>
@@ -107,11 +93,9 @@
         <property name="jmsTemplate"        ref="jmsTemplate"/>
         <property name="z8OrderQueue"        ref="z8OrderQueue"/>
     </bean>
-
     <bean id="QueueMessageConsumer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="connectionFactory" />
         <property name="destination" ref="tmallNotifyQueue" />
         <property name="messageListener" ref="tmallFacadeService" />
     </bean>
-
 </beans>
