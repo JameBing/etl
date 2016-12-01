@@ -64,7 +64,7 @@ public class WMFacadeService {
             case Constants.PLATFORM_WAIMAI_MEITUAN:
                 switch (stringMap.get("push_action")[0]){
                     case "1": //新订单
-                       
+
                         break;
                     case "2": //订单状态变更
 
