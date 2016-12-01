@@ -126,10 +126,25 @@ public class JdHomeInnerService {
         return jdHomeAccessToken;
     }
 
-    //获取系统配置参数
-    public Cfg getJdCfg(String shopId) {
-        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("shopIds").elemMatch(Criteria.where("shopId").is(shopId)));
-        Cfg cfg = mongoTemplate.findOne(query, Cfg.class);
-        return cfg;
+    //添加/修改回调token
+    public void addRefreshToken(JdHomeAccessToken jdHomeAccessToken){
+        // 计算token到期时间
+        long time = Long.parseLong(jdHomeAccessToken.getTime());
+        int expire_in = jdHomeAccessToken.getExpires_in();
+        Date expireDate = DateTimeUtil.getExpireDate(time, expire_in);
+        jdHomeAccessToken.setExpire_Date(expireDate);
+
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(jdHomeAccessToken.getCompanyId()));
+        Update update = new Update()
+            .set("access_token", jdHomeAccessToken.getAccess_token())
+            .set("expires_in", jdHomeAccessToken.getExpires_in())
+            .set("token_type", jdHomeAccessToken.getToken_type())
+            .set("time", jdHomeAccessToken.getTime())
+            .set("uid", jdHomeAccessToken.getUid())
+            .set("user_nick", jdHomeAccessToken.getUser_nick())
+            .set("expire_Date", jdHomeAccessToken.getExpire_Date())
+            .set("username", jdHomeAccessToken.getUsername())
+            .set("companyId",jdHomeAccessToken.getCompanyId());
+        mongoTemplate.upsert(query, update, JdHomeAccessToken.class);
     }
 }

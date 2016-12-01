@@ -62,7 +62,14 @@ public class WMFacadeService {
 
                 break;
             case Constants.PLATFORM_WAIMAI_MEITUAN:
+                switch (stringMap.get("push_action")[0]){
+                    case "1": //新订单
 
+                        break;
+                    case "2": //订单状态变更
+
+                        break;
+                }
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME:
 
@@ -71,6 +78,11 @@ public class WMFacadeService {
         }
 
         return result;
+    }
+
+    //获取供应商-百度
+    public String getSupplier(){
+        return baiDuFacadeService.getSupplier();
     }
 
     //门店开业
@@ -183,6 +195,8 @@ public class WMFacadeService {
                 result = baiDuFacadeService.orderPost(sysParams);
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
+                //result = jdHomeFacadeService.newOrder(stringMap.get("billId")[0],stringMap.get("statusId")[0],stringMap.get("timestamp")[0],"");
+                result = map2Json(stringMap);
                 break;
             default:break;
         }
@@ -215,7 +229,7 @@ public class WMFacadeService {
 
     //取消订单
     public  String orderCancel(Map<String,String[]> stringMap){
-      return orderOpt(stringMap,"order.cancel");
+      return orderOpt(stringMap, "order.cancel");
     }
 
     //订单操作
@@ -246,7 +260,7 @@ public class WMFacadeService {
                 default:break;
             }
         }
-        return MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme);
+        return MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme);
     }
 
     //Other
@@ -255,10 +269,4 @@ public class WMFacadeService {
         return gson.toJson(map);
     }
 
-    //生成外卖订单编号
-    public String getOrderNum(String shopId){
-        String strShopId =  shopId.length()>5?shopId.substring(0,5):shopId;
-        String date = DateTimeUtil.nowDateString("yyyyMMdd").substring(2,8);
-        return  "W" + String.format("%05d", Integer.valueOf(strShopId)) + "99" + date + String.format("%06d",Integer.valueOf(sysFacadeService.getSerialNum(date,"order")));
-    }
 }

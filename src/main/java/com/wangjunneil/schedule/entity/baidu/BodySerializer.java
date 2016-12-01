@@ -8,18 +8,17 @@ import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 
 /**
- * Created by yangwanbin on 2016-11-17.
+ * Created by yangwanbin on 2016-11-16.
  */
 public class BodySerializer implements JsonSerializer<Body> {
 
     @Override
-    public JsonElement serialize(Body body,Type type,JsonSerializationContext context){
+    public JsonElement serialize(Body body, Type type, JsonSerializationContext context){
+
         JsonObject object = new JsonObject();
-        object.add("shop",context.serialize(body.getShop()));
-        object.add("order",context.serialize(body.getOrder()));
-        object.add("user",context.serialize(body.getUser()));
-        object.add("products",context.serialize(body.getProducts()));
-        object.add("discount",context.serialize(body.getDiscount()));
+        object.add("errno",context.serialize(body.getErrno()));
+        object.add("error",context.serialize(body.getError()));
+        object.add("data",context.serialize(body.getData()));
         return object;
-    }
+    };
 }

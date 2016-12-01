@@ -43,25 +43,4 @@ public class EleMeInnerService {
         Update update = new Update().set("order.$.status",status);
         return mongoTemplate.updateMulti(query,update,Order.class).getN();
     }
-
-    //新订单接收
-    public String getNewOrder(String eleme_order_ids){
-
-        return null;
-    }
-    //订单状态变更接收   new_status：订单状态
-    public String orderChange(String eleme_order_ids,int new_status){
-
-        return null;
-    }
-    //退单状态接收  refund_status:退单订单状态
-    public String chargeBack(String eleme_order_ids,int refund_status){
-
-        return  null;
-    }
-    //订单配送状态接收
-    public String distributionStatus(String eleme_order_ids,int status_code,int sub_status_code){
-
-        return  null;
-    }
 }

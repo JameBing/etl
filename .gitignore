@@ -7,7 +7,7 @@
 .classpath
 .project
 *.properties
-.src/main/logs/*
 log/*
+src/main/logs/*
 target/
 

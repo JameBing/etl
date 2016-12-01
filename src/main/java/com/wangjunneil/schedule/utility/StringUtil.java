@@ -180,6 +180,24 @@ public class StringUtil {
         return pageList;
     }
 
+    //list转String
+    public static String listToString(List stringList){
+        if (stringList==null) {
+            return null;
+        }
+        StringBuilder result=new StringBuilder();
+        boolean flag=false;
+        for (Object string : stringList) {
+            if (flag) {
+                result.append(",");
+            }else {
+                flag=true;
+            }
+            result.append(string);
+        }
+        return result.toString();
+    }
+
 
     //将obj转为map
     public static Map getMap(Object obj) throws IllegalAccessException, IntrospectionException, InvocationTargetException {

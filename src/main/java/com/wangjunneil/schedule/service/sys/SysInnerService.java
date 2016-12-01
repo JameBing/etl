@@ -173,24 +173,22 @@ public class SysInnerService {
 
     //获取订单流水号
     public int getSerialNum(String date,String module){
-        int intRresult = 1;
+        int intRresult = 1,curNo = 0;
         Query query = new Query();
         Criteria criteria = new Criteria().where("date").is(date).where("module").is(module);
         query.addCriteria(criteria);
         List<FlowNum> list = mongoTemplate.find(query, FlowNum.class);
         if (list.size()<1){
-            //新增
-//            FlowNum flowNum = new FlowNum();
-//            flowNum.setDate(DateTimeUtil.nowDateString("yyyyMMdd"));
-//            flowNum.setMoudle(module);
-//            flowNum.setFlowNum(1);
-            Update update = new Update().set("date",DateTimeUtil.nowDateString("yyyyMMdd"))
-                                        .set("module",module)
-                                        .set("flowNum",1);
-            mongoTemplate.upsert(query,update,FlowNum.class);
+           curNo = 1;
         }else {
             intRresult = list.get(0).getFlowNum();
+            curNo = intRresult + 1;
         }
+        //新增
+        Update update = new Update().set("date",DateTimeUtil.nowDateString("yyyyMMdd"))
+            .set("module",module)
+            .set("flowNum",curNo);
+        mongoTemplate.upsert(query,update,FlowNum.class);
         return intRresult;
     }
 

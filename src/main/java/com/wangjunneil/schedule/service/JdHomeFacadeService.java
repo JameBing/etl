@@ -121,7 +121,7 @@ public class JdHomeFacadeService {
     }
 
     //新增推送订单
-    public String newOrder(String billId,String statusId,String timestamp,String shopId)throws Exception{
+    public String newOrder(String billId,String statusId,String timestamp,String shopId){
         /*String json  = jdHomeApiService.newOrder(billId,statusId,timestamp,shopId);*/
 
         String json = "{\n" +
@@ -401,26 +401,18 @@ public class JdHomeFacadeService {
         }
     }
 
+
     /**
-    * 京东授权回调处理,接受京东传入的code,换取有效的token信息
-    * @param code  回调code码
-    * @param state 续传state
-    */
-    public void callback(String code, String state ,String companyId) {
-        Cfg cfg = jdHomeInnerService.getJdCfg(companyId);
-        String appKey = cfg.getAppKey();
-        String appSecret = cfg.getAppSecret();
-        String callbackUrl = cfg.getCallback();
-
-        // 拼接请求地址
-        String tokenUrl = MessageFormat.format(Constants.JD_REQUEST_TOKEN_URL, appKey, callbackUrl, code, state, appSecret);
-        // Get请求获取token
-        String returnJson = HttpUtil.get(tokenUrl);
-
+     * 京东授权回调处理,接受京东传入的code,换取有效的token信息
+     * @param tokenJson  返回的json字符串
+     * @param companyId  商家编码
+     */
+    public void callback(String tokenJson,String companyId) {
+        JSONObject json = JSONObject.parseObject(tokenJson);
         // token入库
-        JdHomeAccessToken jdAccessToken = JSONObject.parseObject(returnJson, JdHomeAccessToken.class);
-        jdAccessToken.setUsername(state);
-        jdHomeInnerService.addAccessToken(jdAccessToken);
+        JdHomeAccessToken jdAccessToken = JSONObject.parseObject(tokenJson, JdHomeAccessToken.class);
+        jdAccessToken.setCompanyId(companyId);
+        jdHomeInnerService.addRefreshToken(jdAccessToken);
     }
 }
 
