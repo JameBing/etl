@@ -190,7 +190,7 @@ public final class HttpUtil {
         String urlStr = param[0],
             pars = param.length>1?param[1]:"",
             contentType = (param.length>2 && !StringUtil.isEmpty(param[2]))?param[2]:"application/x-www-form-urlencoded",
-            charset =  (param.length>3 && !StringUtil.isEmpty(param[3]))?param[3]:"utf-8",
+            charset = "charset=" + ((param.length>3 && !StringUtil.isEmpty(param[3]))?param[3]:"utf-8"),
             //boundary = "--ZYETL1234567890--",
             platform = (param.length>6 && !StringUtil.isEmpty(param[6]))?param[6]:"";
         int timeout = (param.length > 4 && !StringUtil.isEmpty(param[4])) ? Integer.parseInt(param[4]) : 60 * 1000,
@@ -202,7 +202,7 @@ public final class HttpUtil {
             con.setDoInput(true);
             con.setUseCaches(false);
             con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type",(contentType.toLowerCase().equals("multipart/form-data")?("multipart/form-data;boundary="+ Constants.BOUNDARY):contentType) + ";" + charset);
+            con.setRequestProperty("Content-Type",(contentType.toLowerCase().equals("multipart/form-data")?(("multipart/form-data;boundary="+ Constants.BOUNDARY) + ";" + charset ):contentType));
             con.setConnectTimeout(timeout);
             con.setReadTimeout(readTimeout);
             con.connect();
@@ -225,8 +225,11 @@ public final class HttpUtil {
 //                default:
 //                    break;
 //            }
-            BufferedOutputStream out = new BufferedOutputStream(con.getOutputStream());
-            out.write(pars.getBytes());
+
+            DataOutputStream dos=new DataOutputStream(con.getOutputStream());
+            dos.writeBytes(pars);
+            dos.flush();
+            dos.close();
             int responseCode = con.getResponseCode();
             if(responseCode == HttpURLConnection.HTTP_OK||responseCode == HttpURLConnection.HTTP_ACCEPTED||responseCode == HttpURLConnection.HTTP_CREATED)
             {

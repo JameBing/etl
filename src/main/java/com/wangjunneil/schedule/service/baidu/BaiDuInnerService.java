@@ -3,6 +3,7 @@ package com.wangjunneil.schedule.service.baidu;
 import com.wangjunneil.schedule.common.BaiDuException;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.Body;
+import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.baidu.Order;
 import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -29,15 +30,16 @@ public class BaiDuInnerService {
     private MongoTemplate mongoTemplate;
 
     //insert or update
-    public void updSyncBaiDuOrder(Body body) throws ScheduleException{
+    public void updSyncBaiDuOrder(Data data) throws ScheduleException{
 
-        Query  query = new Query(Criteria.where("order_id").is(body.getOrder().getOrderId()));
-        Update update = new Update().set("shop",body.getShop())
-                                    .set("order",body.getOrder())
-                                    .set("user",body.getUser())
-                                    .set("products",body.getProducts())
-                                    .set("discount",body.getDiscount());
-        mongoTemplate.upsert(query, update, Body.class);
+        Query  query = new Query(Criteria.where("order_id").is(data.getOrder().getOrderId()));
+        Update update = new Update().set("source",data.getSource())
+                                    .set("shop", data.getShop())
+                                    .set("order",data.getOrder())
+                                    .set("user",data.getUser())
+                                    .set("products",data.getProducts())
+                                    .set("discount",data.getDiscount());
+        mongoTemplate.upsert(query, update, Data.class);
     }
 
     //批量更新订单状态(根据订单号)

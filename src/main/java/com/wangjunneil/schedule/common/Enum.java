@@ -68,6 +68,100 @@ public class Enum {
         @EnumDescription(code = 33060,desc = "已妥投")
         OrderConfirmed
     }
+
+    //错误码--饿了么
+    public enum ReturnCodeEleMe{
+        @EnumDescription(code = 1000,desc = "权限错误")
+        PERMISSION_DENIED,
+        @EnumDescription(code = 1001,desc = "签名错误")
+        SIGNATURE_ERROR,
+        @EnumDescription(code = 1002,desc = "系统级参数错误")
+        SYSTEM_PARAM_ERROR,
+        @EnumDescription(code = 1003,desc = "系统级参数错误")
+        INVALID_CONSUMER,
+        @EnumDescription(code = 1004,desc = "非法请求参数")
+        INVALID_REQUEST_PARAM,
+        @EnumDescription(code = 1005,desc = "在线支付订单验证错误")
+        INVALID_ONLINE_PAYMENT_ORDER_VALIDATION,
+        @EnumDescription(code = 1006,desc = "系统错误")
+        SYSTEM_ERROR,
+        @EnumDescription(code = 1007,desc = "饿了么业务系统错误")
+        ELEME_SYSTEM_ERROR,
+        @EnumDescription(code = 1008,desc = "开放平台错误")
+        OPENAPI_SYSTEM_ERROR,
+        @EnumDescription(code = 1009,desc = "超过请求限制")
+        RATE_LIMIT_REACHED,
+        @EnumDescription(code = 1010,desc = "GnuPG公钥未找到")
+        GPG_KEY_NOT_FOUND,
+        @EnumDescription(code = 1011,desc = "开放平台应用未找到")
+        APPLICATION_NOT_FOUND,
+        @EnumDescription(code = 1012,desc = "订单未找到")
+        ORDER_NOT_FOUND,
+        @EnumDescription(code = 1013,desc = "订单已取消")
+        ORDER_CANCELED,
+        @EnumDescription(code = 1014,desc = "无效地理位置")
+        INVALID_GEO,
+        @EnumDescription(code = 1015,desc = "订单已存在")
+        ORDER_EXISTED,
+        @EnumDescription(code = 1016,desc = "食物已存在")
+        FOOD_EXISTED,
+        @EnumDescription(code = 1017,desc = "图片上传失败")
+        IMAGE_UPLOAD_ERROR,
+        @EnumDescription(code = 1018,desc = "无效的订单状态")
+        INVALID_ORDER_STATUS,
+        @EnumDescription(code = 1019,desc = "无效的食物分类")
+        INVALID_FOOD_CATEGORY,
+        @EnumDescription(code = 1020,desc = "无效的食物")
+        INVALID_FOOD,
+        @EnumDescription(code = 1021,desc = "已回复评论")
+        COMMENT_REPLY_ERROR
+    }
+    //订单状态--饿了么
+    public enum OrderStatusEleMe{
+        @EnumDescription(code = -1,desc = "订单已取消")
+        STATUS_CODE_INVALID,
+        @EnumDescription(code = 0,desc = "订单未处理")
+        STATUS_CODE_UNPROCESSED,
+        @EnumDescription(code = 1,desc = "订单等待餐厅确认")
+        STATUS_CODE_PROCESSING,
+        @EnumDescription(code = 2,desc = "订单已处理")
+        STATUS_CODE_PROCESSED_AND_VALID,
+        @EnumDescription(code = 9,desc = "订单已完成")
+        STATUS_CODE_SUCCESS
+    }
+    //订单取消原因类型--饿了么
+    public enum CancelOrderEleMe{
+        @EnumDescription(code = 0,desc = "其它原因")
+        OTHERS,
+        @EnumDescription(code = 1,desc = "假订单")
+        TYPE_FAKE_ORDER,
+        @EnumDescription(code = 2,desc = "重复订单")
+        TYPE_DUPLICATE_ORDER,
+        @EnumDescription(code = 3,desc = "联系不上餐厅")
+        TYPE_FAIL_CONTACT_RESTAURANT,
+        @EnumDescription(code = 4,desc = "联系不上用户")
+        TYPE_FAIL_CONTACT_USER,
+        @EnumDescription(code = 5,desc = "食物已售完")
+        TYPE_FOOD_SOLDOUT,
+        @EnumDescription(code = 6,desc = "餐厅已打烊")
+        TYPE_RESTAURANT_CLOSED,
+        @EnumDescription(code = 7,desc = "超出配送范围")
+        TYPE_TOO_FAR,
+        @EnumDescription(code = 8,desc = "餐厅太忙")
+        TYPE_RST_TOO_BUSY,
+        @EnumDescription(code = 9,desc = "用户无理由退单")
+        TYPE_FORCE_REJECT_ORDER,
+        @EnumDescription(code = 10,desc = "配送方检测餐品不合格")
+        TYPE_DELIVERY_CHECK_FOOD_UNQUALIFIED,
+        @EnumDescription(code = 11,desc = "由于配送过程问题,用户退单")
+        TYPE_DELIVERY_FAULT,
+        @EnumDescription(code = 12,desc = "订单被替换")
+        TYPE_REPLACE_ORDER,
+        @EnumDescription(code = 13,desc = "用户取消订单")
+        TYPE_USR_CANCEL_ORDER,
+        @EnumDescription(code = 14,desc = "餐厅长时间未接单，订单自动取消")
+        TYPE_SYSTEM_AUTO_CANCEL,
+    }
     //根据枚举类型值获取枚举注释
       public static JSONObject GetEnumDesc(Object obj,String name){
         JSONObject json = new JSONObject();
