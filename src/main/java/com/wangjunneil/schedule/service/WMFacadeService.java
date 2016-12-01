@@ -44,20 +44,51 @@ public class WMFacadeService {
     @Autowired
     private EleMeFacadeService eleMeFacadeService;
 
+    @Autowired
+    private MeiTuanFacadeService meiTuanFacadeService;
+
 
     @Autowired
     private SysFacadeService sysFacadeService;
 
     //回调地址入口处理方法
     public String appReceiveCallBack(Map<String,String[]> stringMap,String platform){
+        String result = "";
+        switch (platform){
+            case Constants.PLATFORM_WAIMAI_BAIDU:
 
-        return null;
+                break;
+            case Constants.PLATFORM_WAIMAI_JDHOME:
+
+                break;
+            case Constants.PLATFORM_WAIMAI_MEITUAN:
+
+                break;
+            case Constants.PLATFORM_WAIMAI_ELEME:
+
+                break;
+            default:break;
+        }
+
+        return result;
     }
 
     //门店开业
     public String startBusiness(Map<String,String[]> stringMap){
 
         return shopOpt(stringMap, "shop.open");
+    }
+
+    public String startBusiness(ParsFromPos parsFromPos){
+        String result = "{baidu:{0},jdhome:{1},meituan:{2},eleme:{3}}",
+            result_baidu = null,
+            result_jdhome = null,
+            result_eleme = null,
+            result_meituan = null;
+        result_baidu = baiDuFacadeService.startBusiness(parsFromPos.getBaidu().getShopId(),parsFromPos.getBaidu().getPlatformShopId());
+        result_jdhome = jdHomeFacadeService.startBusiness(parsFromPos.getJdhome().getShopId(),parsFromPos.getJdhome().getPlatformShopId());
+        //result_eleme = eleMeFacadeService.pullNewOrder()
+        return null;
     }
 
     //门店歇业

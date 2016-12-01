@@ -38,18 +38,31 @@ public final class URL {
     public static final String URL_ELENE_NEW_ORDER = "http://v2.openapi.ele.me/order/new/";
     //饿了么拉取新订单
     public static final String URL_ELEME_PULL_NEW_ORDER = "http://v2.openapi.ele.me/order/pull/new/";
-    //饿了么拉取新订单
-    public static final String URL_ELEME_PULL_FIRM_ORDER = "http://v2.openapi.ele.me/order/{0}/status/";
+
+    //订单状态变更
+    public static final String URL_ELEME_STATE_CHANGE_ORDER = "http://v2.openapi.ele.me/order/{0}/status/";
+
+    //饿了么修改订单状态
+    public static final String URL_ELEME_ORDER_STATUS = "http://v2.openapi.ele.me/order/{0}/status/";
+
 //    //获取订单详情
 //    public static final String URL_ELEME_GET_ORDER = "http://v2.openapi.ele.me/order/{0}/";
-//    //取消订单
-//    public static final String URL_ELEME_CANCEL_ORDER = "http://v2.openapi.ele.me/order/{0}/status/";
     //添加食物
     public static final String URL_ELEME_ADD_FOODS = "http://v2.openapi.ele.me/food/";
 //    //获取店铺信息
 //    public static final String URL_ELEME_SHOP_INFO = "http://v2.openapi.ele.me/restaurant/{0}/";
 //    //获取所属餐厅Id
 //    public static final String URL_ELEME_SHOP_ID = "http://v2.openapi.ele.me/restaurant/own/";
+    //食品上下架
+    public static final String URL_ELEME_UPORDOWNFRAME_FOODS = "http://v2.openapi.ele.me/food/{0}/";
+    //获取餐厅食物分类
+    public static final String URL_ELEME_CLASSIFY_FOODS = "http://v2.openapi.ele.me/restaurant/{0}/food_categories/";
+    //获取餐厅食物ID
+    public static final String URL_ELEME_GETFOODSID = "http://v2.openapi.ele.me/food_category/{0}/foods/";
+    //查询订单详情
+    public static final String URL_ELEME_ORDER_DETAIL = "http://v2.openapi.ele.me/order/{0}/";
+    //查询餐厅菜单
+    public static final String URL_ELEME_RESTAURANT_MENU = "http://v2.openapi.ele.me/restaurant/{0}/menu/";
 
 
 }

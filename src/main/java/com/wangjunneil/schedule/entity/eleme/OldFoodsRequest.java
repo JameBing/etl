@@ -4,7 +4,7 @@ package com.wangjunneil.schedule.entity.eleme;
  * Created by admin on 2016/11/28.
  */
 public class OldFoodsRequest {
-    private int food_category_id;
+    private String food_category_id;
     private String name;
     private float price;
     private String description;
@@ -18,12 +18,22 @@ public class OldFoodsRequest {
     private int is_spicy;
     private float packing_fee;
     private int sort_order;
+    private String food_id;
 
-    public int getFood_category_id() {
+
+    public String getFood_id() {
+        return food_id;
+    }
+
+    public void setFood_id(String food_id) {
+        this.food_id = food_id;
+    }
+
+    public String getFood_category_id() {
         return food_category_id;
     }
 
-    public void setFood_category_id(int food_category_id) {
+    public void setFood_category_id(String food_category_id) {
         this.food_category_id = food_category_id;
     }
 

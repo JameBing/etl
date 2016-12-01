@@ -1,8 +1,7 @@
 package com.wangjunneil.schedule.controller.tm;
 
-import com.alibaba.fastjson.JSONObject;
 import com.taobao.api.FileItem;
-import com.taobao.api.request.*;
+import com.taobao.api.request.LogisticsOnlineSendRequest;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.sys.Cfg;
@@ -12,29 +11,24 @@ import com.wangjunneil.schedule.entity.tm.TmallCrmOrder;
 import com.wangjunneil.schedule.entity.tm.TmallCrmRefund;
 import com.wangjunneil.schedule.entity.tm.TmallOrderRequest;
 import com.wangjunneil.schedule.service.SysFacadeService;
-import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.service.TmallFacadeService;
+import com.wangjunneil.schedule.service.sys.SysInnerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  *
@@ -226,6 +220,31 @@ public class TmallController {
 
         Cfg cfg = sysFacadeService.findTmCfg();
         int size = tmallFacadeService.syncOrderByCond(cfg, orderRequest);
+        String returnJson = "{\"status\":1,\"message\":" + size + "}";
+
+        out.println(returnJson);
+        out.close();
+        return null;
+    }
+
+
+    /**
+     * 提供日期范围内查询订单方法：本地拉订单数据使用
+     * @param out
+     * @param req
+     * @return
+     * @throws ScheduleException
+     */
+    @RequestMapping(value = "/queryAllOrder.php")
+    public String queryAllOrderByCond(PrintWriter out, HttpServletRequest req) throws ScheduleException {
+        String startDate    = req.getParameter("startDate");
+        String endDate      = req.getParameter("endDate");
+
+        TmallOrderRequest orderRequest = new TmallOrderRequest();
+        orderRequest.setStartDate(startDate);
+        orderRequest.setEndDate(endDate);
+
+        int size = tmallFacadeService.queryAllByCond(orderRequest);
         String returnJson = "{\"status\":1,\"message\":" + size + "}";
 
         out.println(returnJson);

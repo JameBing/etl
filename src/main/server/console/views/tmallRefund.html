@@ -143,23 +143,23 @@
                         <td>
                             <div class="form-group">
                                 <div class="col-md-12">
-                                    <span ng-show="refund_info.status=='买家已经申请退款'">未审核 |</span>
+                                    <!--<span ng-show="refund_info.status=='买家已经申请退款'">未审核 |</span>
                                     <span ng-show="false">已审核 |</span>
-                                    <span ng-show="false">审核已失效 |</span>
+                                    <span ng-show="false">审核已失效 |</span>-->
                                     <a data-toggle="modal" data-target="#toExamine"
                                        ng-click="refundAuditingDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);" style="cursor:pointer" ng-show="refund_info.status=='买家已经申请退款'">审核</a>
-                                    <a ng-show="false">取消</a>
+                                    <!--<a ng-show="false">取消</a>-->
 
                                     <a ng-show="refund_info.status=='买家已经申请退款'"   data-toggle="modal" data-target="#refundAgreeDiv" style="cursor:pointer;margin-left: 15px;"
                                        ng-click="refundAgreeDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version, refund_info.refund_fee);">同意退款</a>
-                                    <a ng-show="refund_info.status=='买家已经申请退款' && refund_info.has_goods_return=='true'"  data-toggle="modal" data-target="#returnGoodsAddr"  style="cursor:pointer"
+                                    <a ng-show="refund_info.status=='买家已经申请退款' && refund_info.has_good_return==true"  data-toggle="modal" data-target="#returnGoodsAddr"  style="cursor:pointer"
                                        ng-click="returnGoodsAgreeDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);">同意退货</a>
                                     <a ng-show="(refund_info.status=='买家已经申请退款'||refund_info.status=='买家已经退货') && (refund_info.order_status!='等待发货' && refund_info.reason!='7天无理由退换货')"   style="cursor:pointer;margin-left: 10px;"
                                        data-toggle="modal" data-target="#refundRefuseDiv" ng-click="refundRefuseDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);">拒绝退款</a>
-                                    <a ng-show="(refund_info.status=='买家已经申请退款'||refund_info.status=='买家已经退货') && (refund_info.order_status!='等待发货' && refund_info.reason!='7天无理由退换货') && refund_info.has_goods_return=='true'"   style="cursor:pointer"
+                                    <a ng-show="(refund_info.status=='买家已经申请退款'||refund_info.status=='买家已经退货') && (refund_info.order_status!='等待发货' && refund_info.reason!='7天无理由退换货') && refund_info.has_good_return=='true'"   style="cursor:pointer"
                                        data-toggle="modal" data-target="#returnGoodsRefuseDiv" ng-click="returnGoodsRefuseDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);">拒绝退货</a>
                             <!--<a class="btn btn-default btn-sm btn-block" style="display:inline-block" style="display:inline-block"
-                               ng-click="refundAgree(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version, refund_info.refund_fee);">同意退款</a>
+                               ng-click="refundAgree(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version, refund_info.refund_fee);">同意退款</a >
                             <a class="btn btn-default btn-sm btn-block" data-toggle="modal" data-target="#returnGoodsAddr" style="display:inline-block"
                                ng-click="returnGoodsAgreeDiv(refund_info.refund_id, refund_info.refund_phase, refund_info.refund_version);">同意退货</a>
                             <a class="btn btn-default btn-sm btn-block" data-toggle="modal" data-target="#refundRefuseDiv" style="display:inline-block"
@@ -217,6 +217,9 @@
                             <div class="alert alert-warning" ng-show="refundAuditingStatus" style="text-align: center;"><!--错误警告-->
                                 <strong>{{refundAuditingMsg}}</strong>
                             </div>
+                            <div class="alert alert-success" ng-show="successRefundAuditingStatus" style="text-align: center;"><!--成功提示-->
+                                <strong>{{successRefundAuditingMsg}}</strong>
+                            </div>
                             <form name="cardForm" class="form-horizontal form-row-seperated ng-dirty ng-valid ng-valid-required" novalidate="novalidate">
                                 <input type="hidden" ng-model="refundId5">
                                 <input type="hidden" ng-model="refundPhase5">
@@ -259,7 +262,8 @@
                                 <input type="hidden" ng-model="refundVersion6">
                                 <input type="hidden" ng-model="amount6">
                                 <div class="form-group">
-                                    <label class="col-md-7">你确定要退款吗？</label>
+                                    <label class="col-md-7" style="color:#FF0000">如需验证码退款，验证码将发送至子帐号手机。</label>
+                                    <label class="col-md-7" style="margin-top: 20px;">你确定要退款吗？</label>
                                 </div>
                                 <div class="form-group" ng-show="isVerification">
                                     <label class="col-md-3">短信验证码<span class="required"> * </span></label>
