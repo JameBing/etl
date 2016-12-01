@@ -77,5 +77,47 @@ public class EleMeFacadeService {
         return  result;
     }
 
+    //商品上下架
+    public String Upordownframe(String elemeFoodId ,int status){
+        String result = null;
+        try {
+            OldFoodsRequest orderRequest = new OldFoodsRequest();
+            orderRequest.setFood_id(elemeFoodId);
+            orderRequest.setStock(status);
+            result = eleMeApiService.Upordownframe(orderRequest);
+        } catch (ScheduleException e) {
+            e.printStackTrace();
+        }
+        return  result;
+    }
+
+    //添加食品
+    public String addFoods(OldFoodsRequest obj){
+        String result = null;
+        try {
+            OldFoodsRequest orderRequest = new OldFoodsRequest();
+            orderRequest.setFood_id(obj.getFood_category_id());
+            orderRequest.setName(obj.getName());
+            orderRequest.setPrice(obj.getPrice());
+            orderRequest.setDescription(obj.getDescription());
+            orderRequest.setMax_stock(obj.getMax_stock());
+            orderRequest.setStock(obj.getStock());
+            result = eleMeApiService.addFoods(orderRequest);
+        } catch (ScheduleException e) {
+            e.printStackTrace();
+        }
+        return  result;
+    }
+    //查询餐厅菜单
+    public String restaurantmenu(){
+        String result = null;
+        try {
+            result = eleMeApiService.restaurantmenu();
+        } catch (ScheduleException e) {
+            e.printStackTrace();
+        }
+        return  result;
+    }
+
 
 }
