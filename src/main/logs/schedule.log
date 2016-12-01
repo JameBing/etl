@@ -8325,3 +8325,1550 @@ Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProc
 	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
 	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
 	... 54 more
+2016-12-01 14:00:45,623 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:00:45,877 | INFO  | Logging initialized @687ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:00:45,952 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:00:46,211 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:00:47,572 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:00:47,733 | INFO  | Opened connection [connectionId{localValue:1, serverValue:262}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fbc8f907be51eace65eee', description='null'}-192.168.1.190:27017
+2016-12-01 14:00:47,735 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=821404} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fbc8f907be51eace65eee', description='null'}-192.168.1.190:27017
+2016-12-01 14:00:48,278 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:03:16,630 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:03:16,671 | INFO  | Logging initialized @248ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:03:16,768 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:03:17,207 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:03:18,253 | INFO  | Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:03:18,776 | WARN  | Failed startup of context o.e.j.w.WebAppContext@22b53226{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:03:34,529 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:03:34,560 | INFO  | Logging initialized @219ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:03:34,643 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:03:34,864 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:03:36,157 | INFO  | Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:03:36,646 | WARN  | Failed startup of context o.e.j.w.WebAppContext@22b53226{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:05:46,827 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:05:46,853 | INFO  | Logging initialized @244ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:05:46,938 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:05:47,186 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:05:48,181 | INFO  | Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:05:48,663 | WARN  | Failed startup of context o.e.j.w.WebAppContext@22b53226{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:07:18,121 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:07:18,144 | INFO  | Logging initialized @196ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:07:18,220 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:07:18,440 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:07:19,658 | INFO  | Cluster created with settings {hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:07:20,167 | WARN  | Failed startup of context o.e.j.w.WebAppContext@22b53226{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:09:24,343 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:09:24,374 | INFO  | Logging initialized @214ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:09:24,477 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:09:24,684 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:09:25,866 | INFO  | Cluster created with settings {hosts=[127.0.0.1:43221], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:09:26,348 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:10:11,888 | INFO  | Exception in monitor thread while connecting to server 127.0.0.1:43221 | org.mongodb.driver.cluster | cluster-ClusterId{value='583cdd4e907be523648f04ee', description='null'}-127.0.0.1:43221
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.connection.SocketStream.open(SocketStream.java:63)
+	at com.mongodb.connection.InternalStreamConnection.open(InternalStreamConnection.java:115)
+	at com.mongodb.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:130)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at com.mongodb.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:50)
+	at com.mongodb.connection.SocketStream.open(SocketStream.java:58)
+	... 3 more
+2016-12-01 14:10:11,989 | INFO  | Exception in monitor thread while connecting to server 127.0.0.1:43221 | org.mongodb.driver.cluster | cluster-ClusterId{value='583cdd38907be523648f04ed', description='null'}-127.0.0.1:43221
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.connection.SocketStream.open(SocketStream.java:63)
+	at com.mongodb.connection.InternalStreamConnection.open(InternalStreamConnection.java:115)
+	at com.mongodb.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:130)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at com.mongodb.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:50)
+	at com.mongodb.connection.SocketStream.open(SocketStream.java:58)
+	... 3 more
+2016-12-01 14:11:11,921 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:11:11,958 | INFO  | Logging initialized @252ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:11:12,067 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:11:12,289 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:11:13,241 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:11:13,320 | INFO  | Opened connection [connectionId{localValue:1, serverValue:264}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fbf01907be528803258b7', description='null'}-192.168.1.190:27017
+2016-12-01 14:11:13,322 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1081841} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fbf01907be528803258b7', description='null'}-192.168.1.190:27017
+2016-12-01 14:11:13,785 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:12:13,326 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:12:13,353 | INFO  | Logging initialized @234ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:12:13,450 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:12:13,722 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:12:14,678 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:12:14,932 | INFO  | Opened connection [connectionId{localValue:1, serverValue:265}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fbf3e907be51fd42824bc', description='null'}-192.168.1.190:27017
+2016-12-01 14:12:14,934 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1137649} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fbf3e907be51fd42824bc', description='null'}-192.168.1.190:27017
+2016-12-01 14:12:15,266 | WARN  | Failed startup of context o.e.j.w.WebAppContext@22b53226{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:12:23,669 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:12:23,701 | INFO  | Logging initialized @231ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:12:23,799 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:12:24,130 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:12:25,240 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:12:25,321 | INFO  | Opened connection [connectionId{localValue:1, serverValue:266}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fbf49907be51b88e0b87d', description='null'}-192.168.1.190:27017
+2016-12-01 14:12:25,323 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1057465} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fbf49907be51b88e0b87d', description='null'}-192.168.1.190:27017
+2016-12-01 14:12:25,737 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:15:48,975 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:15:49,001 | INFO  | Logging initialized @221ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:15:49,083 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:15:49,271 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:15:50,390 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:15:50,517 | INFO  | Opened connection [connectionId{localValue:1, serverValue:277}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc016907be528cc0a2400', description='null'}-192.168.1.190:27017
+2016-12-01 14:15:50,519 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1192495} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc016907be528cc0a2400', description='null'}-192.168.1.190:27017
+2016-12-01 14:15:50,914 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:15:50,988 | INFO  | Started ServerConnector@4c37b5b{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 14:15:50,988 | INFO  | Started @2216ms | org.eclipse.jetty.server.Server | main
+2016-12-01 14:17:39,410 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:17:39,435 | INFO  | Logging initialized @217ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:17:39,511 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:17:39,707 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:17:40,876 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:17:40,954 | INFO  | Opened connection [connectionId{localValue:1, serverValue:278}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc084907be5077484d0d4', description='null'}-192.168.1.190:27017
+2016-12-01 14:17:40,955 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=576362} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc084907be5077484d0d4', description='null'}-192.168.1.190:27017
+2016-12-01 14:17:41,366 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:17:41,421 | INFO  | Started ServerConnector@4c37b5b{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 14:17:41,421 | INFO  | Started @2210ms | org.eclipse.jetty.server.Server | main
+2016-12-01 14:19:15,702 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:19:15,747 | INFO  | Logging initialized @307ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:19:15,839 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:19:16,029 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:19:16,933 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:19:17,010 | INFO  | Opened connection [connectionId{localValue:1, serverValue:279}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc0e4907be51df0dca281', description='null'}-192.168.1.190:27017
+2016-12-01 14:19:17,013 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1318865} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc0e4907be51df0dca281', description='null'}-192.168.1.190:27017
+2016-12-01 14:19:17,414 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:19:17,468 | INFO  | Started ServerConnector@4c37b5b{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 14:19:17,468 | INFO  | Started @2036ms | org.eclipse.jetty.server.Server | main
+2016-12-01 14:23:14,004 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:23:14,032 | INFO  | Logging initialized @215ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:23:14,127 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:23:14,316 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:23:15,366 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:23:15,446 | INFO  | Opened connection [connectionId{localValue:1, serverValue:280}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc1d3907be510e4a6174c', description='null'}-192.168.1.190:27017
+2016-12-01 14:23:15,447 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=936228} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc1d3907be510e4a6174c', description='null'}-192.168.1.190:27017
+2016-12-01 14:23:15,841 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:23:15,896 | INFO  | Started ServerConnector@4c37b5b{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 14:23:15,896 | INFO  | Started @2087ms | org.eclipse.jetty.server.Server | main
+2016-12-01 14:25:30,735 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:25:30,772 | INFO  | Logging initialized @234ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:25:30,876 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:25:31,087 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:25:32,079 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:25:32,165 | INFO  | Opened connection [connectionId{localValue:1, serverValue:281}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc25c907be51604b78440', description='null'}-192.168.1.190:27017
+2016-12-01 14:25:32,167 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=592078} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc25c907be51604b78440', description='null'}-192.168.1.190:27017
+2016-12-01 14:25:32,643 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:27:14,334 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:27:14,395 | INFO  | Logging initialized @240ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:27:14,526 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:27:14,767 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:27:15,795 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:27:15,975 | INFO  | Opened connection [connectionId{localValue:1, serverValue:282}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc2c307665f1f1c1d2db9', description='null'}-192.168.1.190:27017
+2016-12-01 14:27:15,977 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=809537} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc2c307665f1f1c1d2db9', description='null'}-192.168.1.190:27017
+2016-12-01 14:27:16,550 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:27:16,624 | INFO  | Started ServerConnector@4c37b5b{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 14:27:16,624 | INFO  | Started @2511ms | org.eclipse.jetty.server.Server | main
+2016-12-01 14:31:47,735 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:31:47,775 | INFO  | Logging initialized @246ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:31:47,877 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:31:48,119 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:31:49,184 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:31:49,262 | INFO  | Opened connection [connectionId{localValue:1, serverValue:283}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc3d507665f14e0c6c62f', description='null'}-192.168.1.190:27017
+2016-12-01 14:31:49,264 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1119047} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc3d507665f14e0c6c62f', description='null'}-192.168.1.190:27017
+2016-12-01 14:31:49,717 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:31:55,795 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:31:55,825 | INFO  | Logging initialized @212ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:31:55,919 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:31:56,125 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:31:57,381 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:31:57,467 | INFO  | Opened connection [connectionId{localValue:1, serverValue:284}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc3dd07665f2074b3d38b', description='null'}-192.168.1.190:27017
+2016-12-01 14:31:57,469 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=853478} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc3dd07665f2074b3d38b', description='null'}-192.168.1.190:27017
+2016-12-01 14:31:57,889 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:32:31,667 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:32:31,711 | INFO  | Logging initialized @412ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:32:31,884 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:32:32,437 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:32:33,624 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:32:33,741 | INFO  | Opened connection [connectionId{localValue:1, serverValue:285}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc40107665f0ab0ee0b4d', description='null'}-192.168.1.190:27017
+2016-12-01 14:32:33,746 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=3488962} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc40107665f0ab0ee0b4d', description='null'}-192.168.1.190:27017
+2016-12-01 14:32:34,374 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:32:34,452 | INFO  | Started ServerConnector@4c37b5b{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 14:32:34,452 | INFO  | Started @3161ms | org.eclipse.jetty.server.Server | main
+2016-12-01 14:32:48,070 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:32:48,101 | INFO  | Logging initialized @261ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:32:48,181 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:32:48,373 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:32:49,459 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:32:49,569 | INFO  | Opened connection [connectionId{localValue:1, serverValue:287}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc41107665f0ca8b388dc', description='null'}-192.168.1.190:27017
+2016-12-01 14:32:49,572 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1170686} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc41107665f0ca8b388dc', description='null'}-192.168.1.190:27017
+2016-12-01 14:32:50,011 | WARN  | Failed startup of context o.e.j.w.WebAppContext@60d1a32f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,STARTING} | org.eclipse.jetty.webapp.WebAppContext | main
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#0' defined in URL [file:/D:/zhongtai/workplace/schedule-center-v1/target/classes/ctx.xml]: Initialization of bean failed; nested exception is java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:553)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:306)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:197)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:775)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:861)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541)
+	at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+	at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+	at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+	at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized(ContextHandler.java:835)
+	at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:530)
+	at org.eclipse.jetty.server.handler.ContextHandler.startContext(ContextHandler.java:808)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:342)
+	at org.eclipse.jetty.webapp.WebAppContext.startWebapp(WebAppContext.java:1380)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1342)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:772)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:259)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:518)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:132)
+	at org.eclipse.jetty.server.Server.start(Server.java:405)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:106)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:61)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:372)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:68)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.startJetty(ScheduleMain.java:81)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.start(ScheduleMain.java:38)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.process(ScheduleMain.java:177)
+	at com.wangjunneil.schedule.bootstrap.ScheduleMain.main(ScheduleMain.java:194)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:134)
+Caused by: java.lang.NoClassDefFoundError: com/fasterxml/jackson/core/JsonProcessingException
+	at java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.lang.Class.privateGetDeclaredMethods(Class.java:2701)
+	at java.lang.Class.getDeclaredMethods(Class.java:1975)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:612)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:524)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:510)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:243)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1069)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1042)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:510)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:482)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveInnerBean(BeanDefinitionValueResolver.java:299)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:122)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveManagedList(BeanDefinitionValueResolver.java:382)
+	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveValueIfNecessary(BeanDefinitionValueResolver.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyPropertyValues(AbstractAutowireCapableBeanFactory.java:1481)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1226)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:543)
+	... 36 more
+Caused by: java.lang.ClassNotFoundException: com.fasterxml.jackson.core.JsonProcessingException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 54 more
+2016-12-01 14:32:50,065 | INFO  | Started ServerConnector@4c37b5b{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 14:32:50,065 | INFO  | Started @2232ms | org.eclipse.jetty.server.Server | main
+2016-12-01 14:37:59,001 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:37:59,029 | INFO  | Logging initialized @340ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:37:59,112 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:37:59,350 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:38:00,266 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:38:00,345 | INFO  | Opened connection [connectionId{localValue:1, serverValue:296}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc54807665f197860c174', description='null'}-192.168.1.190:27017
+2016-12-01 14:38:00,347 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1218154} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc54807665f197860c174', description='null'}-192.168.1.190:27017
+2016-12-01 14:38:22,222 | INFO  | Opened connection [connectionId{localValue:2, serverValue:299}] to 192.168.1.190:27017 | org.mongodb.driver.connection | main
+2016-12-01 14:38:22,294 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-12-01 14:38:22,406 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:38:22,415 | INFO  | Opened connection [connectionId{localValue:3, serverValue:300}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fc55e07665f197860c175', description='null'}-192.168.1.190:27017
+2016-12-01 14:38:22,415 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=652056} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fc55e07665f197860c175', description='null'}-192.168.1.190:27017
+2016-12-01 14:38:43,556 | INFO  | Started o.e.j.w.WebAppContext@5f462e3b{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-12-01 14:38:43,607 | INFO  | Started ServerConnector@4b1abd11{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 14:38:43,607 | INFO  | Started @44927ms | org.eclipse.jetty.server.Server | main
+2016-12-01 14:38:53,000 | INFO  | Opened connection [connectionId{localValue:4, serverValue:301}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-35
+2016-12-01 14:44:07,929 | INFO  | [127.0.0.1] request /mark/tmall/controlStatus.php params {} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-49
+2016-12-01 14:48:24,459 | INFO  | [127.0.0.1] request /mark/jd/jdControl.php params {} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-188
+2016-12-01 14:54:16,086 | INFO  | [127.0.0.1] request /mark/tmall/controlStatus.php params {} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-278
+2016-12-01 14:54:17,374 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-278
+2016-12-01 14:54:17,374 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-280
+2016-12-01 14:54:17,465 | INFO  | Opened connection [connectionId{localValue:5, serverValue:312}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-278
+2016-12-01 14:58:06,834 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 14:58:06,860 | INFO  | Logging initialized @233ms | org.eclipse.jetty.util.log | main
+2016-12-01 14:58:06,953 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 14:58:07,150 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 14:58:08,146 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:58:08,220 | INFO  | Opened connection [connectionId{localValue:1, serverValue:313}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fca0007665f221437f429', description='null'}-192.168.1.190:27017
+2016-12-01 14:58:08,222 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1601113} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fca0007665f221437f429', description='null'}-192.168.1.190:27017
+2016-12-01 14:58:30,003 | INFO  | Opened connection [connectionId{localValue:2, serverValue:314}] to 192.168.1.190:27017 | org.mongodb.driver.connection | main
+2016-12-01 14:58:30,075 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-12-01 14:58:30,179 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 14:58:30,186 | INFO  | Opened connection [connectionId{localValue:3, serverValue:315}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fca1607665f221437f42a', description='null'}-192.168.1.190:27017
+2016-12-01 14:58:30,187 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=975037} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fca1607665f221437f42a', description='null'}-192.168.1.190:27017
+2016-12-01 14:58:51,329 | INFO  | Started o.e.j.w.WebAppContext@5f462e3b{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-12-01 14:58:51,375 | INFO  | Started ServerConnector@4b1abd11{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 14:58:51,375 | INFO  | Started @44757ms | org.eclipse.jetty.server.Server | main
+2016-12-01 14:59:00,457 | INFO  | Opened connection [connectionId{localValue:4, serverValue:316}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-15
+2016-12-01 14:59:00,457 | INFO  | Opened connection [connectionId{localValue:5, serverValue:317}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-38
+2016-12-01 15:04:10,277 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 15:04:10,306 | INFO  | Logging initialized @243ms | org.eclipse.jetty.util.log | main
+2016-12-01 15:04:10,410 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 15:04:10,755 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 15:04:11,759 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:04:11,839 | INFO  | Opened connection [connectionId{localValue:1, serverValue:319}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fcb6b07665f1528e8e7f3', description='null'}-192.168.1.190:27017
+2016-12-01 15:04:11,840 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=776822} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fcb6b07665f1528e8e7f3', description='null'}-192.168.1.190:27017
+2016-12-01 15:04:33,643 | INFO  | Opened connection [connectionId{localValue:2, serverValue:321}] to 192.168.1.190:27017 | org.mongodb.driver.connection | main
+2016-12-01 15:04:33,714 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-12-01 15:04:33,838 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:04:33,847 | INFO  | Opened connection [connectionId{localValue:3, serverValue:322}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fcb8107665f1528e8e7f4', description='null'}-192.168.1.190:27017
+2016-12-01 15:04:33,848 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=814668} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fcb8107665f1528e8e7f4', description='null'}-192.168.1.190:27017
+2016-12-01 15:04:54,977 | INFO  | Started o.e.j.w.WebAppContext@5f462e3b{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-12-01 15:04:55,026 | INFO  | Started ServerConnector@4b1abd11{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 15:04:55,026 | INFO  | Started @44976ms | org.eclipse.jetty.server.Server | main
+2016-12-01 15:04:58,928 | INFO  | Opened connection [connectionId{localValue:4, serverValue:323}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-15
+2016-12-01 15:06:27,635 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 15:06:27,668 | INFO  | Logging initialized @243ms | org.eclipse.jetty.util.log | main
+2016-12-01 15:06:27,758 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 15:06:27,980 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 15:06:28,986 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:06:29,057 | INFO  | Opened connection [connectionId{localValue:1, serverValue:324}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fcbf407665f22f46dfc90', description='null'}-192.168.1.190:27017
+2016-12-01 15:06:29,058 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=587909} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fcbf407665f22f46dfc90', description='null'}-192.168.1.190:27017
+2016-12-01 15:06:50,857 | INFO  | Opened connection [connectionId{localValue:2, serverValue:326}] to 192.168.1.190:27017 | org.mongodb.driver.connection | main
+2016-12-01 15:06:50,930 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-12-01 15:06:51,038 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:06:51,044 | INFO  | Opened connection [connectionId{localValue:3, serverValue:327}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fcc0b07665f22f46dfc91', description='null'}-192.168.1.190:27017
+2016-12-01 15:06:51,046 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1812798} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fcc0b07665f22f46dfc91', description='null'}-192.168.1.190:27017
+2016-12-01 15:07:12,173 | INFO  | Started o.e.j.w.WebAppContext@5f462e3b{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-12-01 15:07:12,220 | INFO  | Started ServerConnector@4b1abd11{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 15:07:12,221 | INFO  | Started @44804ms | org.eclipse.jetty.server.Server | main
+2016-12-01 15:14:19,245 | INFO  | Opened connection [connectionId{localValue:4, serverValue:336}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-150
+2016-12-01 15:15:13,370 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 15:15:13,399 | INFO  | Logging initialized @243ms | org.eclipse.jetty.util.log | main
+2016-12-01 15:15:13,501 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 15:15:13,770 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 15:15:14,609 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:15:14,689 | INFO  | Opened connection [connectionId{localValue:1, serverValue:337}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fce0207665f1e2454f1ba', description='null'}-192.168.1.190:27017
+2016-12-01 15:15:14,691 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=534025} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fce0207665f1e2454f1ba', description='null'}-192.168.1.190:27017
+2016-12-01 15:15:35,548 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 15:15:35,572 | INFO  | Logging initialized @228ms | org.eclipse.jetty.util.log | main
+2016-12-01 15:15:35,655 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 15:15:35,879 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 15:15:37,063 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:15:37,141 | INFO  | Opened connection [connectionId{localValue:1, serverValue:338}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fce1907665f20a8a8ac5c', description='null'}-192.168.1.190:27017
+2016-12-01 15:15:37,143 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1178383} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fce1907665f20a8a8ac5c', description='null'}-192.168.1.190:27017
+2016-12-01 15:15:58,998 | INFO  | Opened connection [connectionId{localValue:2, serverValue:339}] to 192.168.1.190:27017 | org.mongodb.driver.connection | main
+2016-12-01 15:15:59,073 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-12-01 15:15:59,184 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:15:59,205 | INFO  | Opened connection [connectionId{localValue:3, serverValue:340}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fce2f07665f20a8a8ac5d', description='null'}-192.168.1.190:27017
+2016-12-01 15:15:59,207 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=2417705} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fce2f07665f20a8a8ac5d', description='null'}-192.168.1.190:27017
+2016-12-01 15:16:20,327 | INFO  | Started o.e.j.w.WebAppContext@5f462e3b{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-12-01 15:16:20,377 | INFO  | Started ServerConnector@4b1abd11{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 15:16:20,377 | INFO  | Started @45042ms | org.eclipse.jetty.server.Server | main
+2016-12-01 15:16:20,910 | INFO  | Opened connection [connectionId{localValue:4, serverValue:341}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-15
+2016-12-01 15:16:20,940 | INFO  | Opened connection [connectionId{localValue:5, serverValue:342}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-37
+2016-12-01 15:16:52,487 | INFO  | [127.0.0.1] request /mark/tmall/controlStatus.php params {} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-36
+2016-12-01 15:21:31,180 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 15:21:31,204 | INFO  | Logging initialized @198ms | org.eclipse.jetty.util.log | main
+2016-12-01 15:21:31,283 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 15:21:31,535 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 15:21:32,711 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:21:32,791 | INFO  | Opened connection [connectionId{localValue:1, serverValue:349}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fcf7c07665f0314c36f93', description='null'}-192.168.1.190:27017
+2016-12-01 15:21:32,792 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=691827} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fcf7c07665f0314c36f93', description='null'}-192.168.1.190:27017
+2016-12-01 15:21:54,552 | INFO  | Opened connection [connectionId{localValue:2, serverValue:350}] to 192.168.1.190:27017 | org.mongodb.driver.connection | main
+2016-12-01 15:21:54,623 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-12-01 15:21:54,750 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:21:54,758 | INFO  | Opened connection [connectionId{localValue:3, serverValue:351}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fcf9207665f0314c36f94', description='null'}-192.168.1.190:27017
+2016-12-01 15:21:54,761 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=2760251} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fcf9207665f0314c36f94', description='null'}-192.168.1.190:27017
+2016-12-01 15:22:15,910 | INFO  | Started o.e.j.w.WebAppContext@5f462e3b{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-12-01 15:22:15,960 | INFO  | Started ServerConnector@4b1abd11{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 15:22:15,960 | INFO  | Started @44963ms | org.eclipse.jetty.server.Server | main
+2016-12-01 15:22:21,646 | INFO  | Opened connection [connectionId{localValue:4, serverValue:352}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-31
+2016-12-01 15:22:21,707 | INFO  | [127.0.0.1] request /mark/tmall/controlStatus.php params {} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-38
+2016-12-01 15:22:28,687 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-34
+2016-12-01 15:22:28,687 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-15
+2016-12-01 15:22:28,776 | INFO  | Opened connection [connectionId{localValue:5, serverValue:353}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-34
+2016-12-01 15:23:01,759 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-01 15:23:01,790 | INFO  | Logging initialized @217ms | org.eclipse.jetty.util.log | main
+2016-12-01 15:23:01,870 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-01 15:23:02,128 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-01 15:23:03,262 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:23:03,337 | INFO  | Opened connection [connectionId{localValue:1, serverValue:354}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fcfd707665f1538c1f9ad', description='null'}-192.168.1.190:27017
+2016-12-01 15:23:03,340 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1233549} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fcfd707665f1538c1f9ad', description='null'}-192.168.1.190:27017
+2016-12-01 15:23:25,148 | INFO  | Opened connection [connectionId{localValue:2, serverValue:355}] to 192.168.1.190:27017 | org.mongodb.driver.connection | main
+2016-12-01 15:23:25,219 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-12-01 15:23:25,330 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-01 15:23:25,333 | INFO  | Opened connection [connectionId{localValue:3, serverValue:356}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='583fcfed07665f1538c1f9ae', description='null'}-192.168.1.190:27017
+2016-12-01 15:23:25,334 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=555514} | org.mongodb.driver.cluster | cluster-ClusterId{value='583fcfed07665f1538c1f9ae', description='null'}-192.168.1.190:27017
+2016-12-01 15:23:46,482 | INFO  | Started o.e.j.w.WebAppContext@5f462e3b{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-12-01 15:23:46,533 | INFO  | Started ServerConnector@4b1abd11{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-01 15:23:46,533 | INFO  | Started @44970ms | org.eclipse.jetty.server.Server | main
+2016-12-01 15:24:16,628 | INFO  | Opened connection [connectionId{localValue:4, serverValue:357}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-40
+2016-12-01 15:24:17,199 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-15
+2016-12-01 15:24:17,199 | INFO  | [127.0.0.1] request /mark/tmall/getHistoryOrder.php params {currentPage=[1],pageSize=[20],orderState=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-45
+2016-12-01 15:24:17,304 | INFO  | Opened connection [connectionId{localValue:5, serverValue:358}] to 192.168.1.190:27017 | org.mongodb.driver.connection | HTTP-SERVER-THREAD-15
+2016-12-01 15:24:47,621 | INFO  | [127.0.0.1] request /mark/tmall/getRefundOrder.php params {pageSize=[20],currentPage=[1],refundId=[all],status=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-50
+2016-12-01 15:24:47,626 | INFO  | [127.0.0.1] request /mark/tmall/getRefundOrder.php params {pageSize=[20],currentPage=[1],refundId=[all],status=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-49
+2016-12-01 15:29:39,020 | INFO  | [127.0.0.1] request /mark/tmall/getRefundOrder.php params {pageSize=[20],currentPage=[1],refundId=[all],status=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-52
+2016-12-01 15:29:39,022 | INFO  | [127.0.0.1] request /mark/tmall/getRefundOrder.php params {pageSize=[20],currentPage=[1],refundId=[all],status=[]} | com.wangjunneil.schedule.interceptor.AccessController | HTTP-SERVER-THREAD-130

@@ -78,13 +78,13 @@ public class EleMeFacadeService {
     }
 
     //商品上下架
-    public String Upordownframe(String elemeFoodId ,int status){
+    public String uporDownFrame(String elemeFoodId ,int status){
         String result = null;
         try {
             OldFoodsRequest orderRequest = new OldFoodsRequest();
             orderRequest.setFood_id(elemeFoodId);
             orderRequest.setStock(status);
-            result = eleMeApiService.Upordownframe(orderRequest);
+            result = eleMeApiService.uporDownFrame(orderRequest);
         } catch (ScheduleException e) {
             e.printStackTrace();
         }
@@ -108,16 +108,30 @@ public class EleMeFacadeService {
         }
         return  result;
     }
+
     //查询餐厅菜单
-    public String restaurantmenu(){
+    public String restaurantMenu(OldFoodsRequest obj){
         String result = null;
         try {
-            result = eleMeApiService.restaurantmenu();
+            result = eleMeApiService.restaurantMenu();
         } catch (ScheduleException e) {
             e.printStackTrace();
         }
         return  result;
     }
 
+    //更新食物
+    public String uporDownFrame(OldFoodsRequest obj){
+        String result = null;
+        try {
+            OldFoodsRequest orderRequest = new OldFoodsRequest();
+            orderRequest.setFood_id(obj.getFood_id());
+            orderRequest.setPrice(obj.getPrice());
+            result = eleMeApiService.uporDownFrame(orderRequest);
+        } catch (ScheduleException e) {
+            e.printStackTrace();
+        }
+        return  result;
+    }
 
 }
