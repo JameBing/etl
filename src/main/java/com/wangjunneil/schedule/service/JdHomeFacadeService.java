@@ -63,7 +63,7 @@ public class JdHomeFacadeService {
      * @param stockRequests 商品列表
      * @return
      */
-    public String updateAllStockOn(List<QueryStockRequest> stockRequests ,String shopId) throws JdHomeException{
+    public String updateAllStockOn(List<QueryStockRequest> stockRequests ,String shopId){
         try{
             String json = jdHomeApiService.updateAllStockOn(stockRequests,shopId);
             return json;
@@ -92,7 +92,7 @@ public class JdHomeFacadeService {
      * @return
      * @throws Exception
      */
-    public String updateShopCategory(shopCategory shopCategory)throws JdHomeException{
+    public String updateShopCategory(shopCategory shopCategory){
         try {
             String json = jdHomeApiService.updateShopCategory(shopCategory);
             return  json;
@@ -107,7 +107,7 @@ public class JdHomeFacadeService {
      * @return
      * @throws Exception
      */
-    public String deleteShopCategory(shopCategory shopCategory)throws JdHomeException{
+    public String deleteShopCategory(shopCategory shopCategory){
         try{
             String json = jdHomeApiService.deleteShopCategory(shopCategory);
             return json;
@@ -118,80 +118,84 @@ public class JdHomeFacadeService {
     }
 
     //新增推送订单
-    public String newOrder(String billId,String statusId,String timestamp,String shopId)throws Exception{
-        String json  = jdHomeApiService.newOrder(billId,statusId,timestamp,shopId);
-        JSONObject jsonObject =JSONObject.parseObject(json);
-        JSONObject apiJson= JSONObject.parseObject(jsonObject.getString("data"));
-        if("0".equals(jsonObject.get("code")) && "0".equals(apiJson.getString("code"))){
-            log.info("=====订单接口推送成功=====");
-        }else {
-            log.info("=====订单接口推送失败=====");
-            return "{\"code\":\"1\",\"msg\":\"failure\",\"data\":\"{}\"}";
-        }
-        JSONArray jsonArray = JSONObject.parseObject(apiJson.getString("result")).getJSONArray("resultList");
-        if(jsonArray!=null && jsonArray.size()>0){
-            List<OrderInfoDTO> orders = new ArrayList<>();
-            for(int i=0; i<jsonArray.size();i++){
-                OrderInfoDTO order = new OrderInfoDTO();
-                //订单详情
-                JSONObject jsonOrder = jsonArray.getJSONObject(i);
-                order.setOrderId(jsonOrder.getLong("orderId"));
-                order.setSrcOrderId(jsonOrder.getString("srcOrderId"));
-                order.setSrcInnerType(jsonOrder.getInteger("srcInnerType"));
-                order.setSrcInnerOrderId(jsonOrder.getLong("srcInnerOrderId"));
-                order.setOrderType(jsonOrder.getInteger("orderType"));
-                order.setOrderStatus(jsonOrder.getInteger("orderStatus"));
-                order.setOrderStatusTime(jsonOrder.getDate("orderStatusTime"));
-                order.setOrderStartTime(jsonOrder.getDate("orderStartTime"));
-                order.setOrderPurchaseTime(jsonOrder.getDate("orderPurchaseTime"));
-                order.setOrderAgingType(jsonOrder.getInteger("orderAgingType"));
-                order.setOrderPreStartDeliveryTime(jsonOrder.getDate("orderPreStartDeliveryTime"));
-                order.setOrderPreEndDeliveryTime(jsonOrder.getDate("orderPreEndDeliveryTime"));
-                order.setOrderCancelTime(jsonOrder.getDate("orderCancelTime"));
-                order.setOrderCancelRemark(jsonOrder.getString("orderCancelRemark"));
-                order.setOrgCode(jsonOrder.getString("orgCode"));
-                order.setBuyerFullName(jsonOrder.getString("buyerFullName"));
-                order.setBuyerFullAddress(jsonOrder.getString("buyerFullAddress"));
-                order.setBuyerTelephone(jsonOrder.getString("buyerTelephone"));
-                order.setBuyerMobile(jsonOrder.getString("buyerMobile"));
-                order.setProduceStationNo(jsonOrder.getString("produceStationNo"));
-                order.setProduceStationName(jsonOrder.getString("produceStationName"));
-                order.setProduceStationNoIsv(jsonOrder.getString("produceStationNoIsv"));
-                order.setDeliveryStationNo(jsonOrder.getString("deliveryStationNo"));
-                order.setDeliveryStationName(jsonOrder.getString("deliveryStationName"));
-                order.setDeliveryCarrierNo(jsonOrder.getString("deliveryCarrierNo"));
-                order.setDeliveryCarrierName(jsonOrder.getString("deliveryCarrierName"));
-                order.setDeliveryBillNo(jsonOrder.getString("deliveryBillNo"));
-                order.setDeliveryPackageWeight(jsonOrder.getDouble("deliveryPackageWeight"));
-                order.setDeliveryConfirmTime(jsonOrder.getDate("deliveryConfirmTime"));
-                order.setOrderPayType(jsonOrder.getInteger("orderPayType"));
-                order.setOrderTotalMoney(jsonOrder.getLong("orderTotalMoney"));
-                order.setOrderDiscountMoney(jsonOrder.getLong("orderDiscountMoney"));
-                order.setOrderFreightMoney(jsonOrder.getLong("orderFreightMoney"));
-                order.setOrderBuyerPayableMoney(jsonOrder.getLong("orderBuyerPayableMoney"));
-                order.setPackagingMoney(jsonOrder.getLong("packagingMoney"));
-                order.setOrderInvoiceOpenMark(jsonOrder.getInteger("orderInvoiceOpenMark"));
-                order.setAdjustId(jsonOrder.getLong("adjustId"));
-                order.setAdjustIsExists(jsonOrder.getBoolean("adjustIsExists"));
-                order.setTs(jsonOrder.getDate("ts"));
-                //扩展类
-                order.setOrderExtend(getOrdeExtend(jsonOrder.getJSONObject("orderExtend")));
-                //商品信息
-                order.setProductList(getProducts(jsonOrder.getJSONArray("product")));
-                //折扣信息
-                order.setDiscountList(getDiscounts(jsonOrder.getJSONArray("discount")));
-                orders.add(order);
+    public String newOrder(String billId,String statusId,String timestamp,String shopId){
+        try {
+            String json  = jdHomeApiService.newOrder(billId,statusId,timestamp,shopId);
+            JSONObject jsonObject =JSONObject.parseObject(json);
+            JSONObject apiJson= JSONObject.parseObject(jsonObject.getString("data"));
+            if("0".equals(jsonObject.get("code")) && "0".equals(apiJson.getString("code"))){
+                log.info("=====订单接口推送成功=====");
+            }else {
+                log.info("=====订单接口推送失败=====");
+                return "{\"code\":\"1\",\"msg\":\"failure\",\"data\":\"{}\"}";
             }
-            if(orders !=null && orders.size()>0){
-                log.info("=====MongoDb insert Order start====");
-                try {
-                    jdHomeInnerService.addOrUpdateSyncOrder(orders);
-                }catch (Exception e){
-                    return "{\"code\":\"2\",\"msg\":\"failure\",\"data\":\"{}\"}";
+            JSONArray jsonArray = JSONObject.parseObject(apiJson.getString("result")).getJSONArray("resultList");
+            if(jsonArray!=null && jsonArray.size()>0){
+                List<OrderInfoDTO> orders = new ArrayList<>();
+                for(int i=0; i<jsonArray.size();i++){
+                    OrderInfoDTO order = new OrderInfoDTO();
+                    //订单详情
+                    JSONObject jsonOrder = jsonArray.getJSONObject(i);
+                    order.setOrderId(jsonOrder.getLong("orderId"));
+                    order.setSrcOrderId(jsonOrder.getString("srcOrderId"));
+                    order.setSrcInnerType(jsonOrder.getInteger("srcInnerType"));
+                    order.setSrcInnerOrderId(jsonOrder.getLong("srcInnerOrderId"));
+                    order.setOrderType(jsonOrder.getInteger("orderType"));
+                    order.setOrderStatus(jsonOrder.getInteger("orderStatus"));
+                    order.setOrderStatusTime(jsonOrder.getDate("orderStatusTime"));
+                    order.setOrderStartTime(jsonOrder.getDate("orderStartTime"));
+                    order.setOrderPurchaseTime(jsonOrder.getDate("orderPurchaseTime"));
+                    order.setOrderAgingType(jsonOrder.getInteger("orderAgingType"));
+                    order.setOrderPreStartDeliveryTime(jsonOrder.getDate("orderPreStartDeliveryTime"));
+                    order.setOrderPreEndDeliveryTime(jsonOrder.getDate("orderPreEndDeliveryTime"));
+                    order.setOrderCancelTime(jsonOrder.getDate("orderCancelTime"));
+                    order.setOrderCancelRemark(jsonOrder.getString("orderCancelRemark"));
+                    order.setOrgCode(jsonOrder.getString("orgCode"));
+                    order.setBuyerFullName(jsonOrder.getString("buyerFullName"));
+                    order.setBuyerFullAddress(jsonOrder.getString("buyerFullAddress"));
+                    order.setBuyerTelephone(jsonOrder.getString("buyerTelephone"));
+                    order.setBuyerMobile(jsonOrder.getString("buyerMobile"));
+                    order.setProduceStationNo(jsonOrder.getString("produceStationNo"));
+                    order.setProduceStationName(jsonOrder.getString("produceStationName"));
+                    order.setProduceStationNoIsv(jsonOrder.getString("produceStationNoIsv"));
+                    order.setDeliveryStationNo(jsonOrder.getString("deliveryStationNo"));
+                    order.setDeliveryStationName(jsonOrder.getString("deliveryStationName"));
+                    order.setDeliveryCarrierNo(jsonOrder.getString("deliveryCarrierNo"));
+                    order.setDeliveryCarrierName(jsonOrder.getString("deliveryCarrierName"));
+                    order.setDeliveryBillNo(jsonOrder.getString("deliveryBillNo"));
+                    order.setDeliveryPackageWeight(jsonOrder.getDouble("deliveryPackageWeight"));
+                    order.setDeliveryConfirmTime(jsonOrder.getDate("deliveryConfirmTime"));
+                    order.setOrderPayType(jsonOrder.getInteger("orderPayType"));
+                    order.setOrderTotalMoney(jsonOrder.getLong("orderTotalMoney"));
+                    order.setOrderDiscountMoney(jsonOrder.getLong("orderDiscountMoney"));
+                    order.setOrderFreightMoney(jsonOrder.getLong("orderFreightMoney"));
+                    order.setOrderBuyerPayableMoney(jsonOrder.getLong("orderBuyerPayableMoney"));
+                    order.setPackagingMoney(jsonOrder.getLong("packagingMoney"));
+                    order.setOrderInvoiceOpenMark(jsonOrder.getInteger("orderInvoiceOpenMark"));
+                    order.setAdjustId(jsonOrder.getLong("adjustId"));
+                    order.setAdjustIsExists(jsonOrder.getBoolean("adjustIsExists"));
+                    order.setTs(jsonOrder.getDate("ts"));
+                    //扩展类
+                    order.setOrderExtend(getOrdeExtend(jsonOrder.getJSONObject("orderExtend")));
+                    //商品信息
+                    order.setProductList(getProducts(jsonOrder.getJSONArray("product")));
+                    //折扣信息
+                    order.setDiscountList(getDiscounts(jsonOrder.getJSONArray("discount")));
+                    orders.add(order);
                 }
-                log.info("=====MongoDb insert Order end====");
-                return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}";
+                if(orders !=null && orders.size()>0){
+                    log.info("=====MongoDb insert Order start====");
+                    try {
+                        jdHomeInnerService.addOrUpdateSyncOrder(orders);
+                    }catch (Exception e){
+                        return "{\"code\":\"2\",\"msg\":\"failure\",\"data\":\"{}\"}";
+                    }
+                    log.info("=====MongoDb insert Order end====");
+                    return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}";
+                }
             }
+        }catch (Exception e){
+            return "";
         }
         return null;
     }
@@ -268,7 +272,7 @@ public class JdHomeFacadeService {
     }
 
     //商家确认/取消接单接口
-    public String orderAcceptOperate(OrderAcceptOperate acceptOperate)throws JdHomeException{
+    public String orderAcceptOperate(OrderAcceptOperate acceptOperate){
         try {
             String json = jdHomeApiService.orderAcceptOperate(acceptOperate);
             //返回成功/失败 若成功修改mongodb订单状态

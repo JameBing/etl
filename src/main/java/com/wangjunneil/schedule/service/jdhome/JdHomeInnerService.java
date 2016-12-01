@@ -119,9 +119,16 @@ public class JdHomeInnerService {
         mongoTemplate.upsert(query, update, JdHomeAccessToken.class);
     }
 
-    //获取token值
+    //根据门店Id获取token值
     public JdHomeAccessToken getAccessToken(String shopId) {
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("shopIds").elemMatch(Criteria.where("shopId").is(shopId)));
+        JdHomeAccessToken jdHomeAccessToken = mongoTemplate.findOne(query, JdHomeAccessToken.class);
+        return jdHomeAccessToken;
+    }
+
+    //根据商家Id获取token值
+    public JdHomeAccessToken getAccessTokenByComId(String companyId) {
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(companyId));
         JdHomeAccessToken jdHomeAccessToken = mongoTemplate.findOne(query, JdHomeAccessToken.class);
         return jdHomeAccessToken;
     }

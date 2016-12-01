@@ -153,7 +153,6 @@ public class JdHomeApiService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("orderId",billId);
         jsonObject.put("orderStatus",statusId);
-        //jsonObject.put("orderPurchaseTime_begin",DateTimeUtil.formatDateString(timestamp,"yyyy-MM-dd HH:mm:ss"));
         signParams.setJd_param_json(jsonObject.toJSONString());
         param.put("jd_param_json",jsonObject);
         try {
@@ -198,7 +197,7 @@ public class JdHomeApiService {
         return  sysParam ;
     }
 
-    //获取签名参数
+    //根据门口编号获取签名参数
     private SignParams getSignParams(String shopId){
         JdHomeAccessToken jdHomeAccessToken = jdHomeInnerService.getAccessToken(shopId);
         SignParams signParam = new SignParams();
