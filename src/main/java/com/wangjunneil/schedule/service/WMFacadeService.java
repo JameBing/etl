@@ -64,11 +64,18 @@ public class WMFacadeService {
             case Constants.PLATFORM_WAIMAI_MEITUAN:
                 switch (stringMap.get("push_action")[0]){
                     case "1": //新订单
-
+                        eleMeFacadeService.getNewOrder(stringMap.get("eleme_order_ids")[0]);
                         break;
                     case "2": //订单状态变更
+                        eleMeFacadeService.orderChange(stringMap.get("eleme_order_id")[0],stringMap.get("new_status")[0]);
+                        break;
+                    case "3": //退单状态推送
+                        eleMeFacadeService.chargeBack(stringMap.get("eleme_order_id")[0],stringMap.get("refund_status")[0]);
+                        break;
+                    case "4": //订单配送状态推送
 
                         break;
+                    default: break;
                 }
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME:

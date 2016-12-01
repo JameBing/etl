@@ -111,7 +111,7 @@ public class EleMeFacadeService {
         return  result;
     }
 
-    //添加食品
+    //添加食品{}
     public String addFoods(OldFoodsRequest obj){
         String result = null;
         Result rtn = new Result();
@@ -174,17 +174,18 @@ public class EleMeFacadeService {
         return null;
     }
     //订单状态变更接收   new_status：订单状态
-    public String orderChange(String eleme_order_ids,int new_status){
+    public String orderChange(String eleme_order_ids,String new_status){
 
+        //温馨提醒：单个参数传输都使用String类型，因为Request对象的getparamter方法返回的均是String类型，外层做类型转换的话，如果发生异常则无法捕获，异常处理均在这一层处理，所以放在这里做类型转换更合适
         return null;
     }
     //退单状态接收  refund_status:退单订单状态
-    public String chargeBack(String eleme_order_ids,int refund_status){
+    public String chargeBack(String eleme_order_ids,String refund_status){
 
         return  null;
     }
     //订单配送状态接收
-    public String distributionStatus(String eleme_order_ids,int status_code,int sub_status_code){
+    public String distributionStatus(String eleme_order_ids,String status_code,int sub_status_code){
 
         return  null;
     }
