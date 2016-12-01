@@ -28,16 +28,57 @@ public class MeiTuanController {
     private MeiTuanFacadeService mtFacadeService;
 
 
-    //测试关店接口
-    public String closeStore(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws ScheduleException{
+    //测试开店接口
+    @RequestMapping(value = "/mtapi/openshop",method = RequestMethod.GET)
+    public String openShop(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws ScheduleException{
         resp.setContentType("text/html;charset=utf-8");
-        String code = "22222";
+        String code = "test_poi_01";
+        String params = mtFacadeService.openShop(code);
+        out.println(params);
+        out.close();
+        return null;
+    }
+
+    //测试关店接口
+    @RequestMapping(value = "/mtapi/closeshop",method = RequestMethod.GET)
+    public String closeShop(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws ScheduleException{
+        resp.setContentType("text/html;charset=utf-8");
+        String code = "test_poi_01";
         String params = mtFacadeService.closeShop(code);
         out.println(params);
         out.close();
         return null;
     }
- 
+
+
+    //测试商家确认订单接口
+    @RequestMapping(value = "/mtapi/confirmOrder",method = RequestMethod.GET)
+    public String confirmOrder(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws Exception{
+        resp.setContentType("text/html;charset=utf-8");
+        long order_id = 2703090006L;
+        String params = mtFacadeService.getConfirmOrder(order_id);
+        out.println(params);
+        out.close();
+        return null;
+    }
+
+
+    //测试商家取消订单接口
+    @RequestMapping(value = "/mtapi/cancelOrder",method = RequestMethod.GET)
+    public String cancelOrder(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws Exception{
+        resp.setContentType("text/html;charset=utf-8");
+        long order_id = 2703210907L;
+        String reason = "测试取消订单";
+        String reason_code = "1001";
+        String params = mtFacadeService.getCancelOrder(order_id, reason, reason_code);
+        out.println(params);
+        out.close();
+        return null;
+    }
+
+
+
+
     //获取订单信息添加数据库
     @ResponseBody
     @RequestMapping(value = "/mtapi/newOrder",method = RequestMethod.GET)
