@@ -118,7 +118,8 @@ public class JdHomeFacadeService {
     }
 
     //新增推送订单
-    public String newOrder(String billId,String statusId,String timestamp,String shopId){
+    public String newOrder(String jdParamJson,String shopId){
+        String billId = null, statusId = null, timestamp = null;
         try {
             String json  = jdHomeApiService.newOrder(billId,statusId,timestamp,shopId);
             JSONObject jsonObject =JSONObject.parseObject(json);
