@@ -155,4 +155,15 @@ public class EleMeApiService {
         return HttpUtil.put(url, StringUtil.getUrlParamsByObject(obj));
     }
 
+    /**
+     * 查询餐厅菜单
+     * no param
+     * @return
+     * @throws ElemaException
+     */
+    public String restaurantmenu() throws ScheduleException {
+        String pathURL = MessageFormat.format(URL.URL_ELEME_RESTAURANT_MENU, RESTAURANTID);
+        String url = getSystemUrl(pathURL, null);
+        return HttpUtil.get2(url);
+    }
 }
