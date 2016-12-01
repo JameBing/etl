@@ -12,14 +12,14 @@ import  java.util.UUID;
  */
 public class SysParams {
     private String cmd;      //命令
-    private int timestamp;   //请求时间戳
-    private String version = "3.0"; //api版本号,当前为2
+    private String timestamp;   //请求时间戳
+    private String version = "3"; //api版本号,当前为2
     private String ticket;   //请求唯一标识
-    private  int source;     //合作方帐号
+    private  String source;     //合作方帐号
     private  String sign;    //签名
     private String encrypt;  //是否加密,如AES,可为空
     private  Object body;    //请求参数
-
+    private  String secret;
 
     public  void  setCmd(String cmd){
         this.cmd = cmd;
@@ -29,14 +29,14 @@ public class SysParams {
         return  this.cmd;
     }
 
-    public int getTimestamp(){
-        if(timestamp == 0){
-          this.timestamp = (int)(System.currentTimeMillis() / 1000);
+    public String getTimestamp(){
+        if(StringUtil.isEmpty(this.timestamp)){
+          this.timestamp = String.valueOf((int)(System.currentTimeMillis() / 1000));
         }
         return  timestamp;
     }
 
-    public void setTimestamp(int timestamp){
+    public void setTimestamp(String timestamp){
         this.timestamp = timestamp;
     }
 
@@ -54,12 +54,12 @@ public class SysParams {
         return  this.ticket;
     }
 
-    public void setSource(int source){
+    public void setSource(){
        this.source = Constants.BAIDU_SOURCE;
     }
 
-    public int getSource(){
-        if(this.source == 0){this.source = Constants.BAIDU_SOURCE;}
+    public String getSource(){
+        if(StringUtil.isEmpty(this.source)){this.source = Constants.BAIDU_SOURCE;}
         return  this.source;
     }
 
@@ -76,7 +76,8 @@ public class SysParams {
     }
 
     public String getEncrypt(){
-        return this.encrypt;
+        if(StringUtil.isEmpty(this.secret)){this.secret = Constants.BAIDU_SECRET;}
+        return this.encrypt == null?"":this.encrypt;
     }
 
     public  void setBody(Object object){
@@ -85,6 +86,14 @@ public class SysParams {
 
     public Object getBody(){
         return this.body;
+    }
+
+    public void  setSecret(String secret){
+        this.secret = secret;
+    }
+
+    public String getSecret(){
+        return StringUtil.isEmpty(this.secret)?"":this.secret;
     }
 
     /**

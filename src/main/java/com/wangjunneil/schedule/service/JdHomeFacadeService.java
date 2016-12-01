@@ -121,7 +121,7 @@ public class JdHomeFacadeService {
     }
 
     //新增推送订单
-    public String newOrder(String billId,String statusId,String timestamp,String shopId)throws Exception{
+    public String newOrder(String billId,String statusId,String timestamp,String shopId){
         /*String json  = jdHomeApiService.newOrder(billId,statusId,timestamp,shopId);*/
 
         String json = "{\n" +
