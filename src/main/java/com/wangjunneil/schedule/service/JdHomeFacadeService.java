@@ -119,7 +119,15 @@ public class JdHomeFacadeService {
 
     //新增推送订单
     public String newOrder(String jdParamJson,String shopId){
-        String billId = null, statusId = null, timestamp = null;
+
+        JSONObject jdParam = JSONObject.parseObject(jdParamJson);
+        if(jdParam == null){
+            return "京东推送参数为空";
+        }
+        String billId = jdParam.getString("billId");
+        String statusId = jdParam.getString("statusId");
+        String timestamp = jdParam.getString("timestamp");
+
         try {
             String json  = jdHomeApiService.newOrder(billId,statusId,timestamp,shopId);
             JSONObject jsonObject =JSONObject.parseObject(json);
