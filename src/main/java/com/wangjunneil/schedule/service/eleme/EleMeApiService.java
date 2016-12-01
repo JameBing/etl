@@ -157,6 +157,7 @@ public class EleMeApiService {
 
     /**
      * 查询餐厅菜单
+     * no param
      * @return
      * @throws ElemaException
      */
