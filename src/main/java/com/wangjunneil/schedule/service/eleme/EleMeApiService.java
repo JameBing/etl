@@ -84,7 +84,7 @@ public class EleMeApiService {
     }
 
     /**
-     * 食品上下架(旧) 食品上下架需先调用获取餐厅食物ID 接口
+     * 食品上下架(旧) 食品上下架需先调用获取餐厅食物分类ID、获取餐厅食物ID 接口
      * @param obj 属性stock ：大于0上架/0下架
      * @return
      * @throws ElemaException
@@ -141,6 +141,13 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
+    public  String StateChange(OrderRequest obj) throws ScheduleException {
+        String pathURL = MessageFormat.format(URL.URL_ELEME_STATE_CHANGE_ORDER, obj.getEleme_order_id().toString());
+        obj.setEleme_order_id("");
+        String url = getSystemUrl(pathURL, obj);
+        return HttpUtil.put(url, StringUtil.getUrlParamsByObject(obj));
+    }
+
     public String upOrderStatus(OrderRequest obj) throws ScheduleException {
         String pathURL = MessageFormat.format(URL.URL_ELEME_ORDER_STATUS, obj.getEleme_order_id().toString());
         obj.setEleme_order_id("");
