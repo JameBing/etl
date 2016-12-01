@@ -129,17 +129,13 @@ public class JdHomeController {
         return  null;
     }
 
-    @ResponseBody
     @RequestMapping(value = "/djsw/newOrder",method = RequestMethod.GET)
-    public JSONObject newOrder(@RequestBody JSONObject jsonObject)throws Exception{
-        if(jsonObject == null){
-            return jsonObject;
-        }
-        JSONObject json = jsonObject.getJSONObject("jd_param_json");
-        String billId = json.getString("billId");
-        String statusId = json.getString("statusId");
-        String timestamp = json.getString("timestamp");
-        String shopId = json.getString("shopId");
+    public String newOrder(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
+        resp.setContentType("text/html;charset=utf-8");
+        String billId = "10003129";
+        String statusId = "32000";
+        String timestamp = "2015-10-16 13:23:30";
+        String shopId = "10054394";
         String rtnJson = jdHomeFacadeService.newOrder(billId,statusId,timestamp,shopId);
         return  null;
     }
@@ -155,8 +151,9 @@ public class JdHomeController {
     public String orderAcceptOperate(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
         OrderAcceptOperate acceptOperate = new OrderAcceptOperate();
-        acceptOperate.setOrderId("100001016163464");
-        acceptOperate.setIsAgreed(true);
+        acceptOperate.setShopId("10054394");
+        acceptOperate.setOrderId("10000101612233");
+        acceptOperate.setIsAgreed(false);
         acceptOperate.setOperator("yang");
         String json = jdHomeFacadeService.orderAcceptOperate(acceptOperate);
         out.println(json);

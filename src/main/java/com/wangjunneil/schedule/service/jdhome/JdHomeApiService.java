@@ -153,7 +153,7 @@ public class JdHomeApiService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("orderId",billId);
         jsonObject.put("orderStatus",statusId);
-        jsonObject.put("orderPurchaseTime_begin",DateTimeUtil.formatDateString(timestamp,"yyyy-MM-dd HH:mm:ss"));
+        //jsonObject.put("orderPurchaseTime_begin",DateTimeUtil.formatDateString(timestamp,"yyyy-MM-dd HH:mm:ss"));
         signParams.setJd_param_json(jsonObject.toJSONString());
         param.put("jd_param_json",jsonObject);
         try {

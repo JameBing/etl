@@ -68,6 +68,12 @@ public class MenuController {
                 menus.add(z8Menu);
             }
 
+            Cfg elemeCfg = getPlatformCfg(cfgs, Constants.PLATFORM_WAIMAI_ELEME);
+            if(elemeCfg != null){
+                Menu elemeMenu = adJustElemeMenu(elemeCfg);  //饿了么菜单
+                menus.add(elemeMenu);
+            }
+
             Menu dashboardMenu = new Menu();    // 主控制面板
             dashboardMenu.setMenuName("数据中心");
             dashboardMenu.setMenuAction("#/");
@@ -191,6 +197,36 @@ public class MenuController {
         }
         return tmMenu;
     }
+    private Menu adJustElemeMenu(Cfg cfg) {
+        // 获取天猫token信息
+//        TmallAccessToken tmallAccessToken = sysFacadeService.getTmToken();
+        Menu tmMenu = new Menu();
+
+        // 若没有授权的token信息则生成授权连接
+//        if (tmallAccessToken == null) {
+//            tmMenu.setMenuName("天猫授权");
+//            tmMenu.setMenuIcon("fa fa-expeditedssl");
+//
+//            String action = MessageFormat.format(Constants.TMALL_LINK_TOKEN_URL, cfg.getAppKey(), cfg.getCallback(), Constants.PLATFORM_TM);
+//            tmMenu.setMenuAction(action);
+//        } else {
+            tmMenu.setMenuName("饿了么平台");
+            tmMenu.setMenuIcon("fa fa-slideshare");
+
+            // child menu
+            Menu orderMenu = new Menu("在线订单", "#/elemeOrder");
+            Menu controlMenu = new Menu("控制台", "#/elemeControl");
+            Menu refundMenu = new Menu("退款单", "#/tmallRefund/all");
+
+            List<Menu> tmMenus = new ArrayList<>();
+            tmMenus.add(controlMenu);
+            tmMenus.add(orderMenu);
+            tmMenus.add(refundMenu);
+            tmMenu.setMenu(tmMenus);
+//        }
+        return tmMenu;
+    }
+
 
     private Cfg getPlatformCfg(List<Cfg> cfgs, String platform) {
         List<Cfg> tempCfgs = cfgs.stream().filter(p -> platform.equals(p.getPlatform())).collect(Collectors.toList());

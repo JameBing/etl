@@ -229,7 +229,7 @@ public class WMFacadeService {
 
     //取消订单
     public  String orderCancel(Map<String,String[]> stringMap){
-      return orderOpt(stringMap,"order.cancel");
+      return orderOpt(stringMap, "order.cancel");
     }
 
     //订单操作
@@ -260,7 +260,7 @@ public class WMFacadeService {
                 default:break;
             }
         }
-        return MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme);
+        return MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme);
     }
 
     //Other
