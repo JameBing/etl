@@ -61,7 +61,7 @@ public class MeiTuanFacadeService {
      * 门店开业
      * @parama app_poi_code - APP方门店id
      */
-    public String openShop(String code)throws MeiTuanException
+    public String openShop(String code)
     {
         try {
             String json = mtApiService.openShop(code);
@@ -76,13 +76,13 @@ public class MeiTuanFacadeService {
      * 门店歇业
      * @params app_poi_code - APP方门店id
      */
-    public String closeShop(String code) throws ScheduleException
+    public String closeShop(String code)
     {
         try {
             String json = mtApiService.closeShop(code);
             return json;
         }catch (Exception ex){
-            throw  new ScheduleException("meituan",ex.getClass().getName(),"",code,new Throwable().getStackTrace());
+            return null;
         }
     }
 

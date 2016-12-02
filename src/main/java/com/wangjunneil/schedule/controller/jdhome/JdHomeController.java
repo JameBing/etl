@@ -136,7 +136,7 @@ public class JdHomeController {
         String statusId = "32000";
         String timestamp = "2015-10-16 13:23:30";
         String shopId = "10054394";
-        String rtnJson = jdHomeFacadeService.newOrder(billId,statusId,timestamp,shopId);
+        String rtnJson = jdHomeFacadeService.newOrder(null,shopId);
         return  null;
     }
 
@@ -164,7 +164,7 @@ public class JdHomeController {
     @RequestMapping(value = "/testAddOrder",method = RequestMethod.GET)
     public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-        String json = jdHomeFacadeService.newOrder("", "", "","");
+        String json = jdHomeFacadeService.newOrder(null,"");
         out.println(json);
         out.close();
         return null;

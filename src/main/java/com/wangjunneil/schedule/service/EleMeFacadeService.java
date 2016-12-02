@@ -7,6 +7,7 @@ import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.eleme.*;
 import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,14 +38,14 @@ public class EleMeFacadeService {
     }
 
     //门店开关店
-    public String setRestaurantStatus(String elemeShopId,int status){
+    public String setRestaurantStatus(String elemeShopId,String status){
         String result = null;
         Result rtn = new Result();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new ResultSerializer()).disableHtmlEscaping().create();
         try {
             RestaurantRequest restaurantRequest = new RestaurantRequest();
             restaurantRequest.setRestaurant_id(elemeShopId);
-            restaurantRequest.setIs_open(status);
+            restaurantRequest.setIs_open(Integer.valueOf(status));
             result = eleMeApiService.setRestaurantStatus(restaurantRequest);
             rtn = gson1.fromJson(result, Result.class);
         } catch (ScheduleException e) {
