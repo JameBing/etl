@@ -1,12 +1,9 @@
 package com.wangjunneil.schedule.service;
 
-<<<<<<< HEAD
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-=======
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.Constants;
->>>>>>> 079bb2ae9ceb6ad6bdcb817b1221acafae7c33f3
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.entity.baidu.*;
 import com.wangjunneil.schedule.entity.common.Rtn;

@@ -10466,3 +10466,10 @@ Caused by: java.lang.NullPointerException
 2016-12-02 09:17:03,719 | INFO  | Started ServerConnector@3af7d855{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
 2016-12-02 09:17:03,719 | INFO  | Started @45619ms | org.eclipse.jetty.server.Server | main
 >>>>>>> 079bb2ae9ceb6ad6bdcb817b1221acafae7c33f3
+2016-12-02 18:16:39,319 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-02 18:16:39,366 | INFO  | Logging initialized @259ms | org.eclipse.jetty.util.log | main
+2016-12-02 18:16:39,447 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-02 18:16:39,659 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-02 18:16:40,603 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-02 18:16:40,684 | INFO  | Opened connection [connectionId{localValue:1, serverValue:834}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='58414a087b3fed12c44d77d3', description='null'}-192.168.1.190:27017
+2016-12-02 18:16:40,686 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1148233} | org.mongodb.driver.cluster | cluster-ClusterId{value='58414a087b3fed12c44d77d3', description='null'}-192.168.1.190:27017

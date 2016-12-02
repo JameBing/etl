@@ -38,19 +38,14 @@ public class MeiTuanFacadeService {
      * 门店开业
      * @parama app_poi_code - APP方门店id
      */
-<<<<<<< HEAD
-    public String openShop(String code)throws ScheduleException
-=======
-    public String openShop(String code)
->>>>>>> 079bb2ae9ceb6ad6bdcb817b1221acafae7c33f3
-    {
+    public String openShop(String code) {
         try {
             ShopRequest shopRequest = new ShopRequest();
             shopRequest.setApp_poi_code(code);
             String json = mtApiService.openShop(shopRequest);
             return json;
         }catch (Exception ex){
-            throw  new ScheduleException(Constants.PLATFORM_WAIMAI_MEITUAN,ex.getClass().getName(),"",code,new Throwable().getStackTrace());
+            return "";
         }
     }
 
@@ -66,11 +61,7 @@ public class MeiTuanFacadeService {
             String json = mtApiService.closeShop(shopRequest);
             return json;
         }catch (Exception ex){
-<<<<<<< HEAD
-            throw  new ScheduleException(Constants.PLATFORM_WAIMAI_MEITUAN,ex.getClass().getName(), "",code,new Throwable().getStackTrace());
-=======
-            return null;
->>>>>>> 079bb2ae9ceb6ad6bdcb817b1221acafae7c33f3
+            return "";
         }
     }
 

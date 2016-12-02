@@ -51,16 +51,13 @@ public class EleMeFacadeService {
         return gson;
     }
 
-<<<<<<< HEAD
     /**
      * 开关店
      * @param elemeShopId 店铺id
      * @param status 1:开店/0:关店
      * @return
      */
-=======
     //门店开关店
->>>>>>> 079bb2ae9ceb6ad6bdcb817b1221acafae7c33f3
     public String setRestaurantStatus(String elemeShopId,String status){
         String result = null;
         Rtn rtn = new Rtn();
@@ -68,7 +65,7 @@ public class EleMeFacadeService {
         try {
             RestaurantRequest restaurantRequest = new RestaurantRequest();
             restaurantRequest.setRestaurant_id(elemeShopId);
-            restaurantRequest.setIs_open(Integer.valueOf(status));
+            restaurantRequest.setIs_open(status);
             result = eleMeApiService.setRestaurantStatus(restaurantRequest);
             Result obj = getGson().fromJson(result, Result.class);
             rtn.setCode(obj.getCode());

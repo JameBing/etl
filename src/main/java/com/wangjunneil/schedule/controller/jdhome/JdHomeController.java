@@ -131,9 +131,8 @@ public class JdHomeController {
 
     @ResponseBody
     @RequestMapping(value = "/djsw/newOrder",method = RequestMethod.GET)
-<<<<<<< HEAD
-    public JSONObject newOrder(@RequestBody JSONObject jsonObject)throws Exception{
-        if(jsonObject == null){
+    public JSONObject newOrder(@RequestBody JSONObject jsonObject)throws Exception {
+        if (jsonObject == null) {
             return jsonObject;
         }
         JSONObject json = jsonObject.getJSONObject("jd_param_json");
@@ -142,8 +141,8 @@ public class JdHomeController {
         String timestamp = json.getString("timestamp");
         String shopId = json.getString("shopId");
 //        String rtnJson = jdHomeFacadeService.newOrder(billId,statusId,timestamp,shopId);
-       return  null;
-=======
+        return null;
+    }
     public String newOrder(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
         String billId = "10003129";
@@ -152,7 +151,6 @@ public class JdHomeController {
         String shopId = "10054394";
         String rtnJson = jdHomeFacadeService.newOrder(null,shopId);
         return  null;
->>>>>>> 079bb2ae9ceb6ad6bdcb817b1221acafae7c33f3
     }
 
     /**
@@ -178,13 +176,10 @@ public class JdHomeController {
     @RequestMapping(value = "/testAddOrder",method = RequestMethod.GET)
     public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-<<<<<<< HEAD
        /* String json = jdHomeFacadeService.newOrder("", "", "","");
         out.println(json);*/
-=======
         String json = jdHomeFacadeService.newOrder(null,"");
         out.println(json);
->>>>>>> 079bb2ae9ceb6ad6bdcb817b1221acafae7c33f3
         out.close();
         return null;
     }
