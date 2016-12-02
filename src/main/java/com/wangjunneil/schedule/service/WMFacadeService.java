@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -59,7 +60,7 @@ public class WMFacadeService {
 
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
-
+                jdHomeFacadeService.callback(stringMap.get("token")[0],stringMap.get("sid")[0]);
                 break;
             case Constants.PLATFORM_WAIMAI_MEITUAN:
                 switch (stringMap.get("push_action")[0]){
@@ -98,18 +99,6 @@ public class WMFacadeService {
         return shopOpt(stringMap, "shop.open");
     }
 
-    public String startBusiness(ParsFromPos parsFromPos){
-        String result = "{baidu:{0},jdhome:{1},meituan:{2},eleme:{3}}",
-            result_baidu = null,
-            result_jdhome = null,
-            result_eleme = null,
-            result_meituan = null;
-        result_baidu = baiDuFacadeService.startBusiness(parsFromPos.getBaidu().getShopId(),parsFromPos.getBaidu().getPlatformShopId());
-        result_jdhome = jdHomeFacadeService.startBusiness(parsFromPos.getJdhome().getShopId(),parsFromPos.getJdhome().getPlatformShopId());
-        //result_eleme = eleMeFacadeService.pullNewOrder()
-        return null;
-    }
-
     //门店歇业
     public String endBusiness(Map<String,String[]> stringMap){
 
@@ -141,6 +130,34 @@ public class WMFacadeService {
                 default:break;
             }
         }
+        return MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme);
+    }
+
+    //门店开业-new
+    public String startBusiness(ParsFromPos parsFromPos){
+        String result = "{baidu:{0},jdhome:{1},meituan:{2},eleme:{3}}",
+               result_baidu = null,
+               result_jdhome = null,
+               result_eleme = null,
+               result_meituan = null;
+        result_baidu = baiDuFacadeService.startBusiness(parsFromPos.getBaidu().getPlatformShopId(),parsFromPos.getBaidu().getShopId());
+        result_jdhome = jdHomeFacadeService.startBusiness(parsFromPos.getJdhome().getShopId(),parsFromPos.getJdhome().getPlatformShopId());
+        result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"1");
+        result_meituan = meiTuanFacadeService.openShop(parsFromPos.getMeituan().getShopId());
+        return MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme);
+    }
+
+    //门店歇业-new
+    public String endBusiness(ParsFromPos parsFromPos){
+        String result = "{baidu:{0},jdhome:{1},meituan:{2},eleme:{3}}",
+               result_baidu = null,
+               result_jdhome = null,
+               result_eleme = null,
+               result_meituan = null;
+        result_baidu = baiDuFacadeService.endBusiness(parsFromPos.getBaidu().getPlatformShopId(),parsFromPos.getBaidu().getShopId());
+        result_jdhome = jdHomeFacadeService.endBusiness(parsFromPos.getJdhome().getShopId(),parsFromPos.getJdhome().getPlatformShopId());
+        result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"0");
+        result_meituan = meiTuanFacadeService.closeShop(parsFromPos.getMeituan().getShopId());
         return MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme);
     }
 
@@ -203,8 +220,13 @@ public class WMFacadeService {
                 result = baiDuFacadeService.orderPost(sysParams);
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
+<<<<<<< HEAD
 //                result = jdHomeFacadeService.newOrder(stringMap.get("billId")[0],stringMap.get("statusId")[0],stringMap.get("timestamp")[0],"10054394");
                 result = map2Json(stringMap);
+=======
+                result = jdHomeFacadeService.newOrder(stringMap.get("jd_param_json")[0],"10054394");
+                //result = map2Json(stringMap);
+>>>>>>> 079bb2ae9ceb6ad6bdcb817b1221acafae7c33f3
                 break;
             default:break;
         }
@@ -272,9 +294,15 @@ public class WMFacadeService {
     }
 
     //Other
-    public static<T> String map2Json(Map<String,T> map){
-        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
-        return gson.toJson(map);
-    }
+//    public static<T> String map2Json(Map<String,T> map){
+//        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+//        return gson.toJson(map);
+//    }
 
+    public static String map2Json(Map<String,String[]> map){
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+        Map<String,String> map1 = new HashMap<String,String>();
+        map.forEach((k,v)->{map1.put(k,v[0]);});
+        return gson.toJson(map1);
+    }
 }
