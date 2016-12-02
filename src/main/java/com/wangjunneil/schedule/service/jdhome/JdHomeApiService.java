@@ -3,11 +3,7 @@ package com.wangjunneil.schedule.service.jdhome;
 import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.JdHomeException;
-import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
-import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
-import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
-import com.wangjunneil.schedule.entity.jdhome.shopCategory;
-import com.wangjunneil.schedule.entity.sys.Cfg;
+import com.wangjunneil.schedule.entity.jdhome.*;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -17,7 +13,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,54 +26,58 @@ public class JdHomeApiService {
 
     private static Logger log = Logger.getLogger(JdHomeApiService.class.getName());
 
-    private String token = "585e8e9c-63da-43b4-8360-4fd38f778859";
+    private String appSecret="";
 
-    private String app_key = "811f96f894614a1bbcbff480330e6eb3";
+    private String sign="";
 
-    private String appSecret = "d4c20ee551eb4fb19795da5a83102b24";
-
-    private String timeStamp = "";
-
-    private String sign = "";
-
-    private String format = "json";
-
-    private String v = "1.0";
-
-    private String jd_param_json = "";
+    private String jd_param_json="";
 
     @Autowired
     private JdHomeInnerService jdHomeInnerService;
 
-
     //批量修改商品上架
     public String updateAllStockOn(List<QueryStockRequest> stockRequests,String shopId)throws Exception{
-        Map<String,Object> param = getSysMap(shopId); //系统参数
+        SignParams signParams = getSignParams(shopId);//签名参数
+        Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         String rtnStr = "";
-        int page = 1;
-        int pageSize = Constants.STOCK_REQUEST_COUNT;// 配置参数
-        int begin = 0;
-        int end = pageSize;
-        for (int i = 0; i <= stockRequests.size() / pageSize; i++) {
-            List<QueryStockRequest> list = StringUtil.setListPageDate(begin, end, stockRequests);
-            if (list != null) {
-                jsonObject.put("listBaseStockCenterRequest",list);
-                jd_param_json = jsonObject.toJSONString();
-                param.put("jd_param_json",jd_param_json);
-                try {
-                    sign = SignUtils.getSign(param,appSecret);
-                    param.put("sign",sign);
-                }catch (Exception e){
-                    throw new JdHomeException("签名失败",e);
+        //应用参数是否有值
+        if(stockRequests !=null && stockRequests.size()>0){
+            int page = 1;
+            int pageSize = Constants.STOCK_REQUEST_COUNT;// 配置参数
+            int begin = 0;
+            int end = pageSize;
+            for (int i = 0; i <= stockRequests.size() / pageSize; i++) {
+                List<QueryStockRequest> list = StringUtil.setListPageDate(begin, end, stockRequests);
+                if (list != null) {
+                    jsonObject.put("listBaseStockCenterRequest",list);
+                    signParams.setJd_param_json(jsonObject.toJSONString());
+                    param.put("jd_param_json",jsonObject);
+                    try {
+                        sign = SignUtils.getSign(signParams,appSecret);
+                        param.put("sign",sign);
+                    }catch (Exception e){
+                        throw new JdHomeException("签名失败",e);
+
+                    }
+                    log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
+                    rtnStr = rtnStr + HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+",";
+                    begin = pageSize * page;
+                    end = pageSize * (page + 1);
+                    page++;
                 }
-                log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-                rtnStr = rtnStr + HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+",";
-                begin = pageSize * page;
-                end = pageSize * (page + 1);
-                 page++;
             }
+        }else{
+            try {
+                sign = SignUtils.getSign(signParams,appSecret);
+                param.put("sign",sign);
+            }catch (Exception e){
+                throw new JdHomeException("签名失败",e);
+            }
+            log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
+            rtnStr = HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
         }
+
         if(rtnStr.length()>0){
             return rtnStr.substring(0,rtnStr.length()-1);
         }
@@ -87,7 +86,8 @@ public class JdHomeApiService {
 
     //新增商品分类
     public String addShopCategory(shopCategory shopCategory)throws Exception{
-        Map<String,Object> param = getSysMap(shopCategory.getShopId());//系统参数
+        SignParams signParams = getSignParams(shopCategory.getShopId());//签名参数
+        Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         jsonObject.put("pid",shopCategory.getPid());
         jsonObject.put("shopCategoryName",shopCategory.getShopCategoryName());
@@ -95,9 +95,10 @@ public class JdHomeApiService {
         jsonObject.put("sort",shopCategory.getSort());
         jsonObject.put("createPin",shopCategory.getCreatePin());
         jd_param_json = jsonObject.toJSONString();
+        signParams.setJd_param_json(jd_param_json);
         param.put("jd_param_json",jd_param_json);
         try {
-            sign = SignUtils.getSign(param,appSecret);
+            sign = SignUtils.getSign(signParams,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
             throw new JdHomeException("签名失败",e);
@@ -108,14 +109,16 @@ public class JdHomeApiService {
 
     //修改商品分类
     public String updateShopCategory(shopCategory shopCategory) throws Exception{
-        Map<String,Object> param = getSysMap(shopCategory.getShopId());//系统参数
+        SignParams signParams = getSignParams(shopCategory.getShopId());//签名参数
+        Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         jsonObject.put("id",shopCategory.getId());
         jsonObject.put("shopCategoryName",shopCategory.getShopCategoryName());
         jd_param_json = jsonObject.toJSONString();
+        signParams.setJd_param_json(jd_param_json);
         param.put("jd_param_json", jd_param_json);
         try {
-            sign = SignUtils.getSign(param,appSecret);
+            sign = SignUtils.getSign(signParams,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
             throw new JdHomeException("签名失败",e);
@@ -126,13 +129,15 @@ public class JdHomeApiService {
 
     //删除商品分类
     public String deleteShopCategory(shopCategory shopCategory) throws Exception{
-        Map<String,Object> param = getSysMap(shopCategory.getShopId());//系统参数
+        SignParams signParams = getSignParams(shopCategory.getShopId());//签名参数
+        Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
         jsonObject.put("id",shopCategory.getId());
         jd_param_json = jsonObject.toJSONString();
+        signParams.setJd_param_json(jd_param_json);
         param.put("jd_param_json",jd_param_json);
         try {
-            sign = SignUtils.getSign(param,appSecret);
+            sign = SignUtils.getSign(signParams,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
             throw new JdHomeException("签名失败",e);
@@ -141,15 +146,17 @@ public class JdHomeApiService {
         return HttpUtil.post(URL.URL_DELETE_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
     }
 
+    //新增订单
     public String newOrder(String billId,String statusId,String timestamp,String shopId) throws Exception{
-        Map<String,Object> param = getSysMap(shopId);
+        SignParams signParams = getSignParams(shopId);//签名参数
+        Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("orderId",billId);
         jsonObject.put("orderStatus",statusId);
-        jsonObject.put("orderPurchaseTime_begin",DateTimeUtil.formatDateString(timestamp,"yyyy-MM-dd HH:mm:ss"));
-        param.put("jd_param_json",jd_param_json);
+        signParams.setJd_param_json(jsonObject.toJSONString());
+        param.put("jd_param_json",jsonObject);
         try {
-            sign = SignUtils.getSign(param,appSecret);
+            sign = SignUtils.getSign(signParams,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
             throw new JdHomeException("签名失败",e);
@@ -160,14 +167,16 @@ public class JdHomeApiService {
 
     //商家确认/取消接单接口
     public String orderAcceptOperate(OrderAcceptOperate acceptOperate)throws Exception{
-        Map<String,Object> param = getSysMap(acceptOperate.getShopId());
+        SignParams signParams = getSignParams(acceptOperate.getShopId());//签名参数
+        Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("orderId",acceptOperate.getOrderId());
         jsonObject.put("isAgreed", acceptOperate.getIsAgreed());
         jsonObject.put("operator", acceptOperate.getOperator());
+        signParams.setJd_param_json(jsonObject.toJSONString());
         param.put("jd_param_json",jsonObject);
         try {
-            sign = SignUtils.getSign(param,appSecret);
+            sign = SignUtils.getSign(signParams,appSecret);
             param.put("sign",sign);
         }catch (Exception e){
             throw new JdHomeException("签名失败",e);
@@ -178,18 +187,26 @@ public class JdHomeApiService {
 
 
     //获取系统参数map对象
-    private Map<String,Object> getSysMap(String shopId){
-        JdHomeAccessToken jdHomeAccessToken = jdHomeInnerService.getAccessToken(shopId);
+    private Map<String,Object> getSysMap(SignParams signParams){
         Map<String ,Object> sysParam = new HashMap<String,Object>();
+        sysParam.put("token",signParams.getToken());
+        sysParam.put("app_key",signParams.getApp_key());
+        sysParam.put("format",signParams.getFormat());
+        sysParam.put("v",signParams.getV());
+        sysParam.put("timestamp",signParams.getTimestamp());
+        return  sysParam ;
+    }
+
+    //根据门口编号获取签名参数
+    private SignParams getSignParams(String shopId){
+        JdHomeAccessToken jdHomeAccessToken = jdHomeInnerService.getAccessToken(shopId);
+        SignParams signParam = new SignParams();
         if(jdHomeAccessToken == null){
-            return sysParam;
+            return signParam;
         }
         appSecret = jdHomeAccessToken.getAppSecret();
-        sysParam.put("token",jdHomeAccessToken.getAccess_token());
-        sysParam.put("app_key",jdHomeAccessToken.getAppKey());
-        sysParam.put("format",format);
-        sysParam.put("v",v);
-        sysParam.put("timestamp",DateTimeUtil.dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss"));
-        return  sysParam ;
+        signParam.setToken(jdHomeAccessToken.getAccess_token());
+        signParam.setApp_key(jdHomeAccessToken.getAppKey());
+        return  signParam ;
     }
 }

@@ -20,6 +20,7 @@ public class BodySerializer implements JsonSerializer<Body> {
         object.add("extra", jsonSerializationContext.serialize(body.getExtra()));
         object.add("abandoned_extra", jsonSerializationContext.serialize(body.getAbandonedextra()));
         object.add("restaurant", jsonSerializationContext.serialize(body.getRestaurant()));
+        object.add("food_ids", jsonSerializationContext.serialize(body.getFoodids()));
         return object;
     }
 }

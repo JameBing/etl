@@ -1,3 +1,6 @@
+<style>
+    td {vertical-align: middle;}
+</style>
 <div class="row">
     <div class="col-md-12">
         <div class="box">
@@ -19,30 +22,8 @@
                             <button data-container="body" data-toggle="popover" data-placement="right" type="button" class="btn stop btn-info btn-sm" ng-click="stopListening();">停止</button>
                             <img src="../dist/img/loading.gif" style="margin-left: 10px"/>
                         </td>
-                        <td><span ng-show="startupTime != null">上次启动时间 {{startupTime | date:'yyyy-MM-dd HH:mm:ss'}},</span> <span ng-show="shutdownTime != null">上次停止时间 {{shutdownTime | date:'yyyy-MM-dd HH:mm:ss'}}</span></td>
-                        <td style="text-align:left;color:grey;"><i class="fa fa-question-circle"></i> 点击监听按钮后将会开启同步京东订单</td>
-                    </tr>
-                    <!--<tr>
-                        <td>调度时间</td>
-                        <td>
-                            <select class="form-control select" ng-change="changeScheduleTime();" ng-model="interval" style="width: 100%;height: 22px;font-size: 10px;padding: 0px;">
-                                <option selected="selected" value="60000">1分钟</option>
-                                <option value="120000">2分钟</option>
-                                <option value="180000">3分钟</option>
-                                <option value="240000">4分钟</option>
-                                <option value="300000">5分钟</option>
-                                <option value="600000">10分钟</option>
-                                <option value="1200000">20分钟</option>
-                            </select>
-                        </td>
-                        <td>最近一次的调度时间是 2016-09-01 23:45:55</td>
-                        <td style="text-align:left;color:grey;"><i class="fa fa-question-circle"></i> 定义每次间隔的同步时间</td>
-                    </tr>-->
-                    <tr>
-                        <td>重置任务</td>
-                        <td><button type="button" class="btn btn-info btn-sm" ng-click="clean();">清除</button></td>
-                        <td>已执行调度任务 {{scheduleCount}} 次</td>
-                        <td style="text-align:left;color:grey;"><i class="fa fa-question-circle"></i> 点击按钮后将会清除所有调度的任务</td>
+                        <td style="text-align:left;color:grey;vertical-align: middle;">{{result}}</td>
+                        <td style="text-align:left;color:grey;vertical-align: middle;"><i class="fa fa-question-circle"></i> 点击监听按钮后将会开启同步饿了么订单</td>
                     </tr>
                     <tr>
                         <td style="vertical-align: middle;">在线补单</td>
@@ -53,7 +34,7 @@
                                 </div>
                                 <input type="text" class="form-control input-sm  pull-right" placeholder="选择需要补单的时间范围" id="reservationtime">
                                 <span class="input-group-btn">
-                                  <button type="button" class="btn btn-info btn-flat" ng-click="batch();" ng-disabled="disabled">执行</button>
+                                  <button type="button" class="btn btn-info btn-flat" ng-click="fixOrder();" ng-disabled="disabled">执行</button>
                                   <img src="../dist/img/loading.gif" ng-show="loading" style="margin-left: 15px"/>
                                 </span>
                             </div>
@@ -61,7 +42,8 @@
                         <td style="text-align:left;color:grey;vertical-align: middle;">{{message}}</td>
                         <td style="text-align:left;color:grey;vertical-align: middle;"><i class="fa fa-question-circle"></i> 选择时间维度进行差异化补单操作</td>
                     </tr>
-                    </tbody></table>
+                    </tbody>
+                </table>
             </div>
             <!-- /.box-body -->
         </div>
@@ -69,7 +51,6 @@
     <!-- /.col -->
 </div>
 <!-- /.row -->
-
 
 <script>
     $(function () {

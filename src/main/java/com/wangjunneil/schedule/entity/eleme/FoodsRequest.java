@@ -26,6 +26,8 @@ public class FoodsRequest {
     private Labels labels;
     //规格
     private List<Specs> specs;
+    /*********通过第三方id查询平台id属性******************/
+    private String tp_food_ids;
 
     public String getName() {
         return name;
@@ -83,5 +85,13 @@ public class FoodsRequest {
 
     public void setSpecs(List<Specs> specs) {
         this.specs = specs;
+    }
+
+    public String getTp_food_ids() {
+        return tp_food_ids;
+    }
+
+    public void setTp_food_ids(String tp_food_ids) {
+        this.tp_food_ids = tp_food_ids;
     }
 }

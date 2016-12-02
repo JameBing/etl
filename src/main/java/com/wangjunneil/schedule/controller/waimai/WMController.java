@@ -10,7 +10,9 @@ import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.entity.common.FlowNum;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
+import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.WMFacadeService;
+import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
@@ -173,23 +175,25 @@ public class WMController {
      * @param response  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/new","/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/new","/jdhome/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
     public String orderPost(PrintWriter out, HttpServletRequest request,HttpServletResponse response) {
-
+        String result = null;
         String platform = null;
         switch (request.getPathInfo().toLowerCase()){
             case "/waimai/baidu/order/new": //百度
                 platform = Constants.PLATFORM_WAIMAI_BAIDU;
                 response.setContentType("text/html; charset=utf-8");
                 break;
-            case  "/waimai/djsw/neworder": //京东到家
+            case  "/waimai/jdhome/djsw/neworder": //京东到家
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             default:
                 break;
         }
         if (!StringUtil.isEmpty(platform))
-        out.println(wmFacadeService.orderPost(request.getParameterMap(),platform));
+            result = wmFacadeService.orderPost(request.getParameterMap(), platform);
+        out.println(result);
+        System.out.println("推送订单\r\n" + result + "\r\n");
         return  null;
     }
 
@@ -309,5 +313,22 @@ public class WMController {
 //        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(httpRequest.getSession().getServletContext());
 //        MultipartHttpServletRequest multipartRequest = commonsMultipartResolver.resolveMultipart(httpRequest);
         return null;
+    }
+
+    @RequestMapping(value = "/baidu/getSupplier",method = RequestMethod.GET)
+    public String getSupplierList(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        out.println(wmFacadeService.getSupplier());
+        return null;
+    }
+
+
+
+    @Autowired
+    private EleMeFacadeService eleMeFacadeService;
+    @RequestMapping(value = "/eleme/text",method = RequestMethod.GET)
+    public void text() {
+        //测试用
+        System.out.println(eleMeFacadeService.restaurantMenu("2063064"));
+
     }
 }
