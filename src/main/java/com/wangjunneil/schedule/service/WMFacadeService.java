@@ -55,7 +55,7 @@ public class WMFacadeService {
 
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
-
+                jdHomeFacadeService.callback(stringMap.get("token")[0],stringMap.get("sid")[0]);
                 break;
             case Constants.PLATFORM_WAIMAI_MEITUAN:
                 switch (stringMap.get("push_action")[0]){

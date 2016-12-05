@@ -17,7 +17,7 @@ import java.util.List;
 
     private String username;
 
-    private String access_token;
+    private String token;
 
     private int expires_in;
 
@@ -57,12 +57,12 @@ import java.util.List;
         this.username = username;
     }
 
-    public String getAccess_token() {
-        return access_token;
+    public String getToken() {
+        return token;
     }
 
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public int getExpires_in() {

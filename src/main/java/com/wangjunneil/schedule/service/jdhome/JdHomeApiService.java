@@ -244,7 +244,7 @@ public class JdHomeApiService {
             return signParam;
         }
         appSecret = jdHomeAccessToken.getAppSecret();
-        signParam.setToken(jdHomeAccessToken.getAccess_token());
+        signParam.setToken(jdHomeAccessToken.getToken());
         signParam.setApp_key(jdHomeAccessToken.getAppKey());
         return  signParam ;
     }
