@@ -203,7 +203,7 @@ public class WMFacadeService {
                 result = baiDuFacadeService.orderPost(sysParams);
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
-                result = jdHomeFacadeService.newOrder(stringMap.get("billId")[0],stringMap.get("statusId")[0],stringMap.get("timestamp")[0],"10054394");
+                result = jdHomeFacadeService.newOrder(stringMap.get("jd_param_json")[0],"10054394");
                 //result = map2Json(stringMap);
                 break;
             default:break;
@@ -213,6 +213,7 @@ public class WMFacadeService {
 
     //平台订单状态推送
     public String orderStatus(Map<String,String[]> stringMap,String platform){
+
           String result = null;
           switch (platform){
               case Constants.PLATFORM_WAIMAI_BAIDU:
