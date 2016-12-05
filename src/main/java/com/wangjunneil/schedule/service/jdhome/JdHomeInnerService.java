@@ -123,6 +123,9 @@ public class JdHomeInnerService {
     public JdHomeAccessToken getAccessToken(String shopId) {
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("shopIds").elemMatch(Criteria.where("shopId").is(shopId)));
         JdHomeAccessToken jdHomeAccessToken = mongoTemplate.findOne(query, JdHomeAccessToken.class);
+        if(jdHomeAccessToken == null){
+            return  getAccessTokenByComId(shopId);
+        }
         return jdHomeAccessToken;
     }
 

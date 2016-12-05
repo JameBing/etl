@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
+import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.*;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
@@ -51,10 +52,15 @@ public class BaiDuFacadeService {
                                     .registerTypeAdapter(Discount.class, new DiscountSerializer())
                                     .registerTypeAdapter(businessForm.class,new BusinessFormSerializer())
                                     .registerTypeAdapter(Categorys.class,new CategorysSerializer())
+                                    .registerTypeAdapter(DeliveryRegion.class,new DeliveryRegionSerializer())
+                                    .registerTypeAdapter(Region.class, new RegionSerializer())
+                                    .registerTypeAdapter(BusinessTime.class, new BusinessTimeSerializer())
+                                   .registerTypeAdapter(AvailableTime.class, new AvailableTimeSerializer())
+                                    .registerTypeAdapter(Rtn.class, new RtnSerializer())
                                     .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
                                         @Override
                                         public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
-                                            if(aDouble == aDouble.longValue())
+                                            if (aDouble == aDouble.longValue())
                                                 return new JsonPrimitive(aDouble.longValue());
                                             return new JsonPrimitive(aDouble);
                                         }
@@ -95,6 +101,22 @@ public class BaiDuFacadeService {
         return result;
     }
 
+    //创建门店
+    public String shopAdd(JsonObject jsonStr) {
+            String result = null;
+            Rtn rtn = new Rtn();
+            try {
+                rtn  = getGson().fromJson( baiDuApiService.shopAdd(jsonStr.toString()),Rtn.class);
+            }
+            catch (Exception ex){
+                rtn.setDynamic("");
+                rtn.setCode(-999);
+                rtn.setDesc("发生异常");
+                rtn.setLogId("");
+                //异常日志
+        }
+        return getGson().toJson(rtn);
+    }
     //门店开业
     public String startBusiness(String baiduShopId,String shopId){
         String result = null;
@@ -139,6 +161,49 @@ public class BaiDuFacadeService {
         }
         result = gson1.toJson(rtn);
         return  result;
+    }
+
+    //新增菜品
+    public String dishAdd(JsonObject jsonStr){
+        Rtn rtn = new Rtn();
+        try {
+            rtn = getGson().fromJson(baiDuApiService.dishAdd(jsonStr.toString()),Rtn.class);
+        }
+        catch (Exception ex){
+          rtn.setDynamic("");
+           rtn.setCode(-999);
+            rtn.setDesc("error");
+            rtn.setRemark("发生异常");
+            rtn .setLogId("");
+            //异常日志
+        }
+        return  getGson().toJson(rtn);
+    }
+
+    //菜品查看
+    public String dishGet(String baiduShopId,String shopId,String baiduDishId,String dishId){
+        String result = null;
+        Rtn rtn = new Rtn();
+        try {
+            String bodyStr = (StringUtil.isEmpty(baiduShopId)?"":MessageFormat.format("\"baidu_shop_id\":{0}",baiduShopId)).concat( (StringUtil.isEmpty(shopId)?"":MessageFormat.format("\"shop_id\":{0}",shopId)))
+                                                .concat( (StringUtil.isEmpty(baiduDishId)?"":MessageFormat.format("\"baidu_dish_id\":{0}",baiduDishId))).concat( (StringUtil.isEmpty(dishId)?"":MessageFormat.format("\"dish_id\":{0}",dishId)));
+             result = baiDuApiService.dishGet("{".concat(bodyStr).concat("}"));
+
+            SysParams sysParams = getGson().fromJson(result,SysParams.class);
+            Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
+            rtn.setRemark(result);
+            rtn.setCode(Integer.valueOf(body.getErrno()));
+            rtn.setDesc(body.getError());
+            rtn.setRemark(getGson().toJson(body.getData()));
+        }catch (Exception ex){
+           rtn.setCode(-999);
+            rtn.setDesc("error");
+            rtn.setRemark("发生异常");
+            //异常记录
+            rtn.setLogId("");
+        }
+
+        return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
     }
 
     //菜品上架
@@ -331,7 +396,7 @@ public class BaiDuFacadeService {
         Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
         Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
        //？是否多个订单号存在
-       int intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.GetEnumDesc(Enum.OrderTypeBaiDu.R5, data.getOrder().getStatus()).get("code").toString()));
+       int intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.getEnumDesc(Enum.OrderTypeBaiDu.R5, data.getOrder().getStatus()).get("code").getAsString()));
         if (intR > 0){
             result.setErrno("0");
             result.setError("success");

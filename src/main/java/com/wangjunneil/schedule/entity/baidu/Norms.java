@@ -3,7 +3,9 @@ package com.wangjunneil.schedule.entity.baidu;
 /**
  * Created by yangwanbin on 2016-11-16.
  */
+//菜品规格
 public class Norms {
+
 
     private String dishNormsId;
 
