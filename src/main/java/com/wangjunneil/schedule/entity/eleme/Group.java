@@ -17,19 +17,20 @@ public class Group {
     //价格
     @SerializedName("price")
     private double price;
+    @SerializedName("id")
+    private String id;
     //搭配食品
     @SerializedName("garnish")
     private List<Garnish> garnish;
-    @SerializedName("id")
-    private String id;
-    //数量
-    @SerializedName("quantity")
-    private String quantity;
-    @SerializedName("tp_food_id")
-    private String tpfoodid;
     //规格
     @SerializedName("specs")
     private List specs;
+    //数量
+    @SerializedName("quantity")
+    private String quantity;
+    //销售模式
+    @SerializedName("sale_mode")
+    private int salemode;
 
     public String getCategoryid() {
         return categoryid;
@@ -55,14 +56,6 @@ public class Group {
         this.price = price;
     }
 
-    public List<Garnish> getGarnish() {
-        return garnish;
-    }
-
-    public void setGarnish(List<Garnish> garnish) {
-        this.garnish = garnish;
-    }
-
     public String getId() {
         return id;
     }
@@ -71,20 +64,12 @@ public class Group {
         this.id = id;
     }
 
-    public String getQuantity() {
-        return quantity;
+    public List<Garnish> getGarnish() {
+        return garnish;
     }
 
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
-    }
-
-    public String getTpfoodid() {
-        return tpfoodid;
-    }
-
-    public void setTpfoodid(String tpfoodid) {
-        this.tpfoodid = tpfoodid;
+    public void setGarnish(List<Garnish> garnish) {
+        this.garnish = garnish;
     }
 
     public List getSpecs() {
@@ -95,17 +80,19 @@ public class Group {
         this.specs = specs;
     }
 
-    @Override
-    public String toString() {
-        return "Group{" +
-            "categoryid='" + categoryid + '\'' +
-            ", name='" + name + '\'' +
-            ", price=" + price +
-            ", garnish=" + garnish +
-            ", id='" + id + '\'' +
-            ", quantity='" + quantity + '\'' +
-            ", tpfoodid='" + tpfoodid + '\'' +
-            ", specs=" + specs +
-            '}';
+    public String getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+
+    public int getSalemode() {
+        return salemode;
+    }
+
+    public void setSalemode(int salemode) {
+        this.salemode = salemode;
     }
 }

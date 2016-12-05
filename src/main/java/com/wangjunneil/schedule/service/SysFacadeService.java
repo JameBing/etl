@@ -49,6 +49,9 @@ public class SysFacadeService {
     public Cfg findJPCfg() {
         return sysInnerService.findCfg(Constants.PLATFORM_JP);
     }
+    public Cfg findElemeCfg() {
+        return sysInnerService.findCfg(Constants.PLATFORM_WAIMAI_ELEME);
+    }
 
     public Cfg findZ8Cfg() {
         return sysInnerService.findCfg("z8");
