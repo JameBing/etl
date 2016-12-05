@@ -20,7 +20,7 @@ public class Body {
     @SerializedName("extra")
     private List<Extra> extra;
     @SerializedName("abandoned_extra")
-    private Object abandonedextra;
+    private List<Object> abandonedextra;
     /*****************订单详情end********************/
 
     /*****************获取商户信息start********************/
@@ -56,11 +56,11 @@ public class Body {
         this.extra = extra;
     }
 
-    public Object getAbandonedextra() {
+    public List<Object> getAbandonedextra() {
         return abandonedextra;
     }
 
-    public void setAbandonedextra(Object abandonedextra) {
+    public void setAbandonedextra(List<Object> abandonedextra) {
         this.abandonedextra = abandonedextra;
     }
 
