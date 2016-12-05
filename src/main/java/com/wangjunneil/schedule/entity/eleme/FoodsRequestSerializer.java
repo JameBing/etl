@@ -21,6 +21,7 @@ public class FoodsRequestSerializer implements JsonSerializer<FoodsRequest> {
         object.add("image_hash",jsonSerializationContext.serialize(foodsRequest.getImage_hash()));
         object.add("labels",jsonSerializationContext.serialize(foodsRequest.getLabels()));
         object.add("specs",jsonSerializationContext.serialize(foodsRequest.getSpecs()));
+        object.add("tp_food_ids",jsonSerializationContext.serialize(foodsRequest.getTp_food_ids()));
         return object;
     }
 }

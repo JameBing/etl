@@ -1,14 +1,14 @@
 package com.wangjunneil.schedule.service.baidu;
 
+import com.google.gson.*;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.*;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.stereotype.Service;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.utility.HttpUtil;
 
+import java.lang.reflect.Type;
 import java.text.MessageFormat;
 
 /**
@@ -41,8 +41,8 @@ public class BaiDuApiService  {
                 params =  MessageFormat.format(params,bodyStr,sysParams.getCmd(),sysParams.getTimestamp(),sysParams.getVersion(),sysParams.getTicket()
                                               ,String.valueOf(sysParams.getSource()),sysParams.getEncrypt(),sysParams.getSecret());
                 params = StringUtil.retParamAsc(params);
-                params = sysParams.chinaToUnicode(params);
-                return params.concat(MessageFormat.format("&sign={0}",sysParams.getMD5(params)));
+                params = StringUtil.chinaToUnicode(params);
+                return params.concat(MessageFormat.format("&sign={0}",StringUtil.getMD5(params)));
 //                String signJson = gson.toJson(sysParams);
 //                //对所有的/进行转义
 //                signJson = signJson.replace("/", "\\/");
@@ -80,8 +80,8 @@ public class BaiDuApiService  {
         params =  MessageFormat.format(params,bodyStr,sysParams.getCmd(),sysParams.getTimestamp(),sysParams.getVersion(),sysParams.getTicket()
             ,String.valueOf(sysParams.getSource()),sysParams.getEncrypt(),sysParams.getSecret());
         params = StringUtil.retParamAsc(params);
-        params = sysParams.chinaToUnicode(params);
-        return params.concat(MessageFormat.format("&sign={0}", sysParams.getMD5(params)));
+        params = StringUtil.chinaToUnicode(params);
+        return params.concat(MessageFormat.format("&sign={0}", StringUtil.getMD5(params)));
     }
 
     //region 商户
@@ -94,9 +94,17 @@ public class BaiDuApiService  {
        // requestStr = requestStr + "&sign=" + SysParams.getMD5(requestStr);
         String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
-                                     .registerTypeAdapter(Body.class,new BodySerializer())
+                                     .registerTypeAdapter(Body.class, new BodySerializer())
                                      .registerTypeAdapter(Data.class,new DataSerializer())
                                      .registerTypeAdapter(Supplier.class, new SupplierSerializer())
+                                     .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
+                                     @Override
+                                     public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
+                                       if (aDouble == aDouble.longValue())
+                                           return new JsonPrimitive(aDouble.longValue());
+                                           return new JsonPrimitive(aDouble);
+                                         }
+                                        })
                                      .disableHtmlEscaping().create();
         SysParams sysParams = gson.fromJson(response,SysParams.class);
         Body body = gson.fromJson(gson.toJson(sysParams.getBody()),Body.class);

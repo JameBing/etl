@@ -1,12 +1,8 @@
 package com.wangjunneil.schedule.service.baidu;
 
-import com.wangjunneil.schedule.common.BaiDuException;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.Body;
 import com.wangjunneil.schedule.entity.baidu.Data;
-import com.wangjunneil.schedule.entity.baidu.Order;
-import com.wangjunneil.schedule.entity.baidu.Shop;
-import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,7 +11,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.CredentialException;
 import java.util.*;
 
 /**

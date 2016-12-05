@@ -5,7 +5,7 @@ import com.wangjunneil.schedule.utility.StringUtil;
 /**
  * Created by yangwanbin on 2016-12-01.
  */
-public class BusinessForm {
+public class businessForm {
 
     //业态ID
     private String id;

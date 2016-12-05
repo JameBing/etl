@@ -10,6 +10,7 @@ import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.entity.common.FlowNum;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
+import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.WMFacadeService;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.utility.HttpUtil;
@@ -119,8 +120,8 @@ public class WMController {
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/endBusiness.php", method = RequestMethod.GET)
-    public String endBusiness(PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    @RequestMapping(value = "/endBusiness.php", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    public String endBusiness(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.endBusiness(request.getParameterMap()));
         return  null;
@@ -174,7 +175,7 @@ public class WMController {
      * @param response  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/new","/jdhome/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/new","/jdhome/73842/djsw/newOrder","/jdhome/72171/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
     public String orderPost(PrintWriter out, HttpServletRequest request,HttpServletResponse response) {
         String result = null;
         String platform = null;
@@ -316,7 +317,19 @@ public class WMController {
 
     @RequestMapping(value = "/baidu/getSupplier",method = RequestMethod.GET)
     public String getSupplierList(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.getSupplier());
         return null;
+    }
+
+
+
+    @Autowired
+    private EleMeFacadeService eleMeFacadeService;
+    @RequestMapping(value = "/eleme/text",method = RequestMethod.GET)
+    public void text() {
+        //测试用
+        System.out.println(eleMeFacadeService.restaurantMenu("2063064"));
+
     }
 }

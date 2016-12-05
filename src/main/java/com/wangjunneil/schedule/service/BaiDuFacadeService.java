@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.entity.baidu.*;
@@ -9,12 +10,13 @@ import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.service.baidu.BaiDuInnerService;
-import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.text.MessageFormat;
+import java.util.DoubleSummaryStatistics;
 
 /**
  * Created by yangwanbin on 2016-11-17.
@@ -47,8 +49,16 @@ public class BaiDuFacadeService {
                                     .registerTypeAdapter(CoordAmap.class, new CoordAmapSerializer())
                                     .registerTypeAdapter(Products.class, new ProductsSerializer())
                                     .registerTypeAdapter(Discount.class, new DiscountSerializer())
-                                    .registerTypeAdapter(BusinessForm.class,new BusinessFormSerializer())
+                                    .registerTypeAdapter(businessForm.class,new BusinessFormSerializer())
                                     .registerTypeAdapter(Categorys.class,new CategorysSerializer())
+                                    .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
+                                        @Override
+                                        public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
+                                            if(aDouble == aDouble.longValue())
+                                                return new JsonPrimitive(aDouble.longValue());
+                                            return new JsonPrimitive(aDouble);
+                                        }
+                                    })
                                     .serializeNulls()
                                     .disableHtmlEscaping()
                 .create();
@@ -61,7 +71,15 @@ public class BaiDuFacadeService {
         String result = null;
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer())
-                                      .registerTypeAdapter(Supplier.class,new SupplierSerializer()).disableHtmlEscaping().create();
+                                      .registerTypeAdapter(Supplier.class,new SupplierSerializer())
+                                      .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
+                                          @Override
+                                          public JsonElement serialize(Double d, Type typeOfd, JsonSerializationContext context) {
+                                              if(d == d.longValue())
+                                                  return new JsonPrimitive(d.longValue());
+                                              return new JsonPrimitive(d);
+                                          }
+                                      }).disableHtmlEscaping().create();
         try {
             rtn.setRemark(getGson().toJson(baiDuApiService.getSupplierList()));
             rtn.setCode(0);
@@ -313,7 +331,7 @@ public class BaiDuFacadeService {
         Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
         Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
        //？是否多个订单号存在
-       int intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.GetEnumDesc(Enum.OrderTypeBaiDu.R5,data.getOrder().getStatus()).get("code").toString()));
+       int intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.GetEnumDesc(Enum.OrderTypeBaiDu.R5, data.getOrder().getStatus()).get("code").toString()));
         if (intR > 0){
             result.setErrno("0");
             result.setError("success");
