@@ -1,5 +1,7 @@
 package com.wangjunneil.schedule.service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
@@ -9,7 +11,6 @@ import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.service.baidu.BaiDuInnerService;
-import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class BaiDuFacadeService {
                                     .registerTypeAdapter(CoordAmap.class, new CoordAmapSerializer())
                                     .registerTypeAdapter(Products.class, new ProductsSerializer())
                                     .registerTypeAdapter(Discount.class, new DiscountSerializer())
-                                    .registerTypeAdapter(BusinessForm.class,new BusinessFormSerializer())
+                                    .registerTypeAdapter(businessForm.class,new BusinessFormSerializer())
                                     .registerTypeAdapter(Categorys.class,new CategorysSerializer())
                                     .registerTypeAdapter(DeliveryRegion.class,new DeliveryRegionSerializer())
                                     .registerTypeAdapter(Region.class, new RegionSerializer())

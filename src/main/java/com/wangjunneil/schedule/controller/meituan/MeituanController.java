@@ -20,32 +20,36 @@ import java.util.logging.Logger;
  */
 @Controller
 @RequestMapping("/mt")
-public class MeiTuanController {
+public class MeituanController {
 
+    private static Logger log = Logger.getLogger(MeituanController.class.getName());
 
     @Autowired
     private MeiTuanFacadeService mtFacadeService;
 
 
     //测试关店接口
+    @ResponseBody
+    @RequestMapping(value = "/",method = RequestMethod.GET)
     public String closeStore(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws ScheduleException{
         resp.setContentType("text/html;charset=utf-8");
         String code = "22222";
-        //String params = mtFacadeService.closeShop(code);
-        //out.println(params);
+        String params = mtFacadeService.closeShop(code);
+        out.println(params);
         out.close();
         return null;
     }
 
-    //获取订单信息添加数据库
-    @ResponseBody
-    @RequestMapping(value = "/mtapi/newOrder",method = RequestMethod.GET)
-    public JSONObject newOrder(HttpServletRequest req, HttpServletResponse resp)throws Exception{
-        resp.setContentType("text/html;charset=utf-8");
-        String orderId = req.getParameter("order_id ");
-        String status = req.getParameter("status");
-        String rtnJson = mtFacadeService.newOrder(orderId,status);
-        return  null;
-    }
+//    //获取订单信息添加数据库
+//    @ResponseBody
+//    @RequestMapping(value = "/mtapi/newOrder",method = RequestMethod.GET)
+//    public JSONObject newOrder(HttpServletRequest req, HttpServletResponse resp)throws Exception{
+//        resp.setContentType("text/html;charset=utf-8");
+//        String orderId = req.getParameter("order_id ");
+//        String status = req.getParameter("status");
+//        String rtnJson = mtFacadeService.newOrder(orderId,status);
+//        System.out.println(rtnJson);
+//        return  null;
+//    }
 
 }

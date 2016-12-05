@@ -10,10 +10,10 @@ import java.lang.reflect.Type;
 /**
  * Created by yangwanbin on 2016-12-01.
  */
-public class BusinessFormSerializer implements JsonSerializer<BusinessForm> {
+public class BusinessFormSerializer implements JsonSerializer<businessForm> {
 
     @Override
-    public JsonElement serialize(BusinessForm businessForm, Type type, JsonSerializationContext context) {
+    public JsonElement serialize(businessForm businessForm, Type type, JsonSerializationContext context) {
         JsonObject object = new JsonObject();
         object.add("id",context.serialize(businessForm.getId()));
         object.add("name",context.serialize(businessForm.getName()));

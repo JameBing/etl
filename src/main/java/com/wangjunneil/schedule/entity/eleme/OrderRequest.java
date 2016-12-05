@@ -8,7 +8,7 @@ public class OrderRequest {
     //eleme订单id
     private String eleme_order_id;
     //状态
-    private  int status;
+    private  String status;
     /*****************查询订单详情属性********************/
     //第三方订单id
     private String tp_id;
@@ -36,11 +36,11 @@ public class OrderRequest {
         this.tp_id = tp_id;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

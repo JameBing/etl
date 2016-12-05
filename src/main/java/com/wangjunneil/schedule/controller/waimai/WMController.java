@@ -11,6 +11,7 @@ import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.entity.common.FlowNum;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
+import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.WMFacadeService;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.utility.HttpUtil;
@@ -382,5 +383,16 @@ public String dishAdd(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServle
         response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.getSupplier());
         return null;
+    }
+
+
+
+    @Autowired
+    private EleMeFacadeService eleMeFacadeService;
+    @RequestMapping(value = "/eleme/text",method = RequestMethod.GET)
+    public void text() {
+        //测试用
+        System.out.println(eleMeFacadeService.restaurantMenu("2063064"));
+
     }
 }

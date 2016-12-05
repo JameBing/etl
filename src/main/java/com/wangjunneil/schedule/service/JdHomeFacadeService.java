@@ -1,5 +1,6 @@
 package com.wangjunneil.schedule.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
@@ -7,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.common.JdHomeException;
+import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
@@ -16,6 +18,7 @@ import com.wangjunneil.schedule.service.jdhome.JdHomeApiService;
 import com.wangjunneil.schedule.service.jdhome.JdHomeInnerService;
 import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.HttpUtil;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,9 +69,10 @@ public class JdHomeFacadeService {
     public String updateAllStockOn(List<QueryStockRequest> stockRequests ,String shopId){
         try{
             String json = jdHomeApiService.updateAllStockOn(stockRequests,shopId);
+            log.info("=====批量商品上下架接口返回信息:"+json+"=====");
             return json;
         }catch (Exception ex){
-           return "{lg:,plat:,rtn:{}}";
+           return "商品批量上下架失败";
         }
     }
 
@@ -80,6 +84,7 @@ public class JdHomeFacadeService {
     public String addShopCategory(shopCategory shopCategory)throws JdHomeException{
         try {
             String json = jdHomeApiService.addShopCategory(shopCategory);
+            log.info("=====新增商品分类接口返回信息:"+json+"=====");
             return json;
         }catch (Exception e){
             return "";
@@ -95,6 +100,7 @@ public class JdHomeFacadeService {
     public String updateShopCategory(shopCategory shopCategory){
         try {
             String json = jdHomeApiService.updateShopCategory(shopCategory);
+            log.info("=====修改商品分类接口返回信息:"+json+"=====");
             return  json;
         }catch (Exception e){
             return "";
@@ -110,6 +116,7 @@ public class JdHomeFacadeService {
     public String deleteShopCategory(shopCategory shopCategory){
         try{
             String json = jdHomeApiService.deleteShopCategory(shopCategory);
+            log.info("=====删除商品分类接口返回信息:"+json+"=====");
             return json;
         }catch (Exception e){
             return "";
@@ -130,6 +137,7 @@ public class JdHomeFacadeService {
 
         try {
             String json  = jdHomeApiService.newOrder(billId,statusId,timestamp,shopId);
+            log.info("=====订单查询接口返回信息:"+json+"=====");
             JSONObject jsonObject =JSONObject.parseObject(json);
             JSONObject apiJson= JSONObject.parseObject(jsonObject.getString("data"));
             if("0".equals(jsonObject.get("code")) && "0".equals(apiJson.getString("code"))){
@@ -284,6 +292,7 @@ public class JdHomeFacadeService {
     public String orderAcceptOperate(OrderAcceptOperate acceptOperate){
         try {
             String json = jdHomeApiService.orderAcceptOperate(acceptOperate);
+            log.info("=====商家确认/取消接口返回信息:"+json+"=====");
             //返回成功/失败 若成功修改mongodb订单状态
             JSONObject jsonObject = JSONObject.parseObject(json);
             //业务接口返回结果
@@ -311,11 +320,90 @@ public class JdHomeFacadeService {
      * @param companyId  商家编码
      */
     public void callback(String tokenJson,String companyId) {
+        log.info("=====京东到家回调token数据:"+tokenJson+"=====");
         JSONObject json = JSONObject.parseObject(tokenJson);
         // token入库
         JdHomeAccessToken jdAccessToken = JSONObject.parseObject(tokenJson, JdHomeAccessToken.class);
         jdAccessToken.setCompanyId(companyId);
         jdHomeInnerService.addRefreshToken(jdAccessToken);
+    }
+
+    //批量修改商品上下架
+    public String updateAllStockOnAndOff(List<ParsFromPosInner> dishList,Integer doSale){
+        if(dishList ==null || dishList.size()==0){
+            return "批量上下架请求参数为空";
+        }
+        List<QueryStockRequest> requests = new ArrayList<>();
+        //拼装请求参数
+        for(int i=0;i<dishList.size();i++){
+            QueryStockRequest stockRequest = new QueryStockRequest();
+            ParsFromPosInner posInner = dishList.get(i);
+            stockRequest.setDoSale(doSale);
+            //查询到家商品Id
+            String skuStr = querySkuInfo(posInner,stockRequest);
+            if(!"".equals(skuStr)){
+                return skuStr;
+            }
+            //查询到家门店Id
+            String storeStr = getStoreInfoPageBean(posInner,stockRequest);
+            if(!"".equals(skuStr)){
+                return storeStr;
+            }
+            requests.add(stockRequest);
+        }
+        try{
+            String json = jdHomeApiService.updateAllStockOn(requests, dishList.get(0).getShopId());
+            log.info("=====批量商品上下架接口返回信息:"+json+"=====");
+            return json;
+        }catch (Exception ex) {
+            return "批量修改商品上下架失败";
+        }
+    }
+
+    //查询商家商品信息列表
+    public String querySkuInfo(ParsFromPosInner posInner,QueryStockRequest stockRequest){
+        String rtn = "";
+        try {
+            String json = jdHomeApiService.querySkuInfos(posInner.getDishId(),posInner.getShopId());
+            log.info("=====查询商家商品信息接口返回信息:"+json+"=====");
+            if(!StringUtil.isEmpty(json)){
+                JSONObject jsonObject = JSON.parseObject(json);
+                //判断接口是否调用成功
+                if("0".equals(jsonObject.getString("code")) && "0".equals(JSONObject.parseObject(jsonObject.getString("data")).getString("code"))){
+                    JSONArray array = JSONArray.parseArray(JSONObject.parseObject(JSONObject.parseObject(jsonObject.getString("data")).getString("result")).getString("result"));
+                    if(array !=null && array.size()>0){
+                        JSONObject js = array.getJSONObject(0);
+                        stockRequest.setSkuId(js.getLong("skuId"));
+                    }
+                }
+            }
+        }catch (Exception e){
+            return "获取平台商品信息失败";
+        }
+        return rtn;
+    }
+
+    //根据查询条件分页获取门店基本信息
+    public String getStoreInfoPageBean(ParsFromPosInner posInner,QueryStockRequest stockRequest){
+        String rtn ="";
+        try {
+            String storeJson = jdHomeApiService.getStoreInfoPageBean(posInner.getShopId());
+            log.info("=====查询商家门店接口返回信息:"+storeJson+"=====");
+            if(!StringUtil.isEmpty(storeJson)){
+                JSONObject jss = JSONObject.parseObject(storeJson);
+                //判断接口是否调用成功
+                if("0".equals(jss.getString("code")) && "0".equals(JSONObject.parseObject(jss.getString("data")).getString("code"))){
+                    JSONArray storeArray = JSONObject.parseObject(JSONObject.parseObject(jss.getString("data")).getString("result")).getJSONArray("resultList");
+                    if(storeArray !=null && storeArray.size()>0){
+                        JSONObject json2 = storeArray.getJSONObject(0);
+                        stockRequest.setStationNo(json2.getString("stationNo"));
+                    }
+                }
+            }
+        }catch (Exception e){
+            return "获取平台门店信息失败";
+        }
+        return rtn;
     }
 }
 

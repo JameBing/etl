@@ -8,7 +8,7 @@ public class RestaurantRequest {
     private String restaurant_id;
     /***********更新餐厅营业信息属性*************/
     //开关店铺
-    private int is_open;
+    private String is_open;
     /************更新餐厅基本信息属性***********/
     //餐厅地址
     private String address_text;
@@ -37,21 +37,29 @@ public class RestaurantRequest {
     //是否支持开发票
     private int invoice;
     //支持的最小发票金额
-    private float invoice_min_amount;
+    private String invoice_min_amount;
     //满xx元免配送费
     private String no_agent_fee_total;
     //餐厅是否有效
     private String is_valid;
     //订单打包费
-    private float packing_fee=-1;
+    private String packing_fee="-1";
     /************设置配送范围***********/
 
 
-    public int getIs_open() {
+    public String getRestaurant_id() {
+        return restaurant_id;
+    }
+
+    public void setRestaurant_id(String restaurant_id) {
+        this.restaurant_id = restaurant_id;
+    }
+
+    public String getIs_open() {
         return is_open;
     }
 
-    public void setIs_open(int is_open) {
+    public void setIs_open(String is_open) {
         this.is_open = is_open;
     }
 
@@ -159,11 +167,11 @@ public class RestaurantRequest {
         this.invoice = invoice;
     }
 
-    public float getInvoice_min_amount() {
+    public String getInvoice_min_amount() {
         return invoice_min_amount;
     }
 
-    public void setInvoice_min_amount(float invoice_min_amount) {
+    public void setInvoice_min_amount(String invoice_min_amount) {
         this.invoice_min_amount = invoice_min_amount;
     }
 
@@ -183,19 +191,11 @@ public class RestaurantRequest {
         this.is_valid = is_valid;
     }
 
-    public float getPacking_fee() {
+    public String getPacking_fee() {
         return packing_fee;
     }
 
-    public void setPacking_fee(float packing_fee) {
+    public void setPacking_fee(String packing_fee) {
         this.packing_fee = packing_fee;
-    }
-
-    public String getRestaurant_id() {
-        return restaurant_id;
-    }
-
-    public void setRestaurant_id(String restaurant_id) {
-        this.restaurant_id = restaurant_id;
     }
 }

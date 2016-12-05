@@ -20,7 +20,7 @@ public class EleMeApiService {
 
     public static final String KEY = "9938016757";
     public static final String SERVICEC = "b01973894f15afb94745a49c8411a7e7c425cea5";
-    public static final String RESTAURANTID = "2063064";
+//    public static final String RESTAURANTID = "2063064";
 
     public String getSystemUrl(String pathUrl, Object obj) throws ScheduleException {
         try {
@@ -49,13 +49,14 @@ public class EleMeApiService {
     }
 
     /**
-     * 餐厅状态(新)
+     * 餐厅状态
      * @param obj 属性is_open ：1营业/0不营业
      * @return
      * @throws ScheduleException
      */
     public String setRestaurantStatus(RestaurantRequest obj) throws ScheduleException {
-        String pathURL = MessageFormat.format(URL.URL_ELEME_RESTAURANT_ON, RESTAURANTID);
+        String pathURL = MessageFormat.format(URL.URL_ELEME_RESTAURANT_ON, obj.getRestaurant_id().toString());
+        obj.setRestaurant_id("");
         String url = getSystemUrl(pathURL, obj);
         return HttpUtil.put(url, StringUtil.getUrlParamsByObject(obj));
     }
@@ -102,21 +103,20 @@ public class EleMeApiService {
      * @throws ScheduleException
      */
 
-    public String foodsClassify()throws ScheduleException{
-        String pathURL = MessageFormat.format(URL.URL_ELEME_CLASSIFY_FOODS, RESTAURANTID);
+    public String foodsClassify(String restaurantId)throws ScheduleException{
+        String pathURL = MessageFormat.format(URL.URL_ELEME_CLASSIFY_FOODS, restaurantId);
         String url = getSystemUrl(pathURL, null);
         return HttpUtil.get2(url);
     }
 
     /**
-     * 获取餐厅食物ID food_id
+     * 查询食物列表
      * @return
      * @throws ScheduleException
      */
 
-    public String getFoodsId(OldFoodsRequest obj)throws ScheduleException{
-        String pathURL = MessageFormat.format(URL.URL_ELEME_GETFOODSID, obj.getFood_category_id().toString());
-        obj.setFood_category_id("");
+    public String getFoodsList(String categoryId)throws ScheduleException{
+        String pathURL = MessageFormat.format(URL.URL_ELEME_GETFOODSID, categoryId);
         String url = getSystemUrl(pathURL, null);
         return HttpUtil.get2(url);
     }
@@ -127,9 +127,8 @@ public class EleMeApiService {
      * @throws ScheduleException
      */
 
-    public  String orderDetail(OrderRequest obj)throws ScheduleException{
-        String pathURL = MessageFormat.format(URL.URL_ELEME_ORDER_DETAIL, obj.getEleme_order_id().toString());
-        obj.setEleme_order_id("");
+    public String orderDetail(String orderId)throws ScheduleException{
+        String pathURL = MessageFormat.format(URL.URL_ELEME_ORDER_DETAIL, orderId);
         String url = getSystemUrl(pathURL, null);
         return HttpUtil.get2(url);
     }
@@ -153,10 +152,22 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String restaurantMenu() throws ScheduleException {
-        String pathURL = MessageFormat.format(URL.URL_ELEME_RESTAURANT_MENU, RESTAURANTID);
+    public String restaurantMenu(String restaurantId) throws ScheduleException {
+        String pathURL = MessageFormat.format(URL.URL_ELEME_RESTAURANT_MENU, restaurantId);
         String url = getSystemUrl(pathURL, null);
         return HttpUtil.get2(url);
+    }
+
+    /**
+     * 通过第三方id获取平台食物id
+     * @param obj
+     * @return
+     * @throws ScheduleException
+     */
+    public String getFoodId(FoodsRequest obj) throws ScheduleException {
+        String url = getSystemUrl(URL.URL_ELEME_TP_FOOD_ID, obj);
+        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByObject(obj));
+        return HttpUtil.get2(requstUrl);
     }
 
 }
