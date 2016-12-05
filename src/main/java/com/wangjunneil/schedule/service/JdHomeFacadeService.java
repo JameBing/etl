@@ -291,10 +291,10 @@ public class JdHomeFacadeService {
             if("0".equals(jsonObject.getString("code")) && "0".equals(apiJson.getString("code"))){
                int status = 0;
                if(acceptOperate.getIsAgreed()){
-                   status = Enum.GetEnumDesc(Enum.OrderStatusJdHome.OrderReceived,Enum.OrderStatusJdHome.OrderReceived.toString()).getInteger("code");
+                   status = Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderReceived,Enum.OrderStatusJdHome.OrderReceived.toString()).get("code").getAsInt();
                }
                if(!acceptOperate.getIsAgreed()){
-                   status = Enum.GetEnumDesc(Enum.OrderStatusJdHome.OrderSysCancelled,Enum.OrderStatusJdHome.OrderSysCancelled.toString()).getInteger("code");
+                   status = Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderSysCancelled,Enum.OrderStatusJdHome.OrderSysCancelled.toString()).get("code").getAsInt();
                }
                jdHomeInnerService.updateStatus(acceptOperate,status);
             }

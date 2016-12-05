@@ -24,11 +24,11 @@ public class DishSerializer implements JsonSerializer<Dish> {
         object.add("min_order_num",context.serialize(dish.getMinOrderNum()));
         object.add("package_box_num",context.serialize(dish.getPackageBoxNum()));
         object.add("description",context.serialize(dish.getDescription()));
-        object.add("available_times",context.serialize(dish.getAvailableTimesList()));
+        object.add("available_times",context.serialize(dish.getAvailableTime()));
         object.add("stock",context.serialize(dish.getStock()));
-        object.add("category",context.serialize(dish.getCategoryList()));
-        object.add("norms",context.serialize(dish.getNormsList()));
-        object.add("attr",context.serialize(dish.getAttrsList()));
+        object.add("category",context.serialize(dish.getCategories()));
+        object.add("norms",context.serialize(dish.getNorms()));
+        object.add("attr",context.serialize(dish.getAttrs()));
         object.add("wid",context.serialize(dish.getWid()));
         object.add("left_num",context.serialize(dish.getLeftNum()));
         object.add("status",context.serialize(dish.getStatus()));

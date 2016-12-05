@@ -4,9 +4,7 @@ package com.wangjunneil.schedule.utility;
 
 import com.google.gson.Gson;
 import com.wangjunneil.schedule.common.Constants;
-import com.wangjunneil.schedule.common.ElemaException;
 import com.wangjunneil.schedule.common.ScheduleException;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -19,6 +17,8 @@ import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 描述
@@ -270,5 +270,22 @@ public class StringUtil {
             }
         }
         return result;
+    }
+
+
+    /**
+     * Unicode To 中文
+     * @param str
+     * @return
+     */
+    public static String unicodeToChina( String str){
+        Pattern pattern = Pattern.compile("(\\\\u(\\p{XDigit}{4}))");
+        Matcher matcher = pattern.matcher(str);
+        char ch;
+        while (matcher.find()) {
+            ch = (char) Integer.parseInt(matcher.group(2), 16);
+            str = str.replace(matcher.group(1), ch + "");
+        }
+        return str;
     }
 }
