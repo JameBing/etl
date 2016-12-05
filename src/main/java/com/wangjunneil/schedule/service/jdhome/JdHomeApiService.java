@@ -236,7 +236,7 @@ public class JdHomeApiService {
         return  sysParam ;
     }
 
-    //根据门口编号获取签名参数
+    //根据门店编号获取签名参数
     private SignParams getSignParams(String shopId){
         JdHomeAccessToken jdHomeAccessToken = jdHomeInnerService.getAccessToken(shopId);
         SignParams signParam = new SignParams();
