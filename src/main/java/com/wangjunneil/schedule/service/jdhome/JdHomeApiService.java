@@ -225,7 +225,7 @@ public class JdHomeApiService {
 
     //获取系统参数map对象
     private Map<String,Object> getSysMap(SignParams signParams){
-        Map<String ,Object> sysParam = new HashMap<String,Object>();
+        Map<String ,Object> sysParam = new HashMap<>();
         sysParam.put("token",signParams.getToken());
         sysParam.put("app_key",signParams.getApp_key());
         sysParam.put("format",signParams.getFormat());

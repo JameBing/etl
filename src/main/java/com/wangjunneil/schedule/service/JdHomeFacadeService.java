@@ -211,7 +211,6 @@ public class JdHomeFacadeService {
                 if(orders !=null && orders.size()>0){
                     log.info("=====MongoDb insert Order start====");
                     try {
-                        List list = new ArrayList<>();
                         jdHomeInnerService.addOrUpdateSyncOrder(orders);
                     }catch (Exception e){
                         return "{\"code\":\"2\",\"msg\":\"failure\",\"data\":\"{}\"}";
@@ -228,8 +227,8 @@ public class JdHomeFacadeService {
 
     /**
      * 订单扩展信息
-     * @param jsonObject
-     * @return
+     * @param jsonObject 扩展类
+     * @return Entity
      */
     private OrderExtend getOrderExtend(JSONObject jsonObject){
         OrderExtend orderExtend = new OrderExtend();
@@ -253,8 +252,8 @@ public class JdHomeFacadeService {
 
     /**
      * 订单商品信息
-     * @param jsonArray
-     * @return
+     * @param jsonArray 商品数组
+     * @return List
      */
     private List<OrderProductDTO> getProducts(JSONArray jsonArray){
         List<OrderProductDTO> products = new ArrayList<>();
@@ -286,7 +285,7 @@ public class JdHomeFacadeService {
 
     /**
      * 订单折扣信息
-     * @param jsonArray
+     * @param jsonArray 折扣信息
      * @return List
      */
     private List<OrderDiscountDTO> getDiscounts(JSONArray jsonArray){
