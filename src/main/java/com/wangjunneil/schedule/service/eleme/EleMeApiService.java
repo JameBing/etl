@@ -3,10 +3,13 @@ package com.wangjunneil.schedule.service.eleme;
 import com.google.gson.Gson;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.eleme.*;
+import com.wangjunneil.schedule.entity.sys.Cfg;
+import com.wangjunneil.schedule.service.SysFacadeService;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import com.wangjunneil.schedule.utility.URL;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -17,21 +20,20 @@ import java.util.Map;
  */
 @Service
 public class EleMeApiService {
-
-    public static final String KEY = "9938016757";
-    public static final String SERVICEC = "b01973894f15afb94745a49c8411a7e7c425cea5";
-//    public static final String RESTAURANTID = "2063064";
+    @Autowired
+    private SysFacadeService sysFacadeService;
 
     public String getSystemUrl(String pathUrl, Object obj) throws ScheduleException {
         try {
+            Cfg elemeCfg = sysFacadeService.findElemeCfg();
             SysParams sysParams = new SysParams();
-            sysParams.setConsumer_key(KEY);
+            sysParams.setConsumer_key(elemeCfg.getAppKey());
             Map<String, String> map = StringUtil.getMap(sysParams);
             if (obj != null) {
                 Map<String, String> lmap = StringUtil.getMap(obj);
                 map.putAll(lmap);
             }
-            String sig = EleMeUtils.genSig(pathUrl, map, SERVICEC);
+            String sig = EleMeUtils.genSig(pathUrl, map, elemeCfg.getAppSecret());
             sysParams.setSig(sig);
             return EleMeUtils.genUrl(pathUrl, sysParams);
         } catch (Exception ex) {

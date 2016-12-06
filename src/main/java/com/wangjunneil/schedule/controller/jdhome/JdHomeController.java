@@ -169,8 +169,8 @@ public class JdHomeController {
     @RequestMapping(value = "/testAddOrder",method = RequestMethod.GET)
     public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-        String json = jdHomeFacadeService.newOrder(null,"");
-        out.println(json);
+        jdHomeFacadeService.callback("","72171");
+        //out.println(json);
         out.close();
         return null;
     }

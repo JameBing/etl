@@ -4,7 +4,6 @@ import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
-import com.wangjunneil.schedule.entity.sys.Cfg;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +102,7 @@ public class JdHomeInnerService {
 
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(jdHomeAccessToken.getCompanyId()));
         Update update = new Update()
-            .set("access_token", jdHomeAccessToken.getAccess_token())
+            .set("access_token", jdHomeAccessToken.getToken())
             .set("expires_in", jdHomeAccessToken.getExpires_in())
             .set("token_type", jdHomeAccessToken.getToken_type())
             .set("time", jdHomeAccessToken.getTime())
@@ -146,7 +145,7 @@ public class JdHomeInnerService {
 
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(jdHomeAccessToken.getCompanyId()));
         Update update = new Update()
-            .set("access_token", jdHomeAccessToken.getAccess_token())
+            .set("access_token", jdHomeAccessToken.getToken())
             .set("expires_in", jdHomeAccessToken.getExpires_in())
             .set("token_type", jdHomeAccessToken.getToken_type())
             .set("time", jdHomeAccessToken.getTime())

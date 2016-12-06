@@ -14,6 +14,7 @@ import com.wangjunneil.schedule.entity.common.ParsFromPos;
 import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.WMFacadeService;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
+import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
@@ -402,14 +403,4 @@ public class WMController {
         return null;
     }
 
-
-
-    @Autowired
-    private EleMeFacadeService eleMeFacadeService;
-    @RequestMapping(value = "/eleme/text",method = RequestMethod.GET)
-    public void text() {
-        //测试用
-        System.out.println(eleMeFacadeService.restaurantMenu("2063064"));
-
-    }
 }
