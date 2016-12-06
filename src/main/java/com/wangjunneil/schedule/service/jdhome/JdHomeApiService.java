@@ -57,7 +57,6 @@ public class JdHomeApiService {
                         param.put("sign",sign);
                     }catch (Exception e){
                         throw new JdHomeException("签名失败",e);
-
                     }
                     log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
                     rtnStr = rtnStr + HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+",";
@@ -226,7 +225,7 @@ public class JdHomeApiService {
 
     //获取系统参数map对象
     private Map<String,Object> getSysMap(SignParams signParams){
-        Map<String ,Object> sysParam = new HashMap<String,Object>();
+        Map<String ,Object> sysParam = new HashMap<>();
         sysParam.put("token",signParams.getToken());
         sysParam.put("app_key",signParams.getApp_key());
         sysParam.put("format",signParams.getFormat());

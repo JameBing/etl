@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.GsonBuilder;
 import com.wangjunneil.schedule.common.Enum;
-import com.wangjunneil.schedule.common.JdHomeException;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
@@ -69,7 +68,7 @@ public class JdHomeFacadeService {
     /**
      * 批量修改商品上下架
      * @param stockRequests 商品列表
-     * @shopId 商家编号
+     * @param shopId 商家编号
      * @return String 接口响应信息
      */
     public String updateAllStockOn(List<QueryStockRequest> stockRequests ,String shopId){
@@ -228,8 +227,8 @@ public class JdHomeFacadeService {
 
     /**
      * 订单扩展信息
-     * @param jsonObject
-     * @return
+     * @param jsonObject 扩展类
+     * @return Entity
      */
     private OrderExtend getOrderExtend(JSONObject jsonObject){
         OrderExtend orderExtend = new OrderExtend();
@@ -253,8 +252,8 @@ public class JdHomeFacadeService {
 
     /**
      * 订单商品信息
-     * @param jsonArray
-     * @return
+     * @param jsonArray 商品数组
+     * @return List
      */
     private List<OrderProductDTO> getProducts(JSONArray jsonArray){
         List<OrderProductDTO> products = new ArrayList<>();
@@ -286,8 +285,8 @@ public class JdHomeFacadeService {
 
     /**
      * 订单折扣信息
-     * @param jsonArray
-     * @return
+     * @param jsonArray 折扣信息
+     * @return List
      */
     private List<OrderDiscountDTO> getDiscounts(JSONArray jsonArray){
         List<OrderDiscountDTO> discounts =  new ArrayList<>();
@@ -312,7 +311,7 @@ public class JdHomeFacadeService {
     /**
      * 商家确认/取消接口
      * @param acceptOperate Entity
-     * @return
+     * @return String
      */
     public String orderAcceptOperate(OrderAcceptOperate acceptOperate){
         try {
@@ -349,14 +348,20 @@ public class JdHomeFacadeService {
         // token入库
         JdHomeAccessToken jdAccessToken = JSONObject.parseObject(tokenJson, JdHomeAccessToken.class);
         jdAccessToken.setCompanyId(companyId);
-        jdHomeInnerService.addRefreshToken(jdAccessToken);
+        if(!StringUtil.isEmpty(jdAccessToken.getCode())){
+            //添加code
+            jdHomeInnerService.addBackCode(jdAccessToken);
+        }else {
+            //添加token
+            jdHomeInnerService.addRefreshToken(jdAccessToken);
+        }
     }
 
     /**
      * 批量修改商品上下架
      * @param dishList 商品列表
      * @param doSale 上/下标示 0上架  1下架
-     * @return
+     * @return String
      */
     public String updateAllStockOnAndOff(List<ParsFromPosInner> dishList,Integer doSale){
         if(dishList ==null || dishList.size()==0){
@@ -393,7 +398,7 @@ public class JdHomeFacadeService {
      * 查询商家商品信息列表
      * @param posInner 门店信息
      * @param stockRequest 商品信息
-     * @return
+     * @return String
      */
     public String querySkuInfo(ParsFromPosInner posInner,QueryStockRequest stockRequest){
         String rtn = "";
@@ -421,7 +426,7 @@ public class JdHomeFacadeService {
      * 根据查询条件分页获取门店基本信息
      * @param posInner 门店信息
      * @param stockRequest 商品信息
-     * @return
+     * @return String
      */
     public String getStoreInfoPageBean(ParsFromPosInner posInner,QueryStockRequest stockRequest){
         String rtn ="";
