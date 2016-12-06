@@ -102,7 +102,7 @@ public class JdHomeInnerService {
 
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(jdHomeAccessToken.getCompanyId()));
         Update update = new Update()
-            .set("token", jdHomeAccessToken.getToken())
+            .set("access_token", jdHomeAccessToken.getToken())
             .set("expires_in", jdHomeAccessToken.getExpires_in())
             .set("token_type", jdHomeAccessToken.getToken_type())
             .set("time", jdHomeAccessToken.getTime())
@@ -145,7 +145,7 @@ public class JdHomeInnerService {
 
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(jdHomeAccessToken.getCompanyId()));
         Update update = new Update()
-            .set("token", jdHomeAccessToken.getToken())
+            .set("access_token", jdHomeAccessToken.getToken())
             .set("expires_in", jdHomeAccessToken.getExpires_in())
             .set("token_type", jdHomeAccessToken.getToken_type())
             .set("time", jdHomeAccessToken.getTime())
