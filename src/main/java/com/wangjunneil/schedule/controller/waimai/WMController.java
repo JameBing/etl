@@ -63,30 +63,34 @@ public class WMController {
     @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842","/jdhome/72171"})
     public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
         String result = "",platform,requestUrl,sid = null;
-        Map<String,String[]> stringMap =  request.getParameterMap();
+        Map<String,String[]> stringMap = new HashMap<>();
         response.setContentType("application/json;charset=uft-8");
         requestUrl =    request.getPathInfo().toLowerCase();
         if(requestUrl.indexOf("/jdhome/")> 0){
-            sid = requestUrl.split("\\/").length>2?requestUrl.split("\\/")[2]:null;
+            sid = Pattern.compile("[^0-9]").matcher(requestUrl).replaceAll("");
             requestUrl = "/waimai/jdhome";
         }
         switch (requestUrl){
             case "/waimai/baidu":  //百度
                 platform = Constants.PLATFORM_WAIMAI_BAIDU;
+                stringMap = request.getParameterMap();
                // stringMap = request.getParameterMap();//?Content-Type: multipart/form-data 无法取值
                 break;
             case "/waimai/jdhome": //京东到家
-                platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 String[] strArr = {sid};
                 stringMap.put("sid",strArr);
+                stringMap.putAll(request.getParameterMap());
+                platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             case "/waimai/eleme":  //饿了么
                 platform = Constants.PLATFORM_WAIMAI_ELEME;
                 break;
             case "/waimai/meituan": //美团
+                stringMap = request.getParameterMap();
                 platform = Constants.PLATFORM_WAIMAI_MEITUAN;
                 break;
             default:
+                stringMap = request.getParameterMap();
                 platform = null;
                 break;
         }
@@ -116,7 +120,7 @@ public class WMController {
      * 门店开业
      *
      * @param out   响应输出流对象
-     * @param request 请求对象 ｛baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}｝
+     * @param request 请求对象 {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
      * @return {code:0,desc:"success",dynamic:"",logId:""}
      */
