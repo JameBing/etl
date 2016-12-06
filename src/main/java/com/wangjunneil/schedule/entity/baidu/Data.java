@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * Created by yangwanbin on 2016-12-01.
  */
+@Document(collection = "sync.waimai.order.baidu")
 public class Data {
 
     //合作方ID

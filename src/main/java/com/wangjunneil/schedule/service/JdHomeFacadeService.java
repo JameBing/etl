@@ -3,27 +3,19 @@ package com.wangjunneil.schedule.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
-import com.wangjunneil.schedule.common.JdHomeException;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
-import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.*;
-import com.wangjunneil.schedule.entity.sys.Cfg;
 import com.wangjunneil.schedule.service.jdhome.JdHomeApiService;
 import com.wangjunneil.schedule.service.jdhome.JdHomeInnerService;
-import com.wangjunneil.schedule.service.sys.SysInnerService;
-import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +34,12 @@ public class JdHomeFacadeService {
     @Autowired
     private JdHomeInnerService jdHomeInnerService;
 
+    /**
+     * 门店开业
+     * @param shopId 商家门店Id
+     * @param platformShopId 平台门店Id
+     * @return String
+     */
     public String startBusiness(String shopId,String platformShopId){
         Rtn rtn = new Rtn();
         rtn.setCode(1);
@@ -51,6 +49,12 @@ public class JdHomeFacadeService {
         return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
     }
 
+    /**
+     * 门店歇业
+     * @param shopId 商家门店Id
+     * @param platformShopId 平台门店id
+     * @return String
+     */
     public String endBusiness(String shopId,String platformShopId){
 
         Rtn rtn = new Rtn();
@@ -64,7 +68,8 @@ public class JdHomeFacadeService {
     /**
      * 批量修改商品上下架
      * @param stockRequests 商品列表
-     * @return
+     * @param shopId 商家编号
+     * @return String 接口响应信息
      */
     public String updateAllStockOn(List<QueryStockRequest> stockRequests ,String shopId){
         try{
@@ -78,10 +83,10 @@ public class JdHomeFacadeService {
 
     /**
      * 新增商品分类
-     * @param shopCategory
-     * @return
+     * @param shopCategory 商品类别Entity
+     * @return String 接口响应信息
      */
-    public String addShopCategory(shopCategory shopCategory)throws JdHomeException{
+    public String addShopCategory(shopCategory shopCategory){
         try {
             String json = jdHomeApiService.addShopCategory(shopCategory);
             log.info("=====新增商品分类接口返回信息:"+json+"=====");
@@ -93,9 +98,8 @@ public class JdHomeFacadeService {
 
     /**
      * 修改商品分类
-     * @param shopCategory
-     * @return
-     * @throws Exception
+     * @param shopCategory 商品类别Entity
+     * @return String 接口响应信息
      */
     public String updateShopCategory(shopCategory shopCategory){
         try {
@@ -109,9 +113,8 @@ public class JdHomeFacadeService {
 
     /**
      * 删除商品分类
-     * @param shopCategory
-     * @return
-     * @throws Exception
+     * @param shopCategory 商品类别Entity
+     * @return String 接口响应信息
      */
     public String deleteShopCategory(shopCategory shopCategory){
         try{
@@ -124,7 +127,12 @@ public class JdHomeFacadeService {
 
     }
 
-    //新增推送订单
+    /**
+     * 新增订单
+     * @param jdParamJson 接口推送参数
+     * @param shopId 门店Id
+     * @return String 返回响应结果给到家平台
+     */
     public String newOrder(String jdParamJson,String shopId){
 
         JSONObject jdParam = JSONObject.parseObject(jdParamJson);
@@ -193,7 +201,7 @@ public class JdHomeFacadeService {
                     order.setAdjustIsExists(jsonOrder.getBoolean("adjustIsExists"));
                     order.setTs(jsonOrder.getDate("ts"));
                     //扩展类
-                    order.setOrderExtend(getOrdeExtend(jsonOrder.getJSONObject("orderExtend")));
+                    order.setOrderExtend(getOrderExtend(jsonOrder.getJSONObject("orderExtend")));
                     //商品信息
                     order.setProductList(getProducts(jsonOrder.getJSONArray("product")));
                     //折扣信息
@@ -217,8 +225,12 @@ public class JdHomeFacadeService {
         return null;
     }
 
-    //订单扩展类
-    private OrderExtend getOrdeExtend(JSONObject jsonObject){
+    /**
+     * 订单扩展信息
+     * @param jsonObject 扩展类
+     * @return Entity
+     */
+    private OrderExtend getOrderExtend(JSONObject jsonObject){
         OrderExtend orderExtend = new OrderExtend();
         if(jsonObject == null){
             return orderExtend;
@@ -238,7 +250,11 @@ public class JdHomeFacadeService {
         return orderExtend;
     }
 
-    //商品信息
+    /**
+     * 订单商品信息
+     * @param jsonArray 商品数组
+     * @return List
+     */
     private List<OrderProductDTO> getProducts(JSONArray jsonArray){
         List<OrderProductDTO> products = new ArrayList<>();
         if(jsonArray == null || jsonArray.size() ==0){
@@ -267,7 +283,11 @@ public class JdHomeFacadeService {
         return products;
     }
 
-    //折扣信息
+    /**
+     * 订单折扣信息
+     * @param jsonArray 折扣信息
+     * @return List
+     */
     private List<OrderDiscountDTO> getDiscounts(JSONArray jsonArray){
         List<OrderDiscountDTO> discounts =  new ArrayList<>();
         if(jsonArray == null || jsonArray.size()==0){
@@ -288,7 +308,11 @@ public class JdHomeFacadeService {
         return discounts;
     }
 
-    //商家确认/取消接单接口
+    /**
+     * 商家确认/取消接口
+     * @param acceptOperate Entity
+     * @return String
+     */
     public String orderAcceptOperate(OrderAcceptOperate acceptOperate){
         try {
             String json = jdHomeApiService.orderAcceptOperate(acceptOperate);
@@ -321,14 +345,24 @@ public class JdHomeFacadeService {
      */
     public void callback(String tokenJson,String companyId) {
         log.info("=====京东到家回调token数据:"+tokenJson+"=====");
-        JSONObject json = JSONObject.parseObject(tokenJson);
         // token入库
         JdHomeAccessToken jdAccessToken = JSONObject.parseObject(tokenJson, JdHomeAccessToken.class);
         jdAccessToken.setCompanyId(companyId);
-        jdHomeInnerService.addRefreshToken(jdAccessToken);
+        if(!StringUtil.isEmpty(jdAccessToken.getCode())){
+            //添加code
+            jdHomeInnerService.addBackCode(jdAccessToken);
+        }else {
+            //添加token
+            jdHomeInnerService.addRefreshToken(jdAccessToken);
+        }
     }
 
-    //批量修改商品上下架
+    /**
+     * 批量修改商品上下架
+     * @param dishList 商品列表
+     * @param doSale 上/下标示 0上架  1下架
+     * @return String
+     */
     public String updateAllStockOnAndOff(List<ParsFromPosInner> dishList,Integer doSale){
         if(dishList ==null || dishList.size()==0){
             return "批量上下架请求参数为空";
@@ -360,7 +394,12 @@ public class JdHomeFacadeService {
         }
     }
 
-    //查询商家商品信息列表
+    /**
+     * 查询商家商品信息列表
+     * @param posInner 门店信息
+     * @param stockRequest 商品信息
+     * @return String
+     */
     public String querySkuInfo(ParsFromPosInner posInner,QueryStockRequest stockRequest){
         String rtn = "";
         try {
@@ -383,7 +422,12 @@ public class JdHomeFacadeService {
         return rtn;
     }
 
-    //根据查询条件分页获取门店基本信息
+    /**
+     * 根据查询条件分页获取门店基本信息
+     * @param posInner 门店信息
+     * @param stockRequest 商品信息
+     * @return String
+     */
     public String getStoreInfoPageBean(ParsFromPosInner posInner,QueryStockRequest stockRequest){
         String rtn ="";
         try {
