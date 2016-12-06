@@ -53,9 +53,10 @@ public class WMFacadeService {
 
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
-                jdHomeFacadeService.callback(stringMap.get("token")[0],stringMap.get("sid")[0]);
+                jdHomeFacadeService.callback(stringMap.get("token")!=null?stringMap.get("token")[0]:stringMap.get("code")[0],stringMap.get("sid")[0]);
                 break;
             case Constants.PLATFORM_WAIMAI_MEITUAN:
+
 
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME:
@@ -84,6 +85,11 @@ public class WMFacadeService {
     //获取供应商-百度
     public String getSupplier(){
         return baiDuFacadeService.getSupplier();
+    }
+
+    //修改商户信息-百度
+    public String shopUpdate(Shop shop){
+        return baiDuFacadeService.shopUpdate(shop);
     }
 
     //新建门店

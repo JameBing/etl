@@ -503,4 +503,20 @@ public class BaiDuFacadeService {
         }
         return  result;
     }
+    //修改商户信息
+    public String shopUpdate(Shop  shop){
+        Rtn rtn = new Rtn();
+        try {
+            rtn = getGson().fromJson(baiDuApiService.shopUpdate(shop),Rtn.class);
+        }
+        catch (Exception ex){
+            rtn.setDynamic("");
+            rtn.setCode(-999);
+            rtn.setDesc("error");
+            rtn.setRemark("发生异常");
+            rtn .setLogId("");
+            //异常日志
+        }
+        return  getGson().toJson(rtn);
+    }
 }
