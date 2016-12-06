@@ -3,11 +3,13 @@ package com.wangjunneil.schedule.service;
 
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.entity.eleme.*;
 import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -138,47 +140,6 @@ public class EleMeFacadeService {
     }
 
     /**
-     * 商品上下架（通过修改库存）
-     * @param elemeFoodId 食物Id
-     * @param stock
-     * @return
-     */
-    public String uporDownFrame(String elemeFoodId ,String stock){
-        String result = null;
-        Result obj = null;
-        Rtn rtn = new Rtn();
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class, new RtnSerializer())
-                                   .disableHtmlEscaping().create();
-        try {
-            result = getFoodId(elemeFoodId);
-            obj = getGson().fromJson(result, Result.class);
-            Body body = getGson().fromJson(getGson().toJson(obj.getData()), Body.class);
-            if (body.getFoodids().get(elemeFoodId).size() > 0 ) {
-                OldFoodsRequest orderRequest = new OldFoodsRequest();
-                orderRequest.setFood_id(body.getFoodids().get(elemeFoodId).get(0).getFood_id());
-                orderRequest.setStock(stock);
-                result = eleMeApiService.uporDownFrame(orderRequest);
-                obj = getGson().fromJson(result, Result.class);
-                rtn.setCode(obj.getCode());
-                rtn.setLogId("");
-                rtn.setDesc(obj.getMessage());
-                rtn.setDynamic(stock);
-            }else {
-                rtn.setLogId("");
-                rtn.setDesc("食物不存在");
-                rtn.setDynamic(stock);
-            }
-        } catch (ScheduleException e) {
-            rtn.setLogId("");
-            rtn.setCode(-999);
-            rtn.setRemark("发生异常");
-            rtn.setDesc("error");
-        }
-        result = gson1.toJson(rtn);
-        return  result;
-    }
-
-    /**
      * 添加食物
      * @param json json字符串(保证key与实体属性对应)
      * @return
@@ -234,7 +195,7 @@ public class EleMeFacadeService {
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
             OldFoodsRequest oldFoodsRequest = getGson().fromJson(json, OldFoodsRequest.class);
-            result = eleMeApiService.uporDownFrame(oldFoodsRequest);
+            result = eleMeApiService.upFoods(oldFoodsRequest);
             Result obj = getGson().fromJson(result, Result.class);
             rtn.setCode(obj.getCode());
             rtn.setLogId("");
@@ -304,9 +265,84 @@ public class EleMeFacadeService {
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
-            FoodsRequest foodsRequest = new FoodsRequest();
-            foodsRequest.setTp_food_ids(parms);
-            return eleMeApiService.getFoodId(foodsRequest);
+            OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
+            oldFoodsRequest.setTp_food_ids(parms);
+            return eleMeApiService.getFoodId(oldFoodsRequest);
+        }catch (Exception ex) {
+            rtn.setLogId("");
+            rtn.setCode(-999);
+            rtn.setRemark("发生异常");
+            rtn.setDesc("error");
+        }
+        return gson1.toJson(rtn);
+    }
+
+    /**
+     * 商品上下架
+     * @param dishList
+     * @param status 小于0->下架||大于0->上架
+     * @return
+     */
+    public String upBatchFrame(List<ParsFromPosInner> dishList,String status) {
+        Rtn rtn = new Rtn();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        try {
+            HashMap<String, OldFoodsRequest> map = new HashMap<String, OldFoodsRequest>();
+            for (int i = 0; i < dishList.size(); i++) {
+                String result = getFoodId(dishList.get(i).getDishId());
+                Result obj = getGson().fromJson(result, Result.class);
+                Body body = getGson().fromJson(getGson().toJson(obj.getData()), Body.class);
+                if (body.getFoodids().get(dishList.get(i).getDishId()).size() > 0 ) {
+                    OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
+                    oldFoodsRequest.setStock(status);
+                    map.put(body.getFoodids().get(dishList.get(i).getDishId()).get(0).getFood_id(), oldFoodsRequest);
+                }
+            }
+            OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
+            oldFoodsRequest.setFoods_info(map);
+            String result = eleMeApiService.upBatchFrame(oldFoodsRequest);
+            Result obj = getGson().fromJson(result, Result.class);
+            rtn.setLogId("");
+            rtn.setCode(obj.getCode());
+            rtn.setRemark(obj.getMessage());
+        }catch (Exception ex) {
+            rtn.setLogId("");
+            rtn.setCode(-999);
+            rtn.setRemark("发生异常");
+            rtn.setDesc("error");
+        }
+        return gson1.toJson(rtn);
+    }
+
+    /**
+     * 删除食物
+     * @param dishList
+     * @return
+     */
+    public String deleteFoods(List<ParsFromPosInner> dishList) {
+        Rtn rtn = new Rtn();
+        StringBuilder sb = new StringBuilder();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        try {
+            for (int i = 0; i < dishList.size(); i++) {
+                String result = getFoodId(dishList.get(i).getDishId());
+                Result obj = getGson().fromJson(result, Result.class);
+                Body body = getGson().fromJson(getGson().toJson(obj.getData()), Body.class);
+                if (body.getFoodids().get(dishList.get(i).getDishId()).size() > 0 ) {
+                    if (i == 0) {
+                        sb.append(body.getFoodids().get(dishList.get(i).getDishId()).get(0).getFood_id());
+                    }else {
+                        sb.append(","+body.getFoodids().get(dishList.get(i).getDishId()).get(0).getFood_id());
+                    }
+                }
+            }
+            OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
+            oldFoodsRequest.setFood_ids(sb.toString());
+            String result = eleMeApiService.delectAllFoods(oldFoodsRequest);
+            Result obj = getGson().fromJson(result, Result.class);
+            rtn.setLogId("");
+            rtn.setCode(obj.getCode());
+            rtn.setRemark(obj.getMessage());
         }catch (Exception ex) {
             rtn.setLogId("");
             rtn.setCode(-999);

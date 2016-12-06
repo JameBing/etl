@@ -97,7 +97,7 @@ public class Order {
     //创建于
     @SerializedName("created_at")
     private Date createdat;
-    //服务费
+    //服务率
     @SerializedName("service_rate")
     private Double servicerate;
     //包装费

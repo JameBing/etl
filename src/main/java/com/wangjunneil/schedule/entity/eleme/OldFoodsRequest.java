@@ -1,24 +1,44 @@
 package com.wangjunneil.schedule.entity.eleme;
 
+import com.google.gson.Gson;
+
+import java.util.Map;
+
 /**
  * Created by admin on 2016/11/28.
  */
 public class OldFoodsRequest {
+    //食物分类ID
     private String food_category_id;
+    //食物名字
     private String name;
+    //食物价格
     private String price;
+    //食物描述
     private String description;
+    //最大库存
     private String max_stock;
+    //当前库存
     private String stock;
+    //第三食物ID
     private String tp_food_id;
+    //图片
     private String image_hash;
     private String is_new;
     private String is_featured;
     private String is_gum;
     private String is_spicy;
+    //打包费用
     private String packing_fee;
     private String sort_order;
+    //更新食物用食物ID
     private String food_id;
+    //通过第三方ID获取ID
+    private String tp_food_ids;
+    //批量删除食物ID
+    private String food_ids;
+
+    private Map<String, OldFoodsRequest> foods_info;
 
 
     public String getFood_category_id() {
@@ -139,5 +159,30 @@ public class OldFoodsRequest {
 
     public void setFood_id(String food_id) {
         this.food_id = food_id;
+    }
+
+    public String getFoods_info() {
+        Gson gson = new Gson();
+        return gson.toJson(foods_info);
+    }
+
+    public void setFoods_info(Map<String, OldFoodsRequest> foods_info) {
+        this.foods_info = foods_info;
+    }
+
+    public String getTp_food_ids() {
+        return tp_food_ids;
+    }
+
+    public void setTp_food_ids(String tp_food_ids) {
+        this.tp_food_ids = tp_food_ids;
+    }
+
+    public String getFood_ids() {
+        return food_ids;
+    }
+
+    public void setFood_ids(String food_ids) {
+        this.food_ids = food_ids;
     }
 }
