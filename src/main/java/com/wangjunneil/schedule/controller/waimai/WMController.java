@@ -102,29 +102,14 @@ public class WMController {
      * @param response  浏览器响应对象
      * @return {code:0,desc:"success",dynamic:"",logId:"",remark:""}
      */
-    @RequestMapping(value = "/shopAdd",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @RequestMapping(value = "/shop/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
-    public String shopAdd(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+    public String shopCreate(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.shopAdd(jsonStr));
+        out.println(wmFacadeService.shopCreate(jsonStr));
         return  null;
     }
 
-/**
- * 新增菜品
- * @param jsonStr 菜品信息
- * @param out 响应输出流队形
- * @param request 请求对象
- * @param 浏览器响应对象
- * @return {code:0,desc:"success",dynamic:"",logId:"",remark:""}
- */
-@RequestMapping(value = "/dishAdd",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
- @ResponseBody
-public String dishAdd(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
-    response.setContentType("application/json;charset=uft-8");
-    out.println(wmFacadeService.dishAdd(jsonStr));
-    return null;
-}
     /**
      * 门店开业
      *
@@ -133,11 +118,11 @@ public String dishAdd(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServle
      * @param response  浏览器响应对象
      * @return {code:0,desc:"success",dynamic:"",logId:""}
      */
-    @RequestMapping(value = "/startBusiness.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
+    @RequestMapping(value = "/shop/open", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     @ResponseBody
-    public String startBusiness(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws ScheduleException {
+    public String shopOpen(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws ScheduleException {
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.startBusiness(parsFromPos));
+        out.println(wmFacadeService.shopOpen(parsFromPos));
      return  null;
     }
 
@@ -150,21 +135,50 @@ public String dishAdd(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServle
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/endBusiness.php", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
-    public String endBusiness(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    @RequestMapping(value = "/shop/close", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String shopClose(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.endBusiness(request.getParameterMap()));
+        out.println(wmFacadeService.shopClose(parsFromPos));
         return  null;
     }
 
 //endregion
-
-
-
 //region 商品
+    /**
+     * 新增菜品分类
+     * @param jsonObj 菜品分类
+     * @param out 响应输出流队形
+     * @param request 请求对象
+     * @param 浏览器响应对象
+     * @return {"baidu":{code:0,desc:"success",dynamic:"",logId:"",remark:""},"jdhome":{}...}
+     */
+    @RequestMapping(value = "/dish/category/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String dishCategoryCreate(@RequestBody JsonObject jsonObj,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        response.setContentType("application/json;charset=uft-8");
+        out.println(wmFacadeService.dishCategoryCreate(jsonObj));
+        return  null;
+    }
 
     /**
-     * 商品查看
+     * 新增菜品
+     * @param jsonObj 菜品信息
+     * @param out 响应输出流队形
+     * @param request 请求对象
+     * @param 浏览器响应对象
+     * @return  {"baidu":{code:0,desc:"success",dynamic:"",logId:"",remark:""},"jdhome":{}...}
+     */
+    @RequestMapping(value = "/dish/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String dishCreate(@RequestBody JsonObject jsonObj,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+    response.setContentType("application/json;charset=uft-8");
+    out.println(wmFacadeService.dishCreate(jsonObj));
+    return null;
+    }
+
+    /**
+     * 菜品查看
      *@param parsFromPos
      * @param out   响应输出流对象
      * @param request {baidu:[{shopId:"",platformShopId:"",dishId:"",platformDishId:""}],jdhome:[],eleme:[],meituan:[]}
@@ -175,36 +189,38 @@ public String dishAdd(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServle
     @ResponseBody
     public String dishGet(@RequestBody ParsFromPos parsFromPos,PrintWriter out, HttpServletRequest request, HttpServletResponse response){
         response.setContentType("application/json;charset=uft-8");
-        wmFacadeService.dishGet(parsFromPos);
+        out.println(wmFacadeService.dishGet(parsFromPos));
         return null;
     }
     /**
-     * 上架
+     * 菜品上架
      *@param parsFromPos
      * @param out   响应输出流对象
      * @param request {baidu:[{shopId:"",platformShopId:"",dishId:"",platformDishId:""}],jdhome:[],eleme:[],meituan:[]}
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/online", method = RequestMethod.POST,consumes="application/json;charset=utf-8" )
+    @RequestMapping(value = "/dish/online", method = RequestMethod.POST,consumes="application/json;charset=utf-8" )
     @ResponseBody
-    public String online(@RequestBody ParsFromPos parsFromPos, PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    public String dishOnline(@RequestBody ParsFromPos parsFromPos, PrintWriter out, HttpServletRequest request, HttpServletResponse response)  {
         response.setContentType("application/json;charset=uft-8");
-
+        out.println(wmFacadeService.dishOnline(parsFromPos));
         return  null;
     }
 
     /**
-     * 下架
-     *
+     * 菜品下架
+     *@param parsFromPos
      * @param out   响应输出流对象
+     * @param request {baidu:[{shopId:"",platformShopId:"",dishId:"",platformDishId:""}],jdhome:[],eleme:[],meituan:[]}
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/offline", method = RequestMethod.GET)
-    public String offline(PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    @RequestMapping(value = "/dish/offline", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String dishOffline(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response)  {
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.online(request.getParameterMap()));
+        out.println(wmFacadeService.dishOnline(parsFromPos));
         return  null;
     }
 
@@ -222,7 +238,7 @@ public String dishAdd(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServle
      */
     @RequestMapping(value = {"/baidu/order/new","/jdhome/73842/djsw/newOrder","/jdhome/72171/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
     public String orderPost(PrintWriter out, HttpServletRequest request,HttpServletResponse response) {
-        String result, requestUrl, platform = null, sid = null;
+        String result = null, requestUrl, platform = null, sid = null;
         requestUrl = request.getPathInfo().toLowerCase();
         if (requestUrl.indexOf("/jdhome/") > 0) {
             //sid = requestUrl.split("\\/").length>2?requestUrl.split("\\/")[2]:null;
@@ -247,10 +263,10 @@ public String dishAdd(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServle
                 break;
         }
         if (!StringUtil.isEmpty(platform)) {
-            result = wmFacadeService.orderPost(stringMap, platform);
-            System.out.println("推送订单\r\n" + result + "\r\n");
-            return result;
+            //result = wmFacadeService.orderPost(stringMap, platform);
+            result =  "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}";
         }
+        out.println(result);
         return  null;
     }
     /**
@@ -273,7 +289,8 @@ public String dishAdd(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServle
                 break;
             default:break;
         }
-       out.println( wmFacadeService.orderStatus(request.getParameterMap(),platfrom));
+      // out.println( wmFacadeService.orderStatus(request.getParameterMap(),platfrom));
+        out.println("{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}");
         return  null;
     }
 

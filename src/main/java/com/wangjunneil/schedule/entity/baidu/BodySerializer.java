@@ -16,7 +16,7 @@ public class BodySerializer implements JsonSerializer<Body> {
     public JsonElement serialize(Body body, Type type, JsonSerializationContext context){
 
         JsonObject object = new JsonObject();
-        object.add("errno",context.serialize(body.getErrno()));
+        object.add("errno",context.serialize(Integer.valueOf(body.getErrno())));
         object.add("error",context.serialize(body.getError()));
         object.add("data",context.serialize(body.getData()));
         return object;

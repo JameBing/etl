@@ -102,11 +102,11 @@ public class BaiDuFacadeService {
     }
 
     //创建门店
-    public String shopAdd(JsonObject jsonStr) {
+    public String shopCreate(JsonObject jsonBody) {
             String result = null;
             Rtn rtn = new Rtn();
             try {
-                rtn  = getGson().fromJson( baiDuApiService.shopAdd(jsonStr.toString()),Rtn.class);
+                rtn  = getGson().fromJson( baiDuApiService.shopCreate(jsonBody),Rtn.class);
             }
             catch (Exception ex){
                 rtn.setDynamic("");
@@ -118,7 +118,7 @@ public class BaiDuFacadeService {
         return getGson().toJson(rtn);
     }
     //门店开业
-    public String startBusiness(String baiduShopId,String shopId){
+    public String shopOpen(String baiduShopId,String shopId){
         String result = null;
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -126,7 +126,7 @@ public class BaiDuFacadeService {
             Shop shop = new Shop();
             shop.setShopId(shopId);
             shop.setBaiduShopId(baiduShopId);
-            result =  baiDuApiService.startBusiness(shop);
+            result =  baiDuApiService.shopOpen(shop);
             rtn = gson1.fromJson(result,Rtn.class);
             rtn.setDynamic(shopId);
         }catch (Exception ex) {
@@ -141,7 +141,7 @@ public class BaiDuFacadeService {
     }
 
     //门店歇业
-    public String endBusiness(String baiduShopId,String shopId){
+    public String shopClose(String baiduShopId,String shopId){
         String result = null;
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -149,7 +149,7 @@ public class BaiDuFacadeService {
             Shop shop = new Shop();
             shop.setShopId(shopId);
             shop.setBaiduShopId(baiduShopId);
-            result =  baiDuApiService.endBusiness(shop);
+            result =  baiDuApiService.shopClose(shop);
             rtn = gson1.fromJson(result,Rtn.class);
             rtn.setDynamic(shopId);
         }catch (Exception ex) {
@@ -163,11 +163,28 @@ public class BaiDuFacadeService {
         return  result;
     }
 
+    //新增菜品分类
+    public String dishCategoryCreate(JsonObject jsonDishCategory){
+       Rtn rtn = new Rtn();
+        try{
+            rtn = getGson().fromJson(baiDuApiService.dishCategoryCreate(jsonDishCategory),Rtn.class);
+        }
+        catch (Exception ex){
+            rtn.setDynamic("");
+            rtn.setCode(-999);
+            rtn.setDesc("error");
+            rtn.setRemark("发生异常");
+            rtn .setLogId("");
+            //异常日志
+        }
+        return getGson().toJson(rtn);
+    }
+
     //新增菜品
-    public String dishAdd(JsonObject jsonStr){
+    public String dishCreate(JsonObject jsonDish){
         Rtn rtn = new Rtn();
         try {
-            rtn = getGson().fromJson(baiDuApiService.dishAdd(jsonStr.toString()),Rtn.class);
+            rtn = getGson().fromJson(baiDuApiService.dishCreate(jsonDish),Rtn.class);
         }
         catch (Exception ex){
           rtn.setDynamic("");
@@ -185,9 +202,14 @@ public class BaiDuFacadeService {
         String result = null;
         Rtn rtn = new Rtn();
         try {
-            String bodyStr = (StringUtil.isEmpty(baiduShopId)?"":MessageFormat.format("\"baidu_shop_id\":{0}",baiduShopId)).concat( (StringUtil.isEmpty(shopId)?"":MessageFormat.format("\"shop_id\":{0}",shopId)))
-                                                .concat( (StringUtil.isEmpty(baiduDishId)?"":MessageFormat.format("\"baidu_dish_id\":{0}",baiduDishId))).concat( (StringUtil.isEmpty(dishId)?"":MessageFormat.format("\"dish_id\":{0}",dishId)));
-             result = baiDuApiService.dishGet("{".concat(bodyStr).concat("}"));
+//            String bodyStr = (StringUtil.isEmpty(baiduShopId)?"":MessageFormat.format("baidu_shop_id:{0},",baiduShopId)).concat( (StringUtil.isEmpty(shopId)?"":MessageFormat.format("shop_id:{0},",shopId)))
+//                                                .concat( (StringUtil.isEmpty(baiduDishId)?"":MessageFormat.format("baidu_dish_id:{0},",baiduDishId))).concat((StringUtil.isEmpty(dishId) ? "" : MessageFormat.format("dish_id:{0}", dishId)));
+            Dish dish = new Dish();
+            dish.setBaiduShopId(StringUtil.isEmpty(baiduShopId)?"":baiduShopId);
+            dish.setShopId(StringUtil.isEmpty(shopId)?"":shopId);
+            dish.setBaiduDishId(StringUtil.isEmpty(baiduDishId)?"":baiduDishId);
+            dish.setDishId(StringUtil.isEmpty(dishId)?"":dishId);
+             result = baiDuApiService.dishGet(dish);
 
             SysParams sysParams = getGson().fromJson(result,SysParams.class);
             Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
@@ -207,7 +229,7 @@ public class BaiDuFacadeService {
     }
 
     //菜品上架
-    public String online(String baiduShopId,String shopId,String baiduDishId,String dishId){
+    public String dishOnline(String baiduShopId,String shopId,String baiduDishId,String dishId){
         String result = null;
             Rtn rtn = new Rtn();
             rtn.setDynamic(StringUtil.isEmpty(dishId)?baiduDishId:dishId);
@@ -218,7 +240,7 @@ public class BaiDuFacadeService {
                 dish.setBaiduShopId(baiduShopId);
                 dish.setDishId(dishId);
                 dish.setBaiduDishId(baiduDishId);
-                result = baiDuApiService.online(dish);
+                result = baiDuApiService.dishOnline(dish);
                 rtn = gson1.fromJson(result,Rtn.class);
         }catch (Exception ex){
                 rtn.setCode(-999);
@@ -231,7 +253,7 @@ public class BaiDuFacadeService {
     }
 
     //菜品下架
-    public String offline(){
+    public String dishOffline(){
 
         return  null;
     }

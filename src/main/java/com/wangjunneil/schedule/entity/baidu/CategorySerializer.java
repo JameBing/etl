@@ -15,6 +15,7 @@ public class CategorySerializer implements JsonSerializer<Category>{
     @Override
     public JsonElement serialize(Category category,Type type,JsonSerializationContext context){
         JsonObject object = new JsonObject();
+        object.add("id",context.serialize(category.getId()));
         object.add("name",context.serialize(category.getName()));
         object.add("rank",context.serialize(category.getRank()));
         return object;
