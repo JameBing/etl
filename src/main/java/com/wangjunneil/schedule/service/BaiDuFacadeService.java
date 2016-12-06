@@ -228,9 +228,9 @@ public class BaiDuFacadeService {
         return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
     }
 
-    //菜品上架
-    public String dishOnline(String baiduShopId,String shopId,String baiduDishId,String dishId){
-        String result = null;
+    //菜品上架 & 下架
+    public String dishOpt(String baiduShopId,String shopId,String baiduDishId,String dishId,String cmd){
+           String result = "";
             Rtn rtn = new Rtn();
             rtn.setDynamic(StringUtil.isEmpty(dishId)?baiduDishId:dishId);
             Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -240,7 +240,15 @@ public class BaiDuFacadeService {
                 dish.setBaiduShopId(baiduShopId);
                 dish.setDishId(dishId);
                 dish.setBaiduDishId(baiduDishId);
-                result = baiDuApiService.dishOnline(dish);
+                switch (cmd){
+                    case "dish.online":
+                        result = baiDuApiService.dishOnline(dish);
+                        break;
+                    case "dish.offline":
+                        result = baiDuApiService.dishOffline(dish);
+                        break;
+                    default:break;
+                }
                 rtn = gson1.fromJson(result,Rtn.class);
         }catch (Exception ex){
                 rtn.setCode(-999);
@@ -250,12 +258,6 @@ public class BaiDuFacadeService {
         }
         result = gson1.toJson(rtn);
         return result;
-    }
-
-    //菜品下架
-    public String dishOffline(){
-
-        return  null;
     }
 
 //    //接收百度外卖推送过来的订单(2.0)

@@ -9,10 +9,7 @@ import com.wangjunneil.schedule.entity.baidu.Order;
 import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.entity.baidu.SysParamsSerializer;
-import com.wangjunneil.schedule.entity.common.ParsFormPosSerializer;
-import com.wangjunneil.schedule.entity.common.ParsFromPos;
-import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
-import com.wangjunneil.schedule.entity.common.ParsFromPosInnerSerializer;
+import com.wangjunneil.schedule.entity.common.*;
 import com.wangjunneil.schedule.entity.sys.Status;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
@@ -124,34 +121,6 @@ public class WMFacadeService {
         return MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme);
     }
 
-    private String shopOpt(Map<String,String[]> stringMap,String dynamic){
-        String result = "{baidu:{0},jdhome:{1},meituan:{2},eleme:{3}}",
-            result_baidu = null,
-            result_jdhome = null,
-            result_eleme = null,
-            result_meituan = null;
-        for (String k:stringMap.keySet()){
-            switch (k){
-                case Constants.PLATFORM_WAIMAI_BAIDU:
-                    switch (dynamic){
-                        case "shop.open":
-                            result_baidu = baiDuFacadeService.shopOpen(stringMap.get("shopId")[0], stringMap.get("platform_shopId")[0]);
-                            break;
-                        case "shop.close":
-
-                            result_baidu = baiDuFacadeService.shopClose(stringMap.get("shopId")[0], stringMap.get("platform_shopId")[0]);
-                            break;
-                    }
-
-                    break;
-                case Constants.PLATFORM_WAIMAI_JDHOME:
-                    break;
-                default:break;
-            }
-        }
-        return MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme);
-    }
-
     //新增菜品分类
     public String dishCategoryCreate(JsonObject json){
         String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}",
@@ -165,14 +134,14 @@ public class WMFacadeService {
 
     //新增菜品
     public String dishCreate(JsonObject json){
-        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}",
-            result_baidu = "",
-            result_jdhome = "",
-            result_eleme = "",
-            result_meituan = "";
-            result_baidu = baiDuFacadeService.dishCreate(json);
-        return  "{".concat(MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme)).concat("}");
-    }
+    String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}",
+        result_baidu = "",
+        result_jdhome = "",
+        result_eleme = "",
+        result_meituan = "";
+    result_baidu = baiDuFacadeService.dishCreate(json);
+    return  "{".concat(MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme)).concat("}");
+}
 
     //菜品查看
     public String dishGet(ParsFromPos parsFromPos){
@@ -188,65 +157,31 @@ public class WMFacadeService {
         result_baidu = baiDuFacadeService.dishGet(platShopId,shopId,platDishId,dishId);
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
+
+    private Function<ParsFromPosInner,String > function1=(list)->{
+       return baiDuFacadeService.dishOpt(list.getPlatformShopId(),list.getShopId(),list.getPlatformDishId(),list.getDishId(),"dish.online");
+    };
+
     //菜品上架
-    public String dishOnline(ParsFromPos parsFromPos){
-        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
-        String platShopId = StringUtil.isEmpty(parsFromPos.getBaidu().getPlatformShopId())?"":parsFromPos.getBaidu().getPlatformShopId(),
-            shopId = StringUtil.isEmpty(parsFromPos.getBaidu().getShopId())?"":parsFromPos.getBaidu().getShopId(),
-            platDishId = StringUtil.isEmpty(parsFromPos.getBaidu().getPlatformDishId())?"":parsFromPos.getBaidu().getPlatformDishId(),
-            dishId = StringUtil.isEmpty(parsFromPos.getBaidu().getDishId())?"":parsFromPos.getBaidu().getDishId();
-        result_baidu = baiDuFacadeService.dishOnline(platShopId, shopId, platDishId, dishId);
-        //List<ParsFromPosInner> list =
-        //result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(); //0上架 1下架
+    public String dishOnline(ParsFormPos2 parsFormPos2){
+        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
+       result_baidu = parsFormPos2.getBaidu().stream().map(e->function1.apply(e)).reduce("",(x,y)->x.concat(StringUtil.isEmpty(x)?"":",").concat(y));
+       result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(parsFormPos2.getJdhome(),0); //0上架 1下架
+
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
+
+    private Function<ParsFromPosInner,String > function2=(list)->{
+        return baiDuFacadeService.dishOpt(list.getPlatformShopId(), list.getShopId(), list.getPlatformDishId(), list.getDishId(), "dish.offline");
+    };
 
     //菜品下架
-    public String dishOffline(ParsFromPos parsFromPos){
-           String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
-           String platShopId = StringUtil.isEmpty(parsFromPos.getBaidu().getPlatformShopId())?"":parsFromPos.getBaidu().getPlatformShopId(),
-            shopId = StringUtil.isEmpty(parsFromPos.getBaidu().getShopId())?"":parsFromPos.getBaidu().getShopId(),
-            platDishId = StringUtil.isEmpty(parsFromPos.getBaidu().getPlatformDishId())?"":parsFromPos.getBaidu().getPlatformDishId(),
-            dishId = StringUtil.isEmpty(parsFromPos.getBaidu().getDishId())?"":parsFromPos.getBaidu().getDishId();
-        result_baidu = baiDuFacadeService.dishOnline(platShopId, shopId, platDishId, dishId);
-        return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
-    }
-
-    private String dishOpt(Map<String,String[]> stringMap,String dynamic){
-
-        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}",
-            result_baidu = "",
-            result_jdhome = "",
-            result_eleme = "",
-            result_meituan = "";
-        Gson gson = new GsonBuilder().registerTypeAdapter(ParsFromPos.class,new ParsFormPosSerializer())
-                                     .registerTypeAdapter(ParsFromPosInner.class,new ParsFromPosInnerSerializer())
-                                     .disableHtmlEscaping().create();
-        ParsFromPosInner parsFromPosInner;
-        for (String k:stringMap.keySet()){
-            for (String v:stringMap.get(k)){
-                parsFromPosInner = gson.fromJson(v,ParsFromPosInner.class);
-                switch (k){
-                    case Constants.PLATFORM_WAIMAI_BAIDU:
-                        switch (dynamic){
-                            case "dish.online":
-                                result_baidu += (StringUtil.isEmpty(result_baidu)?"":",")
-                                             + baiDuFacadeService.dishOnline(parsFromPosInner.getPlatformShopId(), parsFromPosInner.getShopId(), parsFromPosInner.getPlatformDishId(), parsFromPosInner.getDishId());
-                                break;
-                            case "dish.offline":
-                                //result_baidu +=(StringUtil.isEmpty(result_baidu)?"":",")
-                                break;
-                        }
-
-                        break;
-                    case Constants.PLATFORM_WAIMAI_JDHOME:
-                        break;
-                    default:break;
-                }
-            }
-        }
-        return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
-    }
+    public String dishOffline(ParsFormPos2 parsFormPos2){
+    String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
+    result_baidu = parsFormPos2.getBaidu().stream().map(e->function2.apply(e)).reduce("",(x,y)->x.concat(StringUtil.isEmpty(x)?"":",").concat(y));
+    result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(parsFormPos2.getJdhome(), 1); //0上架 1下架
+    return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
+}
 
     //平台订单推送【消息型】
     public String orderPost(Map<String,String[]> stringMap,String platform){

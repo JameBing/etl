@@ -10,6 +10,7 @@ import com.wangjunneil.schedule.common.EnumDescription;
 import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.entity.common.FlowNum;
+import com.wangjunneil.schedule.entity.common.ParsFormPos2;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
 import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.WMFacadeService;
@@ -195,7 +196,7 @@ public class WMController {
     }
     /**
      * 菜品上架
-     *@param parsFromPos
+     *@param parsFormPos2
      * @param out   响应输出流对象
      * @param request {baidu:[{shopId:"",platformShopId:"",dishId:"",platformDishId:""}],jdhome:[],eleme:[],meituan:[]}
      * @param response  浏览器响应对象
@@ -203,15 +204,15 @@ public class WMController {
      */
     @RequestMapping(value = "/dish/online", method = RequestMethod.POST,consumes="application/json;charset=utf-8" )
     @ResponseBody
-    public String dishOnline(@RequestBody ParsFromPos parsFromPos, PrintWriter out, HttpServletRequest request, HttpServletResponse response)  {
+    public String dishOnline(@RequestBody ParsFormPos2 parsFormPos2, PrintWriter out, HttpServletRequest request, HttpServletResponse response)  {
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.dishOnline(parsFromPos));
+        out.println(wmFacadeService.dishOnline(parsFormPos2));
         return  null;
     }
 
     /**
      * 菜品下架
-     *@param parsFromPos
+     *@param parsFormPos2
      * @param out   响应输出流对象
      * @param request {baidu:[{shopId:"",platformShopId:"",dishId:"",platformDishId:""}],jdhome:[],eleme:[],meituan:[]}
      * @param response  浏览器响应对象
@@ -219,9 +220,9 @@ public class WMController {
      */
     @RequestMapping(value = "/dish/offline", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
-    public String dishOffline(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response)  {
+    public String dishOffline(@RequestBody ParsFormPos2 parsFormPos2, PrintWriter out,HttpServletRequest request, HttpServletResponse response)  {
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.dishOnline(parsFromPos));
+        out.println(wmFacadeService.dishOffline(parsFormPos2));
         return  null;
     }
 
