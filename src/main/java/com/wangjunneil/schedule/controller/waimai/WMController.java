@@ -156,7 +156,7 @@ public class WMController {
      * @param jsonObj 菜品分类
      * @param out 响应输出流队形
      * @param request 请求对象
-     * @param 浏览器响应对象
+     * @param
      * @return {"baidu":{code:0,desc:"success",dynamic:"",logId:"",remark:""},"jdhome":{}...}
      */
     @RequestMapping(value = "/dish/category/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
@@ -172,7 +172,7 @@ public class WMController {
      * @param jsonObj 菜品信息
      * @param out 响应输出流队形
      * @param request 请求对象
-     * @param 浏览器响应对象
+     * @param
      * @return  {"baidu":{code:0,desc:"success",dynamic:"",logId:"",remark:""},"jdhome":{}...}
      */
     @RequestMapping(value = "/dish/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")

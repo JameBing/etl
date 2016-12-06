@@ -52,7 +52,7 @@ public class JdHomeController {
         resp.setContentType("text/html;charset=utf-8");
         //应用参数
         List<ParsFromPosInner> listBaseStockCenterRequest = new ArrayList<ParsFromPosInner>();
-        String shopId = "10054394";
+        String shopId = "10029045";
         ParsFromPosInner inner = new ParsFromPosInner();
         inner.setShopId(shopId);
         listBaseStockCenterRequest.add(inner);
