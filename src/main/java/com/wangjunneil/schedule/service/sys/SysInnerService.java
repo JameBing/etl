@@ -197,7 +197,7 @@ public class SysInnerService {
 
 
     //订单插入
-    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai){
+    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
         Query  query = new Query(Criteria.where("platfrom").is(orderWaiMai.getPlatformOrderId()).where("platformOrderId"));
         Update update = new Update()
             .set("platfrom", orderWaiMai.getPlatfrom())

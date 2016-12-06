@@ -214,7 +214,7 @@ public class WMFacadeService {
     //平台订单状态推送
     public String orderStatus(Map<String,String[]> stringMap,String platform){
 
-          String result = null;
+          String result = "";
           switch (platform){
               case Constants.PLATFORM_WAIMAI_BAIDU:
                   Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())

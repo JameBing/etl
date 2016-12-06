@@ -37,9 +37,6 @@ public class BaiDuFacadeService {
     @Autowired
     private SysFacadeService sysFacadeService;
 
-    @Autowired
-    private SysInnerService sysInnerService;
-
     private Gson gson;
 
     private Gson getGson(){
@@ -387,7 +384,7 @@ public class BaiDuFacadeService {
                 orderWaiMai.setPlatformOrderId(platformOrderId);
                 orderWaiMai.setOrder(data);
                 orderWaiMai.setShopId(shopId);
-                sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+                sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
                 body.setErrno("0");
                 body.setError("success");
                 body.setData(MessageFormat.format("{0}",MessageFormat.format("source_order_id:{0}",platformOrderId)));
