@@ -60,7 +60,7 @@ public class WMController {
     @Autowired
     private WMFacadeService wmFacadeService;
 
-    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842","/jdhome/72171"})
+    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842","/jdhome/72171","/jdhome/74723"})
     public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
         String result = "",platform,requestUrl,sid = null;
         Map<String,String[]> stringMap = new HashMap<>();
@@ -405,6 +405,23 @@ public class WMController {
     public String getSupplierList(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.getSupplier());
+        return null;
+    }
+
+    /**
+     * 修改商户信息
+     *
+     * @param out   响应输出流对象
+     * @param response  浏览器响应对象
+     * @return
+     */
+    @RequestMapping(value = "/shop/update",method = RequestMethod.POST)
+    @ResponseBody
+    public String shopUpdate( @RequestBody Shop shop,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        response.setContentType("application/json;charset=uft-8");
+        //request.getParameter("minBuyFree");
+        //request.getParameter("minOrderPrice");
+        out.println(wmFacadeService.shopUpdate(shop));
         return null;
     }
 
