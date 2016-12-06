@@ -345,15 +345,25 @@ public class JdHomeFacadeService {
      */
     public void callback(String tokenJson,String companyId) {
         log.info("=====京东到家回调token数据:"+tokenJson+"=====");
-        // token入库
-        JdHomeAccessToken jdAccessToken = JSONObject.parseObject(tokenJson, JdHomeAccessToken.class);
+        if(StringUtil.isEmpty(tokenJson)){
+            return;
+        }
+        //判断是否是json字符串
+        int inx = tokenJson.indexOf("{");
+        JdHomeAccessToken jdAccessToken = new JdHomeAccessToken();
         jdAccessToken.setCompanyId(companyId);
-        if(!StringUtil.isEmpty(jdAccessToken.getCode())){
-            //添加code
+        if(inx < 0){
+            //code入库
+            jdAccessToken.setCode(tokenJson);
+            log.info("=====code insert start======");
             jdHomeInnerService.addBackCode(jdAccessToken);
+            log.info("=====code insert end======");
         }else {
-            //添加token
+            //token入库
+            jdAccessToken = JSONObject.parseObject(tokenJson, JdHomeAccessToken.class);
+            log.info("=====token insert start======");
             jdHomeInnerService.addRefreshToken(jdAccessToken);
+            log.info("=====token insert end======");
         }
     }
 
