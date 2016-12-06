@@ -1,6 +1,7 @@
 package com.wangjunneil.schedule.service.jdhome;
 
 import com.wangjunneil.schedule.common.Constants;
+import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
@@ -33,7 +34,7 @@ public class JdHomeInnerService {
     }
 
     //批量插入/修改订单
-    public void addOrUpdateSyncOrder(List<OrderInfoDTO> orders){
+    public void addOrUpdateSyncOrder(List<OrderInfoDTO> orders) throws ScheduleException{
         for(OrderInfoDTO order : orders){
             Query query = new Query(Criteria.where("orderId").is(order.getOrderId()));
             Update update = new Update().set("_class",OrderInfoDTO.class.getName())

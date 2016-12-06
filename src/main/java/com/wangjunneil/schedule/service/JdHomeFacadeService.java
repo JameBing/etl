@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.GsonBuilder;
+import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
@@ -33,6 +35,10 @@ public class JdHomeFacadeService {
 
     @Autowired
     private JdHomeInnerService jdHomeInnerService;
+
+    @Autowired
+    private SysFacadeService sysFacadeService;
+
 
     /**
      * 门店开业
@@ -210,19 +216,25 @@ public class JdHomeFacadeService {
                 }
                 if(orders !=null && orders.size()>0){
                     log.info("=====MongoDb insert Order start====");
-                    try {
-                        jdHomeInnerService.addOrUpdateSyncOrder(orders);
-                    }catch (Exception e){
-                        return "{\"code\":\"2\",\"msg\":\"failure\",\"data\":\"{}\"}";
-                    }
+                    orders.forEach(o->{
+                        OrderWaiMai orderWaiMai = new OrderWaiMai();
+                        orderWaiMai.setPlatfrom(Constants.PLATFORM_WAIMAI_JDHOME);
+                        orderWaiMai.setShopId(o.getProduceStationNoIsv());
+                        orderWaiMai.setOrderId(String.valueOf(o.getOrderId()));
+                        orderWaiMai.setPlatformOrderId(sysFacadeService.getOrderNum(o.getProduceStationNoIsv()));
+                        orderWaiMai.setOrder(o);
+                        sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
+                    });
+                    //jdHomeInnerService.addOrUpdateSyncOrder(orders);
                     log.info("=====MongoDb insert Order end====");
                     return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}";
                 }
             }
         }catch (Exception e){
+            //异常处理
             return "";
         }
-        return null;
+        return "";
     }
 
     /**
