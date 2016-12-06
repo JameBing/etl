@@ -363,16 +363,17 @@ public class JdHomeFacadeService {
         //判断是否是json字符串
         int inx = tokenJson.indexOf("{");
         JdHomeAccessToken jdAccessToken = new JdHomeAccessToken();
-        jdAccessToken.setCompanyId(companyId);
         if(inx < 0){
             //code入库
             jdAccessToken.setCode(tokenJson);
+            jdAccessToken.setCompanyId(companyId);
             log.info("=====code insert start======");
             jdHomeInnerService.addBackCode(jdAccessToken);
             log.info("=====code insert end======");
         }else {
             //token入库
             jdAccessToken = JSONObject.parseObject(tokenJson, JdHomeAccessToken.class);
+            jdAccessToken.setCompanyId(companyId);
             log.info("=====token insert start======");
             jdHomeInnerService.addRefreshToken(jdAccessToken);
             log.info("=====token insert end======");
