@@ -1,8 +1,11 @@
 package com.wangjunneil.schedule.entity.baidu;
 
 
+import com.google.gson.annotations.SerializedName;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.jasypt.salt.StringFixedSaltGenerator;
 
+import javax.smartcardio.ATR;
 import java.util.List;
 
 /**
@@ -11,13 +14,20 @@ import java.util.List;
 public class Dish {
 
    //合作方商户唯一 ID
+   @SerializedName("shop_id")
    private String shopId;
 
    //百度门店ID,与shop_id二选一
+    @SerializedName("baidu_shop_id")
    private String baiduShopId;
 
     //菜品唯一编号
+    @SerializedName("dish_id")
    private String dishId;
+
+    //百度Dish ID
+    @SerializedName("baidu_dish_id")
+    private String baiduDishId;
 
    //菜品名称
    private String name;
@@ -26,37 +36,39 @@ public class Dish {
    private String upc;
 
    //菜品价格，单位：分
-   private int price;
+   private String price;
 
    //菜品图片，小于3M，尺寸大于等于640*640px
    private String pic;
 
    //最小起订份数
+    @SerializedName("min_order_num")
    private int minOrderNum;
 
    //单份所需餐盒数
+    @SerializedName("package_box_num")
    private int packageBoxNum;
 
    //描述
    private String description;
 
    //可售时间“i”为 1 表示周一，为 7 表示周日
-   private List<AvailableTime[]> availableTimesList;
+    @SerializedName("available_times")
+   private List<AvailableTime[]> availableTime;
 
    //菜品每日库存，每日0点恢复库存
-   private int stock;
+   private String stock;
 
    //分类信息
-   private List<Category> categoryList;
+    @SerializedName("category")
+   private Category[] categories;
 
    //菜品规格
-   private List<Norms> normsList;
+   private Norms[] norms;
 
    //菜品属性
-   private  List<Attr> attrsList;
-
-   //百度菜品ID
-   private String baiduDishId;
+    @SerializedName("attr")
+   private Attr[] attrs;
 
    private String wid;
 
@@ -104,12 +116,12 @@ public class Dish {
        return  this.name;
    }
 
-   public void setPrice(int price){
+   public void setPrice(String price){
        this.price = price;
    }
 
-   public int getPrice(){
-       return this.getPrice();
+   public String getPrice(){
+       return this.price;
    }
 
    public void setPic(String pic){
@@ -144,44 +156,44 @@ public class Dish {
        return this.description;
    }
 
-   public  void setAvailableTimesList(List<AvailableTime[]> availableTimesList){
-       this.availableTimesList = availableTimesList;
+   public  void setAvailableTime(List<AvailableTime[]> availableTime){
+       this.availableTime = availableTime;
    }
 
-   public List<AvailableTime[]> getAvailableTimesList(){
-       return this.availableTimesList;
+   public List<AvailableTime[]> getAvailableTime(){
+       return this.availableTime;
    }
 
-   public void setStock(int stock){
+   public void setStock(String stock){
        this.stock = stock;
    }
 
-   public int getStock(){
+   public String getStock(){
        return this.stock;
    }
 
-   public void setCategoryList(List<Category> categoryList){
-       this.categoryList = categoryList;
+   public void setCategories(Category[] categories){
+       this.categories = categories;
    }
 
-   public List<Category> getCategoryList(){
-       return this.categoryList;
+   public Category[] getCategories(){
+       return this.categories;
    }
 
-   public void setNormsList(List<Norms> normsList){
-       this.normsList = normsList;
+   public void setNorms(Norms[] norms){
+       this.norms = norms;
    }
 
-   public List<Norms> getNormsList(){
-       return  this.normsList;
+   public Norms[] getNorms(){
+       return  this.norms;
    }
 
-   public  void setAttrsList(List<Attr> attrsList){
-       this.attrsList = attrsList;
+   public  void setAttrs(Attr[] attrs){
+       this.attrs = attrs;
    }
 
-   public  List<Attr> getAttrsList(){
-       return  this.attrsList;
+   public  Attr[] getAttrs(){
+       return  this.attrs;
    }
 
    public  void  setWid(String wid){

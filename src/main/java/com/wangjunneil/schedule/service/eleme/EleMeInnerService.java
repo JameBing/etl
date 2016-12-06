@@ -27,9 +27,41 @@ public class EleMeInnerService {
     private MongoTemplate mongoTemplate;
 
     //insert or update
-    public void updSyncElemeOrder(Order data) throws ScheduleException{
-        Query  query = new Query(Criteria.where("order_id").is(data.getOrderid()));
-        Update update = new Update().set("order",data.getOrderid());
+    public void addSyncOrder(Order order) throws ScheduleException{
+        Query  query = new Query(Criteria.where("orderid").is(order.getOrderid()));
+        Update update = new Update()
+            .set("restaurantid", order.getRestaurantid())
+            .set("restaurantnumber", order.getRestaurantnumber())
+            .set("restaurantname", order.getRestaurantname())
+            .set("userid", order.getUserid())
+            .set("username", order.getUsername())
+            .set("consignee", order.getConsignee())
+            .set("phonelist", order.getPhonelist())
+            .set("address", order.getAddress())
+            .set("deliverypoiaddress", order.getDeliverypoiaddress())
+            .set("deliverygeo", order.getDeliverygeo())
+            .set("invoiced", order.getInvoiced())
+            .set("invoice", order.getInvoice())
+            .set("isbook", order.getIsbook())
+            .set("detail", order.getDetail())
+            .set("originalprice", order.getOriginalprice())
+            .set("servicefee", order.getServicefee())
+            .set("deliverfee", order.getDeliverfee())
+            .set("hongbao", order.getHongbao())
+            .set("totalprice", order.getTotalprice())
+            .set("restaurantpart", order.getRestaurantpart())
+            .set("elemepart", order.getElemepart())
+            .set("packagefee", order.getPackagefee())
+            .set("createdat", order.getCreatedat())
+            .set("activeat", order.getActiveat())
+            .set("refundcode", order.getRefundcode())
+            .set("statuscode", order.getStatuscode())
+            .set("description", order.getDescription())
+            .set("income", order.getIncome())
+            .set("delivertime", order.getDelivertime())
+            .set("servicerate", order.getServicerate())
+            .set("isonlinepaid", order.getIsonlinepaid())
+            .set("activitytotal", order.getActivitytotal());
         mongoTemplate.upsert(query, update, Order.class);
     }
 
@@ -58,6 +90,13 @@ public class EleMeInnerService {
         });
 
         query.addCriteria(criteria);
+        List<Order> bodies = mongoTemplate.find(query,Order.class);
+        return  bodies;
+    }
+
+    //查询所有
+    public List<Order> findAll() throws ScheduleException{
+        Query query = new Query();
         List<Order> bodies = mongoTemplate.find(query,Order.class);
         return  bodies;
     }

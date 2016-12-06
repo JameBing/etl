@@ -26,6 +26,13 @@ public final class URL {
     //京东到家商家确认接单接口
     public static final String URL_ORDER_ACCEPT_OPERATE ="https://openo2o.jd.com/mockapi/ocs/orderAcceptOperate";
 
+    //京东到家查询商家商品信息列表
+    public static final String URL_QUERY_SKU_INFO ="https://openo2o.jd.com/mockapi/pms/querySkuInfos";
+
+    //京东到家根据查询条件分页获取门店基本信息
+    public static final String STORE_INFO_PAGEBEAN ="https://openo2o.jd.com/mockapi/djstore/getStoreInfoPageBean";
+
+
     /*************************************************************************************************************************/
     /**
      * 饿了吗接口url

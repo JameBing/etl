@@ -49,6 +49,9 @@ public class SysFacadeService {
     public Cfg findJPCfg() {
         return sysInnerService.findCfg(Constants.PLATFORM_JP);
     }
+    public Cfg findElemeCfg() {
+        return sysInnerService.findCfg(Constants.PLATFORM_WAIMAI_ELEME);
+    }
 
     public Cfg findZ8Cfg() {
         return sysInnerService.findCfg("z8");
@@ -113,6 +116,8 @@ public class SysFacadeService {
     public int getSerialNum(String date,String moudle){
         return sysInnerService.getSerialNum(date,moudle);
     }
+
+
     //生成外卖订单编号
     public String getOrderNum(String shopId){
         String strShopId =  shopId.length()>5?shopId.substring(0,5):shopId;

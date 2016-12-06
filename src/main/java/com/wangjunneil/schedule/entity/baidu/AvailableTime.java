@@ -28,4 +28,5 @@ public class AvailableTime {
     public  String getEndTime(){
         return this.endTime;
     }
+
 }

@@ -5,12 +5,16 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
+import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.*;
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.service.baidu.BaiDuInnerService;
+import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
+import org.omg.CORBA.PRIVATE_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +37,9 @@ public class BaiDuFacadeService {
     @Autowired
     private SysFacadeService sysFacadeService;
 
+    @Autowired
+    private SysInnerService sysInnerService;
+
     private Gson gson;
 
     private Gson getGson(){
@@ -51,10 +58,15 @@ public class BaiDuFacadeService {
                                     .registerTypeAdapter(Discount.class, new DiscountSerializer())
                                     .registerTypeAdapter(businessForm.class,new BusinessFormSerializer())
                                     .registerTypeAdapter(Categorys.class,new CategorysSerializer())
+                                    .registerTypeAdapter(DeliveryRegion.class,new DeliveryRegionSerializer())
+                                    .registerTypeAdapter(Region.class, new RegionSerializer())
+                                    .registerTypeAdapter(BusinessTime.class, new BusinessTimeSerializer())
+                                   .registerTypeAdapter(AvailableTime.class, new AvailableTimeSerializer())
+                                    .registerTypeAdapter(Rtn.class, new RtnSerializer())
                                     .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
                                         @Override
                                         public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
-                                            if(aDouble == aDouble.longValue())
+                                            if (aDouble == aDouble.longValue())
                                                 return new JsonPrimitive(aDouble.longValue());
                                             return new JsonPrimitive(aDouble);
                                         }
@@ -95,8 +107,24 @@ public class BaiDuFacadeService {
         return result;
     }
 
+    //创建门店
+    public String shopCreate(JsonObject jsonBody) {
+            String result = null;
+            Rtn rtn = new Rtn();
+            try {
+                rtn  = getGson().fromJson( baiDuApiService.shopCreate(jsonBody),Rtn.class);
+            }
+            catch (Exception ex){
+                rtn.setDynamic("");
+                rtn.setCode(-999);
+                rtn.setDesc("发生异常");
+                rtn.setLogId("");
+                //异常日志
+        }
+        return getGson().toJson(rtn);
+    }
     //门店开业
-    public String startBusiness(String baiduShopId,String shopId){
+    public String shopOpen(String baiduShopId,String shopId){
         String result = null;
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -104,7 +132,7 @@ public class BaiDuFacadeService {
             Shop shop = new Shop();
             shop.setShopId(shopId);
             shop.setBaiduShopId(baiduShopId);
-            result =  baiDuApiService.startBusiness(shop);
+            result =  baiDuApiService.shopOpen(shop);
             rtn = gson1.fromJson(result,Rtn.class);
             rtn.setDynamic(shopId);
         }catch (Exception ex) {
@@ -119,7 +147,7 @@ public class BaiDuFacadeService {
     }
 
     //门店歇业
-    public String endBusiness(String baiduShopId,String shopId){
+    public String shopClose(String baiduShopId,String shopId){
         String result = null;
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -127,7 +155,7 @@ public class BaiDuFacadeService {
             Shop shop = new Shop();
             shop.setShopId(shopId);
             shop.setBaiduShopId(baiduShopId);
-            result =  baiDuApiService.endBusiness(shop);
+            result =  baiDuApiService.shopClose(shop);
             rtn = gson1.fromJson(result,Rtn.class);
             rtn.setDynamic(shopId);
         }catch (Exception ex) {
@@ -141,9 +169,74 @@ public class BaiDuFacadeService {
         return  result;
     }
 
-    //菜品上架
-    public String online(String baiduShopId,String shopId,String baiduDishId,String dishId){
+    //新增菜品分类
+    public String dishCategoryCreate(JsonObject jsonDishCategory){
+       Rtn rtn = new Rtn();
+        try{
+            rtn = getGson().fromJson(baiDuApiService.dishCategoryCreate(jsonDishCategory),Rtn.class);
+        }
+        catch (Exception ex){
+            rtn.setDynamic("");
+            rtn.setCode(-999);
+            rtn.setDesc("error");
+            rtn.setRemark("发生异常");
+            rtn .setLogId("");
+            //异常日志
+        }
+        return getGson().toJson(rtn);
+    }
+
+    //新增菜品
+    public String dishCreate(JsonObject jsonDish){
+        Rtn rtn = new Rtn();
+        try {
+            rtn = getGson().fromJson(baiDuApiService.dishCreate(jsonDish),Rtn.class);
+        }
+        catch (Exception ex){
+          rtn.setDynamic("");
+           rtn.setCode(-999);
+            rtn.setDesc("error");
+            rtn.setRemark("发生异常");
+            rtn .setLogId("");
+            //异常日志
+        }
+        return  getGson().toJson(rtn);
+    }
+
+    //菜品查看
+    public String dishGet(String baiduShopId,String shopId,String baiduDishId,String dishId){
         String result = null;
+        Rtn rtn = new Rtn();
+        try {
+//            String bodyStr = (StringUtil.isEmpty(baiduShopId)?"":MessageFormat.format("baidu_shop_id:{0},",baiduShopId)).concat( (StringUtil.isEmpty(shopId)?"":MessageFormat.format("shop_id:{0},",shopId)))
+//                                                .concat( (StringUtil.isEmpty(baiduDishId)?"":MessageFormat.format("baidu_dish_id:{0},",baiduDishId))).concat((StringUtil.isEmpty(dishId) ? "" : MessageFormat.format("dish_id:{0}", dishId)));
+            Dish dish = new Dish();
+            dish.setBaiduShopId(StringUtil.isEmpty(baiduShopId)?"":baiduShopId);
+            dish.setShopId(StringUtil.isEmpty(shopId)?"":shopId);
+            dish.setBaiduDishId(StringUtil.isEmpty(baiduDishId)?"":baiduDishId);
+            dish.setDishId(StringUtil.isEmpty(dishId)?"":dishId);
+             result = baiDuApiService.dishGet(dish);
+
+            SysParams sysParams = getGson().fromJson(result,SysParams.class);
+            Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
+            rtn.setRemark(result);
+            rtn.setCode(Integer.valueOf(body.getErrno()));
+            rtn.setDesc(body.getError());
+            rtn.setRemark(getGson().toJson(body.getData()));
+        }catch (Exception ex){
+           rtn.setCode(-999);
+            rtn.setDesc("error");
+            rtn.setRemark("发生异常");
+            //异常记录
+            rtn.setLogId("");
+        }
+
+        return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+    }
+
+    //菜品上架 & 下架
+    public String dishOpt(String baiduShopId,String shopId,String baiduDishId,String dishId,String cmd){
+           String result = "";
             Rtn rtn = new Rtn();
             rtn.setDynamic(StringUtil.isEmpty(dishId)?baiduDishId:dishId);
             Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -153,7 +246,15 @@ public class BaiDuFacadeService {
                 dish.setBaiduShopId(baiduShopId);
                 dish.setDishId(dishId);
                 dish.setBaiduDishId(baiduDishId);
-                result = baiDuApiService.online(dish);
+                switch (cmd){
+                    case "dish.online":
+                        result = baiDuApiService.dishOnline(dish);
+                        break;
+                    case "dish.offline":
+                        result = baiDuApiService.dishOffline(dish);
+                        break;
+                    default:break;
+                }
                 rtn = gson1.fromJson(result,Rtn.class);
         }catch (Exception ex){
                 rtn.setCode(-999);
@@ -163,12 +264,6 @@ public class BaiDuFacadeService {
         }
         result = gson1.toJson(rtn);
         return result;
-    }
-
-    //菜品下架
-    public String offline(){
-
-        return  null;
     }
 
 //    //接收百度外卖推送过来的订单(2.0)
@@ -281,10 +376,21 @@ public class BaiDuFacadeService {
             body = getGson().fromJson(bodyStr,Body.class);
             if (body.getErrno().equals("0")){
                 Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
-                baiDuInnerService.updSyncBaiDuOrder(data);
+                OrderWaiMai orderWaiMai = new OrderWaiMai();
+                orderWaiMai.setPlatfrom(Constants.PLATFORM_WAIMAI_BAIDU);
+                //商家门店ID
+                String shopId = data.getShop().getShopId();
+                //百度订单ID
+                orderWaiMai.setPlatformOrderId(data.getOrder().getOrderId());
+                //商家订单ID
+                String platformOrderId = sysFacadeService.getOrderNum(shopId);
+                orderWaiMai.setPlatformOrderId(platformOrderId);
+                orderWaiMai.setOrder(data);
+                orderWaiMai.setShopId(shopId);
+                sysInnerService.updSynWaiMaiOrder(orderWaiMai);
                 body.setErrno("0");
                 body.setError("success");
-                body.setData(MessageFormat.format("{0}",MessageFormat.format("source_order_id:{0}",sysFacadeService.getOrderNum(data.getShop().getShopId()))));
+                body.setData(MessageFormat.format("{0}",MessageFormat.format("source_order_id:{0}",platformOrderId)));
             }
             else {
               body.setErrno("1");
@@ -331,7 +437,7 @@ public class BaiDuFacadeService {
         Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
         Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
        //？是否多个订单号存在
-       int intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.GetEnumDesc(Enum.OrderTypeBaiDu.R5, data.getOrder().getStatus()).get("code").toString()));
+       int intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.getEnumDesc(Enum.OrderTypeBaiDu.R5, data.getOrder().getStatus()).get("code").getAsString()));
         if (intR > 0){
             result.setErrno("0");
             result.setError("success");

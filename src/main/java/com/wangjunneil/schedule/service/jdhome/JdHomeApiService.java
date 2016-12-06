@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.JdHomeException;
 import com.wangjunneil.schedule.entity.jdhome.*;
-import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import com.wangjunneil.schedule.utility.URL;
@@ -58,7 +57,6 @@ public class JdHomeApiService {
                         param.put("sign",sign);
                     }catch (Exception e){
                         throw new JdHomeException("签名失败",e);
-
                     }
                     log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
                     rtnStr = rtnStr + HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+",";
@@ -82,6 +80,45 @@ public class JdHomeApiService {
             return rtnStr.substring(0,rtnStr.length()-1);
         }
         return rtnStr;
+    }
+
+    //查询商家商品信息
+    public String querySkuInfos(String upcCode,String shopId)throws Exception{
+        SignParams signParams = getSignParams(shopId);
+        Map<String,Object> param = getSysMap(signParams);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("upcCode",upcCode);
+        jd_param_json = jsonObject.toJSONString();
+        signParams.setJd_param_json(jd_param_json);
+        param.put("jd_param_json",jd_param_json);
+        try {
+            sign = SignUtils.getSign(signParams,appSecret);
+            param.put("sign",sign);
+        }catch (Exception e){
+            throw new JdHomeException("签名失败",e);
+        }
+        log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
+        return HttpUtil.post(URL.URL_QUERY_SKU_INFO,StringUtil.getUrlParamsByMap(param));
+    }
+
+    //根据查询条件分页获取门店基本信息
+    public String getStoreInfoPageBean(String shopId) throws Exception{
+        SignParams signParams = getSignParams(shopId);
+        Map<String,Object> param = getSysMap(signParams);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("outSystemId",shopId);
+        jsonObject.put("currentPage",1);
+        jd_param_json = jsonObject.toJSONString();
+        signParams.setJd_param_json(jd_param_json);
+        param.put("jd_param_json",jd_param_json);
+        try {
+            sign = SignUtils.getSign(signParams,appSecret);
+            param.put("sign",sign);
+        }catch (Exception e){
+            throw new JdHomeException("签名失败",e);
+        }
+        log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
+        return HttpUtil.post(URL.STORE_INFO_PAGEBEAN,StringUtil.getUrlParamsByMap(param));
     }
 
     //新增商品分类
@@ -188,16 +225,16 @@ public class JdHomeApiService {
 
     //获取系统参数map对象
     private Map<String,Object> getSysMap(SignParams signParams){
-        Map<String ,Object> sysParam = new HashMap<String,Object>();
+        Map<String ,Object> sysParam = new HashMap<>();
         sysParam.put("token",signParams.getToken());
         sysParam.put("app_key",signParams.getApp_key());
         sysParam.put("format",signParams.getFormat());
-        sysParam.put("v",signParams.getV());
+            sysParam.put("v",signParams.getV());
         sysParam.put("timestamp",signParams.getTimestamp());
         return  sysParam ;
     }
 
-    //根据门口编号获取签名参数
+    //根据门店编号获取签名参数
     private SignParams getSignParams(String shopId){
         JdHomeAccessToken jdHomeAccessToken = jdHomeInnerService.getAccessToken(shopId);
         SignParams signParam = new SignParams();
@@ -205,7 +242,7 @@ public class JdHomeApiService {
             return signParam;
         }
         appSecret = jdHomeAccessToken.getAppSecret();
-        signParam.setToken(jdHomeAccessToken.getAccess_token());
+        signParam.setToken(jdHomeAccessToken.getToken());
         signParam.setApp_key(jdHomeAccessToken.getAppKey());
         return  signParam ;
     }

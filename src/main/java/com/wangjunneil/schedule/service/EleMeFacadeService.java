@@ -8,13 +8,13 @@ import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.entity.eleme.*;
 import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
-import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -251,7 +251,7 @@ public class EleMeFacadeService {
 
     /**
      * 新订单接收
-     * @param eleme_order_ids eleme平台食物id
+     * @param eleme_order_ids eleme平台订单id
      * @return
      */
     public String getNewOrder(String eleme_order_ids){
@@ -263,7 +263,8 @@ public class EleMeFacadeService {
             try {
                 String result = eleMeApiService.orderDetail(id);
                 Result obj = getGson().fromJson(result, Result.class);
-                eleMeInnerService.updSyncElemeOrder((Order)obj.getData());
+                Order order = getGson().fromJson(getGson().toJson(obj.getData()), Order.class);
+                eleMeInnerService.addSyncOrder(order);
                 rtn.setCode(obj.getCode());
                 rtn.setLogId("");
                 rtn.setDesc(obj.getMessage());
@@ -306,6 +307,21 @@ public class EleMeFacadeService {
             FoodsRequest foodsRequest = new FoodsRequest();
             foodsRequest.setTp_food_ids(parms);
             return eleMeApiService.getFoodId(foodsRequest);
+        }catch (Exception ex) {
+            rtn.setLogId("");
+            rtn.setCode(-999);
+            rtn.setRemark("发生异常");
+            rtn.setDesc("error");
+        }
+        return gson1.toJson(rtn);
+    }
+
+    public String getHistoryOrder() {
+        Rtn rtn = new Rtn();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        try {
+            List<Order> orders = eleMeInnerService.findAll();
+            return getGson().toJson(orders);
         }catch (Exception ex) {
             rtn.setLogId("");
             rtn.setCode(-999);
