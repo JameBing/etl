@@ -7,11 +7,14 @@ import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.*;
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.service.baidu.BaiDuInnerService;
+import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
+import org.omg.CORBA.PRIVATE_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +36,9 @@ public class BaiDuFacadeService {
 
     @Autowired
     private SysFacadeService sysFacadeService;
+
+    @Autowired
+    private SysInnerService sysInnerService;
 
     private Gson gson;
 
@@ -370,10 +376,21 @@ public class BaiDuFacadeService {
             body = getGson().fromJson(bodyStr,Body.class);
             if (body.getErrno().equals("0")){
                 Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
-                baiDuInnerService.updSyncBaiDuOrder(data);
+                OrderWaiMai orderWaiMai = new OrderWaiMai();
+                orderWaiMai.setPlatfrom(Constants.PLATFORM_WAIMAI_BAIDU);
+                //商家门店ID
+                String shopId = data.getShop().getShopId();
+                //百度订单ID
+                orderWaiMai.setPlatformOrderId(data.getOrder().getOrderId());
+                //商家订单ID
+                String platformOrderId = sysFacadeService.getOrderNum(shopId);
+                orderWaiMai.setPlatformOrderId(platformOrderId);
+                orderWaiMai.setOrder(data);
+                orderWaiMai.setShopId(shopId);
+                sysInnerService.updSynWaiMaiOrder(orderWaiMai);
                 body.setErrno("0");
                 body.setError("success");
-                body.setData(MessageFormat.format("{0}",MessageFormat.format("source_order_id:{0}",sysFacadeService.getOrderNum(data.getShop().getShopId()))));
+                body.setData(MessageFormat.format("{0}",MessageFormat.format("source_order_id:{0}",platformOrderId)));
             }
             else {
               body.setErrno("1");

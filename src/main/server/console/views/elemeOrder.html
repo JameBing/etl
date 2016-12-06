@@ -92,8 +92,15 @@
                         <th>订单Id</th>
                         <th>交易状态</th>
                         <th>订单信息</th>
+                        <th>额外信息</th>
                         <th>收货人</th>
                         <th>手机号码</th>
+                        <th>收货地址</th>
+                        <th>经纬度</th>
+                        <th>合计</th>
+                        <th>活动时间</th>
+                        <th>创建时间</th>
+                        <th>描述</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -106,12 +113,25 @@
                                     <td>
                                         <table>
                                             <tr ng-repeat="item_item in item_info track by $index">
-                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;">食物名字：{{item_item.name}}</td>
+                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;">食物ID：{{item_item.id}}</td>
+                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">食物名字：{{item_item.name}}</td>
+                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">分类ID：{{item_item.category_id}}</td>
                                                 <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">数量：{{item_item.quantity}}</td>
-                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;padding-left: 20px;">价格：{{item_item.price | currency:'￥'}}</td>
+                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">价格：{{item_item.price | currency:'￥'}}</td>
                                             </tr>
                                         </table>
                                     </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td><!--物料信息-->
+                            <table>
+                                <tr ng-repeat="item_info in order_info.detail.extra track by $index">
+                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;">ID：{{item_info.id}}</td>
+                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">名字：{{item_info.name}}</td>
+                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">分类ID：{{item_info.category_id}}</td>
+                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">数量：{{item_info.quantity}}</td>
+                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">价格：{{item_info.price | currency:'￥'}}</td>
                                 </tr>
                             </table>
                         </td>
@@ -123,6 +143,12 @@
                                 </tr>
                             </table>
                         </td>
+                        <td>{{order_info.delivery_poi_address}}</td>
+                        <td>{{order_info.delivery_geo}}</td>
+                        <td>原价：{{order_info.original_price}} 服务费：{{order_info.service_fee}} 快递费：{{order_info.deliver_fee}} 红包：{{order_info.hongbao}} 包装费：{{order_info.package_fee}} 合计：{{order_info.total_price}}</td>
+                        <td>{{order_info.active_at}}</td>
+                        <td>{{order_info.created_at}}</td>
+                        <td>{{order_info.description}}</td>
                     </tr>
                     </tbody>
                 </table>

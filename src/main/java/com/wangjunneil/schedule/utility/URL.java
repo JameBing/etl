@@ -49,7 +49,7 @@ public final class URL {
     public static final String URL_ELEME_ORDER_STATUS = "http://v2.openapi.ele.me/order/{0}/status/";
     //添加食物
     public static final String URL_ELEME_ADD_FOODS = "http://v2.openapi.ele.me/food/";
-    //食品上下架、更新食物
+    //更新食物
     public static final String URL_ELEME_UPORDOWNFRAME_FOODS = "http://v2.openapi.ele.me/food/{0}/";
     //获取餐厅食物分类
     public static final String URL_ELEME_CLASSIFY_FOODS = "http://v2.openapi.ele.me/restaurant/{0}/food_categories/";
@@ -61,8 +61,10 @@ public final class URL {
     public static final String URL_ELEME_RESTAURANT_MENU = "http://v2.openapi.ele.me/restaurant/{0}/menu/";
     //通过地单方id获取餐厅食物ID
     public static final String URL_ELEME_TP_FOOD_ID = "http://v2.openapi.ele.me/foods/tp_food_id/";
-
-
+    //批量上下架and批量修改食物
+    public static final String URL_ELEME_UPORDOWNFRAME_FOODS_LIST = "http://v2.openapi.ele.me/foods/batch_update/";
+    //批量删除食物
+    public static final String URL_ELEME_DELETE_FOODS_LIST = "http://v2.openapi.ele.me/foods/batch_delete/";
 
 
 }
