@@ -52,7 +52,7 @@ public class JdHomeController {
         resp.setContentType("text/html;charset=utf-8");
         //应用参数
         List<ParsFromPosInner> listBaseStockCenterRequest = new ArrayList<ParsFromPosInner>();
-        String shopId = "10054394";
+        String shopId = "10029045";
         ParsFromPosInner inner = new ParsFromPosInner();
         inner.setShopId(shopId);
         listBaseStockCenterRequest.add(inner);
@@ -169,7 +169,7 @@ public class JdHomeController {
     @RequestMapping(value = "/testAddOrder",method = RequestMethod.GET)
     public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-        jdHomeFacadeService.callback("","72171");
+        jdHomeFacadeService.callback("lvyul","7244171");
         //out.println(json);
         out.close();
         return null;

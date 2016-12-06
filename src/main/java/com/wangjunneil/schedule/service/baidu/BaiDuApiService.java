@@ -78,9 +78,9 @@ public class BaiDuApiService {
 
         String params = "body={0}&cmd={1}&timestamp={2}&version={3}&ticket={4}&source={5}&encrypt={6}&secret={7}";
         //String bodyStr = gson.toJson(sysParams.getBody());
-        params = MessageFormat.format(params, sysParams.getBody(), sysParams.getCmd(), sysParams.getTimestamp(), sysParams.getVersion(), sysParams.getTicket()
-            , String.valueOf(sysParams.getSource()), sysParams.getEncrypt(), sysParams.getSecret());
-        params = StringUtil.retParamAsc(params);
+
+        params =  MessageFormat.format(params,gson.toJson(sysParams.getBody()),sysParams.getCmd(),sysParams.getTimestamp(),sysParams.getVersion(),sysParams.getTicket()
+            ,String.valueOf(sysParams.getSource()),sysParams.getEncrypt(),sysParams.getSecret());
         params = StringUtil.chinaToUnicode(params);
         return params.concat(MessageFormat.format("&sign={0}", StringUtil.getMD5(params)));
     }

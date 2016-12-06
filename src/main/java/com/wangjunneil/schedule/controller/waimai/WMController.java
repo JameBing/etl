@@ -74,7 +74,7 @@ public class WMController {
             case "/waimai/baidu":  //百度
                 platform = Constants.PLATFORM_WAIMAI_BAIDU;
                 stringMap = request.getParameterMap();
-               // stringMap = request.getParameterMap();//?Content-Type: multipart/form-data 无法取值
+                // stringMap = request.getParameterMap();//?Content-Type: multipart/form-data 无法取值
                 break;
             case "/waimai/jdhome": //京东到家
                 String[] strArr = {sid};
@@ -129,7 +129,7 @@ public class WMController {
     public String shopOpen(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws ScheduleException {
         response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.shopOpen(parsFromPos));
-     return  null;
+        return  null;
     }
 
 
@@ -156,7 +156,7 @@ public class WMController {
      * @param jsonObj 菜品分类
      * @param out 响应输出流队形
      * @param request 请求对象
-     * @param 浏览器响应对象
+     * @param
      * @return {"baidu":{code:0,desc:"success",dynamic:"",logId:"",remark:""},"jdhome":{}...}
      */
     @RequestMapping(value = "/dish/category/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
@@ -172,15 +172,15 @@ public class WMController {
      * @param jsonObj 菜品信息
      * @param out 响应输出流队形
      * @param request 请求对象
-     * @param 浏览器响应对象
+     * @param
      * @return  {"baidu":{code:0,desc:"success",dynamic:"",logId:"",remark:""},"jdhome":{}...}
      */
     @RequestMapping(value = "/dish/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
     public String dishCreate(@RequestBody JsonObject jsonObj,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
-    response.setContentType("application/json;charset=uft-8");
-    out.println(wmFacadeService.dishCreate(jsonObj));
-    return null;
+        response.setContentType("application/json;charset=uft-8");
+        out.println(wmFacadeService.dishCreate(jsonObj));
+        return null;
     }
 
     /**
@@ -295,7 +295,7 @@ public class WMController {
                 break;
             default:break;
         }
-      // out.println( wmFacadeService.orderStatus(request.getParameterMap(),platfrom));
+        // out.println( wmFacadeService.orderStatus(request.getParameterMap(),platfrom));
         out.println("{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}");
         return  null;
     }
