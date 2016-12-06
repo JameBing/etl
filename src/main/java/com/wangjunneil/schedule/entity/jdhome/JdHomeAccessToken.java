@@ -17,6 +17,8 @@ import java.util.List;
 
     private String username;
 
+    private String code; //回填码
+
     private String token;
 
     private int expires_in;
@@ -151,5 +153,13 @@ import java.util.List;
 
     public void setShopIds(List<Shop> shopIds) {
         this.shopIds = shopIds;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }
