@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.service;
 
 
 import com.google.gson.*;
+import com.wangjunneil.schedule.common.ElemeException;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.common.Rtn;
@@ -10,6 +11,7 @@ import com.wangjunneil.schedule.entity.eleme.*;
 import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
+import org.apache.taglibs.standard.lang.jstl.ELEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,12 +77,14 @@ public class EleMeFacadeService {
             rtn.setLogId("");
             rtn.setDesc(obj.getMessage());
             rtn.setDynamic(status);
-        } catch (ScheduleException e) {
+        }catch (ElemeException ex){}
+        catch (ScheduleException e) {
             rtn.setLogId("");
             rtn.setCode(-999);
             rtn.setRemark("发生异常");
             rtn.setDesc("error");
         }
+        catch (Exception ex){}
         result = gson1.toJson(rtn);
         return  result;
     }
@@ -98,12 +102,13 @@ public class EleMeFacadeService {
             OrderRequest orderRequest = new OrderRequest();
             orderRequest.setRestaurant_id(elemeShopId);
             return eleMeApiService.pullNewOrder(orderRequest);
-        } catch (ScheduleException e) {
+        }catch (ElemeException ex){}
+        catch (ScheduleException ex) {
             rtn.setLogId("");
             rtn.setCode(-999);
             rtn.setRemark("发生异常");
             rtn.setDesc("error");
-        }
+        }catch (Exception ex){}
         return gson1.toJson(rtn);
     }
 
@@ -132,12 +137,13 @@ public class EleMeFacadeService {
             rtn.setLogId("");
             rtn.setDesc(obj.getMessage());
             rtn.setDynamic(status);
-        } catch (ScheduleException e) {
+        }catch (ElemeException ex){}
+        catch (ScheduleException ex) {
             rtn.setLogId("");
             rtn.setCode(-999);
             rtn.setRemark("发生异常");
             rtn.setDesc("error");
-        }
+        }catch (Exception ex){}
         result = gson1.toJson(rtn);
         return  result;
     }
@@ -159,12 +165,13 @@ public class EleMeFacadeService {
             rtn.setCode(obj.getCode());
             rtn.setLogId("");
             rtn.setDesc(obj.getMessage());
-        } catch (ScheduleException e) {
+        }catch (ElemeException ex){}
+        catch (ScheduleException ex) {
             rtn.setLogId("");
             rtn.setCode(-999);
             rtn.setRemark("发生异常");
             rtn.setDesc("error");
-        }
+        }catch (Exception ex){}
         result = gson1.toJson(rtn);
         return  result;
     }
@@ -180,12 +187,13 @@ public class EleMeFacadeService {
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
             return eleMeApiService.restaurantMenu(restaurantId);
-        } catch (ScheduleException e) {
+        }catch (ElemeException ex){}
+        catch (ScheduleException e) {
             rtn.setLogId("");
             rtn.setCode(-999);
             rtn.setRemark("发生异常");
             rtn.setDesc("error");
-        }
+        }catch (Exception ex){}
         return  gson1.toJson(rtn);
     }
 
@@ -206,12 +214,14 @@ public class EleMeFacadeService {
             rtn.setCode(obj.getCode());
             rtn.setLogId("");
             rtn.setDesc(obj.getMessage());
-        } catch (ScheduleException e) {
+        }catch (ElemeException ex){}
+        catch (ScheduleException ex) {
             rtn.setLogId("");
             rtn.setCode(-999);
             rtn.setRemark("发生异常");
             rtn.setDesc("error");
         }
+        catch (Exception ex){}
         result = gson1.toJson(rtn);
         return  result;
     }
@@ -236,12 +246,13 @@ public class EleMeFacadeService {
                 rtn.setCode(obj.getCode());
                 rtn.setLogId("");
                 rtn.setDesc(obj.getMessage());
-            } catch (ScheduleException e) {
+            }catch (ElemeException ex){}
+            catch (ScheduleException ex) {
                 rtn.setLogId("");
                 rtn.setCode(-999);
                 rtn.setRemark("发生异常");
                 rtn.setDesc("error");
-            }
+            }catch (Exception ex){}
         });
         return gson1.toJson(rtn);
     }
@@ -317,7 +328,9 @@ public class EleMeFacadeService {
             rtn.setLogId("");
             rtn.setCode(obj.getCode());
             rtn.setRemark(obj.getMessage());
-        }catch (Exception ex) {
+        }catch (ElemeException ex){}
+        catch (ScheduleException ex){}
+        catch (Exception ex) {
             rtn.setLogId("");
             rtn.setCode(-999);
             rtn.setRemark("发生异常");
@@ -356,7 +369,9 @@ public class EleMeFacadeService {
             rtn.setLogId("");
             rtn.setCode(obj.getCode());
             rtn.setRemark(obj.getMessage());
-        }catch (Exception ex) {
+        }catch (ElemeException ex){}
+        catch (ScheduleException ex){}
+        catch (Exception ex) {
             rtn.setLogId("");
             rtn.setCode(-999);
             rtn.setRemark("发生异常");
@@ -371,7 +386,9 @@ public class EleMeFacadeService {
         try {
             List<Order> orders = eleMeInnerService.findAll();
             return getGson().toJson(orders);
-        }catch (Exception ex) {
+        }
+        catch (ScheduleException ex){}
+        catch (Exception ex) {
             rtn.setLogId("");
             rtn.setCode(-999);
             rtn.setRemark("发生异常");

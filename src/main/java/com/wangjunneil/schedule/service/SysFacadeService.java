@@ -129,8 +129,14 @@ public class SysFacadeService {
     }
 
     //订单插入
-    public int updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
-      return   sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
+         sysInnerService.updSynWaiMaiOrder(orderWaiMai);
     }
 
+    //订单插入 list
+    public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws  ScheduleException{
+        orderWaiMaiList.forEach(v->{
+            sysInnerService.updSynWaiMaiOrder(v);
+        });
+    }
 }

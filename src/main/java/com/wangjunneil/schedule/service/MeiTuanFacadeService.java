@@ -40,7 +40,7 @@ public class MeiTuanFacadeService {
      * 门店开业
      * @parama app_poi_code - APP方门店id
      */
-    public String openShop(String code)throws ScheduleException
+    public String openShop(String code)
     {
         String json  = "";
         try {
