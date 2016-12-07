@@ -59,7 +59,7 @@ public class JdHomeApiService {
                         throw new JdHomeException("签名失败",e);
                     }
                     log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-                    rtnStr = rtnStr + HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+",";
+                    rtnStr = rtnStr + HttpUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+",";
                     begin = pageSize * page;
                     end = pageSize * (page + 1);
                     page++;
@@ -73,7 +73,7 @@ public class JdHomeApiService {
                 throw new JdHomeException("签名失败",e);
             }
             log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-            rtnStr = HttpUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
+            rtnStr = HttpUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
         }
 
         if(rtnStr.length()>0){
@@ -98,7 +98,7 @@ public class JdHomeApiService {
             throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-        return HttpUtil.post(URL.URL_QUERY_SKU_INFO,StringUtil.getUrlParamsByMap(param));
+        return HttpUtil.post(Constants.URL_QUERY_SKU_INFO,StringUtil.getUrlParamsByMap(param));
     }
 
     //根据查询条件分页获取门店基本信息
@@ -118,7 +118,7 @@ public class JdHomeApiService {
             throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-        return HttpUtil.post(URL.STORE_INFO_PAGEBEAN,StringUtil.getUrlParamsByMap(param));
+        return HttpUtil.post(Constants.STORE_INFO_PAGEBEAN,StringUtil.getUrlParamsByMap(param));
     }
 
     //新增商品分类
@@ -141,7 +141,7 @@ public class JdHomeApiService {
             throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-        return HttpUtil.post(URL.URL_ADD_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
+        return HttpUtil.post(Constants.URL_ADD_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
     }
 
     //修改商品分类
@@ -161,7 +161,7 @@ public class JdHomeApiService {
             throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-        return HttpUtil.post(URL.URL_UPDATE_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
+        return HttpUtil.post(Constants.URL_UPDATE_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
     }
 
     //删除商品分类
@@ -180,7 +180,7 @@ public class JdHomeApiService {
             throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-        return HttpUtil.post(URL.URL_DELETE_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
+        return HttpUtil.post(Constants.URL_DELETE_SHOP_CATEGORY,StringUtil.getUrlParamsByMap(param));
     }
 
     //新增订单
@@ -199,7 +199,7 @@ public class JdHomeApiService {
             throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:"+StringUtil.getUrlParamsByMap(param)+"======");
-        return HttpUtil.post(URL.URL_NEW_ORDER,StringUtil.getUrlParamsByMap(param));
+        return HttpUtil.post(Constants.URL_NEW_ORDER,StringUtil.getUrlParamsByMap(param));
     }
 
     //商家确认/取消接单接口
@@ -219,7 +219,7 @@ public class JdHomeApiService {
             throw new JdHomeException("签名失败",e);
         }
         log.info("======Params:"+StringUtil.getUrlParamsByMap(param)+"======");
-        return HttpUtil.post(URL.URL_ORDER_ACCEPT_OPERATE,StringUtil.getUrlParamsByMap(param));
+        return HttpUtil.post(Constants.URL_ORDER_ACCEPT_OPERATE,StringUtil.getUrlParamsByMap(param));
     }
 
 

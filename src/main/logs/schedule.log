@@ -11921,3 +11921,47 @@ Caused by: java.lang.IllegalStateException: Expected a string but was BEGIN_ARRA
 2016-12-07 14:55:39,706 | INFO  | Started o.e.j.w.WebAppContext@1d1cbd0f{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
 2016-12-07 14:55:39,732 | INFO  | Started ServerConnector@57cb70be{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
 2016-12-07 14:55:39,732 | INFO  | Started @47808ms | org.eclipse.jetty.server.Server | main
+2016-12-07 20:39:48,360 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-07 20:39:48,395 | INFO  | Logging initialized @332ms | org.eclipse.jetty.util.log | main
+2016-12-07 20:39:48,489 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-07 20:39:48,727 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-07 20:39:50,019 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-07 20:39:50,108 | INFO  | Opened connection [connectionId{localValue:1, serverValue:2134}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='5848031607665f33e4628de4', description='null'}-192.168.1.190:27017
+2016-12-07 20:39:50,109 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=740900} | org.mongodb.driver.cluster | cluster-ClusterId{value='5848031607665f33e4628de4', description='null'}-192.168.1.190:27017
+2016-12-07 20:40:11,744 | INFO  | Opened connection [connectionId{localValue:2, serverValue:2135}] to 192.168.1.190:27017 | org.mongodb.driver.connection | main
+2016-12-07 20:40:11,837 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-12-07 20:40:11,978 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-07 20:40:11,992 | INFO  | Opened connection [connectionId{localValue:3, serverValue:2136}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='5848032b07665f33e4628de5', description='null'}-192.168.1.190:27017
+2016-12-07 20:40:11,993 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=852195} | org.mongodb.driver.cluster | cluster-ClusterId{value='5848032b07665f33e4628de5', description='null'}-192.168.1.190:27017
+2016-12-07 20:40:33,256 | INFO  | Started o.e.j.w.WebAppContext@53c6f96d{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-12-07 20:40:33,270 | INFO  | Started ServerConnector@e26af6{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-07 20:40:33,271 | INFO  | Started @45216ms | org.eclipse.jetty.server.Server | main
+2016-12-07 20:46:18,487 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-07 20:46:18,525 | INFO  | Logging initialized @247ms | org.eclipse.jetty.util.log | main
+2016-12-07 20:46:18,617 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-07 20:46:18,901 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-07 20:46:19,989 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-07 20:46:20,130 | INFO  | Opened connection [connectionId{localValue:1, serverValue:2142}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='5848049b07665f1fcca87097', description='null'}-192.168.1.190:27017
+2016-12-07 20:46:20,132 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1286471} | org.mongodb.driver.cluster | cluster-ClusterId{value='5848049b07665f1fcca87097', description='null'}-192.168.1.190:27017
+2016-12-07 20:46:34,826 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-07 20:46:34,855 | INFO  | Logging initialized @306ms | org.eclipse.jetty.util.log | main
+2016-12-07 20:46:34,972 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-07 20:46:35,265 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-07 20:46:36,343 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-07 20:46:36,435 | INFO  | Opened connection [connectionId{localValue:1, serverValue:2143}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='584804ac07665f2bf41f6010', description='null'}-192.168.1.190:27017
+2016-12-07 20:46:36,437 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=893249} | org.mongodb.driver.cluster | cluster-ClusterId{value='584804ac07665f2bf41f6010', description='null'}-192.168.1.190:27017
+2016-12-07 20:47:30,685 | INFO  | load configuration file server.properties | com.wangjunneil.schedule.bootstrap.ScheduleMain | main
+2016-12-07 20:47:30,728 | INFO  | Logging initialized @515ms | org.eclipse.jetty.util.log | main
+2016-12-07 20:47:30,836 | INFO  | jetty-9.3.4.RC1 | org.eclipse.jetty.server.Server | main
+2016-12-07 20:47:31,173 | INFO  | Initializing Spring root WebApplicationContext | / | main
+2016-12-07 20:47:32,005 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-07 20:47:32,142 | INFO  | Opened connection [connectionId{localValue:1, serverValue:2145}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='584804e307665f272cce1915', description='null'}-192.168.1.190:27017
+2016-12-07 20:47:32,146 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=2305128} | org.mongodb.driver.cluster | cluster-ClusterId{value='584804e307665f272cce1915', description='null'}-192.168.1.190:27017
+2016-12-07 20:47:53,764 | INFO  | Opened connection [connectionId{localValue:2, serverValue:2146}] to 192.168.1.190:27017 | org.mongodb.driver.connection | main
+2016-12-07 20:47:53,855 | INFO  | Initializing Spring FrameworkServlet 'springMvc' | / | main
+2016-12-07 20:47:53,993 | INFO  | Cluster created with settings {hosts=[192.168.1.190:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50} | org.mongodb.driver.cluster | main
+2016-12-07 20:47:54,002 | INFO  | Opened connection [connectionId{localValue:3, serverValue:2147}] to 192.168.1.190:27017 | org.mongodb.driver.connection | cluster-ClusterId{value='584804f907665f272cce1916', description='null'}-192.168.1.190:27017
+2016-12-07 20:47:54,003 | INFO  | Monitor thread successfully connected to server with description ServerDescription{address=192.168.1.190:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 2, 8]}, minWireVersion=0, maxWireVersion=4, maxDocumentSize=16777216, roundTripTimeNanos=1145988} | org.mongodb.driver.cluster | cluster-ClusterId{value='584804f907665f272cce1916', description='null'}-192.168.1.190:27017
+2016-12-07 20:48:15,263 | INFO  | Started o.e.j.w.WebAppContext@59bbe88a{/,file:///D:/zhongtai/workplace/schedule-center-v1/src/main/server/,AVAILABLE} | org.eclipse.jetty.server.handler.ContextHandler | main
+2016-12-07 20:48:15,277 | INFO  | Started ServerConnector@20d87335{HTTP/1.1,[http/1.1]}{0.0.0.0:9001} | org.eclipse.jetty.server.ServerConnector | main
+2016-12-07 20:48:15,277 | INFO  | Started @45079ms | org.eclipse.jetty.server.Server | main
