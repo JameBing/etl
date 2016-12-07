@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.service;
 
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jp.JPAccessToken;
 import com.wangjunneil.schedule.entity.sys.Cfg;
@@ -48,6 +49,9 @@ public class SysFacadeService {
 
     public Cfg findJPCfg() {
         return sysInnerService.findCfg(Constants.PLATFORM_JP);
+    }
+    public Cfg findElemeCfg() {
+        return sysInnerService.findCfg(Constants.PLATFORM_WAIMAI_ELEME);
     }
 
     public Cfg findZ8Cfg() {
@@ -110,13 +114,22 @@ public class SysFacadeService {
         sysInnerService.initializeReset(status);
     }
 
+    /*======================================外卖=========================================================*/
+
     public int getSerialNum(String date,String moudle){
         return sysInnerService.getSerialNum(date,moudle);
     }
+
+
     //生成外卖订单编号
     public String getOrderNum(String shopId){
         String strShopId =  shopId.length()>5?shopId.substring(0,5):shopId;
         String date = DateTimeUtil.nowDateString("yyyyMMdd").substring(2,8);
-        return  "W" + String.format("%05d", Integer.valueOf(strShopId)) + "99" + date + String.format("%06d",Integer.valueOf(sysFacadeService.getSerialNum(date,"order")));
+        return  "W" + String.format("%05d", Integer.valueOf(strShopId)) + "99" + date + String.format("%06d",Integer.valueOf(getSerialNum(date,"order")));
     }
+
+    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai){
+          sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+    }
+
 }

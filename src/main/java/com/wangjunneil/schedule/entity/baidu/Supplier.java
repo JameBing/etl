@@ -1,8 +1,6 @@
 package com.wangjunneil.schedule.entity.baidu;
 
 import com.google.gson.annotations.SerializedName;
-import com.wangjunneil.schedule.utility.StringUtil;
-import org.omg.PortableInterceptor.ServerRequestInfo;
 
 /**
  * Created by yangwanbin on 2016-12-01.
@@ -32,7 +30,7 @@ public class Supplier {
 
     //业态
     @SerializedName("business_form")
-    private BusinessForm businessForm;
+    private com.wangjunneil.schedule.entity.baidu.businessForm businessForm;
 
     //经验范围
     private Categorys[] categorys;
@@ -85,11 +83,11 @@ public class Supplier {
         return this.extendFlag;
     }
 
-    public void setBusinessForm(BusinessForm businessForm){
+    public void setBusinessForm(com.wangjunneil.schedule.entity.baidu.businessForm businessForm){
         this.businessForm = businessForm;
     }
 
-    public BusinessForm getBusinessForm(){
+    public com.wangjunneil.schedule.entity.baidu.businessForm getBusinessForm(){
         return  this.businessForm;
     }
 

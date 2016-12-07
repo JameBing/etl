@@ -3,6 +3,7 @@ package com.wangjunneil.schedule.entity.eleme;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by admin on 2016/11/24.
@@ -19,13 +20,15 @@ public class Body {
     @SerializedName("extra")
     private List<Extra> extra;
     @SerializedName("abandoned_extra")
-    private Object abandonedextra;
+    private List<Object> abandonedextra;
     /*****************订单详情end********************/
 
     /*****************获取商户信息start********************/
     @SerializedName("restaurant")
     private Restaurant restaurant;
     /*****************获取商户信息end********************/
+    @SerializedName("food_ids")
+    private Map<String,List<FoodIds>> foodids;
 
 
     public Foods getFood() {
@@ -53,11 +56,11 @@ public class Body {
         this.extra = extra;
     }
 
-    public Object getAbandonedextra() {
+    public List<Object> getAbandonedextra() {
         return abandonedextra;
     }
 
-    public void setAbandonedextra(Object abandonedextra) {
+    public void setAbandonedextra(List<Object> abandonedextra) {
         this.abandonedextra = abandonedextra;
     }
 
@@ -67,5 +70,13 @@ public class Body {
 
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
+    }
+
+    public Map<String, List<FoodIds>> getFoodids() {
+        return foodids;
+    }
+
+    public void setFoodids(Map<String, List<FoodIds>> foodids) {
+        this.foodids = foodids;
     }
 }

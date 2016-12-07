@@ -5,10 +5,10 @@ package com.wangjunneil.schedule.entity.jdhome;
  * @since 2016/11/17.
  */
 public class OrderAcceptOperate {
-    private String orderId;
+    private String orderId; //订单Id
     private Boolean isAgreed; //true 接单 false不接单
-    private String operator;
-    private String shopId;
+    private String operator;//操作人
+    private String shopId;//门店Id
 
     public String getOrderId() {
         return orderId;

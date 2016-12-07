@@ -1,33 +1,45 @@
 package com.wangjunneil.schedule.entity.eleme;
 
+import com.google.gson.Gson;
+
+import java.util.Map;
+
 /**
  * Created by admin on 2016/11/28.
  */
 public class OldFoodsRequest {
+    //食物分类ID
     private String food_category_id;
+    //食物名字
     private String name;
-    private float price;
+    //食物价格
+    private String price;
+    //食物描述
     private String description;
-    private int max_stock;
-    private int stock;
+    //最大库存
+    private String max_stock;
+    //当前库存
+    private String stock;
+    //第三食物ID
     private String tp_food_id;
+    //图片
     private String image_hash;
-    private int is_new;
-    private int is_featured;
-    private int is_gum;
-    private int is_spicy;
-    private float packing_fee;
-    private int sort_order;
+    private String is_new;
+    private String is_featured;
+    private String is_gum;
+    private String is_spicy;
+    //打包费用
+    private String packing_fee;
+    private String sort_order;
+    //更新食物用食物ID
     private String food_id;
+    //通过第三方ID获取ID
+    private String tp_food_ids;
+    //批量删除食物ID
+    private String food_ids;
 
+    private Map<String, OldFoodsRequest> foods_info;
 
-    public String getFood_id() {
-        return food_id;
-    }
-
-    public void setFood_id(String food_id) {
-        this.food_id = food_id;
-    }
 
     public String getFood_category_id() {
         return food_category_id;
@@ -45,11 +57,11 @@ public class OldFoodsRequest {
         this.name = name;
     }
 
-    public float getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
@@ -61,19 +73,19 @@ public class OldFoodsRequest {
         this.description = description;
     }
 
-    public int getMax_stock() {
+    public String getMax_stock() {
         return max_stock;
     }
 
-    public void setMax_stock(int max_stock) {
+    public void setMax_stock(String max_stock) {
         this.max_stock = max_stock;
     }
 
-    public int getStock() {
+    public String getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(String stock) {
         this.stock = stock;
     }
 
@@ -93,51 +105,84 @@ public class OldFoodsRequest {
         this.image_hash = image_hash;
     }
 
-    public int getIs_new() {
+    public String getIs_new() {
         return is_new;
     }
 
-    public void setIs_new(int is_new) {
+    public void setIs_new(String is_new) {
         this.is_new = is_new;
     }
 
-    public int getIs_featured() {
+    public String getIs_featured() {
         return is_featured;
     }
 
-    public void setIs_featured(int is_featured) {
+    public void setIs_featured(String is_featured) {
         this.is_featured = is_featured;
     }
 
-    public int getIs_gum() {
+    public String getIs_gum() {
         return is_gum;
     }
 
-    public void setIs_gum(int is_gum) {
+    public void setIs_gum(String is_gum) {
         this.is_gum = is_gum;
     }
 
-    public int getIs_spicy() {
+    public String getIs_spicy() {
         return is_spicy;
     }
 
-    public void setIs_spicy(int is_spicy) {
+    public void setIs_spicy(String is_spicy) {
         this.is_spicy = is_spicy;
     }
 
-    public float getPacking_fee() {
+    public String getPacking_fee() {
         return packing_fee;
     }
 
-    public void setPacking_fee(float packing_fee) {
+    public void setPacking_fee(String packing_fee) {
         this.packing_fee = packing_fee;
     }
 
-    public int getSort_order() {
+    public String getSort_order() {
         return sort_order;
     }
 
-    public void setSort_order(int sort_order) {
+    public void setSort_order(String sort_order) {
         this.sort_order = sort_order;
+    }
+
+    public String getFood_id() {
+        return food_id;
+    }
+
+    public void setFood_id(String food_id) {
+        this.food_id = food_id;
+    }
+
+    public String getFoods_info() {
+        Gson gson = new Gson();
+        return gson.toJson(foods_info);
+    }
+
+    public void setFoods_info(Map<String, OldFoodsRequest> foods_info) {
+        this.foods_info = foods_info;
+    }
+
+    public String getTp_food_ids() {
+        return tp_food_ids;
+    }
+
+    public void setTp_food_ids(String tp_food_ids) {
+        this.tp_food_ids = tp_food_ids;
+    }
+
+    public String getFood_ids() {
+        return food_ids;
+    }
+
+    public void setFood_ids(String food_ids) {
+        this.food_ids = food_ids;
     }
 }

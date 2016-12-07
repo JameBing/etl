@@ -2,7 +2,9 @@ package com.wangjunneil.schedule.service.sys;
 
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.common.FlowNum;
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jp.JPAccessToken;
 import com.wangjunneil.schedule.entity.sys.Cfg;
@@ -171,6 +173,7 @@ public class SysInnerService {
 
     }
 
+    /*=======================================外卖平台=========================================================*/
     //获取订单流水号
     public int getSerialNum(String date,String module){
         int intRresult = 1,curNo = 0;
@@ -190,6 +193,19 @@ public class SysInnerService {
             .set("flowNum",curNo);
         mongoTemplate.upsert(query,update,FlowNum.class);
         return intRresult;
+    }
+
+
+    //订单插入
+    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
+        Query  query = new Query(Criteria.where("platfrom").is(orderWaiMai.getPlatformOrderId()).where("platformOrderId"));
+        Update update = new Update()
+            .set("platfrom", orderWaiMai.getPlatfrom())
+            .set("shopId", orderWaiMai.getShopId())
+            .set("orderId",orderWaiMai.getOrderId())
+            .set("platformOrderId",orderWaiMai.getPlatformOrderId())
+            .set("order",orderWaiMai.getOrder());
+        mongoTemplate.upsert(query, update, OrderWaiMai.class);
     }
 
 }

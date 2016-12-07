@@ -1,4 +1,5 @@
-<div class="row"  ng-controller="TmallOrderCtrl">
+<script src="../dist/js/admin.js"></script>
+<div class="row"  ng-controller="ElemeOrderCtrl">
     <div class="col-xs-12">
         <div class="box">
             <div class="box-header">
@@ -66,7 +67,7 @@
                         </div>
                     </div>
                     <div class="box-footer">
-                        <button type="button" class="btn btn-info pull-right" ng-click="queryTmallOrder();">查询</button>
+                        <button type="button" class="btn btn-info pull-right" ng-click="queryElemeOrder();">查询</button>
                     </div>
                 </form>
             </div>
@@ -91,75 +92,63 @@
                         <th>订单Id</th>
                         <th>交易状态</th>
                         <th>订单信息</th>
+                        <th>额外信息</th>
                         <th>收货人</th>
                         <th>手机号码</th>
-                        <th>电话号码</th>
-                        <th>省</th>
-                        <th>市</th>
-                        <th>区</th>
-                        <th>街道</th>
-                        <th>详细地址</th>
-
-                        <th>实付金额</th>
-                        <th>邮费</th>
-                        <!--<td>DiscountFee</td>
-                        <td>AdjustFee</td>
-                        <td>TotalFee</td>
-                        <td>ReceivedPayment</td>-->
+                        <th>收货地址</th>
+                        <th>经纬度</th>
+                        <th>合计</th>
+                        <th>活动时间</th>
                         <th>创建时间</th>
-                        <th>付款时间</th>
-                        <th>发货时间</th>
-                        <th>结束时间</th>
-                        <th>货运公司</th>
-                        <th>发票编号</th>
-                        <th>物流方式</th>
-                        <th>订单来源</th>
-                        <th>订单备注</th>
+                        <th>描述</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="order_info in oderList track by $index">
-                        <td align="right"><strong>{{order_info.tid}}</strong></td>
-                        <td style="font-weight: bold;">{{order_info.status}}</td><!--订单状态（中文）-->
+                    <tr ng-repeat="order_info in orderList track by $index">
+                        <td align="left"><strong>{{order_info.order_id}}</strong></td>
+                        <td style="font-weight: bold;">{{order_info.status_code}}</td><!--订单状态（中文）-->
                         <td><!--物料信息-->
                             <table>
-                                <tr ng-repeat="item_info in order_info.orders track by $index">
-                                    <td style="text-align: left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;"><span><strong>{{item_info.skuId}}</strong></span></td>
-                                    <td title="{{item_info.outerSkuId}}"><div style="width:150px;overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"><span ng-show="item_info.outerSkuId"><strong>{{item_info.outerSkuId}}</strong></span></div></td>
-                                    <td title="{{item_info.title}}"><div style="width:400px;overflow: hidden; white-space: nowrap; text-overflow: ellipsis;"><a href="https://detail.tmall.com/item.htm?id={{item_info.numIid}}" target="_blank"><span><strong ng-show="item_info.skuId"></strong>{{item_info.title}}</span></a></div></td>
-                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;">数量：{{item_info.num}}</td>
-                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;padding-left: 20px;">价格：{{item_info.payment | currency:'￥'}}</td>
-                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;padding-left: 20px;" ng-show="item_info.refundId"><strong><a href="#/tmallRefund/{{item_info.refundId}}">退货单号：{{item_info.refundId}}</a></strong></td>
-                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;padding-left: 20px;" ng-show="!item_info.refundId">退货单号：（无）</td>
+                                <tr ng-repeat="item_info in order_info.detail.group track by $index">
+                                    <td>
+                                        <table>
+                                            <tr ng-repeat="item_item in item_info track by $index">
+                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;">食物ID：{{item_item.id}}</td>
+                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">食物名字：{{item_item.name}}</td>
+                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">分类ID：{{item_item.category_id}}</td>
+                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">数量：{{item_item.quantity}}</td>
+                                                <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">价格：{{item_item.price | currency:'￥'}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
                                 </tr>
                             </table>
                         </td>
-                        <td>{{order_info.receiver_name}}</td><!--姓名-->
-                        <td align="right">{{order_info.receiver_mobile}}</td><!--手机号码-->
-                        <td align="right">{{order_info.receiver_phone}}</td><!--电话-->
-                        <td>{{order_info.receiver_state}}</td><!--省-->
-                        <td>{{order_info.receiver_city}}</td><!--市-->
-                        <td>{{order_info.receiver_district}}</td><!--区-->
-                        <td>{{order_info.receiver_town}}</td><!--区-->
-                        <td>{{order_info.receiver_address}}</td><!--详细地址-->
-
-                        <td align="right">{{order_info.payment | currency:'￥'}}</td><!--用户应付金额-->
-                        <td align="right">{{order_info.post_fee | currency:'￥'}}</td><!--商品的运费-->
-                        <!--<td align="right">{{order_info.discount_fee | currency:'￥'}}</td>
-                        <td align="right">{{order_info.adjust_fee | currency:'￥'}}</td>
-                        <td align="right">{{order_info.total_fee | currency:'￥'}}</td>
-                        <td align="right">{{order_info.received_payment | currency:'￥'}}</td>-->
-                        <td>{{order_info.created | date:'yyyy-MM-dd HH:mm:ss'}}</td><!--下单时间-->
-                        <td>{{order_info.pay_time | date:'yyyy-MM-dd HH:mm:ss'}}</td><!--订单支付时间-->
-                        <td>{{order_info.consign_time | date:'yyyy-MM-dd HH:mm:ss'}}</td><!--发货时间-->
-                        <td>{{order_info.end_time | date:'yyyy-MM-dd HH:mm:ss'}}</td><!--完结时间-->
-                        <td>{{order_info.logisticsCompany}}</td>
-                        <td align="right">{{order_info.invoiceNo}}</td>
-                        <td>{{order_info.shipping_type}}</td>
-                        <td>{{order_info.trade_from}}</td><!--订单来源 -->
-                        <td>{{order_info.buyer_message}}</td><!--买家下单时订单备注-->
-                        <!--<td ng-show="order_info.refund_id > 0"><a href="#/tmallRefund/{{order_info.refund_id}}">{{order_info.refund_id}}</a></td>-->
-                        <!--<td ng-show="order_info.refund_id <= 0"></td>-->
+                        <td><!--物料信息-->
+                            <table>
+                                <tr ng-repeat="item_info in order_info.detail.extra track by $index">
+                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis;">ID：{{item_info.id}}</td>
+                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">名字：{{item_info.name}}</td>
+                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">分类ID：{{item_info.category_id}}</td>
+                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">数量：{{item_info.quantity}}</td>
+                                    <td style="text-align: right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;-o-text-overflow: ellipsis; padding-left: 20px;">价格：{{item_info.price | currency:'￥'}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>{{order_info.consignee}}</td><!--姓名-->
+                        <td>
+                            <table>
+                                <tr ng-repeat="item_list in order_info.phone_list track by $index">
+                                    <td align="left"><strong>{{item_list}}</strong></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>{{order_info.delivery_poi_address}}</td>
+                        <td>{{order_info.delivery_geo}}</td>
+                        <td>原价：{{order_info.original_price}} 服务费：{{order_info.service_fee}} 快递费：{{order_info.deliver_fee}} 红包：{{order_info.hongbao}} 包装费：{{order_info.package_fee}} 合计：{{order_info.total_price}}</td>
+                        <td>{{order_info.active_at}}</td>
+                        <td>{{order_info.created_at}}</td>
+                        <td>{{order_info.description}}</td>
                     </tr>
                     </tbody>
                 </table>

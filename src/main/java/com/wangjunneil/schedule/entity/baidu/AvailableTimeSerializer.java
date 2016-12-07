@@ -15,8 +15,8 @@ public class AvailableTimeSerializer implements JsonSerializer<AvailableTime> {
     @Override
     public  JsonElement serialize(AvailableTime availableTime, Type type, JsonSerializationContext context){
         JsonObject object = new JsonObject();
-        object.add("start_time",context.serialize(availableTime.getStartTime()));
-        object.add("end_time",context.serialize(availableTime.getEndTime()));
+        object.add("start",context.serialize(availableTime.getStartTime()));
+        object.add("end",context.serialize(availableTime.getEndTime()));
         return object;
     };
 }

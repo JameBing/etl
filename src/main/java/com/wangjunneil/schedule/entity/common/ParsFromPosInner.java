@@ -1,5 +1,7 @@
 package com.wangjunneil.schedule.entity.common;
 
+import com.wangjunneil.schedule.utility.StringUtil;
+
 /**
  * Created by yangwanbin on 2016-11-24.
  */
@@ -30,7 +32,7 @@ public class ParsFromPosInner {
     }
 
     public String getPlatformShopId(){
-        return this.platformShopId;
+        return StringUtil.isEmpty(this.platformShopId)?"":this.platformShopId;
     }
 
     public  void setDishId(String dishId){
@@ -38,7 +40,7 @@ public class ParsFromPosInner {
     }
 
     public String getDishId(){
-        return this.dishId;
+        return StringUtil.isEmpty(this.dishId)?"":this.dishId;
     }
 
     public void setPlatformDishId(String platformDishId){
@@ -46,7 +48,7 @@ public class ParsFromPosInner {
     }
 
     public String getPlatformDishId(){
-        return this.platformDishId;
+        return StringUtil.isEmpty(this.platformDishId)?"":this.platformDishId;
     }
 
     public void setOrderId(String dishId){
@@ -54,7 +56,7 @@ public class ParsFromPosInner {
     }
 
     public String getOrderId(){
-        return this.orderId;
+        return StringUtil.isEmpty(this.orderId)?"":this.orderId;
     }
 
     public void setPlatformOrderId(String platformOrderId){
@@ -62,6 +64,6 @@ public class ParsFromPosInner {
     }
 
     public String getPlatformOrderId(){
-        return this.platformOrderId;
+        return StringUtil.isEmpty(this.platformOrderId)?"":this.platformOrderId;
     }
 }

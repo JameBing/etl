@@ -2,6 +2,8 @@ package com.wangjunneil.schedule.controller.jdhome;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.wangjunneil.schedule.entity.common.ParsFromPos;
+import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.shopCategory;
@@ -49,17 +51,20 @@ public class JdHomeController {
     public String openStore(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
         //应用参数
-        List<QueryStockRequest> listBaseStockCenterRequest = new ArrayList<QueryStockRequest>();
-        String shopId = "10054394";
-        for(int i=0;i<60;i++){
+        List<ParsFromPosInner> listBaseStockCenterRequest = new ArrayList<ParsFromPosInner>();
+        String shopId = "10029045";
+        ParsFromPosInner inner = new ParsFromPosInner();
+        inner.setShopId(shopId);
+        listBaseStockCenterRequest.add(inner);
+        /*for(int i=0;i<60;i++){
             QueryStockRequest queryStockRequest = new QueryStockRequest();
             queryStockRequest.setStationNo("10054394");
             queryStockRequest.setSkuId(1997342L);
             queryStockRequest.setDoSale(0);
             listBaseStockCenterRequest.add(queryStockRequest);
-        }
+        }*/
         // 测试数据
-        String returnJson = jdHomeFacadeService.updateAllStockOn(listBaseStockCenterRequest,shopId);
+        String returnJson = jdHomeFacadeService.updateAllStockOnAndOff(listBaseStockCenterRequest,0);
         out.println(returnJson);
         out.close();
         return  null;
@@ -76,9 +81,9 @@ public class JdHomeController {
     public String addShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
         shopCategory shopCategory = new shopCategory();
-        shopCategory.setShopId("20001");
+        shopCategory.setShopId("10054394");
         shopCategory.setPid(000L);
-        shopCategory.setShopCategoryLevel(0);
+        shopCategory.setShopCategoryLevel(3);
        // shopCategory.setCreatePin("aaa");//
         shopCategory.setSort(1);
         shopCategory.setShopCategoryName("bb");
@@ -100,7 +105,7 @@ public class JdHomeController {
     public String updateShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
         shopCategory shopCategory = new shopCategory();
-        shopCategory.setShopId("20001");
+        shopCategory.setShopId("10054394");
         shopCategory.setId(111L);
         shopCategory.setShopCategoryName("ccc");
         String returnJson = jdHomeFacadeService.updateShopCategory(shopCategory);
@@ -121,7 +126,7 @@ public class JdHomeController {
     public String deleteShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
         shopCategory shopCategory = new shopCategory();
-        shopCategory.setShopId("20001");
+        shopCategory.setShopId("10054394");
         shopCategory.setId(111L);
         String returnJson = jdHomeFacadeService.deleteShopCategory(shopCategory);
         out.println(returnJson);
@@ -129,18 +134,14 @@ public class JdHomeController {
         return  null;
     }
 
-    @ResponseBody
     @RequestMapping(value = "/djsw/newOrder",method = RequestMethod.GET)
-    public JSONObject newOrder(@RequestBody JSONObject jsonObject)throws Exception{
-        if(jsonObject == null){
-            return jsonObject;
-        }
-        JSONObject json = jsonObject.getJSONObject("jd_param_json");
-        String billId = json.getString("billId");
-        String statusId = json.getString("statusId");
-        String timestamp = json.getString("timestamp");
-        String shopId = json.getString("shopId");
-        String rtnJson = jdHomeFacadeService.newOrder(billId,statusId,timestamp,shopId);
+    public String newOrder(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
+        resp.setContentType("text/html;charset=utf-8");
+        String billId = "10003129";
+        String statusId = "32000";
+        String timestamp = "2015-10-16 13:23:30";
+        String shopId = "10054394";
+        //String rtnJson = jdHomeFacadeService.newOrder(billId,statusId,timestamp,shopId);
         return  null;
     }
 
@@ -155,8 +156,9 @@ public class JdHomeController {
     public String orderAcceptOperate(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
         OrderAcceptOperate acceptOperate = new OrderAcceptOperate();
-        acceptOperate.setOrderId("100001016163464");
-        acceptOperate.setIsAgreed(true);
+        acceptOperate.setShopId("10054394");
+        acceptOperate.setOrderId("10000101612233");
+        acceptOperate.setIsAgreed(false);
         acceptOperate.setOperator("yang");
         String json = jdHomeFacadeService.orderAcceptOperate(acceptOperate);
         out.println(json);
@@ -167,8 +169,8 @@ public class JdHomeController {
     @RequestMapping(value = "/testAddOrder",method = RequestMethod.GET)
     public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-        String json = jdHomeFacadeService.newOrder("", "", "","");
-        out.println(json);
+        jdHomeFacadeService.callback("lvyul","7244171");
+        //out.println(json);
         out.close();
         return null;
     }

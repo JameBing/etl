@@ -65,6 +65,10 @@ adminLteApp.config(function($routeProvider) {
             templateUrl: 'views/z8Order.html',
             controller: 'Z8OrderCtrl'
         })
+        .when('/elemeOrder', {
+            templateUrl:'views/elemeOrder.html',
+            controller:'ElemeOrderCtrl'
+        })
         .when('/configure', {
             templateUrl: 'views/configure.html',
             controller: 'ConfigureCtrl'
@@ -213,7 +217,56 @@ adminLteApp.controller('JdControlCtrl', function ($scope, $http) {
 
     updateClock();
 });
+/*********************************************************************/
+adminLteApp.controller('ElemeOrderCtrl', function ($scope, $http) {
+    $scope.orderStatus = [
+        {status:'所有状态',value:''},
+        {status:'等待出库',value:'WAIT_SELLER_STOCK_OUT'},
+        {status:'等待确认收货',value:'WAIT_GOODS_RECEIVE_CONFIRM'},
+        {status:'已完成',value:'FINISHED_L'},
+        {status:'已取消',value:'TRADE_CANCELED'},
+        {status:'已锁定',value:'LOCKED'},
+        {status:'暂停',value:'PAUSE'}
+    ];
 
+    $scope.select_status = true;//显示所有状态
+    $scope.showStatus = function(){
+        $scope.select_status = false;//隐藏所有状态
+    };
+    //分页查询
+    $scope.getListByPage = function() {
+        $scope.overlayStatus = true;
+        $scope.select_status = false;//隐藏所有状态
+        var params = {};
+        $http({url:"/mark/waimai/elemetext.php", method:"POST", params:params})
+            .success(function(data) {
+                debugger;
+                $scope.overlayStatus = false;
+                var result = data;
+                $scope.status = false;
+                $scope.orderList = result;
+                angular.forEach($scope.orderList,function(orderInfo,oindex,array) {
+
+                });
+            })
+            .error(function(data) {
+                $scope.overlayStatus = false;
+                $scope.status = true;
+                $scope.msg = 'Request processing failed!';
+            });
+    }
+
+    //查询订单
+    $scope.queryElemeOrder = function (){
+        $scope.currentPage = parseInt(1);//当前页
+        $scope.getListByPage();
+    };
+
+    //初始化加载
+    setTimeout($scope.queryElemeOrder,500);
+
+});
+/*********************************************************************/
 adminLteApp.controller('JdOrderCtrl', function ($scope, $http, $location) {
 
     $scope.selected = {status:'所有状态',value:''};
@@ -563,7 +616,7 @@ adminLteApp.controller('JdPartyCtrl', function ($scope, $http) {
 });
 
 
-adminLteApp.controller('TmallOrderCtrl', function ($scope, $http) {
+adminLteApp.controller('TmallOrderCtrl', function ($scope, $http,$timeout) {
 
     $scope.selected = {status:'所有状态',value:''};
     $scope.orderStatus = [
@@ -633,6 +686,7 @@ adminLteApp.controller('TmallOrderCtrl', function ($scope, $http) {
                 if(result.pageDataList.length == 0){
                     $scope.status = true;
                     $scope.msg = 'no order data!';
+                    $timeout(function(){$scope.status = null;}, 3000);
 
                     $scope.currentPage = 1;
                     $scope.totalSize = 0;
@@ -672,6 +726,7 @@ adminLteApp.controller('TmallOrderCtrl', function ($scope, $http) {
                 $scope.overlayStatus = false;
                 $scope.status = true;
                 $scope.msg = 'Request processing failed!';
+                $timeout(function(){$scope.status = null;}, 3000);
             });
     }
 
@@ -730,6 +785,21 @@ adminLteApp.controller('TmallOrderCtrl', function ($scope, $http) {
         }
         $scope.currentPage = parseInt(1);//当前页
         $scope.getListByPage();
+    }
+
+    $scope.fixOrderById = function(tid){
+        $http({ method : "POST", url : '/mark/tmall/fixOrderById.php', params : {tid:tid}})
+            .success(function(data){
+                console.log(data);
+                $scope.status = true;
+                $scope.msg = data.message;
+                $timeout(function(){$scope.status = null;}, 3000);
+            })
+            .error(function(data) {
+                $scope.status = true;
+                $scope.msg = '手工补单失败!';
+                $timeout(function(){$scope.status = null;}, 3000);
+            });
     }
 
 });

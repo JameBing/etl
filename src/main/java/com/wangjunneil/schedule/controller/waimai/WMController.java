@@ -1,6 +1,7 @@
 package com.wangjunneil.schedule.controller.waimai;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
 import com.wangjunneil.schedule.common.*;
@@ -9,9 +10,12 @@ import com.wangjunneil.schedule.common.EnumDescription;
 import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.entity.common.FlowNum;
+import com.wangjunneil.schedule.entity.common.ParsFormPos2;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
+import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.WMFacadeService;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
+import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
@@ -37,6 +41,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -54,38 +60,38 @@ public class WMController {
     @Autowired
     private WMFacadeService wmFacadeService;
 
-    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842","/jdhome/72171"})
+    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842","/jdhome/72171","/jdhome/74723"})
     public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
         String result = "",platform,requestUrl,sid = null;
-        Map<String,String[]> stringMap;
+        Map<String,String[]> stringMap = new HashMap<>();
         response.setContentType("application/json;charset=uft-8");
         requestUrl =    request.getPathInfo().toLowerCase();
         if(requestUrl.indexOf("/jdhome/")> 0){
-            sid = requestUrl.split("\\/").length>2?requestUrl.split("\\/")[2]:null;
+            sid = Pattern.compile("[^0-9]").matcher(requestUrl).replaceAll("");
             requestUrl = "/waimai/jdhome";
         }
         switch (requestUrl){
             case "/waimai/baidu":  //百度
                 platform = Constants.PLATFORM_WAIMAI_BAIDU;
-                stringMap = request.getParameterMap();//?Content-Type: multipart/form-data 无法取值
+                stringMap = request.getParameterMap();
+                // stringMap = request.getParameterMap();//?Content-Type: multipart/form-data 无法取值
                 break;
             case "/waimai/jdhome": //京东到家
-                platform = Constants.PLATFORM_WAIMAI_JDHOME;
-                stringMap = request.getParameterMap();
                 String[] strArr = {sid};
                 stringMap.put("sid",strArr);
+                stringMap.putAll(request.getParameterMap());
+                platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             case "/waimai/eleme":  //饿了么
                 platform = Constants.PLATFORM_WAIMAI_ELEME;
-                stringMap = request.getParameterMap();
                 break;
             case "/waimai/meituan": //美团
-                platform = Constants.PLATFORM_WAIMAI_MEITUAN;
                 stringMap = request.getParameterMap();
+                platform = Constants.PLATFORM_WAIMAI_MEITUAN;
                 break;
             default:
+                stringMap = request.getParameterMap();
                 platform = null;
-                stringMap = new HashMap<String,String[]>();
                 break;
         }
         //out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
@@ -95,19 +101,35 @@ public class WMController {
 //region 商户
 
     /**
+     * 新增门店
+     * @parm  jsonStr 商铺信息
+     * @param out   响应输出流对象
+     * @param request 请求对象
+     * @param response  浏览器响应对象
+     * @return {code:0,desc:"success",dynamic:"",logId:"",remark:""}
+     */
+    @RequestMapping(value = "/shop/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String shopCreate(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        response.setContentType("application/json;charset=uft-8");
+        out.println(wmFacadeService.shopCreate(jsonStr));
+        return  null;
+    }
+
+    /**
      * 门店开业
      *
      * @param out   响应输出流对象
-     * @param request 请求对象 ｛baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}｝
+     * @param request 请求对象 {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
      * @return {code:0,desc:"success",dynamic:"",logId:""}
      */
-    @RequestMapping(value = "/startBusiness.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
+    @RequestMapping(value = "/shop/open", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     @ResponseBody
-    public String startBusiness(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws ScheduleException {
+    public String shopOpen(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws ScheduleException {
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.startBusiness(parsFromPos));
-     return  null;
+        out.println(wmFacadeService.shopOpen(parsFromPos));
+        return  null;
     }
 
 
@@ -119,46 +141,92 @@ public class WMController {
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/endBusiness.php", method = RequestMethod.GET)
-    public String endBusiness(PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    @RequestMapping(value = "/shop/close", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String shopClose(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.endBusiness(request.getParameterMap()));
+        out.println(wmFacadeService.shopClose(parsFromPos));
         return  null;
     }
 
 //endregion
-
-
-
 //region 商品
+    /**
+     * 新增菜品分类
+     * @param jsonObj 菜品分类
+     * @param out 响应输出流队形
+     * @param request 请求对象
+     * @param
+     * @return {"baidu":{code:0,desc:"success",dynamic:"",logId:"",remark:""},"jdhome":{}...}
+     */
+    @RequestMapping(value = "/dish/category/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String dishCategoryCreate(@RequestBody JsonObject jsonObj,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        response.setContentType("application/json;charset=uft-8");
+        out.println(wmFacadeService.dishCategoryCreate(jsonObj));
+        return  null;
+    }
 
     /**
-     * 上架
-     *
+     * 新增菜品
+     * @param jsonObj 菜品信息
+     * @param out 响应输出流队形
+     * @param request 请求对象
+     * @param
+     * @return  {"baidu":{code:0,desc:"success",dynamic:"",logId:"",remark:""},"jdhome":{}...}
+     */
+    @RequestMapping(value = "/dish/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String dishCreate(@RequestBody JsonObject jsonObj,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        response.setContentType("application/json;charset=uft-8");
+        out.println(wmFacadeService.dishCreate(jsonObj));
+        return null;
+    }
+
+    /**
+     * 菜品查看
+     *@param parsFromPos
      * @param out   响应输出流对象
      * @param request {baidu:[{shopId:"",platformShopId:"",dishId:"",platformDishId:""}],jdhome:[],eleme:[],meituan:[]}
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/online", method = RequestMethod.POST,consumes="application/json;charset=utf-8" )
+    @RequestMapping(value = {"/dish/get"},method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
-    public String online(@RequestBody ParsFromPos parsFromPos, PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    public String dishGet(@RequestBody ParsFromPos parsFromPos,PrintWriter out, HttpServletRequest request, HttpServletResponse response){
         response.setContentType("application/json;charset=uft-8");
-
+        out.println(wmFacadeService.dishGet(parsFromPos));
+        return null;
+    }
+    /**
+     * 菜品上架
+     *@param parsFormPos2
+     * @param out   响应输出流对象
+     * @param request {baidu:[{shopId:"",platformShopId:"",dishId:"",platformDishId:""}],jdhome:[],eleme:[],meituan:[]}
+     * @param response  浏览器响应对象
+     * @return
+     */
+    @RequestMapping(value = "/dish/online", method = RequestMethod.POST,consumes="application/json;charset=utf-8" )
+    @ResponseBody
+    public String dishOnline(@RequestBody ParsFormPos2 parsFormPos2, PrintWriter out, HttpServletRequest request, HttpServletResponse response)  {
+        response.setContentType("application/json;charset=uft-8");
+        out.println(wmFacadeService.dishOnline(parsFormPos2));
         return  null;
     }
 
     /**
-     * 下架
-     *
+     * 菜品下架
+     *@param parsFormPos2
      * @param out   响应输出流对象
+     * @param request {baidu:[{shopId:"",platformShopId:"",dishId:"",platformDishId:""}],jdhome:[],eleme:[],meituan:[]}
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/offline", method = RequestMethod.GET)
-    public String offline(PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    @RequestMapping(value = "/dish/offline", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String dishOffline(@RequestBody ParsFormPos2 parsFormPos2, PrintWriter out,HttpServletRequest request, HttpServletResponse response)  {
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.online(request.getParameterMap()));
+        out.println(wmFacadeService.dishOffline(parsFormPos2));
         return  null;
     }
 
@@ -174,28 +242,39 @@ public class WMController {
      * @param response  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/new","/jdhome/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/new","/jdhome/73842/djsw/newOrder","/jdhome/72171/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
     public String orderPost(PrintWriter out, HttpServletRequest request,HttpServletResponse response) {
-        String result = null;
-        String platform = null;
-        switch (request.getPathInfo().toLowerCase()){
+        String result = null, requestUrl, platform = null, sid = null;
+        requestUrl = request.getPathInfo().toLowerCase();
+        if (requestUrl.indexOf("/jdhome/") > 0) {
+            //sid = requestUrl.split("\\/").length>2?requestUrl.split("\\/")[2]:null;
+            sid = Pattern.compile("[^0-9]").matcher(requestUrl).replaceAll("");
+            requestUrl = "/waimai/jdhome";
+        }
+        Map<String,String[]> stringMap = new HashMap<String,String[]>();
+        switch (requestUrl) {
             case "/waimai/baidu/order/new": //百度
                 platform = Constants.PLATFORM_WAIMAI_BAIDU;
                 response.setContentType("text/html; charset=utf-8");
+                stringMap = request.getParameterMap();
                 break;
-            case  "/waimai/jdhome/djsw/neworder": //京东到家
+            case "/waimai/jdhome": //京东到家
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
+                String[] strArr = {sid};
+                stringMap.put("sid",strArr);
+                stringMap.putAll(request.getParameterMap());
                 break;
             default:
+                stringMap = request.getParameterMap();
                 break;
         }
-        if (!StringUtil.isEmpty(platform))
-            result = wmFacadeService.orderPost(request.getParameterMap(), platform);
+        if (!StringUtil.isEmpty(platform)) {
+            //result = wmFacadeService.orderPost(stringMap, platform);
+            result =  "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}";
+        }
         out.println(result);
-        System.out.println("推送订单\r\n" + result + "\r\n");
         return  null;
     }
-
     /**
      * 订单状态推送【消息型】 平台推送订单的状态变更
      *
@@ -204,7 +283,7 @@ public class WMController {
      * @return
      */
     @RequestMapping(value = {"/baidu/order/status","/djsw/orderAdjust"},method = {RequestMethod.GET,RequestMethod.POST})
-    public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){;
+    public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         String platfrom = null;
         switch (request.getPathInfo().toLowerCase()){
             case "/waimai/baidu/order/status"://百度
@@ -216,7 +295,8 @@ public class WMController {
                 break;
             default:break;
         }
-       out.println( wmFacadeService.orderStatus(request.getParameterMap(),platfrom));
+        // out.println( wmFacadeService.orderStatus(request.getParameterMap(),platfrom));
+        out.println("{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}");
         return  null;
     }
 
@@ -287,7 +367,7 @@ public class WMController {
             "}";
 
         String flowNum = "{\"date\":\"20161128\",\"moudle\":\"order\",\"flowNum\":2000}";//实例请求参数
-        out.println(HttpUtil.post2("http://127.0.0.1:9001/mark/waimai/test2?dd=2323", "cmd=232323","multipart/form-data","utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU));//运行方法，这里输出：
+        out.println(HttpUtil.post2("http://127.0.0.1:9001/mark/waimai/shopAdd", "{\"shopId\":\"2222\"}","application/json","utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU));//运行方法，这里输出：
         return null;
     }
 
@@ -314,9 +394,35 @@ public class WMController {
         return null;
     }
 
+    /**
+     * 获取供应商信息
+     *
+     * @param out   响应输出流对象
+     * @param response  浏览器响应对象
+     * @return
+     */
     @RequestMapping(value = "/baidu/getSupplier",method = RequestMethod.GET)
     public String getSupplierList(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.getSupplier());
         return null;
     }
+
+    /**
+     * 修改商户信息
+     *
+     * @param out   响应输出流对象
+     * @param response  浏览器响应对象
+     * @return
+     */
+    @RequestMapping(value = "/shop/update",method = RequestMethod.POST)
+    @ResponseBody
+    public String shopUpdate( @RequestBody Shop shop,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        response.setContentType("application/json;charset=uft-8");
+        //request.getParameter("minBuyFree");
+        //request.getParameter("minOrderPrice");
+        out.println(wmFacadeService.shopUpdate(shop));
+        return null;
+    }
+
 }

@@ -1,5 +1,5 @@
 package com.wangjunneil.schedule.common;
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.sun.java.util.jar.pack.*;
 import com.wangjunneil.schedule.common.EnumDescription;
@@ -163,15 +163,15 @@ public class Enum {
         TYPE_SYSTEM_AUTO_CANCEL,
     }
     //根据枚举类型值获取枚举注释
-      public static JSONObject GetEnumDesc(Object obj,String name){
-        JSONObject json = new JSONObject();
+      public static JsonObject getEnumDesc(Object obj,String name){
+        JsonObject json = new JsonObject();
         java.lang.reflect.Field[] fields = obj.getClass().getDeclaredFields();
         for(Field f:fields){
             if(f.getName().equals(name)){
              Annotation annotation = f.getAnnotations()[0];//注释只有一个，多个的话这里需要增强
-             json.put("code",AnnotationUtils.getValue(annotation,"code"));
-             json.put("desc",AnnotationUtils.getValue(annotation,"desc"));
-             json.put("remark",AnnotationUtils.getValue(annotation,"remark"));
+             json.addProperty("code",AnnotationUtils.getValue(annotation, "code").toString());
+             json.addProperty("desc", AnnotationUtils.getValue(annotation, "desc").toString());
+             json.addProperty("remark",AnnotationUtils.getValue(annotation,"remark").toString());
              break;
             }
         }
@@ -179,16 +179,16 @@ public class Enum {
     }
 
     //根据枚举类型值获取枚举注释
-    public static JSONObject GetEnumDesc(Object obj,Object code){
-        JSONObject json = new JSONObject();
+    public static JsonObject getEnumDesc(Object obj,Object code){
+        JsonObject json = new JsonObject();
         java.lang.reflect.Field[] fields = obj.getClass().getDeclaredFields();
         String[] names = obj.toString().split(".");
         for(Field f:fields){
             if(f.getName().equals("R"+String.valueOf(code))){
                 Annotation annotation = f.getAnnotations()[0];//注释只有一个，多个的话这里需要增强
-                json.put("code",AnnotationUtils.getValue(annotation,"code"));
-                json.put("desc",AnnotationUtils.getValue(annotation,"desc"));
-                json.put("remark",AnnotationUtils.getValue(annotation,"remark"));
+                json.addProperty("code",AnnotationUtils.getValue(annotation,"code").toString());
+                json.addProperty("desc",AnnotationUtils.getValue(annotation,"desc").toString());
+                json.addProperty("remark",AnnotationUtils.getValue(annotation,"remark").toString());
                 break;
             }
         }
