@@ -9,7 +9,6 @@ import com.wangjunneil.schedule.service.JdHomeFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpsUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
-import com.wangjunneil.schedule.utility.URL;
 import o2o.openplatform.sdk.dto.WebRequestDTO;
 import o2o.openplatform.sdk.util.SignUtils;
 import org.apache.log4j.Logger;

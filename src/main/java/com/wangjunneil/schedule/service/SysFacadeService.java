@@ -131,11 +131,6 @@ public class SysFacadeService {
         return  "W" + String.format("%05d", Integer.valueOf(strShopId)) + "99" + date + String.format("%06d",Integer.valueOf(getSerialNum(date,"order")));
     }
 
-<<<<<<< HEAD
-    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai){
-          //sysInnerService.updSynWaiMaiOrder(orderWaiMai);
-    }
-=======
     //订单插入
     public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
          sysInnerService.updSynWaiMaiOrder(orderWaiMai);
@@ -225,8 +220,6 @@ public class SysFacadeService {
         }
         return  log1;
     } ;
->>>>>>> 066496855a08efef832ca28954b72c95c0f93cf4
-
 
     //日志插入
     public void updSynLog(Log log){
