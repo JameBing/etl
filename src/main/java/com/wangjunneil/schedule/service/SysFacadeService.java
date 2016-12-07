@@ -221,7 +221,6 @@ public class SysFacadeService {
         return  log1;
     } ;
 
-
     //日志插入
     public void updSynLog(Log log){
           sysInnerService.updSynLog( log);

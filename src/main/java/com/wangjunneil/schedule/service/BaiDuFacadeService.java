@@ -538,10 +538,10 @@ public class BaiDuFacadeService {
         return  result;
     }
     //修改商户信息
-    public String shopUpdate(Shop  shop){
+    public String shopUpdate(JsonObject jsonObject){
         Rtn rtn = new Rtn();
         try {
-            rtn = getGson().fromJson(baiDuApiService.shopUpdate(shop),Rtn.class);
+            rtn = getGson().fromJson(baiDuApiService.shopUpdate(jsonObject),Rtn.class);
         }
         catch (Exception ex){
             rtn.setDynamic("");

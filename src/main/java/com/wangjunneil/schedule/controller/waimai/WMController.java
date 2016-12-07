@@ -82,7 +82,8 @@ public class WMController {
                 stringMap.putAll(request.getParameterMap());
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
-            case "/waimai/eleme":  //饿了么
+            case "/waimai/eleme/":  //饿了么
+                stringMap = request.getParameterMap();
                 platform = Constants.PLATFORM_WAIMAI_ELEME;
                 break;
             case "/waimai/meituan": //美团
@@ -417,11 +418,11 @@ public class WMController {
      */
     @RequestMapping(value = "/shop/update",method = RequestMethod.POST)
     @ResponseBody
-    public String shopUpdate( @RequestBody Shop shop,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+    public String shopUpdate( @RequestBody JsonObject jsonObject,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         response.setContentType("application/json;charset=uft-8");
         //request.getParameter("minBuyFree");
         //request.getParameter("minOrderPrice");
-        out.println(wmFacadeService.shopUpdate(shop));
+        out.println(wmFacadeService.shopUpdate(jsonObject));
         return null;
     }
 

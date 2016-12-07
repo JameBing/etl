@@ -7,7 +7,6 @@ import com.wangjunneil.schedule.entity.sys.Cfg;
 import com.wangjunneil.schedule.service.SysFacadeService;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
-import com.wangjunneil.schedule.utility.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
