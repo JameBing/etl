@@ -82,6 +82,7 @@ public class JdHomeApiService {
         return rtnStr;
     }
 
+    
     //查询商家商品信息
     public String querySkuInfos(String upcCode,String shopId)throws Exception{
         SignParams signParams = getSignParams(shopId);

@@ -176,7 +176,6 @@ public class JdHomeController {
         return null;
     }
 
-
     public static void main(String[] args) throws Exception{
 
         /**

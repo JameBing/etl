@@ -47,85 +47,85 @@ public class MeiTuanApiService {
 
     //region 门店的开业及歇业
 
-        //门店开业
-        public String openShop(String code) throws Exception {
-            return APIFactory.getPoiAPI().poiOpen(sysPram, code);
-        }
+    //门店开业
+    public String openShop(String code) throws Exception {
+        return APIFactory.getPoiAPI().poiOpen(sysPram, code);
+    }
 
-        //门店歇业
-        public String poiClose(String code) throws Exception {
-            return APIFactory.getPoiAPI().poiClose(sysPram, code);
-        }
+    //门店歇业
+    public String closeShop(String code) throws Exception {
+        return APIFactory.getPoiAPI().poiClose(sysPram, code);
+    }
 
     //endregion
 
 
     //region商品的新增及上下架
 
-        //新增商品 foodCreate
-        public String foodCreate(FoodParam foodParam) throws Exception {
-            return APIFactory.getFoodAPI().foodSave(sysPram, foodParam);
-        }
+    //新增商品 foodCreate
+    public String foodCreate(FoodParam foodParam) throws Exception {
+        return APIFactory.getFoodAPI().foodSave(sysPram, foodParam);
+    }
 
-        //查询所有商品
-        public FoodParam foodList(String appPoiCode,String foodCode) throws Exception {
-            List<FoodParam> foodList = APIFactory.getFoodAPI().foodList(sysPram, appPoiCode);
-            if(foodList !=null && foodList.size()>0){
-                for(FoodParam food :foodList){
-                    if(food.getApp_food_code().equals(foodCode)){
-                        return food;
-                    }
+    //查询所有商品
+    public FoodParam foodList(String appPoiCode,String foodCode) throws Exception {
+        List<FoodParam> foodList = APIFactory.getFoodAPI().foodList(sysPram, appPoiCode);
+        if(foodList !=null && foodList.size()>0){
+            for(FoodParam food :foodList){
+                if(food.getApp_food_code().equals(foodCode)){
+                    return food;
                 }
             }
-            return null;
         }
+        return null;
+    }
 
-        //批量上架商品 upFrame   (0：未卖光 )
-        public String upFrame(String appPoiCode,String foodCode) throws Exception {
-            FoodParam food = foodList(appPoiCode,foodCode);
-            FoodParam foodParam = new FoodParam();
-            foodParam.setApp_poi_code(appPoiCode);
-            foodParam.setApp_food_code(foodCode);
-            foodParam.setPrice(food.getPrice());
-            foodParam.setCategory_name(food.getCategory_name());
-            foodParam.setIs_sold_out(0);
-            foodParam.setName(food.getName());
-            return APIFactory.getFoodAPI().foodInitData(sysPram,foodParam);
-        }
+    //批量上架商品 upFrame   (0：未卖光 )
+    public String upFrame(String appPoiCode,String foodCode) throws Exception {
+        FoodParam food = foodList(appPoiCode,foodCode);
+        FoodParam foodParam = new FoodParam();
+        foodParam.setApp_poi_code(appPoiCode);
+        foodParam.setApp_food_code(foodCode);
+        foodParam.setPrice(food.getPrice());
+        foodParam.setCategory_name(food.getCategory_name());
+        foodParam.setIs_sold_out(0);
+        foodParam.setName(food.getName());
+        return APIFactory.getFoodAPI().foodInitData(sysPram,foodParam);
+    }
 
-        //批量下架商品 downFrame (1：卖光)
-        public String downFrame(String appPoiCode,String foodCode) throws Exception {
-            FoodParam food = foodList(appPoiCode,foodCode);
-            FoodParam foodParam = new FoodParam();
-            foodParam.setApp_poi_code(appPoiCode);
-            foodParam.setApp_food_code(foodCode);
-            foodParam.setPrice(food.getPrice());
-            foodParam.setCategory_name(food.getCategory_name());
-            foodParam.setIs_sold_out(1);
-            foodParam.setName(food.getName());
-            return APIFactory.getFoodAPI().foodInitData(sysPram,foodParam);
-        }
+    //批量下架商品 downFrame (1：卖光)
+    public String downFrame(String appPoiCode,String foodCode) throws Exception {
+        FoodParam food = foodList(appPoiCode,foodCode);
+        FoodParam foodParam = new FoodParam();
+        foodParam.setApp_poi_code(appPoiCode);
+        foodParam.setApp_food_code(foodCode);
+        foodParam.setPrice(food.getPrice());
+        foodParam.setCategory_name(food.getCategory_name());
+        foodParam.setIs_sold_out(1);
+        foodParam.setName(food.getName());
+        return APIFactory.getFoodAPI().foodInitData(sysPram,foodParam);
+    }
 
     //endregion
 
 
     //region 订单类接口（商家确认订单及商家取消订单）
 
-        //商家确认订单
-        public String getConfirmOrder(long orderId) throws Exception {
-            List list = new ArrayList<>();
-            return APIFactory.getOrderAPI().orderConfirm(sysPram,orderId);
-        }
+    //商家确认订单
+    public String getConfirmOrder(long orderId) throws Exception {
+        return APIFactory.getOrderAPI().orderConfirm(sysPram,orderId);
+    }
 
-        //商家取消订单
-        public String getCancelOrder(long orderId,String reason,String reasonCode) throws Exception {
-            return APIFactory.getOrderAPI().orderCancel(sysPram,orderId,reason,reasonCode);
-        }
+    //商家取消订单
+    public String getCancelOrder(long orderId,String reason,String reasonCode) throws Exception {
+        return APIFactory.getOrderAPI().orderCancel(sysPram,orderId,reason,reasonCode);
+    }
 
-        //订单推送(已支付)
-        public OrderDetailParam getOrderDetail(long orderId) throws Exception {
-            return APIFactory.getOrderAPI().orderGetOrderDetail(sysPram,orderId,0L);
-        }
+    //通过订单id获取订单明细信息
+    public OrderDetailParam getOrderDetail(long orderId) throws Exception {
+        return APIFactory.getOrderAPI().orderGetOrderDetail(sysPram,orderId,0L);
+    }
 
     //endregion
+
 }

@@ -120,4 +120,5 @@ public class Log {
     public String getDateTime(){
         return StringUtil.isEmpty(this.dateTime)? DateTimeUtil.dateFormat(DateTimeUtil.now(),"yyyy-MM-dd HH:mm:ss"):this.dateTime;
     }
+
 }

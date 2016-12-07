@@ -182,6 +182,7 @@ public class BaiDuFacadeService {
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
+
             Shop shop = new Shop();
             shop.setShopId(shopId);
             shop.setBaiduShopId(baiduShopId);

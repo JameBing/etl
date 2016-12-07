@@ -194,5 +194,4 @@ public class EleMeApiService {
         String url = getSystemUrl(Constants.URL_ELEME_DELETE_FOODS_LIST, obj);
         return HttpUtil.delete(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
     }
-
 }

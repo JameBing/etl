@@ -201,7 +201,5 @@ public final class Constants {
     //批量删除食物
     public static final String URL_ELEME_DELETE_FOODS_LIST = "http://v2.openapi.ele.me/foods/batch_delete/";
 
-
-
     //endregion
 }

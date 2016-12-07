@@ -196,7 +196,6 @@ public class SysInnerService {
         return intRresult;
     }
 
-
     //订单插入
     public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) {
         Query  query = new Query(Criteria.where("platfrom").is(orderWaiMai.getPlatformOrderId()).where("platformOrderId"));
