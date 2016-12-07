@@ -73,7 +73,7 @@
             <div class="overlay" ng-show="overlayStatus">
                 <i class="fa fa-refresh fa-spin"></i>
             </div>
-            <div class="alert alert-warning" ng-show="status" style="text-align: center;"><!--错误警告-->
+            <div class="alert alert-warning" ng-show="status" style="text-align: center;" ><!--错误警告-->
                 <strong>{{msg}}</strong>
             </div>
             <style>
@@ -115,6 +115,8 @@
                         <th>物流方式</th>
                         <th>订单来源</th>
                         <th>订单备注</th>
+
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -160,6 +162,14 @@
                         <td>{{order_info.buyer_message}}</td><!--买家下单时订单备注-->
                         <!--<td ng-show="order_info.refund_id > 0"><a href="#/tmallRefund/{{order_info.refund_id}}">{{order_info.refund_id}}</a></td>-->
                         <!--<td ng-show="order_info.refund_id <= 0"></td>-->
+                        <td>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <a ng-show="order_info.status=='等待发货' || order_info.status=='等待买家确认收货' || order_info.status=='交易成功'" class="btn btn-default btn-sm btn-block" style="display:inline-block" style="display:inline-block" title="本操作适用etl存在订单未同步到中台时操作单条手工补单,订单状态：等待发货，等待买家确认收货，已完成"
+                                       ng-click="fixOrderById(order_info.tid);">手工补单</a >
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
