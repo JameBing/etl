@@ -129,7 +129,7 @@ public class SysFacadeService {
     }
 
     public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai){
-          sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+          //sysInnerService.updSynWaiMaiOrder(orderWaiMai);
     }
 
 }

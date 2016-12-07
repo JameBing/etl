@@ -72,10 +72,10 @@ public class EleMeInnerService {
         List<String> listIds = new ArrayList<String>();
         Collections.addAll(listIds, ids.split(","));
         listIds.forEach((id)->{
-            criteria.orOperator(new Criteria().where("order_id").is(id));
+            criteria.orOperator(new Criteria().where("orderid").is(id));
         });
         query.addCriteria(criteria);
-        Update update = new Update().set("order.$.status",status);
+        Update update = new Update().set("statuscode",status);
         return mongoTemplate.updateMulti(query,update,Order.class).getN();
     }
 

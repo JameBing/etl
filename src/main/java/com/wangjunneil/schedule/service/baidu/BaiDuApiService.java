@@ -81,6 +81,7 @@ public class BaiDuApiService {
 
         params =  MessageFormat.format(params,gson.toJson(sysParams.getBody()),sysParams.getCmd(),sysParams.getTimestamp(),sysParams.getVersion(),sysParams.getTicket()
             ,String.valueOf(sysParams.getSource()),sysParams.getEncrypt(),sysParams.getSecret());
+        params = StringUtil.retParamAsc(params);
         params = StringUtil.chinaToUnicode(params);
         return params.concat(MessageFormat.format("&sign={0}", StringUtil.getMD5(params)));
     }
@@ -427,18 +428,18 @@ public class BaiDuApiService {
 
 
     /**
-     * 修改商户
+     * 修改商户信息
      *
      * @param shop 商户实体对象
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String shopUpdate(Shop shop) throws ScheduleException {
+    public String shopUpdate(JsonObject jsonObject) throws ScheduleException {
         SysParams sysParams = new SysParams();
         sysParams.setCmd("shop.update");
-        sysParams.setBody(shop);
+        sysParams.setBody(jsonObject);
         String requestStr = getRequestPars(sysParams);
         //String requestStr = getRequestPars("shop.update", shop);
-        String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, Constants.CONTENTTYPE_MULTIPART, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
+        String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
             .registerTypeAdapter(Body.class, new BodySerializer())
             .registerTypeAdapter(Shop.class, new ShopSerializer())

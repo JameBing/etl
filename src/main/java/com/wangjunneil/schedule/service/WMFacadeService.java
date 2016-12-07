@@ -88,8 +88,8 @@ public class WMFacadeService {
     }
 
     //修改商户信息-百度
-    public String shopUpdate(Shop shop){
-        return baiDuFacadeService.shopUpdate(shop);
+    public String shopUpdate(JsonObject jsonObject){
+        return baiDuFacadeService.shopUpdate(jsonObject);
     }
 
     //新建门店
