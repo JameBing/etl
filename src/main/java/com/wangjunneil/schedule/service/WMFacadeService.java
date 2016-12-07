@@ -154,7 +154,7 @@ public class WMFacadeService {
                       shopId = StringUtil.isEmpty(parsFromPos.getBaidu().getShopId())?"":parsFromPos.getBaidu().getShopId(),
                       platDishId = StringUtil.isEmpty(parsFromPos.getBaidu().getPlatformDishId())?"":parsFromPos.getBaidu().getPlatformDishId(),
                       dishId = StringUtil.isEmpty(parsFromPos.getBaidu().getDishId())?"":parsFromPos.getBaidu().getDishId();
-        result_baidu = baiDuFacadeService.dishGet(platShopId, shopId, platDishId, dishId);
+        result_baidu = baiDuFacadeService.dishGet(platShopId,shopId,platDishId,dishId);
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
@@ -185,21 +185,12 @@ public class WMFacadeService {
 
     //平台订单推送【消息型】
     public String orderPost(Map<String,String[]> stringMap,String platform){
-       String result = "";
+       String result = null;
         switch (platform){
             case Constants.PLATFORM_WAIMAI_BAIDU:
                 Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
                                              .disableHtmlEscaping().create();
-                //stringMap.get() null值考虑
-                SysParams sysParams = new SysParams();
-                sysParams.setBody(gson.toJson(stringMap.get("body")[0]));
-                sysParams.setCmd(stringMap.get("cmd")[0]);
-                sysParams.setTicket(stringMap.get("ticket")[0]);
-                sysParams.setSource();
-                sysParams.setSecret(Constants.BAIDU_SECRET);
-                sysParams.setSign(stringMap.get("sign")[0]);
-                sysParams.setTimestamp(stringMap.get("timestamp")[0]);
-                sysParams.setEncrypt(stringMap.get("encrypt")[0]);
+                SysParams sysParams = gson.fromJson(map2Json(stringMap),SysParams.class);
                 result = baiDuFacadeService.orderPost(sysParams);
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
@@ -219,7 +210,6 @@ public class WMFacadeService {
               case Constants.PLATFORM_WAIMAI_BAIDU:
                   Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
                                                .disableHtmlEscaping().create();
-
                   SysParams sysParams = gson.fromJson(map2Json(stringMap),SysParams.class);
                  // result = baiDuFacadeService.orderStatus()
                   break;

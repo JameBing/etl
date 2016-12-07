@@ -61,6 +61,7 @@ public class EleMeFacadeService {
      */
     //门店开关店
     public String setRestaurantStatus(String elemeShopId,String status){
+        if ("".equals(elemeShopId) || elemeShopId == null) return "餐厅ID为空!";
         String result = null;
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -90,6 +91,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String pullNewOrder(String elemeShopId){
+        if ("".equals(elemeShopId) || elemeShopId == null) return "餐厅ID为空!";
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
@@ -113,6 +115,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String upOrderStatus(String elemeOrderId, String status, String reason){
+        if (elemeOrderId == null || "".equals(elemeOrderId)) return "订单id为空!";
         String result = null;
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -145,6 +148,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String addFoods(String json){
+        if (json == null || "".equals(json)) return "食物数据为空!";
         String result = null;
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -171,6 +175,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String restaurantMenu(String restaurantId){
+        if (restaurantId == null || "".equals(restaurantId)) return "餐厅ID为空!";
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
@@ -190,6 +195,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String uporDownFrame(String json){
+        if (json == null || "".equals(json)) return "食物数据为空!";
         String result = null;
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -216,6 +222,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String getNewOrder(String eleme_order_ids){
+        if (eleme_order_ids == null && "".equals(eleme_order_ids)) return "订单id列表为空!";
         List<String> listIds = new ArrayList<String>();
         Collections.addAll(listIds, eleme_order_ids.split(","));
         Rtn rtn = new Rtn();
@@ -241,17 +248,20 @@ public class EleMeFacadeService {
 
     //订单状态变更接收   new_status：订单状态
     public String orderChange(String eleme_order_ids,String new_status){
+        if (eleme_order_ids == null || "".equals(eleme_order_ids)) return "订单id列表为空!";
         //温馨提醒：单个参数传输都使用String类型，因为Request对象的getparamter方法返回的均是String类型，外层做类型转换的话，如果发生异常则无法捕获，异常处理均在这一层处理，所以放在这里做类型转换更合适
         eleMeInnerService.updSyncElemeOrderStastus(eleme_order_ids, Integer.parseInt(new_status));
         return null;
     }
     //退单状态接收  refund_status:退单订单状态
     public String chargeBack(String eleme_order_ids,String refund_status){
+        if (eleme_order_ids == null || "".equals(eleme_order_ids)) return "订单id列表为空!";
         eleMeInnerService.updSyncElemeOrderStastus(eleme_order_ids,Integer.parseInt(refund_status));
         return  null;
     }
     //订单配送状态接收
     public String distributionStatus(String eleme_order_ids,String status_code,int sub_status_code){
+        if (eleme_order_ids == null || "".equals(eleme_order_ids)) return "订单id列表为空!";
         eleMeInnerService.updSyncElemeOrderStastus(eleme_order_ids,Integer.parseInt(status_code));
         return  null;
     }
@@ -262,6 +272,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String getFoodId(String parms) {
+        if (parms == null || "".equals(parms)) return "食物id列表为空!";
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
@@ -284,6 +295,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String upBatchFrame(List<ParsFromPosInner> dishList,String status) {
+        if (dishList == null || dishList.size() < 1) return "食物ID不存在!";
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
@@ -320,6 +332,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String deleteFoods(List<ParsFromPosInner> dishList) {
+        if (dishList == null || dishList.size() < 1) return "食物ID不存在!";
         Rtn rtn = new Rtn();
         StringBuilder sb = new StringBuilder();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
