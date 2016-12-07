@@ -8,7 +8,6 @@ import com.wangjunneil.schedule.service.SysFacadeService;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import com.wangjunneil.schedule.utility.URL;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,7 @@ public class EleMeApiService {
     @Autowired
     private SysFacadeService sysFacadeService;
 
-    public String getSystemUrl(String pathUrl, Object obj) throws ScheduleException {
+    public String getSystemUrl(String pathUrl, Object obj) throws ScheduleException,ElemeException {
         try {
             Cfg elemeCfg = sysFacadeService.findElemeCfg();
             SysParams sysParams = new SysParams();
@@ -37,7 +36,7 @@ public class EleMeApiService {
             sysParams.setSig(sig);
             return EleMeUtils.genUrl(pathUrl, sysParams);
         } catch (Exception ex) {
-            throw new ScheduleException(Constants.PLATFORM_WAIMAI_ELEME, ex.getClass().getName(), "签名计算失败", pathUrl+"\r\n"+new Gson().toJson(obj), new Throwable().getStackTrace());
+            throw new ElemeException( ex.getClass().getName(), "签名计算失败", pathUrl+"\r\n"+new Gson().toJson(obj), new Throwable().getStackTrace());
         }
     }
 
@@ -45,7 +44,7 @@ public class EleMeApiService {
      * 获取所属餐厅ID
             * @throws ScheduleException
             */
-        public String getAffiliationShop() throws ScheduleException {
+        public String getAffiliationShop() throws ScheduleException,ElemeException {
             String url = getSystemUrl(URL.URL_ELEME_RESTAURANT_ID, null);
         return HttpUtil.get2(url);
     }
@@ -56,7 +55,7 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String setRestaurantStatus(RestaurantRequest obj) throws ScheduleException {
+    public String setRestaurantStatus(RestaurantRequest obj) throws ScheduleException,ElemeException {
         String pathURL = MessageFormat.format(URL.URL_ELEME_RESTAURANT_ON, obj.getRestaurant_id().toString());
         obj.setRestaurant_id("");
         String url = getSystemUrl(pathURL, obj);
@@ -69,7 +68,7 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String addFoods(OldFoodsRequest obj) throws ScheduleException {
+    public String addFoods(OldFoodsRequest obj) throws ScheduleException,ElemeException {
         String url = getSystemUrl(URL.URL_ELEME_ADD_FOODS, obj);
         return HttpUtil.post(url, StringUtil.getUrlParamsByObject(obj));
     }
@@ -80,7 +79,7 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String pullNewOrder(OrderRequest obj) throws ScheduleException{
+    public String pullNewOrder(OrderRequest obj) throws ScheduleException,ElemeException{
         String url = getSystemUrl(URL.URL_ELEME_PULL_NEW_ORDER, obj);
         String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByObject(obj));
         return HttpUtil.get2(requstUrl);
@@ -92,7 +91,7 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String upFoods(OldFoodsRequest obj)throws ScheduleException{
+    public String upFoods(OldFoodsRequest obj)throws ScheduleException,ElemeException{
         String pathURL = MessageFormat.format(URL.URL_ELEME_UPORDOWNFRAME_FOODS, obj.getFood_id().toString());
         obj.setFood_id("");
         String url = getSystemUrl(pathURL, obj);
@@ -105,7 +104,7 @@ public class EleMeApiService {
      * @throws ScheduleException
      */
 
-    public String foodsClassify(String restaurantId)throws ScheduleException{
+    public String foodsClassify(String restaurantId)throws ScheduleException,ElemeException{
         String pathURL = MessageFormat.format(URL.URL_ELEME_CLASSIFY_FOODS, restaurantId);
         String url = getSystemUrl(pathURL, null);
         return HttpUtil.get2(url);
@@ -117,7 +116,7 @@ public class EleMeApiService {
         * @throws ScheduleException
     */
 
-    public String getFoodsList(String categoryId)throws ScheduleException{
+    public String getFoodsList(String categoryId)throws ScheduleException,ElemeException{
         String pathURL = MessageFormat.format(URL.URL_ELEME_GETFOODSID, categoryId);
         String url = getSystemUrl(pathURL, null);
         return HttpUtil.get2(url);
@@ -129,7 +128,7 @@ public class EleMeApiService {
      * @throws ScheduleException
      */
 
-    public String orderDetail(String orderId)throws ScheduleException{
+    public String orderDetail(String orderId)throws ScheduleException,ElemeException{
         String pathURL = MessageFormat.format(URL.URL_ELEME_ORDER_DETAIL, orderId);
         String url = getSystemUrl(pathURL, null);
         return HttpUtil.get2(url);
@@ -141,7 +140,7 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String upOrderStatus(OrderRequest obj) throws ScheduleException {
+    public String upOrderStatus(OrderRequest obj) throws ScheduleException,ElemeException {
         String pathURL = MessageFormat.format(URL.URL_ELEME_ORDER_STATUS, obj.getEleme_order_id().toString());
         obj.setEleme_order_id("");
         String url = getSystemUrl(pathURL, obj);
@@ -154,7 +153,7 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String restaurantMenu(String restaurantId) throws ScheduleException {
+    public String restaurantMenu(String restaurantId) throws ScheduleException,ElemeException {
         String pathURL = MessageFormat.format(URL.URL_ELEME_RESTAURANT_MENU, restaurantId);
         String url = getSystemUrl(pathURL, null);
         return HttpUtil.get2(url);
@@ -166,7 +165,7 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String getFoodId(OldFoodsRequest obj) throws ScheduleException {
+    public String getFoodId(OldFoodsRequest obj) throws ScheduleException,ElemeException {
         String url = getSystemUrl(URL.URL_ELEME_TP_FOOD_ID, obj);
         String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByObject(obj));
         return HttpUtil.get2(requstUrl);
@@ -178,7 +177,7 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String upBatchFrame(OldFoodsRequest obj) throws ScheduleException {
+    public String upBatchFrame(OldFoodsRequest obj) throws ScheduleException,ElemeException {
         String url = getSystemUrl(URL.URL_ELEME_UPORDOWNFRAME_FOODS_LIST, obj);
         return HttpUtil.put(url, StringUtil.getUrlParamsByObject(obj));
     }
@@ -189,7 +188,7 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String delectAllFoods(OldFoodsRequest obj) throws ScheduleException {
+    public String delectAllFoods(OldFoodsRequest obj) throws ScheduleException,ElemeException {
         String url = getSystemUrl(URL.URL_ELEME_DELETE_FOODS_LIST, obj);
         return HttpUtil.delete(url, StringUtil.getUrlParamsByObject(obj));
     }

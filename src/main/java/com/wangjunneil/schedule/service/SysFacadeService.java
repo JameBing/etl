@@ -128,8 +128,9 @@ public class SysFacadeService {
         return  "W" + String.format("%05d", Integer.valueOf(strShopId)) + "99" + date + String.format("%06d",Integer.valueOf(getSerialNum(date,"order")));
     }
 
-    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai){
-          sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+    //订单插入
+    public int updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
+      return   sysInnerService.updSynWaiMaiOrder(orderWaiMai);
     }
 
 }

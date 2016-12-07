@@ -9,19 +9,41 @@ import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
  */
 public class BaiDuException extends Exception  {
 
-    public BaiDuException(){}
-    private String requestBody;
+    public BaiDuException(){
 
-    private void setRequestBody(String requestBody){
-        this.requestBody = requestBody;
     }
 
-    public String getRequestBody(){
-        return this.requestBody;
+    private String innerExName;
+    private String message;
+    private String requestStr;
+    private String stackInfo;
+
+
+    public String getStackInfo(){
+        return this.stackInfo;
     }
 
-    public BaiDuException(String message,String requestBody,Exception ex) {
-         super(message);
-         this.requestBody = requestBody;
+    public String getInnerExName(){
+        return this.innerExName;
+    }
+
+    public String getMessage(){
+        return this.message;
+    }
+
+    public String getRequestStr(){
+        return this.requestStr;
+    }
+
+    public BaiDuException(String innerExName,String message,String requestStr,StackTraceElement[] traces) {
+        this.innerExName = innerExName;
+        this.requestStr = requestStr;
+        this.message = message;
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < traces.length; i++) {
+            StackTraceElement element = traces[i];
+            sb.append(element.toString() + "\n");
+        }
+        this.stackInfo = sb.toString();
     }
 }

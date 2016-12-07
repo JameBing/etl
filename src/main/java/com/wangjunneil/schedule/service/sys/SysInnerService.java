@@ -197,7 +197,7 @@ public class SysInnerService {
 
 
     //订单插入
-    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
+    public int updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
         Query  query = new Query(Criteria.where("platfrom").is(orderWaiMai.getPlatformOrderId()).where("platformOrderId"));
         Update update = new Update()
             .set("platfrom", orderWaiMai.getPlatfrom())
@@ -205,7 +205,7 @@ public class SysInnerService {
             .set("orderId",orderWaiMai.getOrderId())
             .set("platformOrderId",orderWaiMai.getPlatformOrderId())
             .set("order",orderWaiMai.getOrder());
-        mongoTemplate.upsert(query, update, OrderWaiMai.class);
+      return   mongoTemplate.upsert(query, update, OrderWaiMai.class).getN();
     }
 
 }

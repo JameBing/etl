@@ -1,15 +1,10 @@
 package com.wangjunneil.schedule.common;
 
 /**
- * Created by yangwanbin on 2016-11-17.
+ * Created by admin on 2016/11/18.
  */
-public class JdHomeException extends Exception {
-
-    public JdHomeException(String message,Exception ex){
-        super(message);
-    }
-
-   private String innerExName;
+public class ElemeException extends  Exception {
+    private String innerExName;
     private String message;
     private String requestStr;
     private String stackInfo;
@@ -31,7 +26,7 @@ public class JdHomeException extends Exception {
         return this.requestStr;
     }
 
-    public JdHomeException(String innerExName,String message,String requestStr,StackTraceElement[] traces) {
+    public ElemeException(String innerExName, String message, String requestStr, StackTraceElement[] traces) {
         this.innerExName = innerExName;
         this.requestStr = requestStr;
         this.message = message;
@@ -41,5 +36,6 @@ public class JdHomeException extends Exception {
             sb.append(element.toString() + "\n");
         }
         this.stackInfo = sb.toString();
-}
+    }
+    public ElemeException(String message, Exception ex) {super(message);}
 }

@@ -1,8 +1,7 @@
 package com.wangjunneil.schedule.utility;
 
 import com.sun.org.apache.bcel.internal.generic.BREAKPOINT;
-import com.wangjunneil.schedule.common.Constants;
-import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.common.*;
 import org.eclipse.jetty.http.HttpMethod;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -231,7 +230,7 @@ public final class HttpUtil {
      * @param param  注意顺序 [url,参数,contentType,charset,timeout,readtime,平台标识]
      * @return
      */
-    public static String post2(String... param) throws ScheduleException{
+    public static String post2(String... param) throws ScheduleException,BaiDuException,JdHomeException,ElemeException,MeiTuanException{
         String urlStr = param[0],
             pars = param.length>1?param[1]:"",
             contentType = (param.length>2 && !StringUtil.isEmpty(param[2]))?param[2]:"application/x-www-form-urlencoded",
@@ -251,25 +250,6 @@ public final class HttpUtil {
             con.setConnectTimeout(timeout);
             con.setReadTimeout(readTimeout);
             con.connect();
-//            switch (contentType.toLowerCase()){
-//                case "multipart/form-data":
-//                    BufferedOutputStream out = new BufferedOutputStream(con.getOutputStream());
-//                    StringBuilder sb = new StringBuilder();
-//                    out.write(pars.getBytes());
-//                    break;
-//                case "application/x-www-form-urlencoded":
-//                    DataOutputStream dos=new DataOutputStream(con.getOutputStream());
-//                    dos.writeBytes(param[0]);
-//                    dos.flush();
-//                    dos.close();
-//                    break;
-//                case "application/json":
-//
-//                    //待实现
-//                    break;
-//                default:
-//                    break;
-//            }
 
             DataOutputStream dos=new DataOutputStream(con.getOutputStream());
             dos.writeBytes(pars);
@@ -288,26 +268,24 @@ public final class HttpUtil {
             br.close();
             return sb.toString();
             }else {
-                throw new ScheduleException(platform, "ScheduleException",MessageFormat.format("http error:{0}", String.valueOf(responseCode)),pars,new Throwable().getStackTrace());
-//              switch (platform){
-//                  case Constants.PLATFORM_WAIMAI_BAIDU:
-//
-//                      break;
-//                  case Constants.PLATFORM_WAIMAI_JDHOME:
-//                      break;
-//                  case Constants.PLATFORM_WAIMAI_ELEME:
-//                      break;
-//                  case Constants.PLATFORM_WAIMAI_MEITUAN:
-//                      break;
-//                  default:
-//                      break;
-//              }
+              switch (platform){
+                  case Constants.PLATFORM_WAIMAI_BAIDU:
+                      throw new BaiDuException( "ScheduleException",MessageFormat.format("http error:{0}", String.valueOf(responseCode)),pars,new Throwable().getStackTrace());
+                  case Constants.PLATFORM_WAIMAI_JDHOME:
+                      throw new JdHomeException( "ScheduleException",MessageFormat.format("http error:{0}", String.valueOf(responseCode)),pars,new Throwable().getStackTrace());
+                  case Constants.PLATFORM_WAIMAI_ELEME:
+                      throw new ElemeException( "ScheduleException",MessageFormat.format("http error:{0}", String.valueOf(responseCode)),pars,new Throwable().getStackTrace());
+                  case Constants.PLATFORM_WAIMAI_MEITUAN:
+                      throw new MeiTuanException( "ScheduleException",MessageFormat.format("http error:{0}", String.valueOf(responseCode)),pars,new Throwable().getStackTrace());
+
+                  default:
+                      throw new ScheduleException();
+              }
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
-            throw new ScheduleException(platform, "MalformedURLException",e.getMessage(),pars,e.getStackTrace());
+            throw new ScheduleException(e.getMessage());
         } catch (IOException e) {
-            throw new ScheduleException(platform, "IOException",e.getMessage(),pars,e.getStackTrace());
+            throw new ScheduleException(e.getMessage());
         }
     }
 

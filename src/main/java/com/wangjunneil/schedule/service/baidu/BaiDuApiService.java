@@ -23,7 +23,7 @@ import java.util.Iterator;
 public class BaiDuApiService  {
 
     //打包参数(包含计算sign)
-    public   String getRequestPars(String cmd,Object obj ) throws ScheduleException{
+    public   String getRequestPars(String cmd,Object obj ) throws ScheduleException,BaiDuException{
             Gson gson;
             try {
                 SysParams sysParams = new SysParams();
@@ -57,7 +57,7 @@ public class BaiDuApiService  {
 //                return  MultipartPars(sysParams);
             }
             catch (Exception ex){
-                throw  new ScheduleException(Constants.PLATFORM_WAIMAI_BAIDU,ex.getClass().getName(),"计算签名过程异常",cmd+"\r\n"+new Gson().toJson(obj),new Throwable().getStackTrace());
+                throw  new BaiDuException(ex.getClass().getName(),"计算签名过程异常",cmd+"\r\n"+new Gson().toJson(obj),new Throwable().getStackTrace());
             }
 
 
@@ -90,7 +90,7 @@ public class BaiDuApiService  {
     //region 商户
 
     //查看供应商
-    public Supplier  getSupplierList() throws  ScheduleException{
+    public Supplier  getSupplierList() throws  ScheduleException,BaiDuException{
 
         String requestStr = getRequestPars("supplier.list",null);
         //String requestStr = "body={}&cmd=supplier.list&encrypt=&secret=9aa9bef2dd361398&source=65062&ticket=CBB291F6-33BE-57CC-8FE3-441FE6E7BA6C&timestamp=1430719064&version=3";
@@ -115,7 +115,7 @@ public class BaiDuApiService  {
             Supplier supplier = gson.fromJson(gson.toJson(body.getData()),Supplier.class);
             return supplier;
         }else {
-            throw  new ScheduleException(Constants.PLATFORM_WAIMAI_BAIDU,"ScheduleException","获取供应商信息失败",requestStr,new Throwable().getStackTrace());
+            throw  new BaiDuException("ScheduleException","获取供应商信息失败",requestStr,new Throwable().getStackTrace());
          }
         }
 
@@ -153,7 +153,7 @@ public class BaiDuApiService  {
      * @param   shop  商户实体对象
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
-      public String shopOpen(Shop shop) throws  ScheduleException{
+      public String shopOpen(Shop shop) throws  ScheduleException,BaiDuException{
           String requestStr = getRequestPars("shop.open", shop);
           String response =  HttpUtil.post2(Constants.BAIDU_URL, requestStr,null,"utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
           Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
@@ -178,7 +178,7 @@ public class BaiDuApiService  {
      * @param   shop  商户实体对象
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String shopClose(Shop shop) throws  ScheduleException{
+    public String shopClose(Shop shop) throws  ScheduleException,BaiDuException{
         String requestStr = getRequestPars("shop.close", shop);
         String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
@@ -273,7 +273,7 @@ public class BaiDuApiService  {
      * @param     dish 菜品
      * @return
      */
-    public String dishGet(Dish dish) throws ScheduleException{
+    public String dishGet(Dish dish) throws ScheduleException,BaiDuException{
         String requestStr = getRequestPars("dish.get",dish);
         String response = HttpUtil.post2(Constants.BAIDU_URL,requestStr,null,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
         response = StringUtil.unicodeToChina(response);
@@ -285,7 +285,7 @@ public class BaiDuApiService  {
      * @param   dish  菜品实体对象
      * @return "baidu:{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String dishOnline(Dish dish) throws  ScheduleException{
+    public String dishOnline(Dish dish) throws  ScheduleException,BaiDuException{
         String requestStr = getRequestPars("dish.online", dish);
         String response = HttpUtil.post(Constants.BAIDU_URL,requestStr,Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
@@ -301,7 +301,7 @@ public class BaiDuApiService  {
      * @param   dish  菜品实体对象
      * @return "baidu:{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String dishOffline(Dish dish) throws ScheduleException{
+    public String dishOffline(Dish dish) throws ScheduleException,BaiDuException{
         String requestStr = getRequestPars("dish.offline", dish);
         String response = HttpUtil.post(Constants.BAIDU_URL,requestStr,Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
        Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
@@ -316,7 +316,7 @@ public class BaiDuApiService  {
 
 
     //region 订单
-    public String orderGet(Order order) throws  ScheduleException{
+    public String orderGet(Order order) throws  ScheduleException,BaiDuException{
         String requestStr = getRequestPars("order.get", order);
         String response = HttpUtil.post(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
 
@@ -329,7 +329,7 @@ public class BaiDuApiService  {
      * @param   order  订单实体对象
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String orderConfirm(Order order) throws  ScheduleException{
+    public String orderConfirm(Order order) throws  ScheduleException,BaiDuException{
 
         String requestStr = getRequestPars("order.confirm", order);
         String response = HttpUtil.post(Constants.BAIDU_URL, requestStr, Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
@@ -345,7 +345,7 @@ public class BaiDuApiService  {
      * @param   order  订单实体对象
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String orderCancel(Order order) throws ScheduleException{
+    public String orderCancel(Order order) throws ScheduleException,BaiDuException{
         String requestStr = getRequestPars("order.cancel", order);
         String response = HttpUtil.post(Constants.BAIDU_URL,requestStr,Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())

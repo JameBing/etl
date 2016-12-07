@@ -122,7 +122,7 @@ public class WMController {
      * @param out   响应输出流对象
      * @param request 请求对象 {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
-     * @return {code:0,desc:"success",dynamic:"",logId:""}
+     * @return{baidu: {code:0,desc:"success",dynamic:"",logId:""},jdhome:{},...}
      */
     @RequestMapping(value = "/shop/open", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     @ResponseBody
@@ -137,9 +137,9 @@ public class WMController {
      * 门店歇业
      *
      * @param out   响应输出流对象
-     * @param request 请求对象
+     * @param request 请求对象  {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
-     * @return
+     * @return  {baidu: {code:0,desc:"success",dynamic:"",logId:""},jdhome:{},...}
      */
     @RequestMapping(value = "/shop/close", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
@@ -367,7 +367,7 @@ public class WMController {
             "}";
 
         String flowNum = "{\"date\":\"20161128\",\"moudle\":\"order\",\"flowNum\":2000}";//实例请求参数
-        out.println(HttpUtil.post2("http://127.0.0.1:9001/mark/waimai/shopAdd", "{\"shopId\":\"2222\"}","application/json","utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU));//运行方法，这里输出：
+       
         return null;
     }
 

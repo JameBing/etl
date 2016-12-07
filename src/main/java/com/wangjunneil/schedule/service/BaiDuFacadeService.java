@@ -3,6 +3,7 @@ package com.wangjunneil.schedule.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.*;
+import com.google.gson.annotations.Expose;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.common.ScheduleException;
@@ -93,12 +94,18 @@ public class BaiDuFacadeService {
             rtn.setRemark(getGson().toJson(baiDuApiService.getSupplierList()));
             rtn.setCode(0);
             rtn.setDesc("success");
-        }catch (Exception ex){
+        }
+        //ApiService & InnerService Exception   -999
+        catch (ScheduleException ex){
             rtn.setCode(-999);
             rtn.setDesc("error");
             rtn.setRemark("发生异常");
             rtn.setLogId("");
             //异常日志
+        }
+        //FacadeService Exception -998
+        catch (Exception ex){
+
         }
         result = gson1.toJson(rtn);
         return result;
