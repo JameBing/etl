@@ -2,7 +2,10 @@ package com.wangjunneil.schedule.utility;
 
 
 
+import com.google.gson.Gson;
+import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ElemaException;
+import com.wangjunneil.schedule.common.ScheduleException;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -177,6 +180,24 @@ public class StringUtil {
         return pageList;
     }
 
+    //list转String
+    public static String listToString(List stringList){
+        if (stringList==null) {
+            return null;
+        }
+        StringBuilder result=new StringBuilder();
+        boolean flag=false;
+        for (Object string : stringList) {
+            if (flag) {
+                result.append(",");
+            }else {
+                flag=true;
+            }
+            result.append(string);
+        }
+        return result.toString();
+    }
+
 
     //将obj转为map
     public static Map getMap(Object obj) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
@@ -199,11 +220,11 @@ public class StringUtil {
         return map;
     }
 
-    public static String getUrlParamsByObject(Object obj) throws ElemaException {
+    public static String getUrlParamsByObject(Object obj) throws ScheduleException {
         try {
             return getUrlParamsByMap( getMap(obj));
         }catch ( Exception ex) {
-            throw new ElemaException("数据转换出错!", ex);
+            throw new ScheduleException(Constants.PLATFORM_WAIMAI_ELEME, ex.getClass().getName(), "数据转换出错", new Gson().toJson(obj), new Throwable().getStackTrace());
         }
     }
 }

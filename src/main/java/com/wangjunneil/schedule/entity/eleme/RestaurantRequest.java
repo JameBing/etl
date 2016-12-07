@@ -4,6 +4,8 @@ package com.wangjunneil.schedule.entity.eleme;
  * Created by admin on 2016/11/28.
  */
 public class RestaurantRequest {
+    /****************共有属性********************/
+    private String restaurant_id;
     /***********更新餐厅营业信息属性*************/
     //开关店铺
     private int is_open;
@@ -187,5 +189,13 @@ public class RestaurantRequest {
 
     public void setPacking_fee(float packing_fee) {
         this.packing_fee = packing_fee;
+    }
+
+    public String getRestaurant_id() {
+        return restaurant_id;
+    }
+
+    public void setRestaurant_id(String restaurant_id) {
+        this.restaurant_id = restaurant_id;
     }
 }

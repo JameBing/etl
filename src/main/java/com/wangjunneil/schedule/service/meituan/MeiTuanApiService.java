@@ -1,12 +1,27 @@
 package com.wangjunneil.schedule.service.meituan;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sankuai.meituan.waimai.opensdk.Test;
+import com.sankuai.meituan.waimai.opensdk.api.PoiAPI;
+import com.sankuai.meituan.waimai.opensdk.exception.ApiOpException;
+import com.sankuai.meituan.waimai.opensdk.exception.ApiSysException;
+import com.sankuai.meituan.waimai.opensdk.factory.APIFactory;
+import com.sankuai.meituan.waimai.opensdk.factory.URLFactory;
+import com.sankuai.meituan.waimai.opensdk.util.ConvertUtil;
+import com.sankuai.meituan.waimai.opensdk.util.SignGenerator;
+import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
+import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
+import com.sankuai.meituan.waimai.opensdk.vo.SystemParam;
+import com.wangjunneil.schedule.entity.meituan.FoodCreate;
+import com.wangjunneil.schedule.entity.meituan.UpordownFrame;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.MD5Util;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.net.URLEncoder;
+import java.util.*;
 
 /**
  * @author liuxin
@@ -17,106 +32,92 @@ public class MeiTuanApiService {
 
     private static Logger log = Logger.getLogger(MeiTuanApiService.class.getName());
 
-    private long timestamp =0l;
-
-    private static final String app_id ="0000";
-
-    private String sig ="";
-
-    //TODO 端点
-
-    private static final String end_point = "https://mos.meituan.com/document/sdk";
-
-    private static final String consumer_secret ="000";
-
-    private static final String UTF8_CHARSET = "UTF-8";
-
-    //门店开业
-    private static final String OPEN_SHOP_URL = "http://test.waimaiopen.meituan.com/api/v1/poi/open";
-
-    //门店歇业
-    private static final String CLOSE_SHOP_URL = "http://test.waimaiopen.meituan.com/api/v1/poi/close";
-
-    //商家确认订单
-    private static final String ORDER_CONFIRM_URL = "http://test.waimaiopen.meituan.com/api/v1/order/confirm";
-
-    //商家取消订单
-    private static final String ORDER_CANCEL_URL = "http://test.waimaiopen.meituan.com/api/v1/order/cancel";
-
-    //订单明细
-    private static final String ORDER_DETAIL_URL = "http://test.waimaiopen.meituan.com/api/v1/order/getOrderDetail";
+    //系统参数.（app_id 和 secret）
+    private static final SystemParam sysPram = new SystemParam("459", "5ca2cf48c1d6dc4253f9d491b2246091");
 
 
     //region 门店的开业及歇业
 
-    //门店开业
-    public String openShop(String code)
-    {
-        String params = "app_id=" + app_id + "&app_poi_code=" + code + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
-        String url = OPEN_SHOP_URL + "?" + params;
-        String sig = MD5Util.encrypt32(url);
-        params = params+"& sig="+sig;
-        return HttpUtil.post(OPEN_SHOP_URL,params);
-    }
+        //门店开业
+        public String openShop(String code) throws Exception {
+            return APIFactory.getPoiAPI().poiOpen(sysPram, code);
+        }
 
-    //门店歇业
-    public String closeShop(String code)
-    {
-        String params = "app_id=" + app_id + "&app_poi_code=" + code + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
-        String url = CLOSE_SHOP_URL + "?" + params;
-        String sig = MD5Util.encrypt32(params);
-        params = params+"& sig="+sig;
-        return HttpUtil.post(CLOSE_SHOP_URL,params);
-
-        //TODO 使用工具类生成sig
-        /*
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("app_poi_code",code);
-            timestamp =new Date().getTime();
-            params.put("timestamp",String.valueOf(timestamp));
-            String sig = SignedRequestsHelper.signRequest(consumer_secret, end_point, CLOSE_SHOP_URL, "POST", params);
-            System.out.println(sig);
-            return null;
-            return HttpUtil.post(CLOSE_SHOP_URL,jsonObject.toJSONString());
-        */
-    }
+        //门店歇业
+        public String poiClose(String code) throws Exception {
+            return APIFactory.getPoiAPI().poiClose(sysPram, code);
+        }
 
     //endregion
 
 
-    //region 订单接口（商家确认订单及商家取消订单）
+    //region商品的新增及上下架
 
-    //商家确认订单
-    public String getConfirmOrder(int orderid)
-    {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("order_id",orderid);
-        String params = "app_id=" + app_id + "&order_id=" + jsonObject.toJSONString() + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
-        String url = ORDER_CONFIRM_URL + "?" + params;
-        String sig = MD5Util.encrypt32(url);
-        params = params+"& sig="+sig;
-        return HttpUtil.post(ORDER_CONFIRM_URL,params);
-    }
+        //新增商品 foodCreate
+        public String foodCreate(FoodParam foodParam) throws Exception {
+            return APIFactory.getFoodAPI().foodSave(sysPram, foodParam);
+        }
 
-    //商家取消订单
-    public String getCancelOrder(int orderid,String reason,String reasoncode)
-    {
-        String params = "app_id=" + app_id + "&order_id=" + orderid + "&reason=" + reason + "&reason_code=" + reasoncode + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
-        String url = ORDER_CANCEL_URL + "?" + params;
-        String sig = MD5Util.encrypt32(url);
-        params = params+"& sig="+sig;
-        return HttpUtil.post(ORDER_CANCEL_URL,params);
-    }
+        //查询所有商品
+        public FoodParam foodList(String appPoiCode,String foodCode) throws Exception {
+            List<FoodParam> foodList = APIFactory.getFoodAPI().foodList(sysPram, appPoiCode);
+            if(foodList !=null && foodList.size()>0){
+                for(FoodParam food :foodList){
+                    if(food.getApp_food_code().equals(foodCode)){
+                        return food;
+                    }
+                }
+            }
+            return null;
+        }
 
-    //订单推送(已支付)
-    public String newOrder(String orderId,String status)
-    {
-        String params = "app_id=" + app_id + "&order_id=" + orderId + "&status=" + status + "&timestamp=" + new Date().getTime() + "&consumer_secret=" + consumer_secret;
-        String url = ORDER_DETAIL_URL + "?" + params;
-        String sig = MD5Util.encrypt32(url);
-        params = params+"& sig="+sig;
-        return HttpUtil.post(ORDER_DETAIL_URL,params);
-    }
+        //批量上架商品 upFrame   (0：未卖光 )
+        public String upFrame(String appPoiCode,String foodCode) throws Exception {
+            FoodParam food = foodList(appPoiCode,foodCode);
+            FoodParam foodParam = new FoodParam();
+            foodParam.setApp_poi_code(appPoiCode);
+            foodParam.setApp_food_code(foodCode);
+            foodParam.setPrice(food.getPrice());
+            foodParam.setCategory_name(food.getCategory_name());
+            foodParam.setIs_sold_out(0);
+            foodParam.setName(food.getName());
+            return APIFactory.getFoodAPI().foodInitData(sysPram,foodParam);
+        }
+
+        //批量下架商品 downFrame (1：卖光)
+        public String downFrame(String appPoiCode,String foodCode) throws Exception {
+            FoodParam food = foodList(appPoiCode,foodCode);
+            FoodParam foodParam = new FoodParam();
+            foodParam.setApp_poi_code(appPoiCode);
+            foodParam.setApp_food_code(foodCode);
+            foodParam.setPrice(food.getPrice());
+            foodParam.setCategory_name(food.getCategory_name());
+            foodParam.setIs_sold_out(1);
+            foodParam.setName(food.getName());
+            return APIFactory.getFoodAPI().foodInitData(sysPram,foodParam);
+        }
+
+
+    //endregion
+
+
+    //region 订单类接口（商家确认订单及商家取消订单）
+
+        //商家确认订单
+        public String getConfirmOrder(long orderId) throws Exception {
+            List list = new ArrayList<>();
+            return APIFactory.getOrderAPI().orderConfirm(sysPram,orderId);
+        }
+
+        //商家取消订单
+        public String getCancelOrder(long orderId,String reason,String reasonCode) throws Exception {
+            return APIFactory.getOrderAPI().orderCancel(sysPram,orderId,reason,reasonCode);
+        }
+
+        //订单推送(已支付)
+        public OrderDetailParam getOrderDetail(long orderId) throws Exception {
+            return APIFactory.getOrderAPI().orderGetOrderDetail(sysPram,orderId,0L);
+        }
 
     //endregion
 

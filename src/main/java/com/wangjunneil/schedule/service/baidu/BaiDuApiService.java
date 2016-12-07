@@ -2,15 +2,13 @@ package com.wangjunneil.schedule.service.baidu;
 
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.*;
-import org.apache.log4j.Logger;
-import org.aspectj.apache.bcel.generic.RET;
-import org.springframework.http.HttpRequest;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.utility.HttpUtil;
-import java.lang.reflect.Field;
+
 import java.text.MessageFormat;
 
 /**
@@ -22,25 +20,38 @@ public class BaiDuApiService  {
 
 
     //打包参数(包含计算sign)
-    public   String GetRequestPars(String cmd,Object obj ) throws ScheduleException{
+    public   String getRequestPars(String cmd,Object obj ) throws ScheduleException{
+            Gson gson;
             try {
-                Class<?> clazz = Class.forName(obj.getClass().getName()+"Serializer");
-
-                Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
-                    .registerTypeAdapter(obj.getClass(), (Object)clazz.newInstance()).disableHtmlEscaping().create();
-
                 SysParams sysParams = new SysParams();
                 sysParams.setCmd(cmd);
-                sysParams.setBody(obj);
-                String signJson = gson.toJson(sysParams);
-                //对所有的/进行转义
-                signJson = signJson.replace("/", "\\/");
-                //中文字符安转unicode
-                signJson = sysParams.chinaToUnicode(signJson);
+                if(obj == null){
+                    sysParams.setBody("");
+                    gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer()).disableHtmlEscaping().create();
+                }
+                else {
+                Class<?> clazz = Class.forName(obj.getClass().getName()+"Serializer");
+                gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
+                                        .registerTypeAdapter(obj.getClass(), (Object) clazz.newInstance()).disableHtmlEscaping().create();
+                    sysParams.setBody(obj);
+                }
 
-                sysParams.setSign(sysParams.getMD5(signJson));
-               // String requestJson = gson.toJson(sysParams);
-                return  MultipartPars(sysParams);
+                String params = "body={0}&cmd={1}&timestamp={2}&version={3}&ticket={4}&source={5}&encrypt={6}&secret={7}";
+                String bodyStr = gson.toJson(sysParams.getBody());
+                params =  MessageFormat.format(params,bodyStr,sysParams.getCmd(),sysParams.getTimestamp(),sysParams.getVersion(),sysParams.getTicket()
+                                              ,String.valueOf(sysParams.getSource()),sysParams.getEncrypt(),sysParams.getSecret());
+                params = StringUtil.retParamAsc(params);
+                params = sysParams.chinaToUnicode(params);
+                return params.concat(MessageFormat.format("&sign={0}",sysParams.getMD5(params)));
+//                String signJson = gson.toJson(sysParams);
+//                //对所有的/进行转义
+//                signJson = signJson.replace("/", "\\/");
+//                //中文字符安转unicode
+//                signJson = sysParams.chinaToUnicode(signJson);
+//
+//                sysParams.setSign(sysParams.getMD5(signJson));
+//               // String requestJson = gson.toJson(sysParams);
+//                return  MultipartPars(sysParams);
             }
             catch (Exception ex){
                 throw  new ScheduleException(Constants.PLATFORM_WAIMAI_BAIDU,ex.getClass().getName(),"计算签名过程异常",cmd+"\r\n"+new Gson().toJson(obj),new Throwable().getStackTrace());
@@ -49,55 +60,93 @@ public class BaiDuApiService  {
 
     }
 
-    public String GetRequestPars(SysParams sysParams){
+    public String getRequestPars(SysParams sysParams){
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
-                                     .registerTypeAdapter(Result.class, new ResultSerializer()).disableHtmlEscaping().create();
+                                     .registerTypeAdapter(Body.class, new BodySerializer())
+                                     .disableHtmlEscaping().create();
+//
+//        String signJson = gson.toJson(sysParams);
+//        //对所有的/进行转义
+//        signJson = signJson.replace("/", "\\/");
+//        //中文字符安转unicode
+//        signJson = sysParams.chinaToUnicode(signJson);
+//
+//        sysParams.setSign(sysParams.getMD5(signJson));
+//        String requestJson = gson.toJson(sysParams);
+//        return  requestJson;
 
-        String signJson = gson.toJson(sysParams);
-        //对所有的/进行转义
-        signJson = signJson.replace("/", "\\/");
-        //中文字符安转unicode
-        signJson = sysParams.chinaToUnicode(signJson);
-
-        sysParams.setSign(sysParams.getMD5(signJson));
-        String requestJson = gson.toJson(sysParams);
-        return  requestJson;
+        String params = "body={0}&cmd={1}&timestamp={2}&version={3}&ticket={4}&source={5}&encrypt={6}&secret={7}";
+        String bodyStr = gson.toJson(sysParams.getBody());
+        params =  MessageFormat.format(params,bodyStr,sysParams.getCmd(),sysParams.getTimestamp(),sysParams.getVersion(),sysParams.getTicket()
+            ,String.valueOf(sysParams.getSource()),sysParams.getEncrypt(),sysParams.getSecret());
+        params = StringUtil.retParamAsc(params);
+        params = sysParams.chinaToUnicode(params);
+        return params.concat(MessageFormat.format("&sign={0}", sysParams.getMD5(params)));
     }
 
     //region 商户
 
+    //查看供应商
+    public Supplier  getSupplierList() throws  ScheduleException{
+
+        String requestStr = getRequestPars("supplier.list",null);
+        //String requestStr = "body={}&cmd=supplier.list&encrypt=&secret=9aa9bef2dd361398&source=65062&ticket=CBB291F6-33BE-57CC-8FE3-441FE6E7BA6C&timestamp=1430719064&version=3";
+       // requestStr = requestStr + "&sign=" + SysParams.getMD5(requestStr);
+        String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
+        Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
+                                     .registerTypeAdapter(Body.class,new BodySerializer())
+                                     .registerTypeAdapter(Data.class,new DataSerializer())
+                                     .registerTypeAdapter(Supplier.class, new SupplierSerializer())
+                                     .disableHtmlEscaping().create();
+        SysParams sysParams = gson.fromJson(response,SysParams.class);
+        Body body = gson.fromJson(gson.toJson(sysParams.getBody()),Body.class);
+        if (body.getErrno().equals("0")){
+            Supplier supplier = gson.fromJson(gson.toJson(body.getData()),Supplier.class);
+            return supplier;
+        }else {
+            throw  new ScheduleException(Constants.PLATFORM_WAIMAI_BAIDU,"ScheduleException","获取供应商信息失败",requestStr,new Throwable().getStackTrace());
+         }
+        }
+
+    //创建商户
+    public String shopAdd() throws  ScheduleException{
+
+        return  null;
+    }
+
+
     /**
      * 门店开业
      * @param   shop  商户实体对象
-     * @return "baidu:{code:0,desc:\"成功\",remark:\"\"}"
+     * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
       public String startBusiness(Shop shop) throws  ScheduleException{
-          String requestStr = GetRequestPars("shop.open", shop);
-          String response =  HttpUtil.post2(Constants.BAIDU_URL, requestStr, Constants.CONTENTTYPE_MULTIPART, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
+          String requestStr = getRequestPars("shop.open", shop);
+          String response =  HttpUtil.post2(Constants.BAIDU_URL, requestStr,null,"utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
           Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
               .registerTypeAdapter(Shop.class,new ShopSerializer())
-              .registerTypeAdapter(Result.class, new ResultSerializer()).disableHtmlEscaping().create();
+              .registerTypeAdapter(Body.class, new BodySerializer()).disableHtmlEscaping().create();
           SysParams sysParams = gson.fromJson(response,SysParams.class);
           //暂不考虑验证返回值中的sign签名合法性
-          Result result = gson.fromJson(sysParams.getBody().toString(),Result.class);
-          return Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(result.getErrno())).toString();
+          Body body = gson.fromJson(sysParams.getBody().toString(),Body.class);
+          return Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(body.getErrno())).toString();
       }
 
     /**
      * 门店歇业
      * @param   shop  商户实体对象
-     * @return "baidu:{code:0,desc:\"成功\",remark:\"\"}"
+     * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
     public String endBusiness(Shop shop) throws  ScheduleException{
-        String requestStr = GetRequestPars("shop.close",shop);
+        String requestStr = getRequestPars("shop.close", shop);
         String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
                                      .registerTypeAdapter(Shop.class, new ShopSerializer())
-                                     .registerTypeAdapter(Result.class, new ResultSerializer()).disableHtmlEscaping().create();
+                                     .registerTypeAdapter(Body.class, new BodySerializer()).disableHtmlEscaping().create();
         SysParams sysParams = gson.fromJson(response,SysParams.class);
         //暂不考虑验证返回值中的sign签名合法性
-        Result result = gson.fromJson(sysParams.getBody().toString(),Result.class);
-        return Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(result.getErrno())).toString();
+        Body body = gson.fromJson(sysParams.getBody().toString(),Body.class);
+        return Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(body.getErrno())).toString();
     }
 
     //endregion
@@ -111,14 +160,14 @@ public class BaiDuApiService  {
      * @return "baidu:{code:0,desc:\"成功\",remark:\"\"}"
      */
     public String online(Dish dish) throws  ScheduleException{
-        String requestStr = GetRequestPars("dish.online",dish);
+        String requestStr = getRequestPars("dish.online", dish);
         String response = HttpUtil.post(Constants.BAIDU_URL,requestStr,Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
                                      .registerTypeAdapter(Dish.class,new DishSerializer())
-                                     .registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
+                                     .registerTypeAdapter(Body.class,new BodySerializer()).disableHtmlEscaping().create();
         SysParams sysParams = gson.fromJson(response,SysParams.class);
-        Result result = gson.fromJson(sysParams.getBody().toString(),Result.class);
-        return Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(result.getErrno())).toString();
+        Body body = gson.fromJson(sysParams.getBody().toString(),Body.class);
+        return Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(body.getErrno())).toString();
     }
 
     /**
@@ -127,28 +176,25 @@ public class BaiDuApiService  {
      * @return "baidu:{code:0,desc:\"成功\",remark:\"\"}"
      */
     public String offline(Dish dish) throws ScheduleException{
-        String requestStr = GetRequestPars("dish.offline",dish);
+        String requestStr = getRequestPars("dish.offline", dish);
         String response = HttpUtil.post(Constants.BAIDU_URL,requestStr,Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
        Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
                                     .registerTypeAdapter(Dish.class, new DishSerializer())
-                                    .registerTypeAdapter(Result.class, new ResultSerializer()).disableHtmlEscaping().create();
+                                    .registerTypeAdapter(Body.class, new BodySerializer()).disableHtmlEscaping().create();
         SysParams sysParams = gson.fromJson(response,SysParams.class);
-        Result result = gson.fromJson(sysParams.getBody().toString(),Result.class);
-        return Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(result.getErrno())).toString();
+        Body body = gson.fromJson(sysParams.getBody().toString(),Body.class);
+        return Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(body.getErrno())).toString();
     }
 
     //endregion
 
 
     //region 订单
-    public SysParams orderGet(Order order) throws  ScheduleException{
-      String requestStr = GetRequestPars("order.get",order);
-        String response = HttpUtil.post(Constants.BAIDU_URL,requestStr,Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
-        Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
-                                     .registerTypeAdapter(Order.class,new OrderSerializer())
-                                     .registerTypeAdapter(Result.class, new ResultSerializer()).disableHtmlEscaping().create();
+    public String orderGet(Order order) throws  ScheduleException{
+        String requestStr = getRequestPars("order.get", order);
+        String response = HttpUtil.post(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
 
-        return gson.fromJson(response,SysParams.class);
+        return response;
     }
 
 
@@ -159,13 +205,13 @@ public class BaiDuApiService  {
      */
     public String orderConfirm(Order order) throws  ScheduleException{
 
-        String requestStr = GetRequestPars("order.confirm",order);
+        String requestStr = getRequestPars("order.confirm", order);
         String response = HttpUtil.post(Constants.BAIDU_URL, requestStr, Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
                                      .registerTypeAdapter(Order.class,new OrderSerializer()).disableHtmlEscaping().create();
         SysParams sysParams = gson.fromJson(response,SysParams.class);
-        Result result = gson.fromJson(sysParams.getBody().toString(),Result.class);
-        return Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(result.getErrno())).toString();
+        Body body = gson.fromJson(sysParams.getBody().toString(),Body.class);
+        return Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(body.getErrno())).toString();
     }
 
     /**
@@ -174,13 +220,13 @@ public class BaiDuApiService  {
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
     public String orderCancel(Order order) throws ScheduleException{
-        String requestStr = GetRequestPars("order.cancel",order);
+        String requestStr = getRequestPars("order.cancel", order);
         String response = HttpUtil.post(Constants.BAIDU_URL,requestStr,Constants.CONTENTTYPE_MULTIPART,"utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class,new SysParamsSerializer())
                                      .registerTypeAdapter(Order.class,new OrderSerializer()).disableHtmlEscaping().create();
         SysParams sysParams = gson.fromJson(response,SysParams.class);
-        Result result = gson.fromJson(sysParams.getBody().toString(),Result.class);
-        return  Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(result.getErrno())).toString();
+        Body body = gson.fromJson(sysParams.getBody().toString(),Body.class);
+        return  Enum.GetEnumDesc(Enum.ReturnCodeBaiDu.R0,Integer.valueOf(body.getErrno())).toString();
     }
     //endregion
 
@@ -244,6 +290,7 @@ public class BaiDuApiService  {
 
         return sb.toString();
     }
+
 
 }
 

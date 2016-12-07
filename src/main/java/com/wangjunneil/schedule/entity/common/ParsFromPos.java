@@ -5,44 +5,44 @@ package com.wangjunneil.schedule.entity.common;
  */
 public class ParsFromPos {
 
-    private String baidu;
+    private ParsFromPosInner baidu;
 
-    private String jdhome;
+    private ParsFromPosInner jdhome;
 
-    private String eleme;
+    private ParsFromPosInner eleme;
 
-    private String meituan;
+    private ParsFromPosInner meituan;
 
-    public void setBaidu(String baidu){
-      this.baidu = baidu;
+    public void setBaidu(ParsFromPosInner baidu){
+        this.baidu = baidu;
     }
 
-    public String getBaidu(){
+    public ParsFromPosInner getBaidu(){
         return this.baidu;
     }
 
-    public void setJdhome(String jdhome){
+    public void setJdhome(ParsFromPosInner jdhome){
 
         this.jdhome = jdhome;
     }
 
-    public String getJdhome(){
+    public ParsFromPosInner getJdhome(){
         return  this.jdhome;
     }
 
-    public void  setEleme(String eleme){
+    public void  setEleme(ParsFromPosInner eleme){
         this.eleme = eleme;
     }
 
-    public String getEleme(){
+    public ParsFromPosInner getEleme(){
         return  this.eleme;
     }
 
-    public void setMeituan(String meituan){
+    public void setMeituan(ParsFromPosInner meituan){
         this.meituan = meituan;
     }
 
-    public String getMeituan(){
+    public ParsFromPosInner getMeituan(){
         return this.meituan;
     }
 }

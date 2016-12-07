@@ -2,7 +2,8 @@ package com.wangjunneil.schedule.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.wangjunneil.schedule.common.ElemaException;
+import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.eleme.*;
 import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
@@ -19,184 +20,173 @@ public class EleMeFacadeService {
     @Autowired
     private EleMeInnerService eleMeInnerService;
 
-//    /**
-//     * 获取订单详情
-//     * @param params
-//     * @return
-//     * @throws ElemaException
-//     */
-//    public String orderDetailPost(OrderRequest params) throws ElemaException {
-//        String requeststr = eleMeApiService.getOrderDetail(params);
-//        requeststr = "{\n" +
-//         "   \"code\":200,\n" +
-//         "   \"data\": {\n"+
-//         "       \"address\":\"Smart Garden 5A\",\n" +
-//         "       \"consignee\":\"张三\",\n" +
-//         "       \"created_at\":\"2013-09-24 12:31:24\",\n" +
-//         "       \"active_at\":\"2013-09-24 12:40:21\",\n" +
-//         "       \"deliver_fee\":20,\n" +
-//         "       \"deliver_time\":\"1970-01-01 08:00:00\",\n" +
-//         "       \"description\":\"\",\n" +
-//         "       \"detail\":{\n" +
-//         "       \"group\":[\n" +
-//         "          [\n" +
-//         "              {\n" +
-//         "                  \"category_id\":1,\n" +
-//         "                  \"name\":\"狗不理\",\n" +
-//         "                  \"price\":100,\n" +
-//         "                  \"garnish\":[],\n" +
-//         "                  \"id\":1541311,\n" +
-//         "                  \"quantity\":1,\n" +
-//         "                  \"tp_food_id\":\"1312312\",\n" +
-//         "                  \"specs\":[\"辣\",\"大份\"]\n" +
-//         "              },\n" +
-//         "              {\n" +
-//         "                  \"category_id\":1,\n" +
-//         "                  \"name\":\"牛肉盖浇饭\",\n" +
-//         "                  \"price\":100,\n" +
-//         "                  \"garnish\":[\n" +
-//         "                        {\n" +
-//         "                            \"category_id\":1,\n" +
-//         "                            \"name\":\"荷包蛋\",\n" +
-//         "                            \"price\":2,\n" +
-//         "                            \"id\":1541313,\n" +
-//         "                            \"quantity\":1,\n" +
-//         "                            \"tp_food_id\":\"1312313\"\n" +
-//         "                         }\n" +
-//         "                  ],\n" +
-//         "                  \"id\":1541312,\n" +
-//         "                  \"quantity\":1,\n"+
-//         "                  \"tp_food_id\":\"1312314\",\n" +
-//         "                  \"specs\":[]\n" +
-//         "              }\n" +
-//         "          ]\n" +
-//         "       ],\n" +
-//         "       \"extra\": [\n" +
-//         "          {\n" +
-//         "              \"description\":\"\",\n" +
-//         "              \"price\":20,\n" +
-//         "              \"name\":\"配送费\",\n" +
-//         "              \"category_id\":2,\n" +
-//         "              \"id\":-10,\n" +
-//         "              \"quantity\":1\n" +
-//         "          }\n" +
-//         "       ],\n" +
-//         "       \"abandoned_extra\":null\n" +
-//         "   },\n" +
-//         "   \"invoice\":\"\",\n" +
-//         "   \"is_book\":0,\n" +
-//         "   \"is_online_paid\":0,\n" +
-//         "   \"order_id\":\"12637645858619059\",\n" +
-//         "   \"phone_list\":[\n" +
-//         "      \"15216709049\"\n" +
-//         "   ],\n" +
-//         "   \"tp_restaurant_id\":\"1231231\",\n" +
-//         "   \"restaurant_id\":72823931,\n" +
-//         "   \"inner_id\":37932,\n" +
-//         "   \"restaurant_name\":\"饿了么体验店\",\n"+
-//         "   \"restaurant_number\":3,\n" +
-//         "   \"status_code\":2,\n" +
-//         "   \"refund_code\":6,\n" +
-//         "   \"total_price\":120,\n" +
-//         "   \"original_price\":120,\n" +
-//         "   \"user_id\":481769,\n" +
-//         "   \"user_name\":\"tester\",\n" +
-//         "   \"delivery_geo\":\"31.2538,121.4185\"\n" +
-//         "   },\n" +
-//         "   \"message\":\"ok\",\n" +
-//         "   \"request_id\":\"115bc4a55e3c4e9eaf3f1a111a3e7271\"\n" +
-//         "}";
-//        requeststr = requeststr.replace("/","\\/");
-//        try {
-//            Gson gson = new GsonBuilder().registerTypeAdapter(Result.class, new ResultSerializer())
-//                .registerTypeAdapter(Order.class, new OrderSerializer())
-//                .registerTypeAdapter(Body.class, new BodySerializer())
-//                .serializeNulls()
-//                .disableHtmlEscaping()
-//                .create();
-//            Result result = gson.fromJson(requeststr, Result.class);
-//            Order order = gson.fromJson(gson.toJson(result.getData()).toString(), Order.class);
-//        }catch (Exception ex) {
-//            throw new ElemaException("",ex);
-//        }
-//        return "";
-//    }
+    private Gson gson;
 
-    /**
-     * 获取食物详情
-     * @param params
-     * @return
-     * @throws ElemaException
-     */
-    public String foodsDetailPost(String params) throws ElemaException {
-        String requeststr = "{\n" +
-              "      \"code\":200,\n" +
-              "      \"data\":{\n" +
-              "      \"food\":{\n" +
-              "          \"description\":\" \",\n" +
-              "              \"food_id\":1000,\n" +
-              "              \"name\":\"猪肉饭\",\n" +
-              "              \"is_valid\":1,\n" +
-              "              \"recent_popularity\":2,\n" +
-              "              \"restaurant_id\":11,\n" +
-              "              \"food_category_id\":389337,\n" +
-              "              \"restaurant_name\":\"麦当劳\",\n" +
-              "              \"on_shelf\": 1,\n" +
-              "              \"image_url\":\"http://www.ele.me/demo.jpg\",\n" +
-              "              \"labels\":{\n" +
-              "              \"is_featured\":0,\n" +
-              "                  \"is_gum\":0,\n" +
-              "                  \"is_new\":0,\n" +
-              "                  \"is_spicy\":0\n" +
-              "          },\n" +
-              "          \"specs\":[\n" +
-              "          {\n" +
-              "              \"spec_id\":18473393,\n" +
-              "              \"name\":\"大份\",\n" +
-              "              \"price\":19.9,\n" +
-              "              \"stock\":1000,\n" +
-              "              \"max_stock\":100000,\n" +
-              "              \"packing_fee\":1,\n" +
-              "              \"tp_food_id\": \"1294739dhdjdsk\",\n" +
-              "              \"on_shelf\": 1\n" +
-              "          },\n" +
-              "          {\n" +
-              "              \"spec_id\":18473393,\n" +
-              "              \"name\":\"小份\",\n" +
-              "              \"price\":19.9,\n" +
-              "              \"stock\":1000,\n" +
-              "              \"max_stock\":100000,\n" +
-              "              \"packing_fee\":1,\n" +
-              "              \"tp_food_id\": \"1297398dhdjdsk\",\n" +
-              "              \"on_shelf\": 1\n" +
-              "          }\n" +
-              "          ]\n" +
-              "      }\n" +
-              "  },\n" +
-              "  \"message\":\"ok\",\n" +
-              "      \"request_id\":\"115bc4a55e3c4e9eaf3f1a111a3e7271\"\n" +
-              "  }";
-        requeststr.replace("/","\\/");
-        try {
-            Gson gson = new GsonBuilder().registerTypeAdapter(Result.class, new ResultSerializer())
-                .registerTypeAdapter(Foods.class, new FoodsSerializer())
-                .registerTypeAdapter(Labels.class, new LabelsSerializer())
-                .registerTypeAdapter(Specs.class, new SpecsSerializer())
+    private Gson getGson(){
+
+        if (gson == null){
+            gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
                 .registerTypeAdapter(Body.class, new BodySerializer())
+                .registerTypeAdapter(Order.class, new OrderSerializer())
+                .registerTypeAdapter(Result.class,new ResultSerializer())
                 .serializeNulls()
                 .disableHtmlEscaping()
                 .create();
-            Result result = gson.fromJson(requeststr, Result.class);
-            Body body = gson.fromJson(gson.toJson(result.getData()).toString(), Body.class);
-            System.out.println(body.getFood().getName());
-        }catch (Exception ex) {
-            throw new ElemaException("",ex);
         }
-        return "";
+        return gson;
     }
 
-//    public static void main(String[] arg) throws ElemaException {
-//        EleMeFacadeService eleMeFacadeService = new EleMeFacadeService();
-//        eleMeFacadeService.getShop("2063064");
-//    }
+    //门店开关店
+    public String setRestaurantStatus(String elemeShopId,int status){
+        String result = null;
+        Result rtn = new Result();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new ResultSerializer()).disableHtmlEscaping().create();
+        try {
+            RestaurantRequest restaurantRequest = new RestaurantRequest();
+            restaurantRequest.setRestaurant_id(elemeShopId);
+            restaurantRequest.setIs_open(status);
+            result = eleMeApiService.setRestaurantStatus(restaurantRequest);
+            rtn = gson1.fromJson(result, Result.class);
+        } catch (ScheduleException e) {
+            rtn.setCode(-999);
+            rtn.setMessage("发生异常");
+        }
+        result = gson1.toJson(rtn);
+        return  result;
+    }
+
+    //拉取新订单
+    public String pullNewOrder(String elemeShopId){
+        String result = null;
+        Result rtn = new Result();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new ResultSerializer()).disableHtmlEscaping().create();
+        try {
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setRestaurant_id(elemeShopId);
+            result = eleMeApiService.pullNewOrder(orderRequest);
+            rtn = gson1.fromJson(result, Result.class);
+        } catch (ScheduleException e) {
+            rtn.setCode(-999);
+            rtn.setMessage("发生异常");
+        }
+        result = gson1.toJson(rtn);
+        return  result;
+    }
+
+    //订单状态修改
+    public String upOrderStatus(String elemeOrderId, int status){
+        String result = null;
+        Result rtn = new Result();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new ResultSerializer()).disableHtmlEscaping().create();
+        try {
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setEleme_order_id(elemeOrderId);
+            orderRequest.setStatus(status);
+            result = eleMeApiService.upOrderStatus(orderRequest);
+            rtn = gson1.fromJson(result, Result.class);
+        } catch (ScheduleException e) {
+            rtn.setCode(-999);
+            rtn.setMessage("发生异常");
+        }
+        result = gson1.toJson(rtn);
+        return  result;
+    }
+
+    //商品上下架
+    public String uporDownFrame(String elemeFoodId ,int status){
+        String result = null;
+        Result rtn = new Result();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new ResultSerializer()).disableHtmlEscaping().create();
+        try {
+            OldFoodsRequest orderRequest = new OldFoodsRequest();
+            orderRequest.setFood_id(elemeFoodId);
+            orderRequest.setStock(status);
+            result = eleMeApiService.uporDownFrame(orderRequest);
+            rtn = gson1.fromJson(result, Result.class);
+        } catch (ScheduleException e) {
+            rtn.setCode(-999);
+            rtn.setMessage("发生异常");
+        }
+        result = gson1.toJson(rtn);
+        return  result;
+    }
+
+    //添加食品
+    public String addFoods(OldFoodsRequest obj){
+        String result = null;
+        Result rtn = new Result();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new ResultSerializer()).disableHtmlEscaping().create();
+        try {
+            OldFoodsRequest orderRequest = new OldFoodsRequest();
+//            orderRequest.setFood_id(obj.getFood_category_id());
+//            orderRequest.setName(obj.getName());
+//            orderRequest.setPrice(obj.getPrice());
+//            orderRequest.setDescription(obj.getDescription());
+//            orderRequest.setMax_stock(obj.getMax_stock());
+//            orderRequest.setStock(obj.getStock());
+            result = eleMeApiService.addFoods(obj);
+            rtn = gson1.fromJson(result,Result.class);
+        } catch (ScheduleException e) {
+            rtn.setCode(-999);
+            rtn.setMessage("发生异常");
+        }
+        result = gson1.toJson(rtn);
+        return  result;
+    }
+
+    //查询餐厅菜单
+    public String restaurantMenu(){
+        String result = null;
+        Result rtn = new Result();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new ResultSerializer()).disableHtmlEscaping().create();
+        try {
+            result = eleMeApiService.restaurantMenu();
+            rtn = gson1.fromJson(result, Result.class);
+        } catch (ScheduleException e) {
+            rtn.setCode(-999);
+            rtn.setMessage("发生异常");
+        }
+        result = gson1.toJson(rtn);
+        return  result;
+    }
+
+    //更新食物
+    public String uporDownFrame(OldFoodsRequest obj){
+        String result = null;
+        Result rtn = new Result();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new ResultSerializer()).disableHtmlEscaping().create();
+        try {
+            obj.getFood_id();
+            obj.getPrice();
+            result = eleMeApiService.uporDownFrame(obj);
+            rtn = gson1.fromJson(result,Result.class);
+        } catch (ScheduleException e) {
+            rtn.setCode(-999);
+            rtn.setMessage("发生异常");
+        }
+        result = gson1.toJson(rtn);
+        return  result;
+    }
+
+    //新订单接收
+    public String getNewOrder(String eleme_order_ids){
+
+        return null;
+    }
+    //订单状态变更接收   new_status：订单状态
+    public String orderChange(String eleme_order_ids,int new_status){
+
+        return null;
+    }
+    //退单状态接收  refund_status:退单订单状态
+    public String chargeBack(String eleme_order_ids,int refund_status){
+
+        return  null;
+    }
+    //订单配送状态接收
+    public String distributionStatus(String eleme_order_ids,int status_code,int sub_status_code){
+
+        return  null;
+    }
+
 }

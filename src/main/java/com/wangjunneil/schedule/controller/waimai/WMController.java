@@ -2,13 +2,16 @@ package com.wangjunneil.schedule.controller.waimai;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sun.org.apache.bcel.internal.generic.SWITCH;
+import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.common.EnumDescription;
 import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.entity.common.FlowNum;
+import com.wangjunneil.schedule.entity.common.ParsFromPos;
 import com.wangjunneil.schedule.service.WMFacadeService;
+import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -35,30 +39,41 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+
 /**
  * Created by yangwanbin on 2016-11-14.
  */
 @Controller
+@MultipartConfig
 @RequestMapping("/waimai")
 public class WMController {
 
     @Autowired
     private WMFacadeService wmFacadeService;
 
-    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan"})
+    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842","/jdhome/72171"})
     public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
-        String result = "",platform = null;
+        String result = "",platform,requestUrl,sid = null;
         Map<String,String[]> stringMap;
         response.setContentType("application/json;charset=uft-8");
-        switch (request.getPathInfo().toLowerCase()){
+        requestUrl =    request.getPathInfo().toLowerCase();
+        if(requestUrl.indexOf("/jdhome/")> 0){
+            sid = requestUrl.split("\\/").length>2?requestUrl.split("\\/")[2]:null;
+            requestUrl = "/waimai/jdhome";
+        }
+        switch (requestUrl){
             case "/waimai/baidu":  //百度
                 platform = Constants.PLATFORM_WAIMAI_BAIDU;
-                stringMap = request.getParameterMap();
+                stringMap = request.getParameterMap();//?Content-Type: multipart/form-data 无法取值
                 break;
             case "/waimai/jdhome": //京东到家
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 stringMap = request.getParameterMap();
+                String[] strArr = {sid};
+                stringMap.put("sid",strArr);
                 break;
             case "/waimai/eleme":  //饿了么
                 platform = Constants.PLATFORM_WAIMAI_ELEME;
@@ -69,10 +84,12 @@ public class WMController {
                 stringMap = request.getParameterMap();
                 break;
             default:
+                platform = null;
                 stringMap = new HashMap<String,String[]>();
                 break;
         }
-        out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
+        //out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
+        System.out.print(wmFacadeService.appReceiveCallBack(stringMap,platform));
         return  null;
     }
 //region 商户
@@ -81,14 +98,15 @@ public class WMController {
      * 门店开业
      *
      * @param out   响应输出流对象
-     * @param request 请求对象 ｛baidu:{shopId:"",platformId:""},jdhome:{},meituan:{},eleme:{}｝
+     * @param request 请求对象 ｛baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}｝
      * @param response  浏览器响应对象
-     * @return
+     * @return {code:0,desc:"success",dynamic:"",logId:""}
      */
-    @RequestMapping(value = "/startBusiness.php", method = RequestMethod.GET)
-    public String startBusiness( PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws ScheduleException {
+    @RequestMapping(value = "/startBusiness.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
+    @ResponseBody
+    public String startBusiness(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws ScheduleException {
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.startBusiness(request.getParameterMap()));
+        out.println(wmFacadeService.startBusiness(parsFromPos));
      return  null;
     }
 
@@ -122,24 +140,11 @@ public class WMController {
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/online", method = RequestMethod.POST)
-    public String online( PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    @RequestMapping(value = "/online", method = RequestMethod.POST,consumes="application/json;charset=utf-8" )
+    @ResponseBody
+    public String online(@RequestBody ParsFromPos parsFromPos, PrintWriter out, HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         response.setContentType("application/json;charset=uft-8");
-        try {
-            StringBuffer sb = new StringBuffer();
-            InputStream is = request.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String s = "";
-            while ((s = br.readLine()) != null) {
-                sb.append(s);
-            }
-            String str = sb.toString();
-            //out.println(wmFacadeService.online(request.getParameterMap()));
-            out.println(str);
-        }catch (Exception ex){
 
-        }
         return  null;
     }
 
@@ -169,23 +174,25 @@ public class WMController {
      * @param response  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/new","/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/new","/jdhome/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
     public String orderPost(PrintWriter out, HttpServletRequest request,HttpServletResponse response) {
-
+        String result = null;
         String platform = null;
         switch (request.getPathInfo().toLowerCase()){
             case "/waimai/baidu/order/new": //百度
                 platform = Constants.PLATFORM_WAIMAI_BAIDU;
                 response.setContentType("text/html; charset=utf-8");
                 break;
-            case  "/waimai/djsw/neworder": //京东到家
+            case  "/waimai/jdhome/djsw/neworder": //京东到家
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             default:
                 break;
         }
         if (!StringUtil.isEmpty(platform))
-        out.println(wmFacadeService.orderPost(request.getParameterMap(),platform));
+            result = wmFacadeService.orderPost(request.getParameterMap(), platform);
+        out.println(result);
+        System.out.println("推送订单\r\n" + result + "\r\n");
         return  null;
     }
 
@@ -280,13 +287,36 @@ public class WMController {
             "}";
 
         String flowNum = "{\"date\":\"20161128\",\"moudle\":\"order\",\"flowNum\":2000}";//实例请求参数
-        out.println(HttpUtil.post2("http://127.0.0.1:9001/mark/waimai/test2", "cmd=232323","multipart/form-data","utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU));//运行方法，这里输出：
+        out.println(HttpUtil.post2("http://127.0.0.1:9001/mark/waimai/test2?dd=2323", "cmd=232323","multipart/form-data","utf-8",null,null,Constants.PLATFORM_WAIMAI_BAIDU));//运行方法，这里输出：
         return null;
     }
 
     @RequestMapping(value = "/test2",method = RequestMethod.POST)
     public String test2(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
+        try {
+            StringBuffer sb = new StringBuffer();
+            InputStream is = request.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String s = "";
+            while ((s = br.readLine()) != null) {
+                sb.append(s);
+            }
+            String str = sb.toString();
+            //out.println(wmFacadeService.online(request.getParameterMap()));
+            out.println(str);
+        }catch (Exception ex){
 
+        }
+//        HttpServletRequest httpRequest = (HttpServletRequest)request;
+//        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(httpRequest.getSession().getServletContext());
+//        MultipartHttpServletRequest multipartRequest = commonsMultipartResolver.resolveMultipart(httpRequest);
+        return null;
+    }
+
+    @RequestMapping(value = "/baidu/getSupplier",method = RequestMethod.GET)
+    public String getSupplierList(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        out.println(wmFacadeService.getSupplier());
         return null;
     }
 }

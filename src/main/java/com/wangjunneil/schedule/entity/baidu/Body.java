@@ -1,69 +1,37 @@
 package com.wangjunneil.schedule.entity.baidu;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import javax.jws.soap.SOAPBinding;
-import java.net.PortUnreachableException;
-import java.util.List;
-
 /**
- * Created by yangwanbin on 2016-11-17.
+ * Created by yangwanbin on 2016-11-15.
  */
-@Document(collection = "sync.baidu.order")
 public class Body {
-    //shop
-    private Shop shop;
 
-    //order
-    private Order order;
+    private String errno;
 
-    //user
-    private User user;
+    private String error;
 
-    //products
-    private List<Products> products;
+    private Object data;
 
-    //discount
-    private List<Discount> discount;
-
-    public void setShop(Shop shop){
-        this.shop = shop;
+    public void setErrno(String errno){
+        this.errno = errno;
     }
 
-    public Shop getShop(){
-        return this.shop;
+    public String getErrno(){
+        return this.errno;
     }
 
-    public void setOrder(Order order){
-        this.order = order;
+    public String getError(){
+        return this.error;
     }
 
-    public Order getOrder(){
-        return this.order;
+    public  void setError(String error){
+        this.error = error;
     }
 
-    public void setUser(User user){
-        this.user = user;
+    public  void setData(Object data){
+        this.data = data;
     }
 
-    public  User getUser(){
-        return this.user;
-    }
-
-    public void setProducts(List<Products> products){
-        this.products = products;
-    }
-
-    public List<Products> getProducts(){
-        return this.products;
-    }
-
-    public void setDiscount(List<Discount> discount){
-        this.discount = discount;
-    }
-
-    public List<Discount> getDiscount(){
-        return this.discount;
+    public Object getData(){
+        return this.data;
     }
 }
-
