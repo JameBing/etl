@@ -2,6 +2,11 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
+import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
+import com.wangjunneil.schedule.common.MeiTuanException;
+import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.meituan.*;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.mt.*;
@@ -38,14 +43,15 @@ public class MeiTuanFacadeService {
      * 门店开业
      * @parama app_poi_code - APP方门店id
      */
-    public String openShop(String code) {
+    public String openShop(String code)throws ScheduleException
+    {
         try {
             ShopRequest shopRequest = new ShopRequest();
             shopRequest.setApp_poi_code(code);
-            String json = mtApiService.openShop(shopRequest);
+            String json = mtApiService.openShop(code);
             return json;
         }catch (Exception ex){
-            return "";
+            throw new ScheduleException("meituan",ex.getClass().getName(),"",code,new Throwable().getStackTrace());
         }
     }
 
@@ -56,50 +62,112 @@ public class MeiTuanFacadeService {
     public String closeShop(String code)
     {
         try {
-            ShopRequest shopRequest = new ShopRequest();
-            shopRequest.setApp_poi_code(code);
-            String json = mtApiService.closeShop(shopRequest);
+            String json = mtApiService.poiClose(code);
             return json;
         }catch (Exception ex){
-            return "";
+           return "";
         }
     }
 
     //endregion
 
 
+    //region 菜品类接口
+
+    /**
+     * 商品上架
+     * @parama
+     */
+    public String upFrame(String appPoiCode,String foodCode)throws ScheduleException
+    {
+        try {
+            String json = mtApiService.upFrame(appPoiCode,foodCode);
+            return json;
+        }catch (Exception ex){
+            throw new ScheduleException("meituan",ex.getClass().getName(),"",foodCode,new Throwable().getStackTrace());
+        }
+    }
+
+
+    /**
+     * 商品下架
+     * @parama
+     */
+    public String downFrame(String appPoiCode,String foodCode)throws ScheduleException
+    {
+        try {
+            String json = mtApiService.downFrame(appPoiCode, foodCode);
+            return json;
+        }catch (Exception ex){
+            throw new ScheduleException("meituan",ex.getClass().getName(),"",foodCode,new Throwable().getStackTrace());
+        }
+    }
+
+
+    /**
+     * 创建菜品
+     * @parama app_poi_code - APP方门店id
+     */
+    public String createFood(FoodParam foodParam)throws ScheduleException
+    {
+        try {
+            String json = mtApiService.foodCreate(foodParam);
+            return json;
+        }catch (Exception ex){
+            throw new ScheduleException("meituan",ex.getClass().getName(),"",foodParam.getApp_food_code(),new Throwable().getStackTrace());
+        }
+    }
+
+    /**
+     * 查询所有菜品
+     *
+     */
+    public FoodParam foodList(String appPoiCode, String foodCode) throws Exception {
+        FoodParam foodParam = mtApiService.foodList(appPoiCode,foodCode);
+        return foodParam;
+    }
+
+    //endregion
+
 
     //region 订单相关
-
 
     /**
      * 商家确认订单
      * @param orderid - 订单id
      */
-    public String getConfirmOrder(String orderid) throws ScheduleException {
+    public String getConfirmOrder(long orderid)throws ScheduleException {
         try {
-            OrderRequest orderRequest = new OrderRequest();
-            orderRequest.setOrder_id(orderid);
-            String json = mtApiService.getConfirmOrder(orderRequest);
+            String json = mtApiService.getConfirmOrder(orderid);
             return json;
         }catch (Exception e){
-            return "";
+            throw new ScheduleException("meituan",e.getClass().getName(),"","",new Throwable().getStackTrace());
         }
     }
 
 
     /**
      * 商家取消订单
-     * @param orderId - 订单id
+     * @param orderid - 订单id
      */
-    public String getCancelOrder(String orderId,String reason,String reasonCode) throws ScheduleException
+    public String getCancelOrder(long orderid,String reason,String reason_code)throws ScheduleException
     {
         try {
-            OrderRequest orderRequest = new OrderRequest();
-            orderRequest.setOrder_id(orderId);
-            orderRequest.setReason(reason);
-            orderRequest.setReason_code(reasonCode);
-            String json = mtApiService.getCancelOrder(orderRequest);
+            String json = mtApiService.getCancelOrder(orderid,reason,reason_code);
+            return json;
+        }catch (Exception e)
+        {
+            throw new ScheduleException("meituan",e.getClass().getName(),"","",new Throwable().getStackTrace());
+        }
+    }
+
+    /*
+     * @param orderId - 订单id
+     */
+    public String getCancelOrder(Long orderId,String reason,String reasonCode) throws ScheduleException
+    {
+        try {
+            String json = mtApiService.getCancelOrder(orderId,reason,reasonCode);
             return json;
         }catch (Exception e) {
             return "";
@@ -110,16 +178,12 @@ public class MeiTuanFacadeService {
      * 上下架
      * @return
      */
-    public String setFrame(String app_poi_code,List<FoodData> data) {
+    public OrderDetailParam newOrder(long orderId)throws ScheduleException {
         try {
-            FoodRequest foodRequest = new FoodRequest();
-            foodRequest.setApp_poi_code(app_poi_code);
-            foodRequest.setFood_data(data);
-            String json = mtApiService.setFrame(foodRequest);
+            OrderDetailParam json = mtApiService.getOrderDetail(orderId);
             return json;
-        } catch (ScheduleException e) {
-            e.printStackTrace();
-            return "";
+        } catch (Exception e) {
+            throw new ScheduleException("meituan", e.getClass().getName(), "", "", new Throwable().getStackTrace());
         }
     }
 
@@ -297,6 +361,8 @@ public class MeiTuanFacadeService {
 //        mtInnerService.insertAllOrder(orderInfo);
 //        return null;
 //    }
+
+
 
 
 //endregion

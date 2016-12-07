@@ -131,7 +131,6 @@ public final class HttpUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return sb.toString();
     }
 
