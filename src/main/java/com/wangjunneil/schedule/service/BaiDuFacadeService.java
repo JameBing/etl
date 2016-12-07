@@ -3,10 +3,13 @@ package com.wangjunneil.schedule.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.*;
+import com.google.gson.annotations.Expose;
+import com.wangjunneil.schedule.common.BaiDuException;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.*;
+import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.DoubleSummaryStatistics;
+import java.util.function.Function;
 
 /**
  * Created by yangwanbin on 2016-11-17.
@@ -75,6 +79,7 @@ public class BaiDuFacadeService {
         return gson;
     }
 
+
     //获取供应商
     public String getSupplier(){
         String result = null;
@@ -93,12 +98,21 @@ public class BaiDuFacadeService {
             rtn.setRemark(getGson().toJson(baiDuApiService.getSupplierList()));
             rtn.setCode(0);
             rtn.setDesc("success");
-        }catch (Exception ex){
+        }
+        //ApiService & InnerService Exception   -999
+        catch (BaiDuException ex){
+            rtn.setCode(-997);
+        }
+        catch (ScheduleException ex){
             rtn.setCode(-999);
             rtn.setDesc("error");
             rtn.setRemark("发生异常");
             rtn.setLogId("");
             //异常日志
+        }
+        //FacadeService Exception -998
+        catch (Exception ex){
+          rtn.setCode(-998);
         }
         result = gson1.toJson(rtn);
         return result;
@@ -108,22 +122,23 @@ public class BaiDuFacadeService {
     public String shopCreate(JsonObject jsonBody) {
             String result = null;
             Rtn rtn = new Rtn();
-            try {
-                rtn  = getGson().fromJson( baiDuApiService.shopCreate(jsonBody),Rtn.class);
-            }
-            catch (Exception ex){
-                rtn.setDynamic("");
-                rtn.setCode(-999);
-                rtn.setDesc("发生异常");
-                rtn.setLogId("");
-                //异常日志
+                try {
+                    rtn  = getGson().fromJson( baiDuApiService.shopCreate(jsonBody),Rtn.class);
+                }
+                catch (Exception ex){
+                    rtn.setDynamic("");
+                    rtn.setCode(-999);
+                    rtn.setDesc("发生异常");
+                    rtn.setLogId("");
+                    //异常日志
         }
         return getGson().toJson(rtn);
     }
     //门店开业
     public String shopOpen(String baiduShopId,String shopId){
-        String result = null;
+        String result = "";
         Rtn rtn = new Rtn();
+        Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
             Shop shop = new Shop();
@@ -132,15 +147,33 @@ public class BaiDuFacadeService {
             result =  baiDuApiService.shopOpen(shop);
             rtn = gson1.fromJson(result,Rtn.class);
             rtn.setDynamic(shopId);
-        }catch (Exception ex) {
-            rtn.setDynamic(shopId);
+        }catch (BaiDuException ex){
+            rtn.setCode(-997);
+             log = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex){
             rtn.setCode(-999);
-            rtn.setDesc("发生异常");
-            rtn.setLogId("");
-            //异常日志
+             log = sysFacadeService.functionRtn.apply(ex);
         }
-        result = gson1.toJson(rtn);
-        return  result;
+        catch (Exception ex) {
+            sysFacadeService.functionRtn.apply(ex);
+            rtn.setCode(-998);
+        }
+        finally {
+            //有异常产生
+            if (log !=null){
+                log.setLogId(shopId.concat(log.getLogId()));
+                log.setTitle(MessageFormat.format("门店{0}开业失败", shopId));
+                if (StringUtil.isEmpty(log.getRequest()))
+                    log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"baidu_shop_id\":{1}", shopId, baiduShopId)).concat("}"));
+                sysFacadeService.updSynLog(log);
+                rtn.setDynamic(shopId);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log.getLogId());
+                rtn.setRemark(MessageFormat.format("门店{0}开业失败！",shopId));
+            }
+            result = gson1.toJson(rtn);
+            return  result;
+        }
     }
 
     //门店歇业
@@ -149,6 +182,7 @@ public class BaiDuFacadeService {
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
+
             Shop shop = new Shop();
             shop.setShopId(shopId);
             shop.setBaiduShopId(baiduShopId);

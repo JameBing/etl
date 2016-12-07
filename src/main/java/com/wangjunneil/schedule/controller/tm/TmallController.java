@@ -227,6 +227,26 @@ public class TmallController {
         return null;
     }
 
+    /**
+     * 单条手工补单
+     * @param out
+     * @param req
+     * @return
+     * @throws ScheduleException
+     */
+    @RequestMapping(value = "/fixOrderById.php")
+    public String fixOrderById(PrintWriter out, HttpServletRequest req) throws ScheduleException {
+        String tid          = req.getParameter("tid");
+
+        Cfg cfg = sysFacadeService.findTmCfg();
+        tmallFacadeService.syncOrderById(cfg, Long.parseLong(tid));
+        String returnJson = "{\"status\":1,\"message\":\"手工补单成功\"}";
+
+        out.println(returnJson);
+        out.close();
+        return null;
+    }
+
 
     /**
      * 提供日期范围内查询订单方法：本地拉订单数据使用

@@ -1,4 +1,4 @@
-package com.wangjunneil.schedule.entity.mt;
+package com.wangjunneil.schedule.entity.meituan;
 
 /**
  * @author liuxin

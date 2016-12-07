@@ -1,11 +1,9 @@
 package com.wangjunneil.schedule.controller.jdhome;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.wangjunneil.schedule.entity.common.ParsFromPos;
+import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
-import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.shopCategory;
 import com.wangjunneil.schedule.service.JdHomeFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
@@ -17,10 +15,8 @@ import o2o.openplatform.sdk.util.SignUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -175,7 +171,6 @@ public class JdHomeController {
         return null;
     }
 
-
     public static void main(String[] args) throws Exception{
 
         /**
@@ -205,7 +200,7 @@ public class JdHomeController {
         param.put("v","1.0");
         //param.put("jd_param_json","{\"pageNo\":\"1\",\"pageSize\":\"100\",\"beginOrderStartTime\":\"2015-09-29 00:00:00\",\"endOrderStartTime\":\"2015-09-29 23:59:59\", \"orderStatus\":\"90000\"}");
 
-        String result = HttpsUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
+        String result = HttpsUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
         System.out.println(result);
     }
 }

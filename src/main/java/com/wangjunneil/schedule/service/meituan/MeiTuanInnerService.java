@@ -1,6 +1,6 @@
 package com.wangjunneil.schedule.service.meituan;
 
-import com.wangjunneil.schedule.entity.mt.OrderInfo;
+import com.wangjunneil.schedule.entity.meituan.OrderInfo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;

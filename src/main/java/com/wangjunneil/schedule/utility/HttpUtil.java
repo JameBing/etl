@@ -1,8 +1,7 @@
 package com.wangjunneil.schedule.utility;
 
 import com.sun.org.apache.bcel.internal.generic.BREAKPOINT;
-import com.wangjunneil.schedule.common.Constants;
-import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.common.*;
 import org.eclipse.jetty.http.HttpMethod;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -132,7 +131,6 @@ public final class HttpUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return sb.toString();
     }
 
@@ -251,25 +249,6 @@ public final class HttpUtil {
             con.setConnectTimeout(timeout);
             con.setReadTimeout(readTimeout);
             con.connect();
-//            switch (contentType.toLowerCase()){
-//                case "multipart/form-data":
-//                    BufferedOutputStream out = new BufferedOutputStream(con.getOutputStream());
-//                    StringBuilder sb = new StringBuilder();
-//                    out.write(pars.getBytes());
-//                    break;
-//                case "application/x-www-form-urlencoded":
-//                    DataOutputStream dos=new DataOutputStream(con.getOutputStream());
-//                    dos.writeBytes(param[0]);
-//                    dos.flush();
-//                    dos.close();
-//                    break;
-//                case "application/json":
-//
-//                    //待实现
-//                    break;
-//                default:
-//                    break;
-//            }
 
             DataOutputStream dos=new DataOutputStream(con.getOutputStream());
             dos.writeBytes(pars);
@@ -288,26 +267,12 @@ public final class HttpUtil {
             br.close();
             return sb.toString();
             }else {
-                throw new ScheduleException(platform, "ScheduleException",MessageFormat.format("http error:{0}", String.valueOf(responseCode)),pars,new Throwable().getStackTrace());
-//              switch (platform){
-//                  case Constants.PLATFORM_WAIMAI_BAIDU:
-//
-//                      break;
-//                  case Constants.PLATFORM_WAIMAI_JDHOME:
-//                      break;
-//                  case Constants.PLATFORM_WAIMAI_ELEME:
-//                      break;
-//                  case Constants.PLATFORM_WAIMAI_MEITUAN:
-//                      break;
-//                  default:
-//                      break;
-//              }
+            throw new ScheduleException(platform);
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
-            throw new ScheduleException(platform, "MalformedURLException",e.getMessage(),pars,e.getStackTrace());
+            throw new ScheduleException(e.getMessage());
         } catch (IOException e) {
-            throw new ScheduleException(platform, "IOException",e.getMessage(),pars,e.getStackTrace());
+            throw new ScheduleException(e.getMessage());
         }
     }
 

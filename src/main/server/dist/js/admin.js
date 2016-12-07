@@ -616,7 +616,7 @@ adminLteApp.controller('JdPartyCtrl', function ($scope, $http) {
 });
 
 
-adminLteApp.controller('TmallOrderCtrl', function ($scope, $http) {
+adminLteApp.controller('TmallOrderCtrl', function ($scope, $http,$timeout) {
 
     $scope.selected = {status:'所有状态',value:''};
     $scope.orderStatus = [
@@ -686,6 +686,7 @@ adminLteApp.controller('TmallOrderCtrl', function ($scope, $http) {
                 if(result.pageDataList.length == 0){
                     $scope.status = true;
                     $scope.msg = 'no order data!';
+                    $timeout(function(){$scope.status = null;}, 3000);
 
                     $scope.currentPage = 1;
                     $scope.totalSize = 0;
@@ -725,6 +726,7 @@ adminLteApp.controller('TmallOrderCtrl', function ($scope, $http) {
                 $scope.overlayStatus = false;
                 $scope.status = true;
                 $scope.msg = 'Request processing failed!';
+                $timeout(function(){$scope.status = null;}, 3000);
             });
     }
 
@@ -783,6 +785,21 @@ adminLteApp.controller('TmallOrderCtrl', function ($scope, $http) {
         }
         $scope.currentPage = parseInt(1);//当前页
         $scope.getListByPage();
+    }
+
+    $scope.fixOrderById = function(tid){
+        $http({ method : "POST", url : '/mark/tmall/fixOrderById.php', params : {tid:tid}})
+            .success(function(data){
+                console.log(data);
+                $scope.status = true;
+                $scope.msg = data.message;
+                $timeout(function(){$scope.status = null;}, 3000);
+            })
+            .error(function(data) {
+                $scope.status = true;
+                $scope.msg = '手工补单失败!';
+                $timeout(function(){$scope.status = null;}, 3000);
+            });
     }
 
 });
