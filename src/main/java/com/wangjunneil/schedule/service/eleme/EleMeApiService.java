@@ -11,6 +11,9 @@ import com.wangjunneil.schedule.utility.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.beans.IntrospectionException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Map;
 
@@ -55,11 +58,11 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String setRestaurantStatus(RestaurantRequest obj) throws ScheduleException,ElemeException {
-        String pathURL = MessageFormat.format(URL.URL_ELEME_RESTAURANT_ON, obj.getRestaurant_id().toString());
-        obj.setRestaurant_id("");
-        String url = getSystemUrl(pathURL, obj);
-        return HttpUtil.put(url, StringUtil.getUrlParamsByObject(obj));
+    public String setRestaurantStatus(RestaurantRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+           String pathURL = MessageFormat.format(URL.URL_ELEME_RESTAURANT_ON, obj.getRestaurant_id().toString());
+           obj.setRestaurant_id("");
+           String url = getSystemUrl(pathURL, obj);
+           return HttpUtil.put(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
     }
 
     /**
@@ -68,9 +71,9 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String addFoods(OldFoodsRequest obj) throws ScheduleException,ElemeException {
+    public String addFoods(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String url = getSystemUrl(URL.URL_ELEME_ADD_FOODS, obj);
-        return HttpUtil.post(url, StringUtil.getUrlParamsByObject(obj));
+        return HttpUtil.post(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
     }
 
     /**
@@ -79,9 +82,9 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String pullNewOrder(OrderRequest obj) throws ScheduleException,ElemeException{
+    public String pullNewOrder(OrderRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException{
         String url = getSystemUrl(URL.URL_ELEME_PULL_NEW_ORDER, obj);
-        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByObject(obj));
+        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
         return HttpUtil.get2(requstUrl);
     }
 
@@ -91,11 +94,11 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String upFoods(OldFoodsRequest obj)throws ScheduleException,ElemeException{
+    public String upFoods(OldFoodsRequest obj)throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException{
         String pathURL = MessageFormat.format(URL.URL_ELEME_UPORDOWNFRAME_FOODS, obj.getFood_id().toString());
         obj.setFood_id("");
         String url = getSystemUrl(pathURL, obj);
-        return HttpUtil.put(url, StringUtil.getUrlParamsByObject(obj));
+        return HttpUtil.put(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
     }
 
     /**
@@ -127,7 +130,6 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-
     public String orderDetail(String orderId)throws ScheduleException,ElemeException{
         String pathURL = MessageFormat.format(URL.URL_ELEME_ORDER_DETAIL, orderId);
         String url = getSystemUrl(pathURL, null);
@@ -140,11 +142,11 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String upOrderStatus(OrderRequest obj) throws ScheduleException,ElemeException {
+    public String upOrderStatus(OrderRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String pathURL = MessageFormat.format(URL.URL_ELEME_ORDER_STATUS, obj.getEleme_order_id().toString());
         obj.setEleme_order_id("");
         String url = getSystemUrl(pathURL, obj);
-        return HttpUtil.put(url, StringUtil.getUrlParamsByObject(obj));
+        return HttpUtil.put(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
     }
 
     /**
@@ -165,9 +167,9 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String getFoodId(OldFoodsRequest obj) throws ScheduleException,ElemeException {
+    public String getFoodId(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String url = getSystemUrl(URL.URL_ELEME_TP_FOOD_ID, obj);
-        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByObject(obj));
+        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
         return HttpUtil.get2(requstUrl);
     }
 
@@ -177,9 +179,9 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String upBatchFrame(OldFoodsRequest obj) throws ScheduleException,ElemeException {
+    public String upBatchFrame(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String url = getSystemUrl(URL.URL_ELEME_UPORDOWNFRAME_FOODS_LIST, obj);
-        return HttpUtil.put(url, StringUtil.getUrlParamsByObject(obj));
+        return HttpUtil.put(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
     }
 
     /**
@@ -188,9 +190,9 @@ public class EleMeApiService {
      * @return
      * @throws ScheduleException
      */
-    public String delectAllFoods(OldFoodsRequest obj) throws ScheduleException,ElemeException {
+    public String delectAllFoods(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String url = getSystemUrl(URL.URL_ELEME_DELETE_FOODS_LIST, obj);
-        return HttpUtil.delete(url, StringUtil.getUrlParamsByObject(obj));
+        return HttpUtil.delete(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
     }
 
 }

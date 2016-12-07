@@ -229,7 +229,7 @@ public final class HttpUtil {
      * @param param  注意顺序 [url,参数,contentType,charset,timeout,readtime,平台标识]
      * @return
      */
-    public static String post2(String... param) throws ScheduleException,BaiDuException,JdHomeException,ElemeException,MeiTuanException{
+    public static String post2(String... param) throws ScheduleException{
         String urlStr = param[0],
             pars = param.length>1?param[1]:"",
             contentType = (param.length>2 && !StringUtil.isEmpty(param[2]))?param[2]:"application/x-www-form-urlencoded",
@@ -267,19 +267,7 @@ public final class HttpUtil {
             br.close();
             return sb.toString();
             }else {
-              switch (platform){
-                  case Constants.PLATFORM_WAIMAI_BAIDU:
-                      throw new BaiDuException( "ScheduleException",MessageFormat.format("http error:{0}", String.valueOf(responseCode)),pars,new Throwable().getStackTrace());
-                  case Constants.PLATFORM_WAIMAI_JDHOME:
-                      throw new JdHomeException( "ScheduleException",MessageFormat.format("http error:{0}", String.valueOf(responseCode)),pars,new Throwable().getStackTrace());
-                  case Constants.PLATFORM_WAIMAI_ELEME:
-                      throw new ElemeException( "ScheduleException",MessageFormat.format("http error:{0}", String.valueOf(responseCode)),pars,new Throwable().getStackTrace());
-                  case Constants.PLATFORM_WAIMAI_MEITUAN:
-                      throw new MeiTuanException( "ScheduleException",MessageFormat.format("http error:{0}", String.valueOf(responseCode)),pars,new Throwable().getStackTrace());
-
-                  default:
-                      throw new ScheduleException();
-              }
+            throw new ScheduleException(platform);
             }
         } catch (MalformedURLException e) {
             throw new ScheduleException(e.getMessage());
