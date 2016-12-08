@@ -65,7 +65,7 @@ public class WMController {
         String result = "",platform,requestUrl,sid = null;
         Map<String,String[]> stringMap = new HashMap<>();
         response.setContentType("application/json;charset=uft-8");
-        requestUrl =    request.getPathInfo().toLowerCase();
+        requestUrl = request.getPathInfo().toLowerCase();
         if(requestUrl.indexOf("/jdhome/")> 0){
             sid = Pattern.compile("[^0-9]").matcher(requestUrl).replaceAll("");
             requestUrl = "/waimai/jdhome";
@@ -270,8 +270,7 @@ public class WMController {
                 break;
         }
         if (!StringUtil.isEmpty(platform)) {
-            //result = wmFacadeService.orderPost(stringMap, platform);
-            result =  "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}";
+            result = wmFacadeService.orderPost(stringMap, platform);
         }
         out.println(result);
         return  null;
@@ -283,21 +282,24 @@ public class WMController {
      * @param request  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/status","/djsw/orderAdjust"},method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/status","/djsw/pickFinishOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
     public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         String platfrom = null;
-        switch (request.getPathInfo().toLowerCase()){
+        String requestUrl = request.getPathInfo().toLowerCase();
+        if (requestUrl.indexOf("/djsw/") > 0) {
+            requestUrl = "/waimai/djsw";
+        }
+        switch (requestUrl){
             case "/waimai/baidu/order/status"://百度
                 platfrom = Constants.PLATFORM_WAIMAI_BAIDU;
                 response.setContentType("text/html; charset=utf-8");
                 break;
-            case "/waimai/djsw/orderAdjust": //京东到家
+            case "/waimai/djsw": //京东到家
                 platfrom = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             default:break;
         }
-        // out.println( wmFacadeService.orderStatus(request.getParameterMap(),platfrom));
-        out.println("{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}");
+         out.println( wmFacadeService.orderStatus(request.getParameterMap(),platfrom));
         return  null;
     }
 
