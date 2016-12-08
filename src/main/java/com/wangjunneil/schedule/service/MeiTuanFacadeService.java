@@ -1,12 +1,12 @@
 package com.wangjunneil.schedule.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
 import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
 import com.sankuai.meituan.waimai.opensdk.vo.OrderExtraParam;
+import com.sankuai.meituan.waimai.opensdk.vo.OrderFoodDetailParam;
 import com.wangjunneil.schedule.common.MeiTuanException;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.meituan.*;
@@ -16,6 +16,8 @@ import com.wangjunneil.schedule.service.meituan.MeiTuanInnerService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.net.URLDecoder;
 
 
 /**
@@ -206,13 +208,15 @@ public class MeiTuanFacadeService {
     /**
      * 通过订单id获取订单明细信息（已支付）
      * @return
-     */
-    public OrderDetailParam newOrder(JsonObject jsonObject) {
-        OrderDetailParam detailParam = null;
-        Gson gson = new GsonBuilder().registerTypeAdapter(OrderInfo.class,new OrderInfoSerializer())
-                                                                              .registerTypeAdapter(OrderExtraParam.class,new OrderExtraParamSerializer()).disableHtmlEscaping().create();
-        try {
+            */
+            public OrderDetailParam newOrder(JsonObject jsonObject) {
+                OrderDetailParam detailParam = null;
+                Gson gson = new GsonBuilder().registerTypeAdapter(OrderInfo.class,new OrderInfoSerializer())
+                    .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderExtraParam.class, new OrderExtraParamSerializer())
+                    .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderFoodDetailParam.class, new OrderFoodDetailParamSerializer()) .disableHtmlEscaping().create();
+                try {
             String json =gson.toJson(jsonObject);
+            json = java.net.URLDecoder.decode(json,"utf-8");
             OrderInfo order = gson.fromJson(json, OrderInfo.class);
             detailParam = mtApiService.getOrderDetail(order.getOrderid());
 //            OrderInfo order = new OrderInfo();
