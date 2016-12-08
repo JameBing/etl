@@ -80,6 +80,19 @@ public class BaiDuFacadeService {
     }
 
 
+    //平台推送消息 没有接收到任何参数时 response
+    public String responseNoPars(String cmd){
+        Body body = new Body();
+        body.setErrno("1");
+        body.setError("没有接收到任何参数");
+        body.setData("");
+        SysParams sysParams = new SysParams();
+        sysParams.setBody(body);
+        sysParams.setCmd(cmd);
+        return baiDuApiService.getRequestPars(sysParams);
+    }
+
+
     //获取供应商
     public String getSupplier(){
         String result = null;
@@ -422,6 +435,7 @@ public class BaiDuFacadeService {
                 body.setErrno("0");
                 body.setError("success");
                 body.setData(MessageFormat.format("{0}",MessageFormat.format("source_order_id:{0}",platformOrderId)));
+
             }
             else {
               body.setErrno("1");
@@ -435,6 +449,7 @@ public class BaiDuFacadeService {
             body.setData("");
             //记录日志
         }
+        sysParams.setCmd(Constants.BAIDU_CMD_RESP.concat(".").concat(Constants.BAIDU_CMD_ORDER_CREATE));
         sysParams.setBody(body);
         sysParams.setTimestamp("");
         sysParams.setTicket("");

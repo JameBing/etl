@@ -1,5 +1,7 @@
 package com.wangjunneil.schedule.common;
 
+import com.sun.xml.internal.fastinfoset.tools.FI_DOM_Or_XML_DOM_SAX_SAXEvent;
+
 /**
  * Created by wangjun on 7/28/16.
  */
@@ -127,14 +129,30 @@ public final class Constants {
 
    //region 外卖平台相关
 
-    //百度外卖
+    //百度外卖=================================================================================//
     public static final  String BAIDU_URL = "http://api.waimai.baidu.com";
     public static final  String BAIDU_SOURCE = "65062";
     public static final String  BAIDU_SECRET = "9aa9bef2dd361398";
 
-
     public static final  String BOUNDARY = "--ZYETL1234567890--";
     public static final String CONTENTTYPE_MULTIPART = "multipart/form-data";
+
+    public static final String BAIDU_CMD_SHOP_OPEN = "shop.open";        //门店开业
+    public static final String BAIDU_CMD_SHOP_CLOSE = "shop.close";       //门店歇业
+    public static final String BAIDU_CMD_SHOP_CREATE = "shop.create";   //创建门店
+    public static final String BAIDU_CMD_SUPPLIER_LIST = "supplier.list";   //查看供应商
+    public static final String BAIDU_CMD_DISH_ONLINE = "dish.online";      //菜品上线
+    public static final String BAIDU_CMD_DISH_OFLINE = "dish.offline";      //菜品下线
+    public static final String BAIDU_CMD_DISH_GET = "dish.get";                  //菜品查看
+    public static final String BAIDU_CMD_DISH_CREATE = "dish.create";     //菜品创建
+    public static final String BAIDU_CMD_ORDER_CREATE = "order.create"; //订单创建
+    public static final String BAIDU_CMD_ORDER_STATUS_PUSH="order.status.push"; //订单状态推送
+    public static final String BAIDU_CMD_ORDER_CONFIRM = "order.confirm";//订单确认
+    public static final String BAIDU_CMD_ORDER_COMPLETE = "order.complete";//订单完成
+    public static final String BAIDU_CMD_ORDER_CANCEL = "order.cancel";  //订单取消
+    public static final String BAIDU_CMD_ORDER_LIST = "order.list"; //查看订单列表
+    public static final String BAIDU_CMD_RESP = "resp";                       //接口返回操作前缀
+
 
 
     /**
