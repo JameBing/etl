@@ -49,7 +49,7 @@ public class JdHomeController {
         resp.setContentType("text/html;charset=utf-8");
         //应用参数
         List<ParsFromPosInner> listBaseStockCenterRequest = new ArrayList<ParsFromPosInner>();
-        String shopId = "8888";
+        String shopId = "6666";
         ParsFromPosInner inner = new ParsFromPosInner();
         inner.setDishId("6666");
         inner.setShopId(shopId);
@@ -169,9 +169,12 @@ public class JdHomeController {
         resp.setContentType("text/html;charset=utf-8");
       //  jdHomeFacadeService.callback("{\"token\":\"e22bb0bc-2b3e-4b35-9dfe-0234be439066\",\"expires_in\":\"31104000\",\"time\":\"1480406979337\",\"uid\":\"yangwanbin\",\"user_nick\":\"yangwanbin\"}","7244171");
         //out.println(json);
-        String json = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
+       /* String json = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
         JSONObject jsonObject = JSON.parseObject(json);
-        jdHomeFacadeService.pickFinishOrder(jsonObject);
+        jdHomeFacadeService.pickFinishOrder(jsonObject);*/
+        String shopId = "6666";
+        String json = jdHomeFacadeService.openOrCloseStore(shopId,1);
+        out.println(json);
         out.close();
         return null;
     }

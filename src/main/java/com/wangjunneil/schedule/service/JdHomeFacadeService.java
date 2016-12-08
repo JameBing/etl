@@ -40,36 +40,21 @@ public class JdHomeFacadeService {
     @Autowired
     private SysFacadeService sysFacadeService;
 
-
     /**
-     * 门店开业
-     * @param shopId 商家门店Id
-     * @param platformShopId 平台门店Id
-     * @return String
+     * 门店开业/歇业
+     * @param shopId 商家门店编号
+     * @param status 门店状态，0正常营业1休息中
+     * @return
      */
-    public String startBusiness(String shopId,String platformShopId){
-        Rtn rtn = new Rtn();
-        rtn.setCode(1);
-        rtn.setDesc("error");
-        rtn.setRemark("京东未提供门店开/歇业接口,请登录京东到家APP进行开/歇操作");
-        rtn.setDynamic(shopId);
-        return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
-    }
-
-    /**
-     * 门店歇业
-     * @param shopId 商家门店Id
-     * @param platformShopId 平台门店id
-     * @return String
-     */
-    public String endBusiness(String shopId,String platformShopId){
-
-        Rtn rtn = new Rtn();
-        rtn.setCode(1);
-        rtn.setDesc("error");
-        rtn.setRemark("京东未提供门店开/歇业接口,请登录京东到家APP进行开/歇操作");
-        rtn.setDynamic(shopId);
-        return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+    public String openOrCloseStore(String shopId,int status){
+        String stationNo = getStoreInfoPageBean(shopId);
+        String operator = "admin";
+        try {
+            String json = jdHomeApiService.changeCloseStatus(shopId,stationNo,operator,status);
+            return json;
+        }catch (Exception e){
+            return "修改门店基本信息失败";
+        }
     }
 
     /**
@@ -392,15 +377,17 @@ public class JdHomeFacadeService {
             QueryStockRequest stockRequest = new QueryStockRequest();
             ParsFromPosInner posInner = dishList.get(i);
             stockRequest.setDoSale(doSale);
+            //查询到家门店Id
+            String stationNO = getStoreInfoPageBean(posInner.getShopId());
+            stockRequest.setStationNo(stationNO);
+            if(StringUtil.isEmpty(stationNO)){
+                return stationNO;
+            }
+
             //查询到家商品Id
             String skuStr = querySkuInfo(posInner,stockRequest);
             if(!"".equals(skuStr)){
                 return skuStr;
-            }
-            //查询到家门店Id
-            String storeStr = getStoreInfoPageBean(posInner,stockRequest);
-            if(!"".equals(skuStr)){
-                return storeStr;
             }
             requests.add(stockRequest);
         }
@@ -443,14 +430,13 @@ public class JdHomeFacadeService {
 
     /**
      * 根据查询条件分页获取门店基本信息
-     * @param posInner 门店信息
-     * @param stockRequest 商品信息
+     * @param shopId 门店Id
      * @return String
      */
-    public String getStoreInfoPageBean(ParsFromPosInner posInner,QueryStockRequest stockRequest){
+    public String getStoreInfoPageBean(String shopId){
         String rtn ="";
         try {
-            String storeJson = jdHomeApiService.getStoreInfoPageBean(posInner.getShopId());
+            String storeJson = jdHomeApiService.getStoreInfoPageBean(shopId);
             log.info("=====查询商家门店接口返回信息:"+storeJson+"=====");
             if(!StringUtil.isEmpty(storeJson)){
                 JSONObject jss = JSONObject.parseObject(storeJson);
@@ -459,7 +445,7 @@ public class JdHomeFacadeService {
                     JSONArray storeArray = JSONObject.parseObject(JSONObject.parseObject(jss.getString("data")).getString("result")).getJSONArray("resultList");
                     if(storeArray !=null && storeArray.size()>0){
                         JSONObject json2 = storeArray.getJSONObject(0);
-                        stockRequest.setStationNo(json2.getString("stationNo"));
+                        return  json2.getString("stationNo");
                     }
                 }
             }
@@ -572,5 +558,6 @@ public class JdHomeFacadeService {
         }
         return null;
     }
+
 }
 
