@@ -149,7 +149,6 @@ public class JdHomeFacadeService {
         String billId = jdParam.getString("billId");
         String statusId = jdParam.getString("statusId");
         String timestamp = jdParam.getString("timestamp");
-
         try {
             String json  = jdHomeApiService.newOrder(billId,statusId,timestamp,shopId);
             log.info("=====订单查询接口返回信息:"+json+"=====");
@@ -472,27 +471,21 @@ public class JdHomeFacadeService {
 
     /**
      * 拣货完成消息推送
-     * @param requestStr
-     * @param shopId
+     * @param jsonObject
      * @return
      */
-    public String pickFinishOrder(String requestStr,String shopId){
-        if(StringUtil.isEmpty(requestStr)){
-            return "拣货完成推送信息接口请求参数为空";
-        }
-        JSONObject jsonObject = JSON.parseObject(requestStr);
+    public String pickFinishOrder( JSONObject jsonObject){
+
         String billId = jsonObject.getString("billId");
         String statusId = jsonObject.getString("statusId");
-        if(StringUtil.isEmpty(statusId)){
-            return "拣货完成推送接口订单状态为空";
-        }
+
         int status = Integer.parseInt(statusId);
         if(StringUtil.isEmpty(billId)){
-            return "拣货完成推送接口订单号为空";
+            return "拣货完成推送消息接口订单号为空";
         }
         Long orderId = Long.parseLong(billId);
         if(jdHomeInnerService.getOrder(orderId)==null){
-            return "拣货完成推送接口推送的订单号没有匹配到订单";
+            return "拣货完成推送接口消息推送的订单号没有匹配到订单";
         }
         try {
             jdHomeInnerService.updateStatus(orderId,status);
@@ -500,6 +493,84 @@ public class JdHomeFacadeService {
         }catch (Exception e){
             return  "{\"code\":\"0\",\"msg\":\"failure\",\"data\":\"\\\"code\\\":\\\"0\\\",\\\"msg\\\":\\\"操作失败\\\"\"}";
         }
+    }
+
+    /**
+     * 开始配送消息推送
+     * @param jsonObject
+     * @return
+     */
+    public String deliveryOrder(JSONObject jsonObject){
+
+        String billId = jsonObject.getString("billId");
+        String statusId = jsonObject.getString("statusId");
+
+        int status = Integer.parseInt(statusId);
+        if(StringUtil.isEmpty(billId)){
+            return "开始配送推送消息接口订单号为空";
+        }
+        Long orderId = Long.parseLong(billId);
+        if(jdHomeInnerService.getOrder(orderId)==null){
+            return "开始配送推送消息接口订单号没有匹配到订单";
+        }
+        try {
+            jdHomeInnerService.updateStatus(orderId,status);
+            return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"\\\"code\\\":\\\"0\\\",\\\"msg\\\":\\\"操作成功\\\"\"}";
+        }catch (Exception e){
+            return  "{\"code\":\"0\",\"msg\":\"failure\",\"data\":\"\\\"code\\\":\\\"0\\\",\\\"msg\\\":\\\"操作失败\\\"\"}";
+        }
+    }
+
+    /**
+     * 订单妥投消息
+     * @param jsonObject
+     * @return
+     */
+    public String finishOrder(JSONObject jsonObject){
+
+        String billId = jsonObject.getString("billId");
+        String statusId = jsonObject.getString("statusId");
+
+        int status = Integer.parseInt(statusId);
+        if(StringUtil.isEmpty(billId)){
+            return "订单妥投消息接口订单号为空";
+        }
+        Long orderId = Long.parseLong(billId);
+        if(jdHomeInnerService.getOrder(orderId)==null){
+            return "订单妥投消息接口订单号没有匹配到订单";
+        }
+        try {
+            jdHomeInnerService.updateStatus(orderId,status);
+            return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"\\\"code\\\":\\\"0\\\",\\\"msg\\\":\\\"操作成功\\\"\"}";
+        }catch (Exception e){
+            return  "{\"code\":\"0\",\"msg\":\"failure\",\"data\":\"\\\"code\\\":\\\"0\\\",\\\"msg\\\":\\\"操作失败\\\"\"}";
+        }
+    }
+
+    /**
+     * 改变订单状态
+     * @param jdParamJson 推送请求参数
+     * @return
+     */
+    public String changeStatus(String jdParamJson){
+        if(StringUtil.isEmpty(jdParamJson)){
+            return "订单变更接口请求参数为空";
+        }
+        JSONObject jsonObject  = JSONObject.parseObject(jdParamJson);
+        String statusId = jsonObject.getString("statusId");
+        if(StringUtil.isEmpty(statusId)){
+            return "订单变更接口订单状态参数为空";
+        }
+        //配送中……
+        if(Integer.parseInt(statusId)==Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderDelivering,Enum.OrderStatusJdHome.OrderDelivering.toString()).get("code").getAsInt()){
+            this.deliveryOrder(jsonObject);
+        //妥投成功
+        }else if(Integer.parseInt(statusId)==Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderConfirmed,Enum.OrderStatusJdHome.OrderConfirmed.toString()).get("code").getAsInt()){
+            this.finishOrder(jsonObject);
+        }else {
+            return "此订单状态无需修改";
+        }
+        return null;
     }
 }
 

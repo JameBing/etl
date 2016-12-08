@@ -1,6 +1,8 @@
 package com.wangjunneil.schedule.controller.jdhome;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
@@ -168,7 +170,8 @@ public class JdHomeController {
       //  jdHomeFacadeService.callback("{\"token\":\"e22bb0bc-2b3e-4b35-9dfe-0234be439066\",\"expires_in\":\"31104000\",\"time\":\"1480406979337\",\"uid\":\"yangwanbin\",\"user_nick\":\"yangwanbin\"}","7244171");
         //out.println(json);
         String json = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
-        jdHomeFacadeService.pickFinishOrder(json,"4444");
+        JSONObject jsonObject = JSON.parseObject(json);
+        jdHomeFacadeService.pickFinishOrder(jsonObject);
         out.close();
         return null;
     }

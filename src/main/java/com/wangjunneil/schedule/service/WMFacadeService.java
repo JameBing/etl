@@ -158,7 +158,7 @@ public class WMFacadeService {
                   result = baiDuFacadeService.orderStatus(functionMap2SysParams.apply(stringMap));
                   break;
               case Constants.PLATFORM_WAIMAI_JDHOME:
-
+                    result = jdHomeFacadeService.changeStatus(stringMap.get("jd_param_json")[0]);
                   break;
               default:break;
           }
