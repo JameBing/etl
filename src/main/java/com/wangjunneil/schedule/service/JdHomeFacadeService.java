@@ -326,6 +326,9 @@ public class JdHomeFacadeService {
      * @return String
      */
     public String orderAcceptOperate(OrderAcceptOperate acceptOperate){
+        if(acceptOperate ==null || StringUtil.isEmpty(acceptOperate.getOrderId()) || StringUtil.isEmpty(acceptOperate.getIsAgreed())){
+            return "商家订单确认/取消接口请求参数为空";
+        }
         try {
             String json = jdHomeApiService.orderAcceptOperate(acceptOperate);
             log.info("=====商家确认/取消接口返回信息:"+json+"=====");
@@ -341,7 +344,7 @@ public class JdHomeFacadeService {
                if(!acceptOperate.getIsAgreed()){
                    status = Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderSysCancelled,Enum.OrderStatusJdHome.OrderSysCancelled.toString()).get("code").getAsInt();
                }
-               jdHomeInnerService.updateStatus(acceptOperate,status);
+               jdHomeInnerService.updateStatus(Long.parseLong(acceptOperate.getOrderId()),status);
             }
             return json;
         }catch (Exception e){
@@ -471,6 +474,38 @@ public class JdHomeFacadeService {
             return "获取平台门店信息失败";
         }
         return rtn;
+    }
+
+    /**
+     * 拣货完成消息推送
+     * @param requestStr
+     * @param shopId
+     * @return
+     */
+    public String pickFinishOrder(String requestStr,String shopId){
+        if(StringUtil.isEmpty(requestStr)){
+            return "拣货完成推送信息接口请求参数为空";
+        }
+        JSONObject jsonObject = JSON.parseObject(requestStr);
+        String billId = jsonObject.getString("billId");
+        String statusId = jsonObject.getString("statusId");
+        if(StringUtil.isEmpty(statusId)){
+            return "拣货完成推送接口订单状态为空";
+        }
+        int status = Integer.parseInt(statusId);
+        if(StringUtil.isEmpty(billId)){
+            return "拣货完成推送接口订单号为空";
+        }
+        Long orderId = Long.parseLong(billId);
+        if(jdHomeInnerService.getOrder(orderId)==null){
+            return "拣货完成推送接口推送的订单号没有匹配到订单";
+        }
+        try {
+            jdHomeInnerService.updateStatus(orderId,status);
+            return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"\\\"code\\\":\\\"0\\\",\\\"msg\\\":\\\"操作成功\\\"\"}";
+        }catch (Exception e){
+            return  "{\"code\":\"0\",\"msg\":\"failure\",\"data\":\"\\\"code\\\":\\\"0\\\",\\\"msg\\\":\\\"操作失败\\\"\"}";
+        }
     }
 }
 

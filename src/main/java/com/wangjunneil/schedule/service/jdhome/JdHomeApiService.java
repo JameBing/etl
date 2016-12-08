@@ -222,7 +222,6 @@ public class JdHomeApiService {
         return HttpUtil.post(URL.URL_ORDER_ACCEPT_OPERATE,StringUtil.getUrlParamsByMap(param));
     }
 
-
     //获取系统参数map对象
     private Map<String,Object> getSysMap(SignParams signParams){
         Map<String ,Object> sysParam = new HashMap<>();
@@ -246,4 +245,6 @@ public class JdHomeApiService {
         signParam.setApp_key(jdHomeAccessToken.getAppKey());
         return  signParam ;
     }
+
+
 }

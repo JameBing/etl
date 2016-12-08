@@ -52,8 +52,9 @@ public class JdHomeController {
         resp.setContentType("text/html;charset=utf-8");
         //应用参数
         List<ParsFromPosInner> listBaseStockCenterRequest = new ArrayList<ParsFromPosInner>();
-        String shopId = "10029045";
+        String shopId = "8888";
         ParsFromPosInner inner = new ParsFromPosInner();
+        inner.setDishId("6666");
         inner.setShopId(shopId);
         listBaseStockCenterRequest.add(inner);
         /*for(int i=0;i<60;i++){
@@ -169,8 +170,10 @@ public class JdHomeController {
     @RequestMapping(value = "/testAddOrder",method = RequestMethod.GET)
     public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-        jdHomeFacadeService.callback("lvyul","7244171");
+      //  jdHomeFacadeService.callback("{\"token\":\"e22bb0bc-2b3e-4b35-9dfe-0234be439066\",\"expires_in\":\"31104000\",\"time\":\"1480406979337\",\"uid\":\"yangwanbin\",\"user_nick\":\"yangwanbin\"}","7244171");
         //out.println(json);
+        String json = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
+        jdHomeFacadeService.pickFinishOrder(json,"4444");
         out.close();
         return null;
     }

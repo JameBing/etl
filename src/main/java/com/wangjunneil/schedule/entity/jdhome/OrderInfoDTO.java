@@ -51,6 +51,7 @@ public class OrderInfoDTO {
     private Boolean adjustIsExists;//是否存在调整单(0:否;1:是)
     private Long adjustId;//调整单编号
     private Date ts;//时间戳
+    private Date latestTime;
     private OrderExtend orderExtend;//订单扩展类
     private List<OrderProductDTO> productList;//商品信息
     private List<OrderDiscountDTO> discountList;//订单折扣
@@ -365,6 +366,14 @@ public class OrderInfoDTO {
 
     public void setTs(Date ts) {
         this.ts = ts;
+    }
+
+    public Date getLatestTime() {
+        return latestTime;
+    }
+
+    public void setLatestTime(Date latestTime) {
+        this.latestTime = latestTime;
     }
 
     public OrderExtend getOrderExtend() {
