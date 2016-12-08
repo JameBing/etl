@@ -9,7 +9,7 @@ public final class URL {
      * 京东到家接口URL
      */
     //京东到家商品编码批量修改门店商品上下架
-    public static final String  URL_JDHOME_STORE_ON = "https://openo2o.jd.com/mockapi/stock/updateVendibility";
+    public static final String  URL_JDHOME_STORE_ON = "https://openo2o.jd.com/djapi/stock/updateVendibility";
 
     //京东到家新增商家店内分类信息
     public static final String  URL_ADD_SHOP_CATEGORY = "https://openo2o.jd.com/mockapi/pms/addShopCategory";
@@ -27,10 +27,10 @@ public final class URL {
     public static final String URL_ORDER_ACCEPT_OPERATE ="https://openo2o.jd.com/mockapi/ocs/orderAcceptOperate";
 
     //京东到家查询商家商品信息列表
-    public static final String URL_QUERY_SKU_INFO ="https://openo2o.jd.com/mockapi/pms/querySkuInfos";
+    public static final String URL_QUERY_SKU_INFO ="https://openo2o.jd.com/djapi/pms/querySkuInfos";
 
     //京东到家根据查询条件分页获取门店基本信息
-    public static final String STORE_INFO_PAGEBEAN ="https://openo2o.jd.com/mockapi/djstore/getStoreInfoPageBean";
+    public static final String STORE_INFO_PAGEBEAN ="https://openo2o.jd.com/djapi/djstore/getStoreInfoPageBean";
 
 
     /*************************************************************************************************************************/

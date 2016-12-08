@@ -1,26 +1,21 @@
 package com.wangjunneil.schedule.controller.jdhome;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.wangjunneil.schedule.entity.common.ParsFromPos;
+import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
-import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.shopCategory;
 import com.wangjunneil.schedule.service.JdHomeFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpsUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
-import com.wangjunneil.schedule.utility.URL;
 import o2o.openplatform.sdk.dto.WebRequestDTO;
 import o2o.openplatform.sdk.util.SignUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,8 +47,9 @@ public class JdHomeController {
         resp.setContentType("text/html;charset=utf-8");
         //应用参数
         List<ParsFromPosInner> listBaseStockCenterRequest = new ArrayList<ParsFromPosInner>();
-        String shopId = "10029045";
+        String shopId = "8888";
         ParsFromPosInner inner = new ParsFromPosInner();
+        inner.setDishId("6666");
         inner.setShopId(shopId);
         listBaseStockCenterRequest.add(inner);
         /*for(int i=0;i<60;i++){
@@ -169,12 +165,13 @@ public class JdHomeController {
     @RequestMapping(value = "/testAddOrder",method = RequestMethod.GET)
     public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-        jdHomeFacadeService.callback("lvyul","7244171");
+      //  jdHomeFacadeService.callback("{\"token\":\"e22bb0bc-2b3e-4b35-9dfe-0234be439066\",\"expires_in\":\"31104000\",\"time\":\"1480406979337\",\"uid\":\"yangwanbin\",\"user_nick\":\"yangwanbin\"}","7244171");
         //out.println(json);
+        String json = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
+        jdHomeFacadeService.pickFinishOrder(json,"4444");
         out.close();
         return null;
     }
-
 
     public static void main(String[] args) throws Exception{
 
@@ -205,7 +202,7 @@ public class JdHomeController {
         param.put("v","1.0");
         //param.put("jd_param_json","{\"pageNo\":\"1\",\"pageSize\":\"100\",\"beginOrderStartTime\":\"2015-09-29 00:00:00\",\"endOrderStartTime\":\"2015-09-29 23:59:59\", \"orderStatus\":\"90000\"}");
 
-        String result = HttpsUtil.post(URL.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
+        String result = HttpsUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
         System.out.println(result);
     }
 }

@@ -76,6 +76,7 @@ public class JdHomeInnerService {
                 .set("adjustId",order.getAdjustId())
                 .set("adjustIsExists",order.getAdjustIsExists())
                 .set("ts",order.getTs())
+                .set("latestTime",new Date())
                 .set("orderExtend",order.getOrderExtend())
                 .set("productList",order.getProductList())
                 .set("discountList",order.getDiscountList());
@@ -83,14 +84,19 @@ public class JdHomeInnerService {
         }
     }
 
+    //获取单个订单
+    public OrderInfoDTO getOrder(Long orderId){
+        Query query = new Query(Criteria.where("orderId").is(orderId).is("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+        OrderInfoDTO order = mongoTemplate.findOne(query,OrderInfoDTO.class);
+        return order;
+    }
+
     //修改订单状态
-    public void updateStatus(OrderAcceptOperate operate,int code){
-        if(operate.getOrderId()==null || operate.getIsAgreed()==null){
-            return;
-        }
-        Query query = new Query(Criteria.where("orderId").is(operate.getOrderId()));
-        Update update = new Update().set("orderStatus",code);
-        mongoTemplate.upsert(query,update,OrderInfoDTO.class);
+    public void updateStatus(Long orderId,int status){
+        Query query = new Query(Criteria.where("orderId").is(orderId));
+        Update update = new Update().set("orderStatus",status)
+            .set("latestTime",new Date());
+        mongoTemplate.updateFirst(query, update, OrderInfoDTO.class);
     }
 
     //添加/修改token
@@ -103,7 +109,7 @@ public class JdHomeInnerService {
 
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(jdHomeAccessToken.getCompanyId()));
         Update update = new Update()
-            .set("access_token", jdHomeAccessToken.getToken())
+            .set("token", jdHomeAccessToken.getToken())
             .set("expires_in", jdHomeAccessToken.getExpires_in())
             .set("token_type", jdHomeAccessToken.getToken_type())
             .set("time", jdHomeAccessToken.getTime())
@@ -146,7 +152,7 @@ public class JdHomeInnerService {
 
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(jdHomeAccessToken.getCompanyId()));
         Update update = new Update()
-            .set("access_token", jdHomeAccessToken.getToken())
+            .set("token", jdHomeAccessToken.getToken())
             .set("expires_in", jdHomeAccessToken.getExpires_in())
             .set("token_type", jdHomeAccessToken.getToken_type())
             .set("time", jdHomeAccessToken.getTime())
