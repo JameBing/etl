@@ -1,8 +1,6 @@
 package com.wangjunneil.schedule.entity.meituan;
 
 import com.google.gson.annotations.SerializedName;
-import com.sankuai.meituan.waimai.opensdk.vo.OrderExtraParam;
-import com.sankuai.meituan.waimai.opensdk.vo.OrderFoodDetailParam;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -76,9 +74,9 @@ public class OrderInfo {
     @SerializedName("poi_receive_detail")
     private String poireceivedetail;
     @SerializedName("detail")
-    private List<OrderFoodDetailParam> detail;
+    private OrderFoodDetailParam[] detail;
     @SerializedName("extras")
-    private List<OrderExtraParam> extras;
+    private OrderExtraParam[] extras;
 
 
     public Long getOrderid() {
@@ -329,58 +327,21 @@ public class OrderInfo {
         this.poireceivedetail = poireceivedetail;
     }
 
-    public List<OrderFoodDetailParam> getDetail() {
+    public OrderFoodDetailParam[] getDetail() {
         return detail;
     }
 
-    public void setDetail(List<OrderFoodDetailParam> detail) {
+    public void setDetail(OrderFoodDetailParam[] detail) {
         this.detail = detail;
     }
 
-    public List<OrderExtraParam> getExtras() {
+    public OrderExtraParam[] getExtras() {
         return extras;
     }
 
-    public void setExtras(List<OrderExtraParam> extras) {
+    public void setExtras(OrderExtraParam[] extras) {
         this.extras = extras;
     }
 
-    @Override
-    public String toString() {
-        return "OrderInfo{" +
-            "orderid=" + orderid +
-            ", wmorderidview=" + wmorderidview +
-            ", apppoicode='" + apppoicode + '\'' +
-            ", wmpoiname='" + wmpoiname + '\'' +
-            ", wmpoiaddress='" + wmpoiaddress + '\'' +
-            ", wmpoiphone='" + wmpoiphone + '\'' +
-            ", recipientaddress='" + recipientaddress + '\'' +
-            ", recipientphone='" + recipientphone + '\'' +
-            ", recipientname='" + recipientname + '\'' +
-            ", shippingfee=" + shippingfee +
-            ", total=" + total +
-            ", originalprice=" + originalprice +
-            ", caution='" + caution + '\'' +
-            ", shipperphone='" + shipperphone + '\'' +
-            ", status=" + status +
-            ", cityid=" + cityid +
-            ", hasinvoiced=" + hasinvoiced +
-            ", invoicetitle='" + invoicetitle + '\'' +
-            ", ctime=" + ctime +
-            ", utime=" + utime +
-            ", deliverytime=" + deliverytime +
-            ", isthirdshipping=" + isthirdshipping +
-            ", paytype=" + paytype +
-            ", latitude=" + latitude +
-            ", longitude=" + longitude +
-            ", dayseq=" + dayseq +
-            ", isfavorites=" + isfavorites +
-            ", ispoifirstorder=" + ispoifirstorder +
-            ", dinnersnumber=" + dinnersnumber +
-            ", logisticscode='" + logisticscode + '\'' +
-            ", poireceivedetail='" + poireceivedetail + '\'' +
-            ", detail=" + detail +
-            ", extras=" + extras +
-            '}';
-    }
+
 }

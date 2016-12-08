@@ -33,6 +33,27 @@ public class JdHomeApiService {
     @Autowired
     private JdHomeInnerService jdHomeInnerService;
 
+    //开业/歇业
+    public String changeCloseStatus(String shopId,String stationNo,String operator,int status) throws Exception{
+        SignParams signParams = getSignParams(shopId);
+        Map<String,Object> param = getSysMap(signParams);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("stationNo",stationNo);
+        jsonObject.put("operator",operator);
+        jsonObject.put("closeStatus",status);
+        jd_param_json = jsonObject.toJSONString();
+        signParams.setJd_param_json(jd_param_json);
+        param.put("jd_param_json",jd_param_json);
+        try {
+            sign = SignUtils.getSign(signParams,appSecret);
+            param.put("sign",sign);
+        }catch (Exception e){
+            throw new JdHomeException("签名失败",e);
+        }
+        log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
+        return HttpUtil.post(Constants.UPDATE_STORE_INFO,StringUtil.getUrlParamsByMap(param));
+    }
+
     //批量修改商品上架
     public String updateAllStockOn(List<QueryStockRequest> stockRequests,String shopId)throws Exception{
         SignParams signParams = getSignParams(shopId);//签名参数

@@ -197,7 +197,7 @@ public class WMFacadeService {
             result_eleme = "",
             result_meituan = "";
         result_baidu = baiDuFacadeService.shopOpen(parsFromPos.getBaidu().getPlatformShopId(), parsFromPos.getBaidu().getShopId());
-        result_jdhome = jdHomeFacadeService.startBusiness(parsFromPos.getJdhome().getShopId(),parsFromPos.getJdhome().getPlatformShopId());
+        result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(),0);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"1");
         result_meituan = meiTuanFacadeService.openShop(parsFromPos.getMeituan().getShopId());
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
@@ -207,7 +207,7 @@ public class WMFacadeService {
     public String shopClose(ParsFromPos parsFromPos){
         String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = baiDuFacadeService.shopClose(parsFromPos.getBaidu().getPlatformShopId(), parsFromPos.getBaidu().getShopId());
-        result_jdhome = jdHomeFacadeService.endBusiness(parsFromPos.getJdhome().getShopId(), parsFromPos.getJdhome().getPlatformShopId());
+        result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(),1);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"0");
         result_meituan = meiTuanFacadeService.openShop(parsFromPos.getMeituan().getShopId());
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");

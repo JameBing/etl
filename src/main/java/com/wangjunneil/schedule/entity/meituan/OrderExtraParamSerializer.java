@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.sankuai.meituan.waimai.opensdk.vo.OrderExtraParam;
 
 import java.lang.reflect.Type;
 
@@ -16,7 +15,12 @@ public class OrderExtraParamSerializer  implements JsonSerializer<OrderExtraPara
     public JsonElement serialize(OrderExtraParam orderExtraParam, Type type, JsonSerializationContext context) {
         JsonObject object = new JsonObject();
         object.add("act_detail_id",context.serialize(orderExtraParam.getAct_detail_id()));
-     
+        object.add("reduce_fee",context.serialize(orderExtraParam.getReduce_fee()));
+        object.add("remark",context.serialize(orderExtraParam.getRemark()));
+        object.add("type",context.serialize(orderExtraParam.getType()));
+        object.add("rider_fee",context.serialize(orderExtraParam.getRider_fee()));
+        object.add("mt_charge",context.serialize(orderExtraParam.getMt_charge()));
+        object.add("poi_charge",context.serialize(orderExtraParam.getPoi_charge()));
         return object;
     }
 }

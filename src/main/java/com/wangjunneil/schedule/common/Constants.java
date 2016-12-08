@@ -183,6 +183,9 @@ public final class Constants {
     //京东到家根据查询条件分页获取门店基本信息
     public static final String STORE_INFO_PAGEBEAN ="https://openo2o.jd.com/mockapi/djstore/getStoreInfoPageBean";
 
+    //京东到家修改门店基本信息
+    public static final String UPDATE_STORE_INFO ="https://openo2o.jd.com/mockapi/store/updateStoreInfo4Open";
+
 
     /*************************************************************************************************************************/
     /**
