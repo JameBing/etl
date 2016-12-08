@@ -4,6 +4,7 @@ import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.common.FlowNum;
+import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jp.JPAccessToken;
@@ -195,9 +196,8 @@ public class SysInnerService {
         return intRresult;
     }
 
-
     //订单插入
-    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
+    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) {
         Query  query = new Query(Criteria.where("platfrom").is(orderWaiMai.getPlatformOrderId()).where("platformOrderId"));
         Update update = new Update()
             .set("platfrom", orderWaiMai.getPlatfrom())
@@ -205,7 +205,23 @@ public class SysInnerService {
             .set("orderId",orderWaiMai.getOrderId())
             .set("platformOrderId",orderWaiMai.getPlatformOrderId())
             .set("order",orderWaiMai.getOrder());
-        mongoTemplate.upsert(query, update, OrderWaiMai.class);
+            mongoTemplate.upsert(query, update, OrderWaiMai.class);
+    }
+
+    //日志插入
+    public void updSynLog(Log log){
+        Query query = new Query(Criteria.where("logId").is(log.getLogId()));
+        Update update = new Update().set("logId",log.getLogId())
+                                                                   .set("title",log.getTitle())
+                                                                   .set("type",log.getType())
+                                                                   .set("platform",log.getPlatform())
+                                                                   .set("message",log.getMessage())
+                                                                   .set("request",log.getRequest())
+                                                                   .set("catchExName",log.getCatchExName())
+                                                                   .set("innerExName",log.getInnerExName())
+                                                                   .set("stackInfo",log.getStackInfo())
+                                                                   .set("dateTime",log.getDateTime());
+         mongoTemplate.upsert(query,update,Log.class);
     }
 
 }

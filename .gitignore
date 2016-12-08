@@ -9,5 +9,5 @@
 *.properties
 log/*
 src/main/logs/*
+*.log
 target/
-

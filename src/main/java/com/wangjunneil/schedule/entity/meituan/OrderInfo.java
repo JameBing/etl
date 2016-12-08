@@ -1,8 +1,7 @@
-package com.wangjunneil.schedule.entity.mt;
+package com.wangjunneil.schedule.entity.meituan;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
 import java.util.List;
 
 /**

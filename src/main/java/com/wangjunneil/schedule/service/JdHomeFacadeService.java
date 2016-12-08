@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.GsonBuilder;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
+import com.wangjunneil.schedule.common.JdHomeException;
+import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.common.Rtn;
@@ -18,8 +20,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yangyongbing
@@ -216,6 +217,7 @@ public class JdHomeFacadeService {
                 }
                 if(orders !=null && orders.size()>0){
                     log.info("=====MongoDb insert Order start====");
+                    List<OrderWaiMai> orderWaiMaiList = new ArrayList<OrderWaiMai>();
                     orders.forEach(o->{
                         OrderWaiMai orderWaiMai = new OrderWaiMai();
                         orderWaiMai.setPlatfrom(Constants.PLATFORM_WAIMAI_JDHOME);
@@ -223,14 +225,17 @@ public class JdHomeFacadeService {
                         orderWaiMai.setOrderId(String.valueOf(o.getOrderId()));
                         orderWaiMai.setPlatformOrderId(sysFacadeService.getOrderNum(o.getProduceStationNoIsv()));
                         orderWaiMai.setOrder(o);
-                        sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
+                        orderWaiMaiList.add(orderWaiMai);
                     });
+                    sysFacadeService.updSynWaiMaiOrder(orderWaiMaiList);
                     //jdHomeInnerService.addOrUpdateSyncOrder(orders);
                     log.info("=====MongoDb insert Order end====");
                     return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"{}\"}";
                 }
             }
-        }catch (Exception e){
+        }catch (JdHomeException ex){}
+        catch (ScheduleException ex){}
+        catch (Exception ex){
             //异常处理
             return "";
         }
@@ -360,26 +365,15 @@ public class JdHomeFacadeService {
      */
     public void callback(String tokenJson,String companyId) {
         log.info("=====京东到家回调token数据:"+tokenJson+"=====");
-        if(StringUtil.isEmpty(tokenJson)){
-            return;
-        }
-        //判断是否是json字符串
-        int inx = tokenJson.indexOf("{");
-        JdHomeAccessToken jdAccessToken = new JdHomeAccessToken();
-        if(inx < 0){
-            //code入库
-            jdAccessToken.setCode(tokenJson);
-            jdAccessToken.setCompanyId(companyId);
-            log.info("=====code insert start======");
+        // token入库
+        JdHomeAccessToken jdAccessToken = JSONObject.parseObject(tokenJson, JdHomeAccessToken.class);
+        jdAccessToken.setCompanyId(companyId);
+        if(!StringUtil.isEmpty(jdAccessToken.getCode())){
+            //添加code
             jdHomeInnerService.addBackCode(jdAccessToken);
-            log.info("=====code insert end======");
         }else {
-            //token入库
-            jdAccessToken = JSONObject.parseObject(tokenJson, JdHomeAccessToken.class);
-            jdAccessToken.setCompanyId(companyId);
-            log.info("=====token insert start======");
+            //添加token
             jdHomeInnerService.addRefreshToken(jdAccessToken);
-            log.info("=====token insert end======");
         }
     }
 

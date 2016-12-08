@@ -223,14 +223,6 @@ public class StringUtil {
         return map;
     }
 
-    public static String getUrlParamsByObject(Object obj) throws ScheduleException {
-        try {
-            return getUrlParamsByMap( getMap(obj));
-        }catch ( Exception ex) {
-            throw new ScheduleException(Constants.PLATFORM_WAIMAI_ELEME, ex.getClass().getName(), "数据转换出错", new Gson().toJson(obj), new Throwable().getStackTrace());
-        }
-    }
-
 
     /**
      * 计算MD5
