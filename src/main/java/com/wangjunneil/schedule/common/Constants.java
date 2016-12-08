@@ -1,7 +1,5 @@
 package com.wangjunneil.schedule.common;
 
-import com.sun.xml.internal.fastinfoset.tools.FI_DOM_Or_XML_DOM_SAX_SAXEvent;
-
 /**
  * Created by wangjun on 7/28/16.
  */
