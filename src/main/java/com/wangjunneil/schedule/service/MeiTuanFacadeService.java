@@ -315,19 +315,7 @@ public class MeiTuanFacadeService {
         mtInnerService.updateStatus(orderId,Integer.parseInt(status));
         return null;
     }
-
-
-    //订单状态变更接收   new_status：订单状态
-    public String orderChange(String meituan_order_ids,String new_status){
-        if (meituan_order_ids == null || "".equals(meituan_order_ids)) {
-            return "订单id列表为空!";
-        }
-        mtInnerService.updateStatus(meituan_order_ids, Integer.parseInt(new_status));
-        return null;
-    }
-
-    //
-
+    
     //endregion
 
 
