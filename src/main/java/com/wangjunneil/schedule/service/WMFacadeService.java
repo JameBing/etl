@@ -50,6 +50,8 @@ public class WMFacadeService {
 
     //回调地址入口处理方法
     public String appReceiveCallBack(Map<String,String[]> stringMap,String platform){
+        Rtn rtn = new Rtn();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         String result = "";
         switch (platform){
             case Constants.PLATFORM_WAIMAI_BAIDU:
@@ -70,6 +72,25 @@ public class WMFacadeService {
                 jdHomeFacadeService.callback(stringMap.get("token")!=null?stringMap.get("token")[0]:stringMap.get("code")[0],stringMap.get("sid")[0]);
                 break;
             case Constants.PLATFORM_WAIMAI_MEITUAN:
+                if(stringMap.size()==0){
+                    rtn.setCode(200);
+                    return gson1.toJson(rtn);
+                }
+                switch (stringMap.get("status")[0]){
+                    case "2":             //订单创建(用户已支付)
+                        new Gson().toJson(stringMap);
+                        meiTuanFacadeService.newOrder(functionMap2Json.apply(stringMap));
+                        break;
+                    case  "4":       //商家已确认
+                        orderStatus(stringMap,platform);
+                        break;
+                    case  "8":       //交易完成
+                        orderStatus(stringMap,platform);
+                        break;
+                    default:
+                        result = baiDuFacadeService.responseNoPars("resp");
+                        break;
+                }
 
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME:
@@ -95,7 +116,8 @@ public class WMFacadeService {
         return result;
     }
 
-    private   Function<Map<String, String[]>, SysParams> functionMap = (m) -> {
+
+    private   Function<Map<String, String[]>, SysParams> functionMap2SysParams = (m) -> {
         Map<String, String> map = new HashMap<String, String>();
         m.keySet().forEach(k -> {
             map.put(k, m.get(k)[0]);
@@ -105,12 +127,20 @@ public class WMFacadeService {
         return gson.fromJson(map2Json(map), SysParams.class);
     };
 
+    private Function<Map<String,String[]>,JsonObject> functionMap2Json = (m) ->{
+       JsonObject jsonObject = new JsonObject();
+        m.keySet().forEach(k -> {
+            jsonObject.addProperty(k,m.get(k)[0]);
+        });
+        return jsonObject;
+    };
+
     //平台订单推送【消息型】
     public String orderPost(Map<String,String[]> stringMap,String platform){
        String result = "";
         switch (platform){
             case Constants.PLATFORM_WAIMAI_BAIDU:
-                    result = baiDuFacadeService.orderPost(functionMap.apply(stringMap));
+                    result = baiDuFacadeService.orderPost(functionMap2SysParams.apply(stringMap));
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
                 result = jdHomeFacadeService.newOrder(stringMap.get("jd_param_json")[0],stringMap.get("sid")[0]);
@@ -125,7 +155,7 @@ public class WMFacadeService {
           String result = "";
           switch (platform){
               case Constants.PLATFORM_WAIMAI_BAIDU:
-                  result = baiDuFacadeService.orderStatus(functionMap.apply(stringMap));
+                  result = baiDuFacadeService.orderStatus(functionMap2SysParams.apply(stringMap));
                   break;
               case Constants.PLATFORM_WAIMAI_JDHOME:
                     result = jdHomeFacadeService.changeStatus(stringMap.get("jd_param_json")[0]);
@@ -161,7 +191,7 @@ public class WMFacadeService {
 
     //门店开业
     public String shopOpen(ParsFromPos parsFromPos){
-        String result = "{baidu:{0},jdhome:{1},meituan:{2},eleme:{3}}",
+        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}",
             result_baidu = "",
             result_jdhome = "",
             result_eleme = "",
@@ -170,17 +200,17 @@ public class WMFacadeService {
         result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(),0);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"1");
         result_meituan = meiTuanFacadeService.openShop(parsFromPos.getMeituan().getShopId());
-        return MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme);
+        return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
     //门店歇业
     public String shopClose(ParsFromPos parsFromPos){
-        String result = "{baidu:{0},jdhome:{1},meituan:{2},eleme:{3}}", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
+        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = baiDuFacadeService.shopClose(parsFromPos.getBaidu().getPlatformShopId(), parsFromPos.getBaidu().getShopId());
         result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(),1);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"0");
         result_meituan = meiTuanFacadeService.openShop(parsFromPos.getMeituan().getShopId());
-        return MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme);
+        return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
     //===============菜品=================/
@@ -230,7 +260,6 @@ public class WMFacadeService {
         String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = parsFormPos2.getBaidu().stream().map(e->function1.apply(e)).reduce("",(x,y)->x.concat(StringUtil.isEmpty(x)?"":",").concat(y));
         result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(parsFormPos2.getJdhome(),0); //0上架 1下架
-
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
@@ -259,7 +288,7 @@ public class WMFacadeService {
 
     //订单操作
     private  String orderOpt(Map<String,String[]> stringMap,String command){
-        String result = "{baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]}",
+        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]",
             result_baidu = null,
             result_jdhome = null,
             result_eleme = null,
@@ -285,7 +314,7 @@ public class WMFacadeService {
                 default:break;
             }
         }
-        return MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme);
+        return "{".concat( MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
     //===============Other=================/
