@@ -140,7 +140,7 @@ public class MeituanController {
     public JSONObject newOrder(HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
         long orderId = 2699113370L;
-        OrderDetailParam rtnJson = mtFacadeService.newOrder(orderId);
+        //OrderDetailParam rtnJson = mtFacadeService.newOrder(orderId);
         return  null;
     }
 

@@ -72,7 +72,7 @@ public class BaiDuFacadeService {
                                             return new JsonPrimitive(aDouble);
                                         }
                                     })
-                                    .serializeNulls()
+                                  //  .serializeNulls()
                                     .disableHtmlEscaping()
                 .create();
         }
@@ -414,7 +414,7 @@ public class BaiDuFacadeService {
     public String orderPost(SysParams sysParams){
         Body body = new Body();
         try{
-            Order order = getGson().fromJson(getGson().toJson(sysParams.getBody()).toString(),Order.class);
+            Order order = getGson().fromJson(sysParams.getBody().toString(),Order.class);
             SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order),SysParams.class);
             String bodyStr = getGson().toJson(sysParams1.getBody());
             body = getGson().fromJson(bodyStr,Body.class);

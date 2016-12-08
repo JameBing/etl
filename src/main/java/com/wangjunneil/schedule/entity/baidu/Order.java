@@ -19,7 +19,7 @@ public class Order {
 
     //是否立即送餐，1 是 2 否
     @SerializedName("send_immediately")
-    private int sendImmediately;
+    private Integer sendImmediately;
 
     //期望送达时间,立即配送值为1,非立即配送为时间戳
     @SerializedName("send_time")
@@ -27,35 +27,35 @@ public class Order {
 
     //配送费，单位：分
     @SerializedName("send_fee")
-    private int sendFee;
+    private Integer sendFee;
 
     //餐盒费，单位：分
     @SerializedName("package_fee")
-    private int packageFee;
+    private Integer packageFee;
 
     //优惠总金额，单位：分
     @SerializedName("discount_fee")
-    private int discountFee;
+    private Integer discountFee;
 
     //商户实收总价，单位：分
     @SerializedName("shop_fee")
-    private int shopFee;
+    private Integer shopFee;
 
 
     //订单总价，单位：分
     @SerializedName("total_fee")
-    private int totalFee;
+    private Integer totalFee;
 
     //用户实付总价，单位：分
     @SerializedName("user_fee")
-    private int userFee;
+    private Integer userFee;
     //支付类型，1 下线 2 在线
     @SerializedName("pay_type")
     private String payType;
 
     //是否需要发票 1:是 2:否
     @SerializedName("need_invoice")
-    private int needInvoice;
+    private Integer needInvoice;
 
     //发票抬头
     @SerializedName("invoice_title")
@@ -66,16 +66,16 @@ public class Order {
 
     //物流 1 百度 2 自配送
     @SerializedName("delivery_party")
-    private int deliveryParty;
+    private Integer deliveryParty;
 
     //订单创建时间
     @SerializedName("create_time")
-    private int createTime;
+    private Integer createTime;
 
     @SerializedName("pay_status")
     private String payStatus;
 
-    private int status;
+    private Integer status;
 
     public void setOrderId(String orderId){
         this.orderId = orderId;
@@ -93,11 +93,11 @@ public class Order {
         return  this.sourceOrderId;
     }
 
-    public void setSendImmediately(int sendImmediately){
+    public void setSendImmediately(Integer sendImmediately){
         this.sendImmediately = sendImmediately;
     }
 
-    public int getSendImmediately(){
+    public Integer getSendImmediately(){
         return this.sendImmediately;
     }
 
@@ -109,51 +109,51 @@ public class Order {
         return  this.sendTime;
     }
 
-    public  void setSendFee(int sendFee){
+    public  void setSendFee(Integer sendFee){
         this.sendFee = sendFee;
     }
 
-    public int getSendFee(){
+    public Integer getSendFee(){
         return  this.sendFee;
     }
 
-    public void setPackageFee(int packageFee){
+    public void setPackageFee(Integer packageFee){
         this.packageFee = packageFee;
     }
 
-    public int getPackageFee(){
+    public Integer getPackageFee(){
         return this.packageFee;
     }
 
-    public void setDiscountFee(int discountFee){
+    public void setDiscountFee(Integer discountFee){
         this.discountFee = discountFee;
     }
 
-    public int getDiscountFee(){
+    public Integer getDiscountFee(){
         return this.discountFee;
     }
 
-    public void setShopFee(int shopFee){
+    public void setShopFee(Integer shopFee){
         this.shopFee = shopFee;
     }
 
-    public int getShopFee(){
+    public Integer getShopFee(){
         return this.shopFee;
     }
 
-    public void setTotalFee(int totalFee){
+    public void setTotalFee(Integer totalFee){
         this.totalFee = totalFee;
     }
 
-    public int getTotalFee(){
+    public Integer getTotalFee(){
         return  this.totalFee;
     }
 
-    public void setUserFee(int userFee){
+    public void setUserFee(Integer userFee){
         this.userFee = userFee;
     }
 
-    public int getUserFee(){
+    public Integer getUserFee(){
         return this.userFee;
     }
 
@@ -165,11 +165,11 @@ public class Order {
         return this.payType;
     }
 
-    public void setNeedInvoice(int needInvoice){
+    public void setNeedInvoice(Integer needInvoice){
         this.needInvoice = needInvoice;
     }
 
-    public int getNeedInvoice(){
+    public Integer getNeedInvoice(){
         return this.needInvoice;
     }
 
@@ -189,19 +189,18 @@ public class Order {
         return this.remark;
     }
 
-    public void setDeliveryParty(int deliveryParty){
+    public Integer getDeliveryParty() {
+        return deliveryParty;
+    }
+    public void setDeliveryParty(Integer deliveryParty) {
         this.deliveryParty = deliveryParty;
     }
 
-    public int getDeliveryParty(){
-        return this.deliveryParty;
-    }
-
-    public void setCreateTime(int createTime){
+    public void setCreateTime(Integer createTime){
         this.createTime = createTime;
     }
 
-    public int getCreateTime(){
+    public Integer getCreateTime(){
         return this.createTime;
     }
 
@@ -213,11 +212,11 @@ public class Order {
         return this.payStatus;
     }
 
-    public void setStatus(int status){
+    public void setStatus(Integer status){
         this.status = status;
     }
 
-    public int getStatus(){
+    public Integer getStatus(){
         return this.status;
     }
 }

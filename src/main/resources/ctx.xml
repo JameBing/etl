@@ -41,15 +41,15 @@
         <!--<bean  class="com.wangjunneil.schedule.interceptor.SessionController" />-->
         <!--</mvc:interceptor>-->
     </mvc:interceptors>
-    <!--<bean  class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+    <bean  class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
     </bean>
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">
             <list>
-                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+                <bean class="com.wangjunneil.schedule.servlet.GsonHttpMessageConverterEx" />
             </list>
         </property>
-    </bean>-->
+    </bean>
     <!-- =================================== mongodb配置 =================================== -->
     <mongo:mongo host="${mongo.db.host}" port="${mongo.db.port}">
         <!--<mongo:options connections-per-host="100"/>-->
