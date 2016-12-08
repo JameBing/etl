@@ -88,7 +88,7 @@ public class MeituanController {
         return null;
     }
 
-    //测试商品批量上架接口
+    //测试商品批量下架接口
     @RequestMapping(value = "/mtapi/downFrame",method = RequestMethod.GET)
     public String downFrame(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws Exception
     {

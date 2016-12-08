@@ -1,36 +1,14 @@
 package com.wangjunneil.schedule.service.meituan;
 
-import com.alibaba.fastjson.JSONObject;
-import com.sankuai.meituan.waimai.opensdk.Test;
-import com.sankuai.meituan.waimai.opensdk.api.PoiAPI;
-import com.sankuai.meituan.waimai.opensdk.exception.ApiOpException;
-import com.sankuai.meituan.waimai.opensdk.exception.ApiSysException;
 import com.sankuai.meituan.waimai.opensdk.factory.APIFactory;
-import com.sankuai.meituan.waimai.opensdk.factory.URLFactory;
-import com.sankuai.meituan.waimai.opensdk.util.ConvertUtil;
-import com.sankuai.meituan.waimai.opensdk.util.SignGenerator;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
 import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
 import com.sankuai.meituan.waimai.opensdk.vo.SystemParam;
-import com.wangjunneil.schedule.entity.meituan.FoodCreate;
-import com.wangjunneil.schedule.entity.meituan.UpordownFrame;
-import com.google.gson.Gson;
-import com.wangjunneil.schedule.common.Constants;
-import com.wangjunneil.schedule.common.ScheduleException;
-import com.wangjunneil.schedule.entity.mt.FoodRequest;
-import com.wangjunneil.schedule.entity.mt.OrderRequest;
-import com.wangjunneil.schedule.entity.mt.ShopRequest;
-import com.wangjunneil.schedule.entity.mt.SysParams;
-import com.wangjunneil.schedule.utility.HttpUtil;
-import com.wangjunneil.schedule.utility.MD5Util;
-import com.wangjunneil.schedule.utility.StringUtil;
+import com.wangjunneil.schedule.entity.meituan.OrderInfo;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
 import java.util.*;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * @author liuxin

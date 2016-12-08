@@ -6,59 +6,74 @@ package com.wangjunneil.schedule.entity.meituan;
  */
 public class ExtrasInfo {
 
-    private String act_detail_id;
-
-    //优惠金额
-    private double reduce_fee;
-
-    //优惠说明
+    private Integer act_detail_id;
+    private Float reduce_fee;
     private String remark;
+    private Integer type;
+    private String rider_fee;
+    private Float mt_charge;
+    private Float poi_charge;
 
-    //活动类型
-    private int type;
-
-    //餐厅平均送餐时间，单位为分钟
-    private double avg_send_time;
-
-
-
-    public String getAct_detail_id() {
-        return act_detail_id;
+    public ExtrasInfo() {
     }
 
-    public void setAct_detail_id(String act_detail_id) {
+    public Integer getAct_detail_id() {
+        return this.act_detail_id;
+    }
+
+    public void setAct_detail_id(Integer act_detail_id) {
         this.act_detail_id = act_detail_id;
     }
 
-    public double getReduce_fee() {
-        return reduce_fee;
+    public Float getReduce_fee() {
+        return this.reduce_fee;
     }
 
-    public void setReduce_fee(double reduce_fee) {
+    public void setReduce_fee(Float reduce_fee) {
         this.reduce_fee = reduce_fee;
     }
 
     public String getRemark() {
-        return remark;
+        return this.remark;
     }
 
     public void setRemark(String remark) {
         this.remark = remark;
     }
 
-    public int getType() {
-        return type;
+    public Integer getType() {
+        return this.type;
     }
 
-    public void setType(int type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
-    public double getAvg_send_time() {
-        return avg_send_time;
+    public String getRider_fee() {
+        return this.rider_fee;
     }
 
-    public void setAvg_send_time(double avg_send_time) {
-        this.avg_send_time = avg_send_time;
+    public void setRider_fee(String rider_fee) {
+        this.rider_fee = rider_fee;
+    }
+
+    public Float getMt_charge() {
+        return this.mt_charge;
+    }
+
+    public void setMt_charge(Float mt_charge) {
+        this.mt_charge = mt_charge;
+    }
+
+    public Float getPoi_charge() {
+        return this.poi_charge;
+    }
+
+    public void setPoi_charge(Float poi_charge) {
+        this.poi_charge = poi_charge;
+    }
+
+    public String toString() {
+        return "ExtrasInfo [act_detail_id=" + this.act_detail_id + ", reduce_fee=" + this.reduce_fee + ", remark=\'" + this.remark + '\'' + ", type=" + this.type + ", rider_fee=\'" + this.rider_fee + '\'' + ", mt_charge=" + this.mt_charge + ", poi_charge=" + this.poi_charge + ']';
     }
 }
