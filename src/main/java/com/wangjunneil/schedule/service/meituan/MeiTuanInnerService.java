@@ -1,10 +1,18 @@
 package com.wangjunneil.schedule.service.meituan;
 
+import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
 import com.wangjunneil.schedule.entity.meituan.OrderInfo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author liuxin
@@ -25,5 +33,11 @@ public class MeiTuanInnerService {
     }
 
 
+    //修改订单状态
+    public void updateStatus(String orderId,int status){
+        Query query = new Query(Criteria.where("order_id").is(orderId));
+        Update update = new Update().set("orderStatus",status);
+        mongoTemplate.upsert(query,update,OrderInfoDTO.class);
+    }
 
 }

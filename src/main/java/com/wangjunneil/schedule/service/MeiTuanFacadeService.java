@@ -1,7 +1,5 @@
 package com.wangjunneil.schedule.service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
 import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
 import com.wangjunneil.schedule.common.MeiTuanException;
@@ -13,7 +11,6 @@ import com.wangjunneil.schedule.service.meituan.MeiTuanInnerService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.*;
 
 
 /**
@@ -202,15 +199,81 @@ public class MeiTuanFacadeService {
 
 
     /**
-     * 通过订单id获取订单明细信息
+     * 通过订单id获取订单明细信息（已支付）
      * @return
      * @param orderId 订单Id
      */
     public OrderDetailParam newOrder(long orderId) {
-        OrderDetailParam json = null;
+        OrderDetailParam detailParam = null;
         try {
-           json  = mtApiService.getOrderDetail(orderId);
-            return json;
+            detailParam = mtApiService.getOrderDetail(orderId);
+            OrderInfo order = new OrderInfo();
+            order.setApp_order_code(detailParam.getApp_order_code());
+            order.setApp_poi_code(detailParam.getApp_poi_code());
+            order.setAvg_send_time(detailParam.getAvg_send_time());
+            order.setCaution(detailParam.getCaution());
+            order.setCity_id(detailParam.getCity_id());
+            order.setCtime(detailParam.getCtime());
+            order.setDay_seq(detailParam.getDay_seq());
+            order.setDelivery_time(detailParam.getDelivery_time());
+            order.setDetail(detailParam.getDetail());
+            order.setDinners_number(detailParam.getDinners_number());
+            order.setExpect_deliver_time(detailParam.getExpect_deliver_time());
+            order.setExtras(detailParam.getExtras());
+            order.setHas_invoiced(detailParam.getHas_invoiced());
+            order.setInvoice_title(detailParam.getInvoice_title());
+            order.setIs_favorites(detailParam.getIs_favorites());
+            order.setIs_poi_first_order(detailParam.getIs_poi_first_order());
+            order.setIs_pre(detailParam.getIs_pre());
+            order.setIs_third_shipping(detailParam.getIs_third_shipping());
+            order.setLatitude(detailParam.getLatitude());
+            order.setLogistics_cancel_time(detailParam.getLogistics_cancel_time());
+            order.setLogistics_code(detailParam.getLogistics_code());
+            order.setLogistics_completed_time(detailParam.getLogistics_completed_time());
+            order.setLogistics_confirm_time(detailParam.getLogistics_confirm_time());
+            order.setLogistics_dispatcher_mobile(detailParam.getLogistics_dispatcher_mobile());
+            order.setLogistics_dispatcher_name(detailParam.getLogistics_dispatcher_name());
+            order.setLogistics_fetch_time(detailParam.getLogistics_fetch_time());
+            order.setLogistics_id(detailParam.getLogistics_id());
+            order.setLogistics_name(detailParam.getLogistics_name());
+            order.setLogistics_send_time(detailParam.getLogistics_send_time());
+            order.setLongitude(detailParam.getLongitude());
+            order.setOrder_cancel_time(detailParam.getOrder_cancel_time());
+            order.setOrder_completed_time(detailParam.getOrder_completed_time());
+            order.setOrder_confirm_time(detailParam.getOrder_confirm_time());
+            order.setOrder_id(detailParam.getOrder_id());
+            order.setOrder_receive_time(detailParam.getOrder_receive_time());
+            order.setOrder_send_time(detailParam.getOrder_send_time());
+            order.setOriginal_price(detailParam.getOriginal_price());
+            order.setPay_done_time(detailParam.getPay_done_time());
+            order.setPay_status(detailParam.getPay_status());
+            order.setPay_type(detailParam.getPay_type());
+            order.setPaying_time(detailParam.getPaying_time());
+            order.setPoi_receive_detail(detailParam.getPoi_receive_detail());
+            order.setRecipient_address(detailParam.getRecipient_address());
+            order.setRecipient_name(detailParam.getRecipient_name());
+            order.setRecipient_phone(detailParam.getRecipient_phone());
+            order.setRefund_apply_time(detailParam.getRefund_apply_time());
+            order.setRefund_complete_time(detailParam.getRefund_complete_time());
+            order.setRefund_confirm_time(detailParam.getRefund_confirm_time());
+            order.setRefund_reject_time(detailParam.getRefund_reject_time());
+            order.setRemark(detailParam.getRemark());
+            order.setResult(detailParam.getResult());
+            order.setShipper_phone(detailParam.getShipper_phone());
+            order.setShipping_fee(detailParam.getShipping_fee());
+            order.setShipping_type(detailParam.getShipping_type());
+            order.setSource_id(detailParam.getSource_id());
+            order.setStatus(detailParam.getStatus());
+            order.setTotal(detailParam.getTotal());
+            order.setUnpaid_time(detailParam.getUnpaid_time());
+            order.setUtime(detailParam.getUtime());
+            order.setWm_order_id_view(detailParam.getWm_order_id_view());
+            order.setWm_poi_address(detailParam.getWm_poi_address());
+            order.setWm_poi_id(detailParam.getWm_poi_id());
+            order.setWm_poi_name(detailParam.getWm_poi_name());
+            order.setWm_poi_phone(detailParam.getWm_poi_phone());
+            mtInnerService.insertAllOrder(order);
+            return detailParam;
         } catch (MeiTuanException ex) {
 
         }
@@ -221,10 +284,49 @@ public class MeiTuanFacadeService {
 
         }
         finally {
-            return  json;
+            return detailParam;
         }
     }
 
+    /**
+     * 推送已确认订单信息（已确认）
+     * @return
+     * @param orderId 订单Id
+     */
+    public String getConfirmOrder(String orderId,String status) {
+        if (orderId ==null || "".equals(orderId))
+        {
+            return "订单id列表为空";
+        }
+        mtInnerService.updateStatus(orderId,Integer.parseInt(status));
+        return null;
+    }
+
+    /**
+     * 推送已完成订单信息（已完成）
+     * @return
+     * @param orderId 订单Id
+     */
+    public String getFinishOrder(String orderId,String status) {
+        if (orderId ==null || "".equals(orderId))
+        {
+            return "订单id列表为空";
+        }
+        mtInnerService.updateStatus(orderId,Integer.parseInt(status));
+        return null;
+    }
+
+
+    //订单状态变更接收   new_status：订单状态
+    public String orderChange(String meituan_order_ids,String new_status){
+        if (meituan_order_ids == null || "".equals(meituan_order_ids)) {
+            return "订单id列表为空!";
+        }
+        mtInnerService.updateStatus(meituan_order_ids, Integer.parseInt(new_status));
+        return null;
+    }
+
+    //
 
     //endregion
 
