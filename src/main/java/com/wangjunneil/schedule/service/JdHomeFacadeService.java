@@ -241,7 +241,7 @@ public class JdHomeFacadeService {
         if(StringUtil.isEmpty(jdParamJson)){
             result.setCode(-1);
             result.setMsg("failure");
-            result.setData("京东推送参数为空");
+            result.setData("订单推送请求参数为空");
             return gson.toJson(result);
         }
         JSONObject jdParam = JSONObject.parseObject(jdParamJson);
@@ -324,8 +324,8 @@ public class JdHomeFacadeService {
                         OrderWaiMai orderWaiMai = new OrderWaiMai();
                         orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
                         orderWaiMai.setShopId(o.getProduceStationNoIsv());
-                        orderWaiMai.setOrderId(String.valueOf(o.getOrderId()));
-                        orderWaiMai.setPlatformOrderId(sysFacadeService.getOrderNum(o.getProduceStationNoIsv()));
+                        orderWaiMai.setOrderId(sysFacadeService.getOrderNum(o.getProduceStationNoIsv()));
+                        orderWaiMai.setPlatformOrderId(String.valueOf(o.getOrderId()));
                         orderWaiMai.setOrder(o);
                         orderWaiMaiList.add(orderWaiMai);
                     });
@@ -482,14 +482,14 @@ public class JdHomeFacadeService {
         }finally {
             if (log1 !=null){
                 log1.setLogId(acceptOperate.getOrderId().concat(log1.getLogId()));
-                log1.setTitle(MessageFormat.format("订单{0}确认失败！", acceptOperate.getOrderId()));
+                log1.setTitle(MessageFormat.format("订单:{0}确认失败！", acceptOperate.getOrderId()));
                 if (StringUtil.isEmpty(log1.getRequest()))
                     log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}", acceptOperate.getOrderId())).concat("}"));
                 sysFacadeService.updSynLog(log1);
                 rtn.setDynamic(acceptOperate.getOrderId());
                 rtn.setDesc("发生异常");
                 rtn.setLogId(log1.getLogId());
-                rtn.setRemark(MessageFormat.format("订单{0}确认失败！",acceptOperate.getOrderId()));
+                rtn.setRemark(MessageFormat.format("订单:{0}确认失败！",acceptOperate.getOrderId()));
             }
             return gson.toJson(rtn);
         }

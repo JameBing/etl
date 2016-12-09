@@ -157,7 +157,7 @@ public class JdHomeController {
         resp.setContentType("text/html;charset=utf-8");
         OrderAcceptOperate acceptOperate = new OrderAcceptOperate();
         acceptOperate.setShopId("10054394");
-        acceptOperate.setOrderId("10000101612233");
+        acceptOperate.setOrderId("624573044000041");
         acceptOperate.setIsAgreed(false);
         acceptOperate.setOperator("yang");
         String json = jdHomeFacadeService.orderAcceptOperate(acceptOperate);
