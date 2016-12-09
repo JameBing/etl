@@ -215,10 +215,10 @@ public class MeiTuanFacadeService {
                     .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderExtraParam.class, new OrderExtraParamSerializer())
                     .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderFoodDetailParam.class, new OrderFoodDetailParamSerializer()) .disableHtmlEscaping().create();
                 try {
-            String json =gson.toJson(jsonObject);
-            json = java.net.URLDecoder.decode(json,"utf-8");
-            OrderInfo order = gson.fromJson(json, OrderInfo.class);
-            detailParam = mtApiService.getOrderDetail(order.getOrderid());
+                        String json =gson.toJson(jsonObject);
+                        json = java.net.URLDecoder.decode(json,"utf-8");
+                        OrderInfo order = gson.fromJson(json, OrderInfo.class);
+                        detailParam = mtApiService.getOrderDetail(order.getOrderid());
 //            OrderInfo order = new OrderInfo();
 //            order.setApp_order_code(detailParam.getApp_order_code());
 //            order.setApp_poi_code(detailParam.getApp_poi_code());
@@ -301,34 +301,18 @@ public class MeiTuanFacadeService {
     }
 
     /**
-     * 推送已确认订单信息（已确认）
+     * 推送订单订单状态（已确认、已完成）
      * @return
      * @param orderId 订单Id
      */
     public String getConfirmOrder(String orderId,String status) {
-        if (orderId ==null || "".equals(orderId))
-        {
-            return "订单id列表为空";
-        }
-        mtInnerService.updateStatus(orderId,Integer.parseInt(status));
-        return null;
+            if (orderId ==null || "".equals(orderId)){
+                return "订单id列表为空";
+            }
+            mtInnerService.updateStatus(orderId,Integer.parseInt(status));
+        return  null;
     }
-
-    /**
-     * 推送已完成订单信息（已完成）
-     * @return
-     * @param orderId 订单Id
-     */
-    public String getFinishOrder(String orderId,String status) {
-        if (orderId ==null || "".equals(orderId))
-        {
-            return "订单id列表为空";
-        }
-        mtInnerService.updateStatus(orderId,Integer.parseInt(status));
-        return null;
-    }
-
-    //endregion
+//endregion
 
 
 
