@@ -1,8 +1,7 @@
 package com.wangjunneil.schedule.service;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import com.mchange.v1.util.ArrayUtils;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.entity.baidu.Order;
@@ -15,14 +14,12 @@ import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.util.ArrayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -78,7 +75,6 @@ public class WMFacadeService {
                 }
                 switch (stringMap.get("status")[0]){
                     case "2":             //订单创建(用户已支付)
-                        new Gson().toJson(stringMap);
                         meiTuanFacadeService.newOrder(functionMap2Json.apply(stringMap));
                         break;
                     case  "4":       //商家已确认
@@ -127,13 +123,27 @@ public class WMFacadeService {
         return gson.fromJson(map2Json(map), SysParams.class);
     };
 
+
     private Function<Map<String,String[]>,JsonObject> functionMap2Json = (m) ->{
-       JsonObject jsonObject = new JsonObject();
-        m.keySet().forEach(k -> {
-            jsonObject.addProperty(k,m.get(k)[0]);
-        });
+        JsonObject jsonObject = new JsonObject();
+        if (m.containsKey("ZY_ETL_JSON_KEYS")){
+                m.keySet().forEach(k->{
+                    if (Arrays.asList(m.get("ZY_ETL_JSON_KEYS")).contains(k)){
+                        jsonObject.add(k,new JsonParser().parse(m.get(k)[0]));
+                    }
+                    else{
+                        jsonObject.addProperty(k,m.get(k)[0]);
+                    }
+                });
+        }
+        else{
+            m.keySet().forEach(k->{
+                jsonObject.addProperty(k,m.get(k)[0]);
+            });
+        }
         return jsonObject;
     };
+
 
     //平台订单推送【消息型】
     public String orderPost(Map<String,String[]> stringMap,String platform){
@@ -197,7 +207,7 @@ public class WMFacadeService {
             result_eleme = "",
             result_meituan = "";
         result_baidu = baiDuFacadeService.shopOpen(parsFromPos.getBaidu().getPlatformShopId(), parsFromPos.getBaidu().getShopId());
-        result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(),0);
+        result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(), 0);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"1");
         result_meituan = meiTuanFacadeService.openShop(parsFromPos.getMeituan().getShopId());
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
@@ -207,7 +217,7 @@ public class WMFacadeService {
     public String shopClose(ParsFromPos parsFromPos){
         String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = baiDuFacadeService.shopClose(parsFromPos.getBaidu().getPlatformShopId(), parsFromPos.getBaidu().getShopId());
-        result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(),1);
+        result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(), 1);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"0");
         result_meituan = meiTuanFacadeService.openShop(parsFromPos.getMeituan().getShopId());
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");

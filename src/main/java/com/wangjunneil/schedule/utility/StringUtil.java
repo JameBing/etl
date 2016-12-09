@@ -3,6 +3,8 @@ package com.wangjunneil.schedule.utility;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
 import java.beans.BeanInfo;
@@ -279,5 +281,21 @@ public class StringUtil {
             str = str.replace(matcher.group(1), ch + "");
         }
         return str;
+    }
+
+    /**
+     * Unicode To 中文
+     * @param str
+     * @return boolean
+     */
+    public static boolean isGoodJson(String str){
+        try{
+            if (null == str || "".equals(str.trim())) return false;
+            new JsonParser().parse(str);
+            return true;
+        }
+        catch (JsonParseException ex){
+            return false;
+        }
     }
 }
