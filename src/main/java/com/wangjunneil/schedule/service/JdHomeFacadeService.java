@@ -322,7 +322,7 @@ public class JdHomeFacadeService {
                     List<OrderWaiMai> orderWaiMaiList = new ArrayList<OrderWaiMai>();
                     orders.forEach(o->{
                         OrderWaiMai orderWaiMai = new OrderWaiMai();
-                        orderWaiMai.setPlatfrom(Constants.PLATFORM_WAIMAI_JDHOME);
+                        orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
                         orderWaiMai.setShopId(o.getProduceStationNoIsv());
                         orderWaiMai.setOrderId(String.valueOf(o.getOrderId()));
                         orderWaiMai.setPlatformOrderId(sysFacadeService.getOrderNum(o.getProduceStationNoIsv()));

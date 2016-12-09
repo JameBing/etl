@@ -1,21 +1,29 @@
 package com.wangjunneil.schedule.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
 import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
-import com.sankuai.meituan.waimai.opensdk.vo.OrderExtraParam;
+import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.MeiTuanException;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.common.Log;
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
+import com.wangjunneil.schedule.entity.common.Rtn;
+import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.entity.meituan.*;
 import com.wangjunneil.schedule.entity.mt.*;
 import com.wangjunneil.schedule.service.meituan.MeiTuanApiService;
 import com.wangjunneil.schedule.service.meituan.MeiTuanInnerService;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.net.URLDecoder;
+import java.text.MessageFormat;
 
 
 /**
@@ -32,6 +40,9 @@ public class MeiTuanFacadeService {
     @Autowired
     private MeiTuanInnerService mtInnerService;
 
+    @Autowired
+    private SysFacadeService sysFacadeService;
+
     //日志配置
     private static Logger log = Logger.getLogger(JdHomeFacadeService.class.getName());
 
@@ -45,18 +56,47 @@ public class MeiTuanFacadeService {
     public String openShop(String code)
     {
         String json  = "";
+        Rtn rtn = new Rtn();
+        rtn.setDynamic(code);
+        Log log1 = null;
         try {
             ShopRequest shopRequest = new ShopRequest();
             shopRequest.setApp_poi_code(code);
-             json = mtApiService.openShop(code);
+             json = mtApiService.openShop(code); //SUCCESS {"data":"ok",}   ERROR {"code":"","msg":""}
+             JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+             if (jsonObject.get("data")!=null || jsonObject.get("code").toString() == "200"){
+                 rtn.setCode(0);
+                 rtn.setDesc("success");
+                 rtn.setRemark("成功");
+             }
+            else {
+                 rtn.setCode(Integer.valueOf(jsonObject.get("code").toString()));
+                 rtn.setDesc(jsonObject.get("msg").toString());
+                 rtn.setRemark(jsonObject.get("msg").toString());
+             }
         }catch (MeiTuanException ex){
-
+            rtn.setCode(-997);
+            log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException ex){
-
+           rtn.setCode(-999);
+            log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (Exception ex){
-
+           rtn.setCode(-998);
+            log1 = sysFacadeService.functionRtn.apply(ex);
         }finally {
-            return  json;
+            //有异常产生
+            if (log1 !=null){
+                log1.setLogId(code.concat(log1.getLogId()));
+                log1.setTitle(MessageFormat.format("门店{0}开业失败", code));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"baidu_shop_id\":{1}", code, "")).concat("}"));
+                sysFacadeService.updSynLog(log1);
+                rtn.setDynamic(code);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log1.getLogId());
+                rtn.setRemark(MessageFormat.format("门店{0}开业失败！",code));
+            }
+            return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
         }
     }
 
@@ -206,15 +246,18 @@ public class MeiTuanFacadeService {
     /**
      * 通过订单id获取订单明细信息（已支付）
      * @return
-     */
-    public OrderDetailParam newOrder(JsonObject jsonObject) {
-        OrderDetailParam detailParam = null;
-        Gson gson = new GsonBuilder().registerTypeAdapter(OrderInfo.class,new OrderInfoSerializer())
-                                                                              .registerTypeAdapter(OrderExtraParam.class,new OrderExtraParamSerializer()).disableHtmlEscaping().create();
-        try {
-            String json =gson.toJson(jsonObject);
-            OrderInfo order = gson.fromJson(json, OrderInfo.class);
-            detailParam = mtApiService.getOrderDetail(order.getOrderid());
+            */
+            public String newOrder(JsonObject jsonObject) {
+                String result = "";
+                //OrderDetailParam detailParam = null;
+                Gson gson = new GsonBuilder().registerTypeAdapter(OrderInfo.class,new OrderInfoSerializer())
+                    .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderExtraParam.class, new OrderExtraParamSerializer())
+                    .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderFoodDetailParam.class, new OrderFoodDetailParamSerializer()) .disableHtmlEscaping().create();
+                try {
+                        String json =gson.toJson(jsonObject);
+                        json = java.net.URLDecoder.decode(json,"utf-8");
+                        OrderInfo order = gson.fromJson(json, OrderInfo.class);
+   //                     detailParam = mtApiService.getOrderDetail(order.getOrderid());
 //            OrderInfo order = new OrderInfo();
 //            order.setApp_order_code(detailParam.getApp_order_code());
 //            order.setApp_poi_code(detailParam.getApp_poi_code());
@@ -280,51 +323,49 @@ public class MeiTuanFacadeService {
 //            order.setWm_poi_id(detailParam.getWm_poi_id());
 //            order.setWm_poi_name(detailParam.getWm_poi_name());
 //            order.setWm_poi_phone(detailParam.getWm_poi_phone());
-            mtInnerService.insertAllOrder(order);
-            return detailParam;
-        } catch (MeiTuanException ex) {
-
-        }
-        catch (ScheduleException ex){
-
+          // mtInnerService.insertAllOrder(order);
+                    //商家门店ID
+                    String shopId = order.getApppoicode();
+                    //美团订单ID
+                    String platformOrderId = String.valueOf(order.getOrderid());
+                    OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_MEITUAN,platformOrderId);
+                    //如果订单已经存在则商家订单ID不重新获取
+                    if (orderWaiMai !=null&&orderWaiMai.getPlatform().equals(Constants.PLATFORM_WAIMAI_MEITUAN)&&orderWaiMai.getPlatformOrderId().equals(platformOrderId)){
+                        orderWaiMai.setOrderId(orderWaiMai.getOrderId());
+                    }else {
+                        orderWaiMai = new OrderWaiMai();
+                        //商家订单ID
+                        String orderId = sysFacadeService.getOrderNum(shopId);
+                        orderWaiMai.setOrderId(orderId);
+                    }
+                    orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
+                    orderWaiMai.setPlatformOrderId(platformOrderId);
+                    orderWaiMai.setOrder(order);
+                    orderWaiMai.setShopId(shopId);
+                    sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
+            result = "{\"data\" : \"ok\"}" ;
         }
         catch (Exception ex){
-
+           result = "{\"code\":700,\"msg\":\"系统异常\"}";
         }
         finally {
-            return detailParam;
+            return result;
         }
     }
 
     /**
-     * 推送已确认订单信息（已确认）
+     * 推送订单订单状态（已确认、已完成）
      * @return
      * @param orderId 订单Id
      */
     public String getConfirmOrder(String orderId,String status) {
-        if (orderId ==null || "".equals(orderId))
-        {
-            return "订单id列表为空";
-        }
-        mtInnerService.updateStatus(orderId,Integer.parseInt(status));
-        return null;
+            if (orderId ==null || "".equals(orderId)){
+                return "订单id列表为空";
+            }
+            mtInnerService.updateStatus(orderId,Integer.parseInt(status));
+        return  null;
     }
-
-    /**
-     * 推送已完成订单信息（已完成）
-     * @return
-     * @param orderId 订单Id
-     */
-    public String getFinishOrder(String orderId,String status) {
-        if (orderId ==null || "".equals(orderId))
-        {
-            return "订单id列表为空";
-        }
-        mtInnerService.updateStatus(orderId,Integer.parseInt(status));
-        return null;
-    }
-
-    //endregion
+//endregion
 
 
 

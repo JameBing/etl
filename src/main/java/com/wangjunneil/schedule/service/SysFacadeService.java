@@ -125,15 +125,26 @@ public class SysFacadeService {
 
 
     //生成外卖订单编号
-    public String getOrderNum(String shopId){
-        String strShopId =  shopId.length()>5?shopId.substring(0,5):shopId;
-        String date = DateTimeUtil.nowDateString("yyyyMMdd").substring(2,8);
-        return  "W" + String.format("%05d", Integer.valueOf(strShopId)) + "99" + date + String.format("%06d",Integer.valueOf(getSerialNum(date,"order")));
+    public String getOrderNum(String shopId) {
+        String strShopId = shopId.length() > 5 ? shopId.substring(0, 5) : shopId;
+        String date = DateTimeUtil.nowDateString("yyyyMMdd").substring(2, 8);
+        Integer integerShopId;
+        try {
+            integerShopId = Integer.valueOf(strShopId);
+        } catch (Exception ex) {
+            integerShopId = 99999;
+        }
+        return "W" + String.format("%05d", integerShopId) + "99" + date + String.format("%06d", Integer.valueOf(getSerialNum(date, "order")));
     }
 
     //订单插入
     public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
          sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+    }
+
+    //订单查询
+    public OrderWaiMai findOrderWaiMai(String  platform,String platformOrderId){
+        return sysInnerService.findOrderWaiMai(platform,platformOrderId);
     }
 
     //订单插入 list

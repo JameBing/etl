@@ -331,7 +331,7 @@ public class BaiDuApiService {
     //region 订单
     public String orderGet(Order order) throws  ScheduleException,BaiDuException{
         String requestStr = getRequestPars("order.get", order);
-        String response = HttpUtil.post(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
+        String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
         return response;
     }
 

@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "sync.waimai.order")
 public class OrderWaiMai {
 
-    private String platfrom;
+    private String platform;
 
     private String shopId;
 
@@ -21,12 +21,12 @@ public class OrderWaiMai {
 
     private  Object order;
 
-    public   void setPlatfrom(String platfrom){
-        this.platfrom = platfrom;
+    public   void setPlatform(String platform){
+        this.platform = platform;
     }
 
-    public String getPlatfrom(){
-        return StringUtil.isEmpty(this.platfrom)?"":this.platfrom;
+    public String getPlatform(){
+        return StringUtil.isEmpty(this.platform)?"":this.platform;
     }
 
     public void setShopId(String shopId){
@@ -38,7 +38,7 @@ public class OrderWaiMai {
     }
 
     public void setOrderId(String orderId){
-        this.order = orderId;
+        this.orderId = orderId;
     }
 
     public String getOrderId(){

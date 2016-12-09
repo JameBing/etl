@@ -43,11 +43,11 @@ public class Dish {
 
    //最小起订份数
     @SerializedName("min_order_num")
-   private int minOrderNum;
+   private Integer minOrderNum;
 
    //单份所需餐盒数
     @SerializedName("package_box_num")
-   private int packageBoxNum;
+   private Integer packageBoxNum;
 
    //描述
    private String description;
@@ -72,7 +72,7 @@ public class Dish {
 
    private String wid;
 
-   private int leftNum;
+   private Integer leftNum;
 
    private String status;
 
@@ -132,19 +132,19 @@ public class Dish {
        return this.pic;
    }
 
-   public void setMinOrderNum(int minOrderNum){
+   public void setMinOrderNum(Integer minOrderNum){
        this.minOrderNum = minOrderNum;
    }
 
-   public int getMinOrderNum(){
+   public Integer getMinOrderNum(){
        return this.minOrderNum;
    }
 
-   public  void setPackageBoxNum(int packageBoxNum){
+   public  void setPackageBoxNum(Integer packageBoxNum){
        this.packageBoxNum = packageBoxNum;
    }
 
-   public int getPackageBoxNum(){
+   public Integer getPackageBoxNum(){
        return this.packageBoxNum;
    }
 
@@ -204,11 +204,11 @@ public class Dish {
        return  this.wid;
    }
 
-   public void setLeftNum(int leftNum){
+   public void setLeftNum(Integer leftNum){
        this.leftNum = leftNum;
    }
 
-   public int getLeftNum(){
+   public Integer getLeftNum(){
        return  this.leftNum;
    }
 

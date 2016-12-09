@@ -1,30 +1,15 @@
 package com.wangjunneil.schedule.controller.waimai;
 
-import com.alibaba.fastjson.JSONObject;
+
 import com.google.gson.JsonObject;
-import com.sun.org.apache.bcel.internal.generic.SWITCH;
-import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
 import com.wangjunneil.schedule.common.*;
-import com.wangjunneil.schedule.common.Enum;
-import com.wangjunneil.schedule.common.EnumDescription;
-import com.wangjunneil.schedule.entity.baidu.Shop;
-import com.wangjunneil.schedule.entity.baidu.SysParams;
-import com.wangjunneil.schedule.entity.common.FlowNum;
 import com.wangjunneil.schedule.entity.common.ParsFormPos2;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
-import com.wangjunneil.schedule.service.EleMeFacadeService;
+import com.wangjunneil.schedule.service.MeiTuanFacadeService;
 import com.wangjunneil.schedule.service.WMFacadeService;
-import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
-import com.wangjunneil.schedule.service.eleme.EleMeApiService;
-import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
-import org.apache.log4j.Logger;
-import org.omg.CORBA.PUBLIC_MEMBER;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,13 +26,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 /**
  * Created by yangwanbin on 2016-11-14.
@@ -123,7 +102,7 @@ public class WMController {
      * @param out   响应输出流对象
      * @param request 请求对象 {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
-     * @return{baidu: {code:0,desc:"success",dynamic:"",logId:""},jdhome:{},...}
+     * @return{baidu: [{code:0,desc:"success",dynamic:"",logId:""}],jdhome:[{}],...}]
      */
     @RequestMapping(value = "/shop/open", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     @ResponseBody
@@ -140,7 +119,7 @@ public class WMController {
      * @param out   响应输出流对象
      * @param request 请求对象  {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
-     * @return  {baidu: {code:0,desc:"success",dynamic:"",logId:""},jdhome:{},...}
+     * @return  {baidu: [{code:0,desc:"success",dynamic:"",logId:""}],jdhome:[{}],...}]
      */
     @RequestMapping(value = "/shop/close", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
@@ -284,22 +263,22 @@ public class WMController {
      */
     @RequestMapping(value = {"/baidu/order/status","/djsw/pickFinishOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
     public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
-        String platfrom = null;
+        String platform = null;
         String requestUrl = request.getPathInfo().toLowerCase();
         if (requestUrl.indexOf("/djsw/") > 0) {
             requestUrl = "/waimai/djsw";
         }
         switch (requestUrl){
             case "/waimai/baidu/order/status"://百度
-                platfrom = Constants.PLATFORM_WAIMAI_BAIDU;
+                platform = Constants.PLATFORM_WAIMAI_BAIDU;
                 response.setContentType("text/html; charset=utf-8");
                 break;
             case "/waimai/djsw": //京东到家
-                platfrom = Constants.PLATFORM_WAIMAI_JDHOME;
+                platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             default:break;
         }
-         out.println( wmFacadeService.orderStatus(request.getParameterMap(),platfrom));
+         out.println( wmFacadeService.orderStatus(request.getParameterMap(),platform));
         return  null;
     }
 
@@ -352,25 +331,13 @@ public class WMController {
 //endregion
 
     //备注：需要提供接口用于中台系统下发门店编码对照信息
+@Autowired
+    private  MeiTuanFacadeService meiTuanFacadeService;
 
-    @RequestMapping(value = "/test1",method = RequestMethod.GET)
-    public String test1(PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws  ScheduleException{
-        String tmp = "{\n" +
-            "    \"body\": {\n" +
-            "        \"errno\": 0,\n" +
-            "        \"error\": \"success\"\n" +
-            "    },\n" +
-            "    \"cmd\": \"resp.shop.list\",\n" +
-            "    \"encrypt\": \"\",\n" +
-            "    \"sign\": \"549B9BE31349B53F9ACE0657D17DBC86\",\n" +
-            "    \"source\": \"30325\",\n" +
-            "    \"ticket\": \"D7E3F9E1-BC38-0073-1612-C437748254D2\",\n" +
-            "    \"timestamp\": 1479105805,\n" +
-            "    \"version\": \"3\"\n" +
-            "}";
-
-        String flowNum = "{\"date\":\"20161128\",\"moudle\":\"order\",\"flowNum\":2000}";//实例请求参数
-
+    @RequestMapping(value = "/test1",method = RequestMethod.POST)
+    @ResponseBody
+    public String test1(@RequestBody JsonObject jsonObject,PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws  ScheduleException{
+        out.println(  meiTuanFacadeService.newOrder(jsonObject));
         return null;
     }
 

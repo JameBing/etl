@@ -4,7 +4,7 @@ package com.wangjunneil.schedule.entity.meituan;
  * @author liuxin
  * @since 2016/11/18.
  */
-public class DetailInfo {
+public class OrderFoodDetailParam {
 
     private String app_food_code;
     private String food_name;
@@ -18,7 +18,7 @@ public class DetailInfo {
     private String food_property;
     private String spec;
 
-    public DetailInfo() {
+    public OrderFoodDetailParam() {
     }
 
     public String getApp_food_code() {
@@ -109,7 +109,4 @@ public class DetailInfo {
         this.spec = spec;
     }
 
-    public String toString() {
-        return "DetailInfo [app_food_code=\'" + this.app_food_code + '\'' + ", food_name=\'" + this.food_name + '\'' + ", quantity=" + this.quantity + ", price=" + this.price + ", box_num=" + this.box_num + ", box_price=" + this.box_price + ", unit=\'" + this.unit + '\'' + ", food_discount=" + this.food_discount + ", sku_id=\'" + this.sku_id + '\'' + ", food_property=\'" + this.food_property + '\'' + ", spec=\'" + this.spec + '\'' + ']';
-    }
 }

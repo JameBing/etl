@@ -4,6 +4,7 @@ package com.wangjunneil.schedule.service;
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.ElemeException;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +33,9 @@ public class EleMeFacadeService {
     @Autowired
     private EleMeInnerService eleMeInnerService;
 
+    @Autowired
+    private SysFacadeService sysFacadeService;
+
     private Gson gson;
 
     private Gson getGson(){
@@ -40,6 +45,7 @@ public class EleMeFacadeService {
                 .registerTypeAdapter(Order.class, new OrderSerializer())
                 .registerTypeAdapter(Result.class,new ResultSerializer())
                 .registerTypeAdapter(OldFoodsRequest.class,new OldFoodsRequestSerializer())
+                .registerTypeAdapter(Distribution.class,new DistributionSerializer())
                 .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
                     @Override
                     public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
@@ -63,10 +69,16 @@ public class EleMeFacadeService {
      */
     //门店开关店
     public String setRestaurantStatus(String elemeShopId,String status){
-        if ("".equals(elemeShopId) || elemeShopId == null) return "餐厅ID为空!";
-        String result = null;
+        String result = "";
         Rtn rtn = new Rtn();
+        rtn.setDynamic(elemeShopId);
+        Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if ("".equals(elemeShopId) || elemeShopId == null) {
+            rtn.setCode(1);
+            rtn.setDesc("门店ID为空");
+            rtn.setRemark("门店ID为空");
+        }else {
         try {
             RestaurantRequest restaurantRequest = new RestaurantRequest();
             restaurantRequest.setRestaurant_id(elemeShopId);
@@ -76,15 +88,31 @@ public class EleMeFacadeService {
             rtn.setCode(obj.getCode());
             rtn.setLogId("");
             rtn.setDesc(obj.getMessage());
-            rtn.setDynamic(status);
-        }catch (ElemeException ex){}
-        catch (ScheduleException e) {
-            rtn.setLogId("");
-            rtn.setCode(-999);
-            rtn.setRemark("发生异常");
-            rtn.setDesc("error");
+        }catch (ElemeException ex){
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
         }
-        catch (Exception ex){}
+        catch (ScheduleException ex) {
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }
+        catch (Exception ex){
+            rtn.setCode(-998);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }finally {
+            if (log!=null){
+                log.setLogId(elemeShopId.concat(log.getLogId()));
+                log.setTitle(MessageFormat.format("门店{0}{1}失败", elemeShopId,status=="1"?"开业":"歇业"));
+                if (StringUtil.isEmpty(log.getRequest()))
+                    log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"eleme_shop_id\":{1}", elemeShopId, "")).concat("}"));
+                sysFacadeService.updSynLog(log);
+                rtn.setDynamic(elemeShopId);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log.getLogId());
+                rtn.setRemark(MessageFormat.format("门店{0}{1}失败！",elemeShopId,status=="1"?"开业":"歇业"));
+            }
+          }
+        }
         result = gson1.toJson(rtn);
         return  result;
     }
@@ -186,7 +214,9 @@ public class EleMeFacadeService {
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
-            return eleMeApiService.restaurantMenu(restaurantId);
+            RestaurantRequest restaurantRequest = new RestaurantRequest();
+            restaurantRequest.setRestaurant_id(restaurantId);
+            return eleMeApiService.restaurantMenu(restaurantRequest);
         }catch (ElemeException ex){}
         catch (ScheduleException e) {
             rtn.setLogId("");
@@ -239,9 +269,19 @@ public class EleMeFacadeService {
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         listIds.forEach((id)->{
             try {
-                String result = eleMeApiService.orderDetail(id);
+                OrderRequest orderRequest = new OrderRequest();
+                orderRequest.setEleme_order_id(id);
+                String result = eleMeApiService.orderDetail(orderRequest);
                 Result obj = getGson().fromJson(result, Result.class);
                 Order order = getGson().fromJson(getGson().toJson(obj.getData()), Order.class);
+                orderRequest.setEleme_order_ids(id);
+                String result1 = eleMeApiService.getDeliveryInfo(orderRequest);
+                Body obj1 = getGson().fromJson(result1, Body.class);
+                Distribution distribution = null;
+                for (int i = 0;i < obj1.getData().size(); i++) {
+                    distribution = getGson().fromJson(getGson().toJson(obj1.getData().get(i)), Distribution.class);
+                }
+                order.setDistribution(distribution);
                 eleMeInnerService.addSyncOrder(order);
                 rtn.setCode(obj.getCode());
                 rtn.setLogId("");
@@ -306,7 +346,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String upBatchFrame(List<ParsFromPosInner> dishList,String status) {
-        if (dishList == null || dishList.size() < 1) return "食物ID不存在!";
+        if (dishList == null || dishList.size() < 1) return "食物ID为空!";
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
@@ -345,7 +385,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String deleteFoods(List<ParsFromPosInner> dishList) {
-        if (dishList == null || dishList.size() < 1) return "食物ID不存在!";
+        if (dishList == null || dishList.size() < 1) return "食物ID为空!";
         Rtn rtn = new Rtn();
         StringBuilder sb = new StringBuilder();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -393,6 +433,62 @@ public class EleMeFacadeService {
             rtn.setCode(-999);
             rtn.setRemark("发生异常");
             rtn.setDesc("error");
+        }
+        return gson1.toJson(rtn);
+    }
+
+    /**
+     * 同意退单
+     * @param eleme_order_ids
+     * @return
+     */
+    public String agreeRefund(String eleme_order_ids) {
+        if (eleme_order_ids == null && "".equals(eleme_order_ids)) return "订单id列表为空!";
+        Rtn rtn = new Rtn();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        try {
+            String result = eleMeApiService.agreeRefund(eleme_order_ids);
+            Result obj = getGson().fromJson(result, Result.class);
+            rtn.setLogId("");
+            rtn.setCode(obj.getCode());
+            rtn.setRemark(obj.getMessage());
+        }catch (ScheduleException ex) {
+            rtn.setLogId("");
+            rtn.setCode(-999);
+            rtn.setRemark("发生异常");
+            rtn.setDesc("error");
+        }catch (Exception ex) {
+
+        }
+        return gson1.toJson(rtn);
+    }
+
+    /**
+     * 不同意退单
+     * @param eleme_order_ids
+     * @param reason
+     * @return
+     */
+    public String disAgreeRefund(String eleme_order_ids, String reason) {
+        if (eleme_order_ids == null && "".equals(eleme_order_ids)) return "订单id列表为空!";
+        Rtn rtn = new Rtn();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        try {
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setEleme_order_id(eleme_order_ids);
+            orderRequest.setReason(reason);
+            String result = eleMeApiService.disAgreeRefund(orderRequest);
+            Result obj = getGson().fromJson(result, Result.class);
+            rtn.setLogId("");
+            rtn.setCode(obj.getCode());
+            rtn.setRemark(obj.getMessage());
+        }catch (ScheduleException ex) {
+            rtn.setLogId("");
+            rtn.setCode(-999);
+            rtn.setRemark("发生异常");
+            rtn.setDesc("error");
+        }catch (Exception ex) {
+
         }
         return gson1.toJson(rtn);
     }

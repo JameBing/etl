@@ -1,28 +1,16 @@
 package com.wangjunneil.schedule.service;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.wangjunneil.schedule.common.*;
-import com.wangjunneil.schedule.common.Enum;
-import com.wangjunneil.schedule.entity.baidu.Order;
-import com.wangjunneil.schedule.entity.baidu.Shop;
 import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.entity.baidu.SysParamsSerializer;
 import com.wangjunneil.schedule.entity.common.*;
-import com.wangjunneil.schedule.entity.sys.Status;
-import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
-import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -50,17 +38,16 @@ public class WMFacadeService {
 
     //回调地址入口处理方法
     public String appReceiveCallBack(Map<String,String[]> stringMap,String platform){
-        Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         String result = "";
         switch (platform){
             case Constants.PLATFORM_WAIMAI_BAIDU:
                 switch (stringMap.get("cmd")[0]){
                     case Constants.BAIDU_CMD_ORDER_CREATE:                    //订单创建
-                        orderPost(stringMap,platform);
+                      result =   orderPost(stringMap,platform);
                         break;
                     case  Constants.BAIDU_CMD_ORDER_STATUS_PUSH:       //订单状态推送
-                        orderStatus(stringMap,platform);
+                     result =    orderStatus(stringMap,platform);
                         break;
                     default:
                         result = baiDuFacadeService.responseNoPars("resp");
@@ -73,36 +60,38 @@ public class WMFacadeService {
                 break;
             case Constants.PLATFORM_WAIMAI_MEITUAN:
                 if(stringMap.size()==0){
-                    rtn.setCode(200);
-                    return gson1.toJson(rtn);
+                    result = "{\"data\":\"ok\"}";
+                }else {
+                    switch (stringMap.get("status")[0]) {
+                        case "2":             //订单创建(用户已支付)
+                            Map<String, String[]> map = new HashMap<String, String[]>();
+                            map.putAll(stringMap);
+                            String[] strArr = {"extras", "detail"};
+                            map.put("ZY_ETL_JSON_KEYS", strArr);
+                            result = meiTuanFacadeService.newOrder(functionMap2Json.apply(map));
+                            break;
+                        case "4":       //商家已确认
+                            orderStatus(stringMap, platform);
+                            break;
+                        case "8":       //交易完成
+                            orderStatus(stringMap, platform);
+                            break;
+                        default:
+                            result = baiDuFacadeService.responseNoPars("resp");
+                            break;
+                    }
                 }
-                switch (stringMap.get("status")[0]){
-                    case "2":             //订单创建(用户已支付)
-                        new Gson().toJson(stringMap);
-                        meiTuanFacadeService.newOrder(functionMap2Json.apply(stringMap));
-                        break;
-                    case  "4":       //商家已确认
-                        orderStatus(stringMap,platform);
-                        break;
-                    case  "8":       //交易完成
-                        orderStatus(stringMap,platform);
-                        break;
-                    default:
-                        result = baiDuFacadeService.responseNoPars("resp");
-                        break;
-                }
-
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME:
                 switch (stringMap.get("push_action")[0]){
                     case "1": //新订单
-                        eleMeFacadeService.getNewOrder(stringMap.get("eleme_order_ids")[0]);
+                      result =    eleMeFacadeService.getNewOrder(stringMap.get("eleme_order_ids")[0]);
                         break;
                     case "2": //订单状态变更
-                        eleMeFacadeService.orderChange(stringMap.get("eleme_order_id")[0],stringMap.get("new_status")[0]);
+                      result =    eleMeFacadeService.orderChange(stringMap.get("eleme_order_id")[0], stringMap.get("new_status")[0]);
                         break;
                     case "3": //退单状态推送
-                        eleMeFacadeService.chargeBack(stringMap.get("eleme_order_id")[0],stringMap.get("refund_status")[0]);
+                     result =   eleMeFacadeService.chargeBack(stringMap.get("eleme_order_id")[0], stringMap.get("refund_status")[0]);
                         break;
                     case "4": //订单配送状态推送
 
@@ -112,7 +101,6 @@ public class WMFacadeService {
                 break;
             default:break;
         }
-
         return result;
     }
 
@@ -127,13 +115,30 @@ public class WMFacadeService {
         return gson.fromJson(map2Json(map), SysParams.class);
     };
 
+
     private Function<Map<String,String[]>,JsonObject> functionMap2Json = (m) ->{
-       JsonObject jsonObject = new JsonObject();
-        m.keySet().forEach(k -> {
-            jsonObject.addProperty(k,m.get(k)[0]);
-        });
+        JsonObject jsonObject = new JsonObject();
+        if (m.containsKey("ZY_ETL_JSON_KEYS")){
+                m.keySet().forEach(k->{
+                    if (Arrays.asList(m.get("ZY_ETL_JSON_KEYS")).contains(k)){
+                        try {
+                            jsonObject.add(k,new JsonParser().parse(java.net.URLDecoder.decode(m.get(k)[0],"utf-8")));
+                        }catch (Exception ex){
+                        }
+                    }
+                    else{
+                        jsonObject.addProperty(k,m.get(k)[0]);
+                    }
+                });
+        }
+        else{
+            m.keySet().forEach(k->{
+                jsonObject.addProperty(k,m.get(k)[0]);
+            });
+          }
         return jsonObject;
     };
+
 
     //平台订单推送【消息型】
     public String orderPost(Map<String,String[]> stringMap,String platform){
@@ -143,7 +148,7 @@ public class WMFacadeService {
                     result = baiDuFacadeService.orderPost(functionMap2SysParams.apply(stringMap));
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
-                result = jdHomeFacadeService.newOrder(stringMap.get("jd_param_json")[0],stringMap.get("sid")[0]);
+                result = jdHomeFacadeService.newOrder(stringMap.get("jd_param_json")[0], stringMap.get("sid")[0]);
                 break;
             default:break;
         }
@@ -191,13 +196,13 @@ public class WMFacadeService {
 
     //门店开业
     public String shopOpen(ParsFromPos parsFromPos){
-        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}",
+        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]",
             result_baidu = "",
             result_jdhome = "",
             result_eleme = "",
             result_meituan = "";
         result_baidu = baiDuFacadeService.shopOpen(parsFromPos.getBaidu().getPlatformShopId(), parsFromPos.getBaidu().getShopId());
-        result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(),0);
+        result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(), 0);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"1");
         result_meituan = meiTuanFacadeService.openShop(parsFromPos.getMeituan().getShopId());
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
@@ -205,9 +210,9 @@ public class WMFacadeService {
 
     //门店歇业
     public String shopClose(ParsFromPos parsFromPos){
-        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
+        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = baiDuFacadeService.shopClose(parsFromPos.getBaidu().getPlatformShopId(), parsFromPos.getBaidu().getShopId());
-        result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(),1);
+        result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(), 1);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"0");
         result_meituan = meiTuanFacadeService.openShop(parsFromPos.getMeituan().getShopId());
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
