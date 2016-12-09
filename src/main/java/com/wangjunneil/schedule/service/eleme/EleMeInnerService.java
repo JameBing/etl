@@ -61,7 +61,8 @@ public class EleMeInnerService {
             .set("delivertime", order.getDelivertime())
             .set("servicerate", order.getServicerate())
             .set("isonlinepaid", order.getIsonlinepaid())
-            .set("activitytotal", order.getActivitytotal());
+            .set("activitytotal", order.getActivitytotal())
+            .set("distribution", order.getDistribution());
         mongoTemplate.upsert(query, update, Order.class);
     }
 
@@ -76,6 +77,20 @@ public class EleMeInnerService {
         });
         query.addCriteria(criteria);
         Update update = new Update().set("statuscode",status);
+        return mongoTemplate.updateMulti(query,update,Order.class).getN();
+    }
+
+    //批量更新配送状态(根据订单号)
+    public int updSyncElemeDeliveryStastus(String ids,int i,int status, int zstatus){
+        Query query = new Query();
+        Criteria criteria = new Criteria();
+        List<String> listIds = new ArrayList<String>();
+        Collections.addAll(listIds, ids.split(","));
+        listIds.forEach((id)->{
+            criteria.orOperator(new Criteria().where("orderid").is(id));
+        });
+        query.addCriteria(criteria);
+        Update update = new Update().set("distribution.records.get("+i+").statuscode",status).set("distribution.records.get(\"+i+\").sub_status_code", zstatus);
         return mongoTemplate.updateMulti(query,update,Order.class).getN();
     }
 

@@ -109,6 +109,8 @@ public class Order {
     //联系列表
     @SerializedName("phone_list")
     private List phonelist;
+    @SerializedName("distribution")
+    private Distribution distribution;
 
     public Double getOriginalprice() {
         return originalprice;
@@ -372,5 +374,13 @@ public class Order {
 
     public void setPhonelist(List phonelist) {
         this.phonelist = phonelist;
+    }
+
+    public Distribution getDistribution() {
+        return distribution;
+    }
+
+    public void setDistribution(Distribution distribution) {
+        this.distribution = distribution;
     }
 }

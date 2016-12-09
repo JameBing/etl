@@ -45,6 +45,7 @@ public class EleMeFacadeService {
                 .registerTypeAdapter(Order.class, new OrderSerializer())
                 .registerTypeAdapter(Result.class,new ResultSerializer())
                 .registerTypeAdapter(OldFoodsRequest.class,new OldFoodsRequestSerializer())
+                .registerTypeAdapter(Distribution.class,new DistributionSerializer())
                 .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
                     @Override
                     public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
@@ -213,7 +214,9 @@ public class EleMeFacadeService {
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
-            return eleMeApiService.restaurantMenu(restaurantId);
+            RestaurantRequest restaurantRequest = new RestaurantRequest();
+            restaurantRequest.setRestaurant_id(restaurantId);
+            return eleMeApiService.restaurantMenu(restaurantRequest);
         }catch (ElemeException ex){}
         catch (ScheduleException e) {
             rtn.setLogId("");
@@ -266,9 +269,19 @@ public class EleMeFacadeService {
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         listIds.forEach((id)->{
             try {
-                String result = eleMeApiService.orderDetail(id);
+                OrderRequest orderRequest = new OrderRequest();
+                orderRequest.setEleme_order_id(id);
+                String result = eleMeApiService.orderDetail(orderRequest);
                 Result obj = getGson().fromJson(result, Result.class);
                 Order order = getGson().fromJson(getGson().toJson(obj.getData()), Order.class);
+                orderRequest.setEleme_order_ids(id);
+                String result1 = eleMeApiService.getDeliveryInfo(orderRequest);
+                Body obj1 = getGson().fromJson(result1, Body.class);
+                Distribution distribution = null;
+                for (int i = 0;i < obj1.getData().size(); i++) {
+                    distribution = getGson().fromJson(getGson().toJson(obj1.getData().get(i)), Distribution.class);
+                }
+                order.setDistribution(distribution);
                 eleMeInnerService.addSyncOrder(order);
                 rtn.setCode(obj.getCode());
                 rtn.setLogId("");
@@ -333,7 +346,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String upBatchFrame(List<ParsFromPosInner> dishList,String status) {
-        if (dishList == null || dishList.size() < 1) return "食物ID不存在!";
+        if (dishList == null || dishList.size() < 1) return "食物ID为空!";
         Rtn rtn = new Rtn();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
@@ -372,7 +385,7 @@ public class EleMeFacadeService {
      * @return
      */
     public String deleteFoods(List<ParsFromPosInner> dishList) {
-        if (dishList == null || dishList.size() < 1) return "食物ID不存在!";
+        if (dishList == null || dishList.size() < 1) return "食物ID为空!";
         Rtn rtn = new Rtn();
         StringBuilder sb = new StringBuilder();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
@@ -420,6 +433,62 @@ public class EleMeFacadeService {
             rtn.setCode(-999);
             rtn.setRemark("发生异常");
             rtn.setDesc("error");
+        }
+        return gson1.toJson(rtn);
+    }
+
+    /**
+     * 同意退单
+     * @param eleme_order_ids
+     * @return
+     */
+    public String agreeRefund(String eleme_order_ids) {
+        if (eleme_order_ids == null && "".equals(eleme_order_ids)) return "订单id列表为空!";
+        Rtn rtn = new Rtn();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        try {
+            String result = eleMeApiService.agreeRefund(eleme_order_ids);
+            Result obj = getGson().fromJson(result, Result.class);
+            rtn.setLogId("");
+            rtn.setCode(obj.getCode());
+            rtn.setRemark(obj.getMessage());
+        }catch (ScheduleException ex) {
+            rtn.setLogId("");
+            rtn.setCode(-999);
+            rtn.setRemark("发生异常");
+            rtn.setDesc("error");
+        }catch (Exception ex) {
+
+        }
+        return gson1.toJson(rtn);
+    }
+
+    /**
+     * 不同意退单
+     * @param eleme_order_ids
+     * @param reason
+     * @return
+     */
+    public String disAgreeRefund(String eleme_order_ids, String reason) {
+        if (eleme_order_ids == null && "".equals(eleme_order_ids)) return "订单id列表为空!";
+        Rtn rtn = new Rtn();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        try {
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setEleme_order_id(eleme_order_ids);
+            orderRequest.setReason(reason);
+            String result = eleMeApiService.disAgreeRefund(orderRequest);
+            Result obj = getGson().fromJson(result, Result.class);
+            rtn.setLogId("");
+            rtn.setCode(obj.getCode());
+            rtn.setRemark(obj.getMessage());
+        }catch (ScheduleException ex) {
+            rtn.setLogId("");
+            rtn.setCode(-999);
+            rtn.setRemark("发生异常");
+            rtn.setDesc("error");
+        }catch (Exception ex) {
+
         }
         return gson1.toJson(rtn);
     }
