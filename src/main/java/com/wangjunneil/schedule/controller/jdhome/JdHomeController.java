@@ -49,7 +49,7 @@ public class JdHomeController {
         resp.setContentType("text/html;charset=utf-8");
         //应用参数
         List<ParsFromPosInner> listBaseStockCenterRequest = new ArrayList<ParsFromPosInner>();
-        String shopId = "6666";
+       String shopId = "6666";
         ParsFromPosInner inner = new ParsFromPosInner();
         inner.setDishId("6666");
         inner.setShopId(shopId);
@@ -69,6 +69,8 @@ public class JdHomeController {
     }
 
     /**
+     *
+     *
      * 新增商品分类
      * @param out
      * @param req
@@ -79,12 +81,12 @@ public class JdHomeController {
     public String addShopCategory(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
         shopCategory shopCategory = new shopCategory();
-        shopCategory.setShopId("10054394");
+        /*shopCategory.setShopId("6666");
         shopCategory.setPid(000L);
         shopCategory.setShopCategoryLevel(3);
        // shopCategory.setCreatePin("aaa");//
         shopCategory.setSort(1);
-        shopCategory.setShopCategoryName("bb");
+        shopCategory.setShopCategoryName("bb");*/
         String returnJson = jdHomeFacadeService.addShopCategory(shopCategory);
         out.println(returnJson);
         out.close();
@@ -172,8 +174,10 @@ public class JdHomeController {
        /* String json = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
         JSONObject jsonObject = JSON.parseObject(json);
         jdHomeFacadeService.pickFinishOrder(jsonObject);*/
-        String shopId = "6666";
-        String json = jdHomeFacadeService.openOrCloseStore(shopId,1);
+       /* String shopId = "";
+        String json = jdHomeFacadeService.openOrCloseStore(shopId,1);*/
+        String aa = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
+        String json = jdHomeFacadeService.newOrder(aa,"6666");
         out.println(json);
         out.close();
         return null;
