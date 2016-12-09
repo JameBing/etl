@@ -300,13 +300,13 @@ public class WMController {
      * 确认订单
      * @param out   响应输出流对象
      * @param response  浏览器响应对象
-     * @request request 浏览器请求对象 约定格式：{baidu:"0001,0002",jdhome:"0003,0004"}
+     * @request request 浏览器请求对象 约定格式：{baidu:{orderId:"0001,0002",shopId:""},jdhome:{orderId:"0003,0004",shopId:""},meituan:{},eleme:{}}
      * @return
      */
-    @RequestMapping(value = "/orderConfirm.php", method = RequestMethod.GET)
-    public String orderConfirm(PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    @RequestMapping(value = "/orderConfirm.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
+    public String orderConfirm(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         response.setContentType("application/json;charset=uft-8");
-        String reponseStr = wmFacadeService.orderConfirm(request.getParameterMap());
+        String reponseStr = wmFacadeService.orderConfirm(parsFromPos);
         out.println(reponseStr);
         return  null;
     }
@@ -316,13 +316,15 @@ public class WMController {
      * 取消订单
      *
      * @param out   响应输出流对象
+     * @request request 浏览器请求对象 约定格式：{baidu:{orderId:"0001,0002",shopId:""},jdhome:{orderId:"0003,0004",shopId:""},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/orderCancel.php", method = RequestMethod.GET)
-    public String orderCancel(PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    @RequestMapping(value = "/orderCancel.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
+    @ResponseBody
+    public String orderCancel(@RequestBody ParsFromPos parsFromPos,PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         response.setContentType("application/json;charset=uft-8");
-        out.println(wmFacadeService.orderCancel(request.getParameterMap()));
+        out.println(wmFacadeService.orderCancel(parsFromPos));
         return  null;
     }
 

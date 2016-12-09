@@ -441,21 +441,24 @@ public class JdHomeFacadeService {
 
     /**
      * 商家确认/取消接口
-     * @param acceptOperate Entity
+     * @param orderId 订单Id
+     * @param shopId 门店Id
+     * @param isAgree true 接单 false不接单
      * @return String
      */
-    public String orderAcceptOperate(OrderAcceptOperate acceptOperate){
+    public String orderAcceptOperate(String orderId,String shopId,Boolean isAgree){
         Rtn rtn = new Rtn();
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        if(acceptOperate ==null || StringUtil.isEmpty(acceptOperate.getOrderId()) || StringUtil.isEmpty(acceptOperate.getIsAgreed())){
+        if(StringUtil.isEmpty(orderId) || StringUtil.isEmpty(shopId) || StringUtil.isEmpty(isAgree)){
             rtn.setCode(-1);
             rtn.setDesc("error");
             rtn.setRemark("商家订单确认/取消接口请求参数为空");
             return gson.toJson(rtn);
         }
         try {
-            String json = jdHomeApiService.orderAcceptOperate(acceptOperate);
+            String operator = "admin";
+            String json = jdHomeApiService.orderAcceptOperate(orderId,shopId,isAgree,operator);
             log.info("=====商家确认/取消接口返回信息:"+json+"=====");
             //format返回结果
             getResult(json,rtn);
@@ -465,13 +468,13 @@ public class JdHomeFacadeService {
             JSONObject apiJson = JSONObject.parseObject(jsonObject.getString("data")) ;
             if("0".equals(jsonObject.getString("code")) && "0".equals(apiJson.getString("code"))){
                int status = 0;
-               if(acceptOperate.getIsAgreed()){
+               if(isAgree){
                    status = Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderReceived,Enum.OrderStatusJdHome.OrderReceived.toString()).get("code").getAsInt();
                }
-               if(!acceptOperate.getIsAgreed()){
+               if(!isAgree){
                    status = Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderSysCancelled,Enum.OrderStatusJdHome.OrderSysCancelled.toString()).get("code").getAsInt();
                }
-               jdHomeInnerService.updateStatus(Long.parseLong(acceptOperate.getOrderId()),status);
+               jdHomeInnerService.updateStatus(Long.parseLong(orderId),status);
             }
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
@@ -481,15 +484,15 @@ public class JdHomeFacadeService {
             rtn.setCode(-998);
         }finally {
             if (log1 !=null){
-                log1.setLogId(acceptOperate.getOrderId().concat(log1.getLogId()));
-                log1.setTitle(MessageFormat.format("订单:{0}确认失败！", acceptOperate.getOrderId()));
+                log1.setLogId(orderId.concat(log1.getLogId()));
+                log1.setTitle(MessageFormat.format("订单:{0}确认失败！", orderId));
                 if (StringUtil.isEmpty(log1.getRequest()))
-                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}", acceptOperate.getOrderId())).concat("}"));
+                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}", orderId)).concat("}"));
                 sysFacadeService.updSynLog(log1);
-                rtn.setDynamic(acceptOperate.getOrderId());
+                rtn.setDynamic(orderId);
                 rtn.setDesc("发生异常");
                 rtn.setLogId(log1.getLogId());
-                rtn.setRemark(MessageFormat.format("订单:{0}确认失败！",acceptOperate.getOrderId()));
+                rtn.setRemark(MessageFormat.format("订单:{0}确认失败！",orderId));
             }
             return gson.toJson(rtn);
         }

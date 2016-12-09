@@ -224,13 +224,13 @@ public class JdHomeApiService {
     }
 
     //商家确认/取消接单接口
-    public String orderAcceptOperate(OrderAcceptOperate acceptOperate)throws Exception{
-        SignParams signParams = getSignParams(acceptOperate.getShopId());//签名参数
+    public String orderAcceptOperate(String orderId,String shopId,Boolean isAgree,String operator)throws Exception{
+        SignParams signParams = getSignParams(shopId);//签名参数
         Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("orderId",acceptOperate.getOrderId());
-        jsonObject.put("isAgreed", acceptOperate.getIsAgreed());
-        jsonObject.put("operator", acceptOperate.getOperator());
+        jsonObject.put("orderId",orderId);
+        jsonObject.put("isAgreed", isAgree);
+        jsonObject.put("operator", operator);
         signParams.setJd_param_json(jsonObject.toJSONString());
         param.put("jd_param_json",jsonObject);
         try {

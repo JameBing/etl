@@ -282,41 +282,43 @@ public class WMFacadeService {
 
     //===============订单=================/
     //确认订单
-    public String orderConfirm(Map<String,String[]> stringMap){
-       return orderOpt(stringMap,"order.confirm");
+    public String orderConfirm(ParsFromPos parsFromPos){
+       return orderOpt(parsFromPos,"order.confirm",true);
     }
 
     //取消订单
-    public  String orderCancel(Map<String,String[]> stringMap){
-      return orderOpt(stringMap, "order.cancel");
+    public  String orderCancel(ParsFromPos parsFromPos){
+      return orderOpt(parsFromPos, "order.cancel",false);
     }
 
     //订单操作
-    private  String orderOpt(Map<String,String[]> stringMap,String command){
+    private  String orderOpt(ParsFromPos parsFromPos,String command,Boolean isAgree){
         String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]",
             result_baidu = null,
             result_jdhome = null,
             result_eleme = null,
             result_meituan = null;
-        for (String k :stringMap.keySet()){
-            switch (k){
-                case Constants.PLATFORM_WAIMAI_BAIDU:
-                    for(String id:stringMap.get(k)[0].toString().split(",")){
-                        switch (command){
-                            case "order.confirm":
-                                result_baidu += (result_baidu == null?"":",")+baiDuFacadeService.orderConfirm(id);
-                                break;
-                            case "order.cancel":
-                                result_baidu += (result_baidu == null?"":",")+baiDuFacadeService.orderCancel(id);
-                                break;
-                            default:break;
-                        }
-
-                    }
-                    break;
-                case  Constants.PLATFORM_WAIMAI_JDHOME:
-                    break;
-                default:break;
+        if(parsFromPos.getBaidu()!=null){
+            for(String id:parsFromPos.getBaidu().getOrderId().split(",")){
+                switch (command){
+                    case "order.confirm":
+                        result_baidu += (result_baidu == null?"":",")+baiDuFacadeService.orderConfirm(id);
+                        break;
+                    case "order.cancel":
+                        result_baidu += (result_baidu == null?"":",")+baiDuFacadeService.orderCancel(id);
+                        break;
+                    default:break;
+                }
+            }
+        }
+        if(parsFromPos.getJdhome()!=null){
+            for(String id:parsFromPos.getJdhome().getOrderId().split(",")){
+                  result_jdhome +=(result_jdhome == null?"":",")+jdHomeFacadeService.orderAcceptOperate(id, parsFromPos.getJdhome().getShopId(), isAgree);
+                }
+            }
+        if(parsFromPos.getMeituan()!=null){
+            for(String id:parsFromPos.getMeituan().getOrderId().split(",")){
+                result_meituan +=(result_meituan == null?"":",")+meiTuanFacadeService.getConfirmOrder(Long.parseLong(id));
             }
         }
         return "{".concat( MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
