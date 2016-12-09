@@ -333,16 +333,6 @@ public class WMController {
 //endregion
 
     //备注：需要提供接口用于中台系统下发门店编码对照信息
-@Autowired
-    private  MeiTuanFacadeService meiTuanFacadeService;
-
-    @RequestMapping(value = "/test1",method = RequestMethod.POST)
-    @ResponseBody
-    public String test1(@RequestBody JsonObject jsonObject,PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws  ScheduleException{
-        out.println(  meiTuanFacadeService.newOrder(jsonObject));
-        return null;
-    }
-
     @RequestMapping(value = "/test2",method = RequestMethod.POST)
     public String test2(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
         try {
