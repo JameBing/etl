@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -120,6 +121,7 @@ public class MeituanController {
         param.setApp_poi_code("test_poi_01");
         param.setApp_food_code("test_poi_02");
         param.setName("菜菜阿123");
+
         param.setDescription("今天创建的");
         param.setPrice(15.5F);
         param.setMin_order_count(1);
