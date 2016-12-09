@@ -160,8 +160,8 @@ public class JdHomeController {
         acceptOperate.setOrderId("624573044000041");
         acceptOperate.setIsAgreed(false);
         acceptOperate.setOperator("yang");
-        String json = jdHomeFacadeService.orderAcceptOperate(acceptOperate);
-        out.println(json);
+       // String json = jdHomeFacadeService.orderAcceptOperate(acceptOperate);
+       // out.println(json);
         out.close();
         return null;
     }
