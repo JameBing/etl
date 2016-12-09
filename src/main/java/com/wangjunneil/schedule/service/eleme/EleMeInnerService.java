@@ -1,7 +1,5 @@
 package com.wangjunneil.schedule.service.eleme;
 
-import com.google.gson.Gson;
-import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.eleme.Order;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,7 @@ public class EleMeInnerService {
     private MongoTemplate mongoTemplate;
 
     //insert or update
-    public void addSyncOrder(Order order) throws ScheduleException{
+    public void addSyncOrder(Order order){
         Query  query = new Query(Criteria.where("orderid").is(order.getOrderid()));
         Update update = new Update()
             .set("restaurantid", order.getRestaurantid())
@@ -95,7 +93,7 @@ public class EleMeInnerService {
     }
 
     //多条件查询（完全匹配）
-    public List<Order> findBodies(Map<String,Object[]> map) throws ScheduleException{
+    public List<Order> findBodies(Map<String,Object[]> map) {
 
         Query query = new Query();
         Criteria criteria = new Criteria();
@@ -110,7 +108,7 @@ public class EleMeInnerService {
     }
 
     //查询所有
-    public List<Order> findAll() throws ScheduleException{
+    public List<Order> findAll(){
         Query query = new Query();
         List<Order> bodies = mongoTemplate.find(query,Order.class);
         return  bodies;
