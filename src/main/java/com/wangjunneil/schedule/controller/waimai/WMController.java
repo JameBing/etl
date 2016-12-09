@@ -74,8 +74,8 @@ public class WMController {
                 platform = null;
                 break;
         }
-        //out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
-        System.out.print(wmFacadeService.appReceiveCallBack(stringMap,platform));
+        out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
+        //System.out.print(wmFacadeService.appReceiveCallBack(stringMap,platform));
         return  null;
     }
 //region 商户
@@ -100,7 +100,7 @@ public class WMController {
      * 门店开业
      *
      * @param out   响应输出流对象
-     * @param request 请求对象 {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
+     * @param request 请求对象 {baidu:[{shopId:"",platformShopId:""}],jdhome:[{}],meituan:[{}],eleme:[{}]}
      * @param response  浏览器响应对象
      * @return{baidu: [{code:0,desc:"success",dynamic:"",logId:""}],jdhome:[{}],...}]
      */
@@ -117,7 +117,7 @@ public class WMController {
      * 门店歇业
      *
      * @param out   响应输出流对象
-     * @param request 请求对象  {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
+     * @param request 请求对象  {baidu:[{shopId:"",platformShopId:""}],jdhome:[{}],meituan:[{}],eleme:[{}]}
      * @param response  浏览器响应对象
      * @return  {baidu: [{code:0,desc:"success",dynamic:"",logId:""}],jdhome:[{}],...}]
      */
