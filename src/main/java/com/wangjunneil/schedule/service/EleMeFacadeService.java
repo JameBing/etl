@@ -4,6 +4,7 @@ package com.wangjunneil.schedule.service;
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.ElemeException;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +32,9 @@ public class EleMeFacadeService {
     private EleMeApiService eleMeApiService;
     @Autowired
     private EleMeInnerService eleMeInnerService;
+
+    @Autowired
+    private SysFacadeService sysFacadeService;
 
     private Gson gson;
 
@@ -63,10 +68,16 @@ public class EleMeFacadeService {
      */
     //门店开关店
     public String setRestaurantStatus(String elemeShopId,String status){
-        if ("".equals(elemeShopId) || elemeShopId == null) return "餐厅ID为空!";
-        String result = null;
+        String result = "";
         Rtn rtn = new Rtn();
+        rtn.setDynamic(elemeShopId);
+        Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if ("".equals(elemeShopId) || elemeShopId == null) {
+            rtn.setCode(1);
+            rtn.setDesc("门店ID为空");
+            rtn.setRemark("门店ID为空");
+        }else {
         try {
             RestaurantRequest restaurantRequest = new RestaurantRequest();
             restaurantRequest.setRestaurant_id(elemeShopId);
@@ -76,15 +87,31 @@ public class EleMeFacadeService {
             rtn.setCode(obj.getCode());
             rtn.setLogId("");
             rtn.setDesc(obj.getMessage());
-            rtn.setDynamic(status);
-        }catch (ElemeException ex){}
-        catch (ScheduleException e) {
-            rtn.setLogId("");
-            rtn.setCode(-999);
-            rtn.setRemark("发生异常");
-            rtn.setDesc("error");
+        }catch (ElemeException ex){
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
         }
-        catch (Exception ex){}
+        catch (ScheduleException ex) {
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }
+        catch (Exception ex){
+            rtn.setCode(-998);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }finally {
+            if (log!=null){
+                log.setLogId(elemeShopId.concat(log.getLogId()));
+                log.setTitle(MessageFormat.format("门店{0}{1}失败", elemeShopId,status=="1"?"开业":"歇业"));
+                if (StringUtil.isEmpty(log.getRequest()))
+                    log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"eleme_shop_id\":{1}", elemeShopId, "")).concat("}"));
+                sysFacadeService.updSynLog(log);
+                rtn.setDynamic(elemeShopId);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log.getLogId());
+                rtn.setRemark(MessageFormat.format("门店{0}{1}失败！",elemeShopId,status=="1"?"开业":"歇业"));
+            }
+          }
+        }
         result = gson1.toJson(rtn);
         return  result;
     }

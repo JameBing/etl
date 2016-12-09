@@ -36,7 +36,7 @@ public class MeiTuanInnerService {
     //修改订单状态
     public void updateStatus(String orderId,int status){
         Query query = new Query(Criteria.where("order_id").is(orderId));
-        Update update = new Update().set("orderStatus",status);
+        Update update = new Update().set("status",status);
         mongoTemplate.upsert(query,update,OrderInfoDTO.class);
     }
 
