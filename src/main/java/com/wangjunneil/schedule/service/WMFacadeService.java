@@ -61,26 +61,26 @@ public class WMFacadeService {
             case Constants.PLATFORM_WAIMAI_MEITUAN:
                 if(stringMap.size()==0){
                     result = "{\"data\":\"ok\"}";
+                }else {
+                    switch (stringMap.get("status")[0]) {
+                        case "2":             //订单创建(用户已支付)
+                            Map<String, String[]> map = new HashMap<String, String[]>();
+                            map.putAll(stringMap);
+                            String[] strArr = {"extras", "detail"};
+                            map.put("ZY_ETL_JSON_KEYS", strArr);
+                            result = meiTuanFacadeService.newOrder(functionMap2Json.apply(map));
+                            break;
+                        case "4":       //商家已确认
+                            orderStatus(stringMap, platform);
+                            break;
+                        case "8":       //交易完成
+                            orderStatus(stringMap, platform);
+                            break;
+                        default:
+                            result = baiDuFacadeService.responseNoPars("resp");
+                            break;
+                    }
                 }
-                switch (stringMap.get("status")[0]){
-                    case "2":             //订单创建(用户已支付)
-                        Map<String,String[]> map = new HashMap<>();
-                        map.putAll(stringMap);
-                        String[] strArr = {"extras","detail"};
-                        map.put("ZY_ETL_JSON_KEYS",strArr);
-                      result =  meiTuanFacadeService.newOrder(functionMap2Json.apply(map));
-                        break;
-                    case  "4":       //商家已确认
-                        orderStatus(stringMap,platform);
-                        break;
-                    case  "8":       //交易完成
-                        orderStatus(stringMap,platform);
-                        break;
-                    default:
-                        result = baiDuFacadeService.responseNoPars("resp");
-                        break;
-                }
-
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME:
                 switch (stringMap.get("push_action")[0]){
@@ -196,7 +196,7 @@ public class WMFacadeService {
 
     //门店开业
     public String shopOpen(ParsFromPos parsFromPos){
-        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}",
+        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]",
             result_baidu = "",
             result_jdhome = "",
             result_eleme = "",
@@ -210,7 +210,7 @@ public class WMFacadeService {
 
     //门店歇业
     public String shopClose(ParsFromPos parsFromPos){
-        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
+        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = baiDuFacadeService.shopClose(parsFromPos.getBaidu().getPlatformShopId(), parsFromPos.getBaidu().getShopId());
         result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(), 1);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"0");

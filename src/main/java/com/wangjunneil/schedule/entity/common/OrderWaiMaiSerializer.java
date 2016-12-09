@@ -14,7 +14,7 @@ public class OrderWaiMaiSerializer implements JsonSerializer<OrderWaiMai> {
     @Override
     public JsonElement serialize(OrderWaiMai orderWaiMai, Type type, JsonSerializationContext context) {
         JsonObject object = new JsonObject();
-        object.add("platfrom",context.serialize(orderWaiMai.getPlatfrom()));
+        object.add("platform",context.serialize(orderWaiMai.getPlatform()));
         object.add("orderId",context.serialize(orderWaiMai.getOrderId()));
         object.add("platformOrderId",context.serialize(orderWaiMai.getPlatformOrderId()));
         object.add("order",context.serialize(orderWaiMai.getOrder()));

@@ -102,7 +102,7 @@ public class WMController {
      * @param out   响应输出流对象
      * @param request 请求对象 {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
-     * @return{baidu: {code:0,desc:"success",dynamic:"",logId:""},jdhome:{},...}
+     * @return{baidu: [{code:0,desc:"success",dynamic:"",logId:""}],jdhome:[{}],...}]
      */
     @RequestMapping(value = "/shop/open", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     @ResponseBody
@@ -119,7 +119,7 @@ public class WMController {
      * @param out   响应输出流对象
      * @param request 请求对象  {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
-     * @return  {baidu: {code:0,desc:"success",dynamic:"",logId:""},jdhome:{},...}
+     * @return  {baidu: [{code:0,desc:"success",dynamic:"",logId:""}],jdhome:[{}],...}]
      */
     @RequestMapping(value = "/shop/close", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
@@ -263,22 +263,22 @@ public class WMController {
      */
     @RequestMapping(value = {"/baidu/order/status","/djsw/pickFinishOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
     public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
-        String platfrom = null;
+        String platform = null;
         String requestUrl = request.getPathInfo().toLowerCase();
         if (requestUrl.indexOf("/djsw/") > 0) {
             requestUrl = "/waimai/djsw";
         }
         switch (requestUrl){
             case "/waimai/baidu/order/status"://百度
-                platfrom = Constants.PLATFORM_WAIMAI_BAIDU;
+                platform = Constants.PLATFORM_WAIMAI_BAIDU;
                 response.setContentType("text/html; charset=utf-8");
                 break;
             case "/waimai/djsw": //京东到家
-                platfrom = Constants.PLATFORM_WAIMAI_JDHOME;
+                platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             default:break;
         }
-         out.println( wmFacadeService.orderStatus(request.getParameterMap(),platfrom));
+         out.println( wmFacadeService.orderStatus(request.getParameterMap(),platform));
         return  null;
     }
 

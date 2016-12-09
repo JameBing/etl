@@ -64,7 +64,7 @@ public class MeiTuanFacadeService {
             shopRequest.setApp_poi_code(code);
              json = mtApiService.openShop(code); //SUCCESS {"data":"ok",}   ERROR {"code":"","msg":""}
              JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-             if (jsonObject.get("data")!=null){
+             if (jsonObject.get("data")!=null || jsonObject.get("code").toString() == "200"){
                  rtn.setCode(0);
                  rtn.setDesc("success");
                  rtn.setRemark("成功");
@@ -324,14 +324,21 @@ public class MeiTuanFacadeService {
 //            order.setWm_poi_name(detailParam.getWm_poi_name());
 //            order.setWm_poi_phone(detailParam.getWm_poi_phone());
           // mtInnerService.insertAllOrder(order);
-                    OrderWaiMai orderWaiMai = new OrderWaiMai();
-                    orderWaiMai.setPlatfrom(Constants.PLATFORM_WAIMAI_MEITUAN);
                     //商家门店ID
                     String shopId = order.getApppoicode();
                     //美团订单ID
-                    orderWaiMai.setPlatformOrderId(String.valueOf(order.getOrderid()));
-                    //商家订单ID
-                    String platformOrderId = sysFacadeService.getOrderNum(shopId);
+                    String platformOrderId = String.valueOf(order.getOrderid());
+                    OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_MEITUAN,platformOrderId);
+                    //如果订单已经存在则商家订单ID不重新获取
+                    if (orderWaiMai !=null&&orderWaiMai.getPlatform().equals(Constants.PLATFORM_WAIMAI_MEITUAN)&&orderWaiMai.getPlatformOrderId().equals(platformOrderId)){
+                        orderWaiMai.setOrderId(orderWaiMai.getOrderId());
+                    }else {
+                        orderWaiMai = new OrderWaiMai();
+                        //商家订单ID
+                        String orderId = sysFacadeService.getOrderNum(shopId);
+                        orderWaiMai.setOrderId(orderId);
+                    }
+                    orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
                     orderWaiMai.setPlatformOrderId(platformOrderId);
                     orderWaiMai.setOrder(order);
                     orderWaiMai.setShopId(shopId);

@@ -321,7 +321,7 @@ public class BaiDuFacadeService {
             if (body.getErrno().equals("0")){
                 Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
                 OrderWaiMai orderWaiMai = new OrderWaiMai();
-                orderWaiMai.setPlatfrom(Constants.PLATFORM_WAIMAI_BAIDU);
+                orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
                 //商家门店ID
                 String shopId = data.getShop().getShopId();
                 //百度订单ID
