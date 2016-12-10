@@ -319,22 +319,48 @@ public class BaiDuFacadeService {
             String bodyStr = getGson().toJson(sysParams1.getBody());
             body = getGson().fromJson(bodyStr,Body.class);
             if (body.getErrno().equals("0")){
-                Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
+                Gson gsonDataOrder = new GsonBuilder().registerTypeAdapter(Data.class, new DataSerializer())
+                                                                                                    .registerTypeAdapter(OrderShop.class,new OrderShopSerializer())
+                                                                                                    .registerTypeAdapter(Order.class,new OrderSerializer())
+                                                                                                    .registerTypeAdapter(User.class,new UserSerializer())
+                                                                                                    .registerTypeAdapter(OrderProductsDish.class, new OrderProductsDishSerializer())
+                                                                                                    .registerTypeAdapter(OrderProductsDishAttr.class,new OrderProductsDishAttrSerializer())
+                                                                                                    .registerTypeAdapter(OrderProductsFeatures.class,new OrderProductsFeaturesSerializer())
+                                                                                                    .registerTypeAdapter(OrderProductsCombo.class,new OrderProductsComboSerializer())
+                                                                                                    .registerTypeAdapter(OrderProductsComboGroup.class,new OrderProductsComboGroupSerializer())
+                                                                                                    .registerTypeAdapter(OrderProductsComboGroupProduct.class,new OrderProductsComboGroupProductSerializer())
+                                                                                                    .registerTypeAdapter(Supplier.class,new SupplierSerializer())
+                                                                                                    .registerTypeAdapter(OrderDiscount.class,new OrderDiscountSerializer())
+                                                                                                    .registerTypeAdapter(OrderDiscountProducts.class, new OrderDiscountProductsSerializer())
+                    .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
+                        @Override
+                        public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
+                            if (aDouble == aDouble.longValue())
+                                return new JsonPrimitive(aDouble.longValue());
+                            return new JsonPrimitive(aDouble);
+                        }
+                    })
+                                                                                                    .disableHtmlEscaping().create();
+               Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
+               // JsonObject jsonData = new JsonParser().parse(getGson().toJson(body.getData())).getAsJsonObject();
                 OrderWaiMai orderWaiMai = new OrderWaiMai();
                 orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
                 //商家门店ID
                 String shopId = data.getShop().getShopId();
                 //百度订单ID
-                orderWaiMai.setPlatformOrderId(data.getOrder().getOrderId());
-                //商家订单ID
-                String platformOrderId = sysFacadeService.getOrderNum(shopId);
+                String platformOrderId = data.getOrder().getOrderId();
                 orderWaiMai.setPlatformOrderId(platformOrderId);
+                //商家订单ID
+                String orderId = sysFacadeService.getOrderNum(shopId);
+                orderWaiMai.setOrderId(orderId);
                 orderWaiMai.setOrder(data);
                 orderWaiMai.setShopId(shopId);
                 sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
                 body.setErrno("0");
                 body.setError("success");
-                body.setData(MessageFormat.format("{0}",MessageFormat.format("source_order_id:{0}",platformOrderId)));
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("source_order_id",orderId);
+                body.setData(jsonObject);
 
             }
             else {
@@ -351,10 +377,10 @@ public class BaiDuFacadeService {
         }
         sysParams.setCmd(Constants.BAIDU_CMD_RESP.concat(".").concat(Constants.BAIDU_CMD_ORDER_CREATE));
         sysParams.setBody(body);
-        sysParams.setTimestamp("");
+       sysParams.setTimestamp("");
         sysParams.setTicket("");
         sysParams.setSign("");
-        return baiDuApiService.getRequestPars(sysParams);
+        return baiDuApiService.responseStr(sysParams);
     }
 
     //根据订单号拉取订单详情况
@@ -402,7 +428,9 @@ public class BaiDuFacadeService {
             //日志记录,异常分析
         }
         sysParams.setBody(result);
-        return baiDuApiService.getRequestPars(sysParams);
+        sysParams.setTicket("");
+        sysParams.setTimestamp("");
+        return baiDuApiService.responseStr(sysParams);
     }
 
     //确认订单

@@ -100,7 +100,7 @@ public class WMController {
      * 门店开业
      *
      * @param out   响应输出流对象
-     * @param request 请求对象 {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
+     * @param request 请求对象 {baidu:[{shopId:"",platformShopId:""}],jdhome:[{}],meituan:[{}],eleme:[{}]}
      * @param response  浏览器响应对象
      * @return{baidu: [{code:0,desc:"success",dynamic:"",logId:""}],jdhome:[{}],...}]
      */
@@ -117,7 +117,7 @@ public class WMController {
      * 门店歇业
      *
      * @param out   响应输出流对象
-     * @param request 请求对象  {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
+     * @param request 请求对象  {baidu:[{shopId:"",platformShopId:""}],jdhome:[{}],meituan:[{}],eleme:[{}]}
      * @param response  浏览器响应对象
      * @return  {baidu: [{code:0,desc:"success",dynamic:"",logId:""}],jdhome:[{}],...}]
      */
@@ -332,16 +332,6 @@ public class WMController {
 //endregion
 
     //备注：需要提供接口用于中台系统下发门店编码对照信息
-@Autowired
-    private  MeiTuanFacadeService meiTuanFacadeService;
-
-    @RequestMapping(value = "/test1",method = RequestMethod.POST)
-    @ResponseBody
-    public String test1(@RequestBody JsonObject jsonObject,PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws  ScheduleException{
-        out.println(  meiTuanFacadeService.newOrder(jsonObject));
-        return null;
-    }
-
     @RequestMapping(value = "/test2",method = RequestMethod.POST)
     public String test2(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
         try {

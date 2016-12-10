@@ -155,16 +155,16 @@ public class SysFacadeService {
     }
 
     //异常处理 匿名函数  ?需要验证代码可行性
-    public    Function<Object,Log> functionRtn =(t)->{
-        Log log1 = new Log();
-        String logId = DateTimeUtil.dateFormat(DateTimeUtil.now(),"yyyyMMddHHmmssSSS");
-        log1.setLogId(logId);
-        log1.setType("E");
-        log1.setDateTime(log1.getDateTime());
-        switch (t.getClass().getName().toLowerCase()){
-            case "com.wangjunneil.schedule.common.baiduexception":
-                BaiDuException baiDuException = (BaiDuException)t;
-                log1.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
+                        public    Function<Object,Log> functionRtn =(t)->{
+                            Log log1 = new Log();
+                            String logId = DateTimeUtil.dateFormat(DateTimeUtil.now(),"yyyyMMddHHmmssSSS");
+                            log1.setLogId(logId);
+                            log1.setType("E");
+                            log1.setDateTime(log1.getDateTime());
+                            switch (t.getClass().getName().toLowerCase()){
+                                case "com.wangjunneil.schedule.common.baiduexception":
+                        BaiDuException baiDuException = (BaiDuException)t;
+                        log1.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
                 log1.setMessage(baiDuException.getMessage());
                 log1.setRequest(baiDuException.getRequestStr());
                 log1.setCatchExName("BaiduException");
