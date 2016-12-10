@@ -225,6 +225,8 @@ public final class Constants {
     public static final String URL_ELEME_AGREE_REFUND = "http://v2.openapi.ele.me/order/{0}/agree_refund/";
     //不同意退单
     public static final String URL_ELEME_DISAGREE_REFUND = "http://v2.openapi.ele.me/order/{0}/disagree_refund/";
+    //绑定商户Id
+    public static final String URL_ELEME_BINGDING_RESTAURANTID = "http://v2.openapi.ele.me/restaurant/binding/";
 
     //endregion
 }
