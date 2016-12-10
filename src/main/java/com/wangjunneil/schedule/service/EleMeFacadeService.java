@@ -525,7 +525,7 @@ public class EleMeFacadeService {
                 String result = eleMeApiService.upBatchFrame(oldFoodsRequest);
                 Result obj = getGson().fromJson(result, Result.class);
                 rtn.setCode(0);
-                rtn.setRemark(obj.getMessage());
+                rtn.setDesc(obj.getMessage());
             }catch (ElemeException ex){
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -589,7 +589,7 @@ public class EleMeFacadeService {
                 String result = eleMeApiService.delectAllFoods(oldFoodsRequest);
                 Result obj = getGson().fromJson(result, Result.class);
                 rtn.setCode(0);
-                rtn.setRemark(obj.getMessage());
+                rtn.setDesc(obj.getMessage());
             }catch (ElemeException ex){
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -647,7 +647,7 @@ public class EleMeFacadeService {
                 String result = eleMeApiService.agreeRefund(elemeOrderIds);
                 Result obj = getGson().fromJson(result, Result.class);
                 rtn.setCode(0);
-                rtn.setRemark(obj.getMessage());
+                rtn.setDesc(obj.getMessage());
             }catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -698,7 +698,7 @@ public class EleMeFacadeService {
                 String result = eleMeApiService.disAgreeRefund(orderRequest);
                 Result obj = getGson().fromJson(result, Result.class);
                 rtn.setCode(0);
-                rtn.setRemark(obj.getMessage());
+                rtn.setDesc(obj.getMessage());
             }catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
