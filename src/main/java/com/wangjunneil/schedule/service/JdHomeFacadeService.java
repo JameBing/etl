@@ -579,9 +579,9 @@ public class JdHomeFacadeService {
                 rtn.setRemark(MessageFormat.format("批量商品{0}上下架失败！", dishList.get(0).getDishId()));
             }
             if(!StringUtil.isEmpty(rtnStr)){
-                return "["+rtnStr.substring(0,rtnStr.length()-1)+"]";
+                return rtnStr.substring(0,rtnStr.length()-1);
             }
-            return "["+gson.toJson(rtn)+"]";
+            return gson.toJson(rtn);
         }
     }
 
