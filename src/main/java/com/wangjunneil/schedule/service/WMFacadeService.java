@@ -311,10 +311,10 @@ public class WMFacadeService {
             for(String id:parsFromPos.getBaidu().getOrderId().split(",")){
                 switch (isAgree){
                     case 0:
-                        result_baidu += (result_baidu == null?"":",")+baiDuFacadeService.orderConfirm(id);
+                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderConfirm(id);
                         break;
                     case 1:
-                        result_baidu += (result_baidu == null?"":",")+baiDuFacadeService.orderCancel(id);
+                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderCancel(id);
                         break;
                     default:break;
                 }
@@ -322,17 +322,17 @@ public class WMFacadeService {
         }
         if(parsFromPos.getJdhome()!=null){
             for(String id:parsFromPos.getJdhome().getOrderId().split(",")){
-                  result_jdhome +=(result_jdhome == null?"":",")+jdHomeFacadeService.orderAcceptOperate(id, parsFromPos.getJdhome().getShopId(),isAgree==0?true:false);
+                  result_jdhome =(result_jdhome == null?"":result_jdhome+",")+jdHomeFacadeService.orderAcceptOperate(id, parsFromPos.getJdhome().getShopId(),isAgree==0?true:false);
                 }
             }
         if(parsFromPos.getMeituan()!=null){
             for(String id:parsFromPos.getMeituan().getOrderId().split(",")){
                 switch (isAgree){
                     case 0:
-                        result_meituan +=(result_meituan == null?"":",")+meiTuanFacadeService.getConfirmOrder(Long.parseLong(id));
+                        result_meituan =(result_meituan == null?"":result_meituan+",")+meiTuanFacadeService.getConfirmOrder(Long.parseLong(id));
                         break;
                     case 1:
-                        result_meituan +=(result_meituan == null?"":",")+meiTuanFacadeService.getCancelOrder(Long.parseLong(id),parsFromPos.getMeituan().getReason(),parsFromPos.getMeituan().getReasonCode());
+                        result_meituan =(result_meituan == null?"":result_meituan+",")+meiTuanFacadeService.getCancelOrder(Long.parseLong(id),parsFromPos.getMeituan().getReason(),parsFromPos.getMeituan().getReasonCode());
                         break;
                     default:break;
                 }
@@ -340,7 +340,7 @@ public class WMFacadeService {
         }
         if(parsFromPos.getEleme()!=null){
             for(String id:parsFromPos.getEleme().getOrderId().split(",")){
-                result_eleme +=(result_eleme == null?"":",")+eleMeFacadeService.upOrderStatus(id,isAgree==0?"2":"-1",parsFromPos.getEleme().getReason());
+                result_eleme =(result_eleme == null?"":result_eleme+",")+eleMeFacadeService.upOrderStatus(id,isAgree==0?"2":"-1",parsFromPos.getEleme().getReason());
             }
         }
         return "{".concat( MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
