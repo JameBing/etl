@@ -36,7 +36,7 @@ public class JdHomeInnerService {
     //批量插入/修改订单
     public void addOrUpdateSyncOrder(List<OrderInfoDTO> orders) throws ScheduleException{
         for(OrderInfoDTO order : orders){
-            Query query = new Query(Criteria.where("orderId").is(order.getOrderId()));
+            Query query = new Query(Criteria.where("platformOrderId").is(order.getOrderId()));
             Update update = new Update().set("_class",OrderInfoDTO.class.getName())
                 .set("srcOrderId",order.getSrcOrderId())
                 .set("srcInnerType",order.getSrcInnerType())
@@ -86,14 +86,14 @@ public class JdHomeInnerService {
 
     //获取单个订单
     public OrderInfoDTO getOrder(Long orderId){
-        Query query = new Query(Criteria.where("orderId").is(orderId).is("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId).is("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
         OrderInfoDTO order = mongoTemplate.findOne(query,OrderInfoDTO.class);
         return order;
     }
 
     //修改订单状态
     public void updateStatus(Long orderId,int status){
-        Query query = new Query(Criteria.where("orderId").is(orderId));
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId));
         Update update = new Update().set("orderStatus",status)
             .set("latestTime",new Date());
         mongoTemplate.updateFirst(query, update, OrderInfoDTO.class);

@@ -219,6 +219,14 @@ public final class Constants {
     public static final String URL_ELEME_UPORDOWNFRAME_FOODS_LIST = "http://v2.openapi.ele.me/foods/batch_update/";
     //批量删除食物
     public static final String URL_ELEME_DELETE_FOODS_LIST = "http://v2.openapi.ele.me/foods/batch_delete/";
+    //查询配送信息
+    public static final String URL_ELEME_DELIVERY = "http://v2.openapi.ele.me/order/delivery/";
+    //同意退单
+    public static final String URL_ELEME_AGREE_REFUND = "http://v2.openapi.ele.me/order/{0}/agree_refund/";
+    //不同意退单
+    public static final String URL_ELEME_DISAGREE_REFUND = "http://v2.openapi.ele.me/order/{0}/disagree_refund/";
+    //绑定商户Id
+    public static final String URL_ELEME_BINGDING_RESTAURANTID = "http://v2.openapi.ele.me/restaurant/binding/";
 
     //endregion
 }

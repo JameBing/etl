@@ -89,6 +89,42 @@ public class BaiDuApiService {
         return params.concat(MessageFormat.format("&sign={0}", StringUtil.getMD5(params)));
     }
 
+    //消息型接口Response
+    public String responseStr(SysParams sysParams){
+        Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
+            .registerTypeAdapter(Body.class, new BodySerializer())
+            .disableHtmlEscaping().create();
+        String params = "body={0}&cmd={1}&timestamp={2}&version={3}&ticket={4}&source={5}&encrypt={6}&secret={7}";
+        params =  MessageFormat.format(params,gson.toJson(sysParams.getBody()),Constants.BAIDU_CMD_RESP.concat(".").concat(sysParams.getCmd()),sysParams.getTimestamp(),sysParams.getVersion(),sysParams.getTicket()
+            ,String.valueOf(sysParams.getSource()),sysParams.getEncrypt(),sysParams.getSecret());
+        params = StringUtil.retParamAsc(params);
+        params = StringUtil.chinaToUnicode(params);
+
+        JsonObject json = new JsonObject();
+        JsonObject jsonBody = new JsonObject();
+        JsonObject jsonData = new JsonObject();
+       switch (sysParams.getCmd()){
+           case Constants.BAIDU_CMD_ORDER_CREATE:
+               jsonData.addProperty("source_order_id","123456789");
+               jsonBody.add("data", jsonData);
+               break;
+           case Constants.BAIDU_CMD_ORDER_STATUS_PUSH:
+               break;
+           default:
+               break;
+       }
+        jsonBody.addProperty("errno", 0);
+        jsonBody.addProperty("error","success");
+        json.add("body",jsonBody);
+        json.addProperty("cmd", Constants.BAIDU_CMD_RESP.concat(".").concat(sysParams.getCmd()));
+        json.addProperty("source",sysParams.getSource());
+        json.addProperty("ticket",sysParams.getTicket());
+        json.addProperty("timestamp",sysParams.getTimestamp());
+        json.addProperty("version",3);
+        json.addProperty("sign",StringUtil.getMD5(params));
+        return json.toString();
+    }
+
     //region 商户
 
     //查看供应商
@@ -340,7 +376,7 @@ public class BaiDuApiService {
     //region 订单
     public String orderGet(Order order) throws  ScheduleException,BaiDuException{
         String requestStr = getRequestPars("order.get", order);
-        String response = HttpUtil.post(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
+        String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
         return response;
     }
 

@@ -1,7 +1,5 @@
 package com.wangjunneil.schedule.service.eleme;
 
-import com.google.gson.Gson;
-import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.eleme.Order;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,7 @@ public class EleMeInnerService {
     private MongoTemplate mongoTemplate;
 
     //insert or update
-    public void addSyncOrder(Order order) throws ScheduleException{
+    public void addSyncOrder(Order order){
         Query  query = new Query(Criteria.where("orderid").is(order.getOrderid()));
         Update update = new Update()
             .set("restaurantid", order.getRestaurantid())
@@ -61,7 +59,8 @@ public class EleMeInnerService {
             .set("delivertime", order.getDelivertime())
             .set("servicerate", order.getServicerate())
             .set("isonlinepaid", order.getIsonlinepaid())
-            .set("activitytotal", order.getActivitytotal());
+            .set("activitytotal", order.getActivitytotal())
+            .set("distribution", order.getDistribution());
         mongoTemplate.upsert(query, update, Order.class);
     }
 
@@ -79,8 +78,22 @@ public class EleMeInnerService {
         return mongoTemplate.updateMulti(query,update,Order.class).getN();
     }
 
+    //批量更新配送状态(根据订单号)
+    public int updSyncElemeDeliveryStastus(String ids,int i,int status, int zstatus){
+        Query query = new Query();
+        Criteria criteria = new Criteria();
+        List<String> listIds = new ArrayList<String>();
+        Collections.addAll(listIds, ids.split(","));
+        listIds.forEach((id)->{
+            criteria.orOperator(new Criteria().where("orderid").is(id));
+        });
+        query.addCriteria(criteria);
+        Update update = new Update().set("distribution.records.get("+i+").statuscode",status).set("distribution.records.get(\"+i+\").sub_status_code", zstatus);
+        return mongoTemplate.updateMulti(query,update,Order.class).getN();
+    }
+
     //多条件查询（完全匹配）
-    public List<Order> findBodies(Map<String,Object[]> map) throws ScheduleException{
+    public List<Order> findBodies(Map<String,Object[]> map) {
 
         Query query = new Query();
         Criteria criteria = new Criteria();
@@ -95,7 +108,7 @@ public class EleMeInnerService {
     }
 
     //查询所有
-    public List<Order> findAll() throws ScheduleException{
+    public List<Order> findAll(){
         Query query = new Query();
         List<Order> bodies = mongoTemplate.find(query,Order.class);
         return  bodies;

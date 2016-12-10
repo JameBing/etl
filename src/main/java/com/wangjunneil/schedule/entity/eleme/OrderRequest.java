@@ -18,6 +18,7 @@ public class OrderRequest {
     /******************拉取新订单请求参数***********************/
     //商户可管理商家id
     private String restaurant_id;
+    private String eleme_order_ids;
 
 
     public String getEleme_order_id() {
@@ -60,5 +61,11 @@ public class OrderRequest {
         this.restaurant_id = restaurant_id;
     }
 
+    public String getEleme_order_ids() {
+        return eleme_order_ids;
+    }
 
+    public void setEleme_order_ids(String eleme_order_ids) {
+        this.eleme_order_ids = eleme_order_ids;
+    }
 }

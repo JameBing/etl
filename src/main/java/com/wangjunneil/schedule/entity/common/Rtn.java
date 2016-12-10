@@ -1,5 +1,7 @@
 package com.wangjunneil.schedule.entity.common;
 
+import com.wangjunneil.schedule.utility.StringUtil;
+
 /**
  * Created by yangwanbin on 2016-11-21.
  */
@@ -50,7 +52,7 @@ public class Rtn {
     }
 
     public String getRemark(){
-        return this.remark;
+        return StringUtil.isEmpty(remark)?"":remark;
     }
 
     public void setDynamic(String dynamic){

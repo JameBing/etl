@@ -196,11 +196,18 @@ public class SysInnerService {
         return intRresult;
     }
 
+    //订单查询
+    public  OrderWaiMai findOrderWaiMai(String platform,String platformOrderId){
+        Query query = new Query(Criteria.where("platform").is(platform).where("platformOrderId").is(platformOrderId));
+        OrderWaiMai orderWaiMai = mongoTemplate.findOne(query,OrderWaiMai.class);
+        return  orderWaiMai;
+    }
+
     //订单插入
     public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) {
-        Query  query = new Query(Criteria.where("platfrom").is(orderWaiMai.getPlatformOrderId()).where("platformOrderId"));
+        Query  query = new Query(Criteria.where("platform").is(orderWaiMai.getPlatformOrderId()).where("platformOrderId").is(orderWaiMai.getPlatformOrderId()));
         Update update = new Update()
-            .set("platfrom", orderWaiMai.getPlatfrom())
+            .set("platform", orderWaiMai.getPlatform())
             .set("shopId", orderWaiMai.getShopId())
             .set("orderId",orderWaiMai.getOrderId())
             .set("platformOrderId",orderWaiMai.getPlatformOrderId())
@@ -223,5 +230,4 @@ public class SysInnerService {
                                                                    .set("dateTime",log.getDateTime());
          mongoTemplate.upsert(query,update,Log.class);
     }
-
 }

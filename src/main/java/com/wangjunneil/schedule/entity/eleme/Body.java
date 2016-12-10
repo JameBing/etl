@@ -29,6 +29,8 @@ public class Body {
     /*****************获取商户信息end********************/
     @SerializedName("food_ids")
     private Map<String,List<FoodIds>> foodids;
+    /***************************************************/
+    private List data;
 
 
     public Foods getFood() {
@@ -78,5 +80,13 @@ public class Body {
 
     public void setFoodids(Map<String, List<FoodIds>> foodids) {
         this.foodids = foodids;
+    }
+
+    public List getData() {
+        return data;
+    }
+
+    public void setData(List data) {
+        this.data = data;
     }
 }

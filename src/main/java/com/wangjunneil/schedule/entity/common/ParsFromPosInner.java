@@ -17,6 +17,10 @@ public class ParsFromPosInner {
 
     private String orderId;
 
+    private String reason;
+
+    private String reasonCode;
+
     private String platformOrderId;
 
     public void setShopId(String shopId){
@@ -65,5 +69,21 @@ public class ParsFromPosInner {
 
     public String getPlatformOrderId(){
         return StringUtil.isEmpty(this.platformOrderId)?"":this.platformOrderId;
+    }
+
+    public String getReason() {
+        return StringUtil.isEmpty(reason)?"":this.reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getReasonCode() {
+        return StringUtil.isEmpty(reasonCode)?"":this.reasonCode;
+    }
+
+    public void setReasonCode(String reasonCode) {
+        this.reasonCode = reasonCode;
     }
 }

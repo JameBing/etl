@@ -45,7 +45,9 @@ public class RestaurantRequest {
     //订单打包费
     private String packing_fee="-1";
     /************设置配送范围***********/
+    private String tp_id;
 
+    private String tp_restaurant_id;
 
     public String getRestaurant_id() {
         return restaurant_id;
@@ -197,5 +199,21 @@ public class RestaurantRequest {
 
     public void setPacking_fee(String packing_fee) {
         this.packing_fee = packing_fee;
+    }
+
+    public String getTp_id() {
+        return tp_id;
+    }
+
+    public void setTp_id(String tp_id) {
+        this.tp_id = tp_id;
+    }
+
+    public String getTp_restaurant_id() {
+        return tp_restaurant_id;
+    }
+
+    public void setTp_restaurant_id(String tp_restaurant_id) {
+        this.tp_restaurant_id = tp_restaurant_id;
     }
 }
