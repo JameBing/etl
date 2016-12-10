@@ -13,9 +13,9 @@ public class Distribution {
     @SerializedName("records")
     private List<Records> records;
     @SerializedName("eleme_order_ids_not_existed")
-    private List<Object> elemeorderidsnotexisted;
+    private List<Double> elemeorderidsnotexisted;
     @SerializedName("order_delivery_info_not_existed")
-    private List<Object> orderdeliveryinfonotexisted;
+    private List<Double> orderdeliveryinfonotexisted;
 
     public String getElemeorderid() {
         return elemeorderid;
@@ -33,19 +33,19 @@ public class Distribution {
         this.records = records;
     }
 
-    public List<Object> getElemeorderidsnotexisted() {
+    public List<Double> getElemeorderidsnotexisted() {
         return elemeorderidsnotexisted;
     }
 
-    public void setElemeorderidsnotexisted(List<Object> elemeorderidsnotexisted) {
+    public void setElemeorderidsnotexisted(List<Double> elemeorderidsnotexisted) {
         this.elemeorderidsnotexisted = elemeorderidsnotexisted;
     }
 
-    public List<Object> getOrderdeliveryinfonotexisted() {
+    public List<Double> getOrderdeliveryinfonotexisted() {
         return orderdeliveryinfonotexisted;
     }
 
-    public void setOrderdeliveryinfonotexisted(List<Object> orderdeliveryinfonotexisted) {
+    public void setOrderdeliveryinfonotexisted(List<Double> orderdeliveryinfonotexisted) {
         this.orderdeliveryinfonotexisted = orderdeliveryinfonotexisted;
     }
 }

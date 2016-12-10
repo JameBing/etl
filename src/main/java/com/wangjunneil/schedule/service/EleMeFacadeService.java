@@ -79,22 +79,13 @@ public class EleMeFacadeService {
             rtn.setRemark("门店ID为空");
         }else {
         try {
-            String restaurantID = getRestaurantId(merchantId);
-            Result obj1 = getGson().fromJson(restaurantID, Result.class);
-            Restaurant restaurantinfo = getGson().fromJson(getGson().toJson(obj1.getData()), Restaurant.class);
-            if (StringUtil.isEmpty(restaurantinfo.getRestaurantid()) ) {
-                rtn.setCode(1);
-                rtn.setDesc("商户ID没绑定");
-                rtn.setRemark("商户ID没绑定");
-            }else {
-                RestaurantRequest restaurantRequest = new RestaurantRequest();
-                restaurantRequest.setRestaurant_id(restaurantinfo.getRestaurantid());
-                restaurantRequest.setIs_open(status);
-                result = eleMeApiService.setRestaurantStatus(restaurantRequest);
-                Result obj = getGson().fromJson(result, Result.class);
-                rtn.setCode(0);
-                rtn.setDesc(obj.getMessage());
-            }
+            RestaurantRequest restaurantRequest = new RestaurantRequest();
+            restaurantRequest.setRestaurant_id(merchantId);
+            restaurantRequest.setIs_open(status);
+            result = eleMeApiService.setRestaurantStatus(restaurantRequest);
+            Result obj = getGson().fromJson(result, Result.class);
+            rtn.setCode(0);
+            rtn.setDesc(obj.getMessage());
         }catch (ElemeException ex){
             rtn.setCode(-997);
             log = sysFacadeService.functionRtn.apply(ex);
@@ -139,18 +130,9 @@ public class EleMeFacadeService {
             rtn.setRemark("门店ID为空");
         }else {
             try {
-                String restaurantID = getRestaurantId(merchantId);
-                Result obj1 = getGson().fromJson(restaurantID, Result.class);
-                Restaurant restaurantinfo = getGson().fromJson(getGson().toJson(obj1.getData()), Restaurant.class);
-                if (StringUtil.isEmpty(restaurantinfo.getRestaurantid())) {
-                    rtn.setCode(1);
-                    rtn.setDesc("商户ID没绑定");
-                    rtn.setRemark("商户ID没绑定");
-                }else {
-                    OrderRequest orderRequest = new OrderRequest();
-                    orderRequest.setRestaurant_id(restaurantinfo.getRestaurantid());
-                    return eleMeApiService.pullNewOrder(orderRequest);
-                }
+                OrderRequest orderRequest = new OrderRequest();
+                orderRequest.setRestaurant_id(merchantId);
+                return eleMeApiService.pullNewOrder(orderRequest);
             }catch (ElemeException ex){
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -299,18 +281,9 @@ public class EleMeFacadeService {
             rtn.setRemark("门店ID为空");
         }else {
             try {
-                String restaurantID = getRestaurantId(merchantId);
-                Result obj1 = getGson().fromJson(restaurantID, Result.class);
-                Restaurant restaurantinfo = getGson().fromJson(getGson().toJson(obj1.getData()), Restaurant.class);
-                if (StringUtil.isEmpty(restaurantinfo.getRestaurantid())) {
-                    rtn.setCode(1);
-                    rtn.setDesc("商户ID没绑定");
-                    rtn.setRemark("商户ID没绑定");
-                }else {
                     RestaurantRequest restaurantRequest = new RestaurantRequest();
-                    restaurantRequest.setRestaurant_id(restaurantinfo.getRestaurantid());
+                    restaurantRequest.setRestaurant_id(merchantId);
                     return eleMeApiService.restaurantMenu(restaurantRequest);
-                }
             }catch (ElemeException ex){
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -420,10 +393,10 @@ public class EleMeFacadeService {
                     OrderWaiMai orderWaiMai = new OrderWaiMai();
                     orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
                     orderWaiMai.setPlatformOrderId(order.getOrderid());
-                   // String orderId = sysFacadeService.getOrderNum(shopId);
+                    String orderId = sysFacadeService.getOrderNum(order.getRestaurantid());
                     orderWaiMai.setOrder(order);
-                    //orderWaiMai.setOrderId(orderId);
-                   // orderWaiMai.setShopId();
+                    orderWaiMai.setOrderId(orderId);
+                    orderWaiMai.setShopId(order.getRestaurantid());
                     sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
                     rtn.setCode(0);
                     rtn.setDesc(obj.getMessage());
@@ -438,7 +411,7 @@ public class EleMeFacadeService {
                     rtn.setCode(-998);
                     log[0] = sysFacadeService.functionRtn.apply(ex);
                 }finally {
-                    if (log != null) {
+                    if (log[0] != null) {
                         log[0].setLogId(elemeOrderIds.concat(log[0].getLogId()));
                         log[0].setTitle(MessageFormat.format("接收新订单{0}or获取新订单{1}配送信息失败", elemeOrderIds,elemeOrderIds));
                         if (StringUtil.isEmpty(log[0].getRequest())) {
