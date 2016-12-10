@@ -186,10 +186,19 @@ public class BaiDuApiService {
      */
     public String shopClose(Shop shop) throws  ScheduleException,BaiDuException{
         String requestStr = getRequestPars("shop.close", shop);
-        String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, Constants.CONTENTTYPE_MULTIPART, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
+        String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
             .registerTypeAdapter(Shop.class, new ShopSerializer())
-            .registerTypeAdapter(Body.class, new BodySerializer()).disableHtmlEscaping().create();
+            .registerTypeAdapter(Body.class, new BodySerializer())
+            .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
+                @Override
+                public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
+                    if (aDouble == aDouble.longValue())
+                        return new JsonPrimitive(aDouble.longValue());
+                    return new JsonPrimitive(aDouble);
+                }
+            })
+            .disableHtmlEscaping().create();
         SysParams sysParams = gson.fromJson(response, SysParams.class);
         //暂不考虑验证返回值中的sign签名合法性
         Body body = gson.fromJson(gson.toJson(sysParams.getBody()), Body.class);
