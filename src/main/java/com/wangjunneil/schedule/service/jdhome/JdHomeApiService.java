@@ -79,7 +79,7 @@ public class JdHomeApiService {
                         throw new JdHomeException("签名失败",e);
                     }
                     log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-                    rtnStr = rtnStr + HttpUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+",";
+                    rtnStr = rtnStr + HttpUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+"#";
                     begin = pageSize * page;
                     end = pageSize * (page + 1);
                     page++;

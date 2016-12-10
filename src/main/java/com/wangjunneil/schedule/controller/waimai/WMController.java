@@ -74,8 +74,8 @@ public class WMController {
                 platform = null;
                 break;
         }
-        //out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
-        System.out.print(wmFacadeService.appReceiveCallBack(stringMap,platform));
+        out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
+        //System.out.print(wmFacadeService.appReceiveCallBack(stringMap,platform));
         return  null;
     }
 //region 商户
@@ -291,7 +291,6 @@ public class WMController {
      */
     @RequestMapping(value = "/orderGet.php", method = RequestMethod.GET)
     public String orderGet(PrintWriter out, HttpServletResponse response) throws SchedulerException {
-
         out.println("");
         return  null;
     }
@@ -316,7 +315,7 @@ public class WMController {
      * 取消订单
      *
      * @param out   响应输出流对象
-     * @request request 浏览器请求对象 约定格式：{baidu:{orderId:"0001,0002",shopId:""},jdhome:{orderId:"0003,0004",shopId:""},meituan:{},eleme:{}}
+     * @request request 浏览器请求对象 约定格式：{baidu:{orderId:"0001,0002",shopId:"",reason:"",reasonCode:""},jdhome:{orderId:"0003,0004",shopId:"",reason:"",reasonCode:""},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
      * @return
      */

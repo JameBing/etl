@@ -528,6 +528,7 @@ public class JdHomeFacadeService {
         Rtn rtn = new Rtn();
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        String rtnStr ="";
         if(dishList ==null || dishList.size()==0){
             rtn.setCode(-1);
             rtn.setDesc("error");
@@ -558,7 +559,7 @@ public class JdHomeFacadeService {
             String json = jdHomeApiService.updateAllStockOn(requests, dishList.get(0).getShopId());
             log.info("=====批量商品上下架接口返回信息:"+json+"=====");
             //format返回结果
-            getResult(json,rtn);
+             rtnStr = getResultList(json);
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
@@ -577,7 +578,10 @@ public class JdHomeFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("批量商品{0}上下架失败！", dishList.get(0).getDishId()));
             }
-            return gson.toJson(rtn);
+            if(!StringUtil.isEmpty(rtnStr)){
+                return "["+rtnStr.substring(0,rtnStr.length()-1)+"]";
+            }
+            return "["+gson.toJson(rtn)+"]";
         }
     }
 
@@ -820,6 +824,9 @@ public class JdHomeFacadeService {
 
     //接口返回结果转换标准格式
     private void getResult(String rtnJson,Rtn rtn){
+        for (String json :rtnJson.split(",")){
+
+        }
         Result result = JSONObject.parseObject(rtnJson, Result.class);
         if(result.getCode()==0){
             JSONObject json = JSONObject.parseObject(result.getData());
@@ -835,5 +842,28 @@ public class JdHomeFacadeService {
         }
     }
 
+    //接口返回结果转换标准格式
+    private String getResultList(String rtnJson){
+        String str = "";
+        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new RtnSerializer()).disableHtmlEscaping().create();
+        for (String json0 :rtnJson.split("#")){
+            Rtn rtn = new Rtn();
+            Result result = JSONObject.parseObject(json0, Result.class);
+            if(result.getCode()==0){
+                JSONObject json = JSONObject.parseObject(result.getData());
+                rtn.setCode(json.getInteger("retCode"));
+                rtn.setDesc("success");
+                rtn.setRemark(json.getString("retMsg"));
+                rtn.setDynamic("1");
+            }else {
+                rtn.setCode(result.getCode());
+                rtn.setDesc("failure");
+                rtn.setRemark(result.getMsg());
+                rtn.setDynamic("-1");
+            }
+           str=str+gson.toJson(rtn)+",";
+        }
+        return str;
+    }
 }
 
