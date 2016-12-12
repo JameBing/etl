@@ -77,6 +77,14 @@ public class Order {
 
     private Integer status;
 
+    //订单状态
+    @SerializedName("type")
+    private  String  type;
+
+    //取消原因
+    @SerializedName("reason")
+    private  String reason;
+
     public void setOrderId(String orderId){
         this.orderId = orderId;
     }
@@ -218,5 +226,21 @@ public class Order {
 
     public Integer getStatus(){
         return this.status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

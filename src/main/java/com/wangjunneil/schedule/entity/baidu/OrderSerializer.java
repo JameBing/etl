@@ -31,6 +31,8 @@ public class OrderSerializer implements JsonSerializer<Order> {
         object.add("remark",context.serialize(order.getRemark()));
         object.add("delivery_party",context.serialize(order.getDeliveryParty()));
         object.add("create_time",context.serialize(order.getCreateTime()));
+        object.add("type",context.serialize(order.getType()));
+        object.add("reason",context.serialize(order.getReason()));
 
         return  object;
     }
