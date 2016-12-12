@@ -94,7 +94,6 @@ public class WMFacadeService {
                      result =   eleMeFacadeService.chargeBack(stringMap.get("eleme_order_id")[0], stringMap.get("refund_status")[0]);
                         break;
                     case "4": //订单配送状态推送
-
                         break;
                     default: break;
                 }
@@ -259,40 +258,50 @@ public class WMFacadeService {
     private Function<ParsFromPosInner,String > function1=(list)->{
         return baiDuFacadeService.dishOpt(list.getPlatformShopId(),list.getShopId(),list.getPlatformDishId(),list.getDishId(),"dish.online");
     };
+    private Function<ParsFromPosInner,String > function3=(list)->{
+        return meiTuanFacadeService.upFrame(list.getShopId(),list.getDishId());
+    };
 
     //菜品上架
     public String dishOnline(ParsFormPos2 parsFormPos2){
         String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = parsFormPos2.getBaidu().stream().map(e->function1.apply(e)).reduce("",(x,y)->x.concat(StringUtil.isEmpty(x)?"":",").concat(y));
-        result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(parsFormPos2.getJdhome(),0); //0上架 1下架
+        result_meituan = parsFormPos2.getMeituan().stream().map(e->function3.apply(e)).reduce("", (x, y) -> x.concat(StringUtil.isEmpty(x) ? "" : ",").concat(y));
+        result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(parsFormPos2.getJdhome(), 0); //0上架 1下架
+        result_eleme =  eleMeFacadeService.upBatchFrame(parsFormPos2.getEleme(),"1");
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
     private Function<ParsFromPosInner,String > function2=(list)->{
         return baiDuFacadeService.dishOpt(list.getPlatformShopId(), list.getShopId(), list.getPlatformDishId(), list.getDishId(), "dish.offline");
     };
+    private Function<ParsFromPosInner,String > function4=(list)->{
+        return meiTuanFacadeService.downFrame(list.getShopId(),list.getDishId());
+    };
 
     //菜品下架
     public String dishOffline(ParsFormPos2 parsFormPos2){
         String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = parsFormPos2.getBaidu().stream().map(e->function2.apply(e)).reduce("",(x,y)->x.concat(StringUtil.isEmpty(x)?"":",").concat(y));
+        result_meituan = parsFormPos2.getMeituan().stream().map(e->function4.apply(e)).reduce("", (x, y) -> x.concat(StringUtil.isEmpty(x) ? "" : ",").concat(y));
         result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(parsFormPos2.getJdhome(), 1); //0上架 1下架
+        result_eleme = eleMeFacadeService.upBatchFrame(parsFormPos2.getEleme(),"0");
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
     //===============订单=================/
     //确认订单
     public String orderConfirm(ParsFromPos parsFromPos){
-       return orderOpt(parsFromPos,"order.confirm",true);
+       return orderOpt(parsFromPos,0);
     }
 
     //取消订单
     public  String orderCancel(ParsFromPos parsFromPos){
-      return orderOpt(parsFromPos, "order.cancel",false);
+      return orderOpt(parsFromPos,1);
     }
 
-    //订单操作
-    private  String orderOpt(ParsFromPos parsFromPos,String command,Boolean isAgree){
+    //订单操作 isAgree 0是确认订单 1取消订单
+    private  String orderOpt(ParsFromPos parsFromPos,int isAgree){
         String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]",
             result_baidu = null,
             result_jdhome = null,
@@ -300,12 +309,12 @@ public class WMFacadeService {
             result_meituan = null;
         if(parsFromPos.getBaidu()!=null){
             for(String id:parsFromPos.getBaidu().getOrderId().split(",")){
-                switch (command){
-                    case "order.confirm":
-                        result_baidu += (result_baidu == null?"":",")+baiDuFacadeService.orderConfirm(id);
+                switch (isAgree){
+                    case 0:
+                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderConfirm(id);
                         break;
-                    case "order.cancel":
-                        result_baidu += (result_baidu == null?"":",")+baiDuFacadeService.orderCancel(id);
+                    case 1:
+                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderCancel(id,parsFromPos.getBaidu ().getReason(),parsFromPos.getBaidu().getReasonCode());
                         break;
                     default:break;
                 }
@@ -313,12 +322,25 @@ public class WMFacadeService {
         }
         if(parsFromPos.getJdhome()!=null){
             for(String id:parsFromPos.getJdhome().getOrderId().split(",")){
-                  result_jdhome +=(result_jdhome == null?"":",")+jdHomeFacadeService.orderAcceptOperate(id, parsFromPos.getJdhome().getShopId(), isAgree);
+                  result_jdhome =(result_jdhome == null?"":result_jdhome+",")+jdHomeFacadeService.orderAcceptOperate(id, parsFromPos.getJdhome().getShopId(),isAgree==0?true:false);
                 }
             }
         if(parsFromPos.getMeituan()!=null){
             for(String id:parsFromPos.getMeituan().getOrderId().split(",")){
-                result_meituan +=(result_meituan == null?"":",")+meiTuanFacadeService.getConfirmOrder(Long.parseLong(id));
+                switch (isAgree){
+                    case 0:
+                        result_meituan =(result_meituan == null?"":result_meituan+",")+meiTuanFacadeService.getConfirmOrder(Long.parseLong(id));
+                        break;
+                    case 1:
+                        result_meituan =(result_meituan == null?"":result_meituan+",")+meiTuanFacadeService.getCancelOrder(Long.parseLong(id),parsFromPos.getMeituan().getReason(),parsFromPos.getMeituan().getReasonCode());
+                        break;
+                    default:break;
+                }
+            }
+        }
+        if(parsFromPos.getEleme()!=null){
+            for(String id:parsFromPos.getEleme().getOrderId().split(",")){
+                result_eleme =(result_eleme == null?"":result_eleme+",")+eleMeFacadeService.upOrderStatus(id,isAgree==0?"2":"-1",parsFromPos.getEleme().getReason());
             }
         }
         return "{".concat( MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");

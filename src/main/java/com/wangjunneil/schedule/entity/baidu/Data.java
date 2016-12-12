@@ -7,14 +7,13 @@ import java.util.List;
 /**
  * Created by yangwanbin on 2016-12-01.
  */
-@Document(collection = "sync.waimai.order.baidu")
 public class Data {
 
     //合作方ID
     private String source;
 
     //shop
-    private Shop shop;
+    private OrderShop shop;
 
     //order
     private Order order;
@@ -26,7 +25,7 @@ public class Data {
     private Supplier supplier;
 
     //products
-    private List<Products> products;
+    private List<OrderProductsDish[]> products;
 
     //discount
     private List<Discount> discount;
@@ -39,11 +38,11 @@ public class Data {
         return this.source;
     }
 
-    public void setShop(Shop shop){
+    public void setShop(OrderShop shop){
         this.shop = shop;
     }
 
-    public Shop getShop(){
+    public OrderShop getShop(){
         return this.shop;
     }
 
@@ -71,11 +70,11 @@ public class Data {
         return this.supplier;
     }
 
-    public void setProducts(List<Products> products){
+    public void setProducts(List<OrderProductsDish[]> products){
         this.products = products;
     }
 
-    public List<Products> getProducts(){
+    public List<OrderProductsDish[]> getProducts(){
         return this.products;
     }
 

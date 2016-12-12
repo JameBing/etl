@@ -26,7 +26,6 @@ public class BaiDuInnerService {
 
     //insert or update
     public void updSyncBaiDuOrder(Data data) throws ScheduleException{
-
         Query  query = new Query(Criteria.where("order_id").is(data.getOrder().getOrderId()));
         Update update = new Update().set("source",data.getSource())
                                     .set("shop", data.getShop())

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
+import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.shopCategory;
 import com.wangjunneil.schedule.service.JdHomeFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
@@ -49,18 +50,17 @@ public class JdHomeController {
         resp.setContentType("text/html;charset=utf-8");
         //应用参数
         List<ParsFromPosInner> listBaseStockCenterRequest = new ArrayList<ParsFromPosInner>();
-       String shopId = "6666";
-        ParsFromPosInner inner = new ParsFromPosInner();
+        String shopId = "6666";
+      /*  ParsFromPosInner inner = new ParsFromPosInner();
         inner.setDishId("6666");
         inner.setShopId(shopId);
-        listBaseStockCenterRequest.add(inner);
-        /*for(int i=0;i<60;i++){
-            QueryStockRequest queryStockRequest = new QueryStockRequest();
-            queryStockRequest.setStationNo("10054394");
-            queryStockRequest.setSkuId(1997342L);
-            queryStockRequest.setDoSale(0);
-            listBaseStockCenterRequest.add(queryStockRequest);
-        }*/
+        listBaseStockCenterRequest.add(inner);*/
+        for(int i=0;i<10;i++){
+            ParsFromPosInner inner = new ParsFromPosInner();
+            inner.setDishId("6666");
+            inner.setShopId(shopId);
+            listBaseStockCenterRequest.add(inner);
+        }
         // 测试数据
         String returnJson = jdHomeFacadeService.updateAllStockOnAndOff(listBaseStockCenterRequest,0);
         out.println(returnJson);

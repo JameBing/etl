@@ -74,8 +74,8 @@ public class WMController {
                 platform = null;
                 break;
         }
-        //out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
-        System.out.print(wmFacadeService.appReceiveCallBack(stringMap,platform));
+        out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
+        //System.out.print(wmFacadeService.appReceiveCallBack(stringMap,platform));
         return  null;
     }
 //region 商户
@@ -100,7 +100,7 @@ public class WMController {
      * 门店开业
      *
      * @param out   响应输出流对象
-     * @param request 请求对象 {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
+     * @param request 请求对象 {baidu:[{shopId:"",platformShopId:""}],jdhome:[{}],meituan:[{}],eleme:[{}]}
      * @param response  浏览器响应对象
      * @return{baidu: [{code:0,desc:"success",dynamic:"",logId:""}],jdhome:[{}],...}]
      */
@@ -117,7 +117,7 @@ public class WMController {
      * 门店歇业
      *
      * @param out   响应输出流对象
-     * @param request 请求对象  {baidu:{shopId:"",platformShopId:""},jdhome:{},meituan:{},eleme:{}}
+     * @param request 请求对象  {baidu:[{shopId:"",platformShopId:""}],jdhome:[{}],meituan:[{}],eleme:[{}]}
      * @param response  浏览器响应对象
      * @return  {baidu: [{code:0,desc:"success",dynamic:"",logId:""}],jdhome:[{}],...}]
      */
@@ -291,7 +291,6 @@ public class WMController {
      */
     @RequestMapping(value = "/orderGet.php", method = RequestMethod.GET)
     public String orderGet(PrintWriter out, HttpServletResponse response) throws SchedulerException {
-
         out.println("");
         return  null;
     }
@@ -305,7 +304,7 @@ public class WMController {
      */
     @RequestMapping(value = "/orderConfirm.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     public String orderConfirm(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
-        response.setContentType("application/json;charset=uft-8");
+        //response.setContentType("application/json;charset=uft-8");
         String reponseStr = wmFacadeService.orderConfirm(parsFromPos);
         out.println(reponseStr);
         return  null;
@@ -316,14 +315,14 @@ public class WMController {
      * 取消订单
      *
      * @param out   响应输出流对象
-     * @request request 浏览器请求对象 约定格式：{baidu:{orderId:"0001,0002",shopId:""},jdhome:{orderId:"0003,0004",shopId:""},meituan:{},eleme:{}}
+     * @request request 浏览器请求对象 约定格式：{baidu:{orderId:"0001,0002",shopId:"",reason:"",reasonCode:""},jdhome:{orderId:"0003,0004",shopId:"",reason:"",reasonCode:""},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
      * @return
      */
     @RequestMapping(value = "/orderCancel.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     @ResponseBody
     public String orderCancel(@RequestBody ParsFromPos parsFromPos,PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
-        response.setContentType("application/json;charset=uft-8");
+        //response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.orderCancel(parsFromPos));
         return  null;
     }
@@ -333,16 +332,6 @@ public class WMController {
 //endregion
 
     //备注：需要提供接口用于中台系统下发门店编码对照信息
-@Autowired
-    private  MeiTuanFacadeService meiTuanFacadeService;
-
-    @RequestMapping(value = "/test1",method = RequestMethod.POST)
-    @ResponseBody
-    public String test1(@RequestBody JsonObject jsonObject,PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws  ScheduleException{
-        out.println(  meiTuanFacadeService.newOrder(jsonObject));
-        return null;
-    }
-
     @RequestMapping(value = "/test2",method = RequestMethod.POST)
     public String test2(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
         try {

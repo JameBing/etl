@@ -243,4 +243,53 @@ public class EleMeApiService {
         String url = getSystemUrl(pathURL, obj);
         return HttpUtil.post(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
     }
+
+    /**
+     * 绑定商户ID
+     * @param obj
+     * @return
+     * @throws ElemeException
+     * @throws ScheduleException
+     * @throws IllegalAccessException
+     * @throws IntrospectionException
+     * @throws InvocationTargetException
+     * @throws IOException
+     */
+    public String bingDing(RestaurantRequest obj) throws ElemeException, ScheduleException, IllegalAccessException, IntrospectionException, InvocationTargetException, IOException {
+        String url = getSystemUrl(Constants.URL_ELEME_BINGDING_RESTAURANTID, obj);
+        return HttpUtil.post(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+    }
+
+    /**
+     * 重新绑定商户ID
+     * @param obj
+     * @return
+     * @throws ElemeException
+     * @throws ScheduleException
+     * @throws IllegalAccessException
+     * @throws IntrospectionException
+     * @throws InvocationTargetException
+     * @throws IOException
+     */
+    public String againBingDing(RestaurantRequest obj) throws ElemeException, ScheduleException, IllegalAccessException, IntrospectionException, InvocationTargetException, IOException {
+        String url = getSystemUrl(Constants.URL_ELEME_BINGDING_RESTAURANTID, obj);
+        return HttpUtil.put(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+    }
+
+    /**
+     * 通过第三方ID查询餐厅ID
+     * @param obj
+     * @return
+     * @throws ElemeException
+     * @throws ScheduleException
+     * @throws IllegalAccessException
+     * @throws IntrospectionException
+     * @throws InvocationTargetException
+     * @throws IOException
+     */
+    public String getRestaurantId(RestaurantRequest obj) throws ElemeException, ScheduleException, IllegalAccessException, IntrospectionException, InvocationTargetException, IOException {
+        String url = getSystemUrl(Constants.URL_ELEME_BINGDING_RESTAURANTID, obj);
+        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+        return HttpUtil.get2(requstUrl);
+    }
 }
