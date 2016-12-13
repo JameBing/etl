@@ -469,10 +469,10 @@ public class JdHomeFacadeService {
             if("0".equals(jsonObject.getString("code")) && "0".equals(apiJson.getString("code"))){
                int status = 0;
                if(isAgree){
-                   status = Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderReceived,Enum.OrderStatusJdHome.OrderReceived.toString()).get("code").getAsInt();
+                   status =Constants.JH_ORDER_RECEIVED;
                }
                if(!isAgree){
-                   status = Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderSysCancelled,Enum.OrderStatusJdHome.OrderSysCancelled.toString()).get("code").getAsInt();
+                   status = Constants.JH_ORDER_USER_CANCELLED;
                }
                jdHomeInnerService.updateStatus(Long.parseLong(orderId),status);
             }
