@@ -152,10 +152,15 @@ public final class Constants {
     public static final String BAIDU_CMD_RESP = "resp";                       //接口返回操作前缀
 
     public static final int BD_SUSPENDING=1;  //待确认
+
     public static final int BD_CONFIRMED=5;  // 已确认
+
     public static final int BD_PICKUP=7;     //正在取餐
+
     public static final int BD_DELIVERY=8;  // 送货中
+
     public static final int BD_COMPLETED=9;  // 已完成
+    
     public static final int BD_CANCELED=10;  // 已取消
 
     /**
@@ -282,6 +287,6 @@ public final class Constants {
     public static final int POS_ORDER_CANCELED = 50;  //   已取消
 
     public static final int POS_ORDER_REFUSED = 60;  // 已拒绝
-    
+
     public static final int POS_ORDER_OTHER = 90;  // 其它
 }
