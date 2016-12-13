@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
 import com.wangjunneil.schedule.activemq.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
+import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.baidu.OrderProductsDish;
 import com.wangjunneil.schedule.entity.baidu.OrderShop;
@@ -192,6 +193,7 @@ public class SysFacadeService {
           }catch (Exception ex){
               //待补充
           }
+            formatOrder2Pos(v);
         });
     }
 
@@ -252,9 +254,9 @@ public class SysFacadeService {
         jsonObject.put("poiPhone","");
         jsonObject.put("orderIndex",data.getOrder().getOrderIndex());
         jsonObject.put("orderType","");
-        jsonObject.put("orderStatus",data.getOrder().getStatus());
+        jsonObject.put("orderStatus",tranBdOrderStatus(data.getOrder().getStatus()));
         jsonObject.put("orderStatusTime","");
-        jsonObject.put("orderStartTime","");
+        jsonObject.put("orderStartTime",data.getOrder().getCreateTime());
         jsonObject.put("orderConfirmTime",data.getOrder().getConfirmTime());
         jsonObject.put("orderPurchaseTime", "");
         jsonObject.put("orderAgingType","");
@@ -394,7 +396,7 @@ public class SysFacadeService {
         jsonObject.put("poiPhone","");
         jsonObject.put("orderIndex","");
         jsonObject.put("orderType",orderInfo.getOrderType());
-        jsonObject.put("orderStatus",orderInfo.getOrderStatus());
+        jsonObject.put("orderStatus",tranJHOrderStatus(orderInfo.getOrderStatus()));
         jsonObject.put("orderStatusTime",orderInfo.getOrderStartTime());
         jsonObject.put("orderStartTime",orderInfo.getOrderStartTime());
         jsonObject.put("orderConfirmTime","");
@@ -534,7 +536,7 @@ public class SysFacadeService {
         jsonObject.put("poiPhone",orderInfo.getWmpoiphone());
         jsonObject.put("orderIndex",orderInfo.getDayseq());
         jsonObject.put("orderType","");
-        jsonObject.put("orderStatus",orderInfo.getStatus());
+        jsonObject.put("orderStatus",tranMTOrderStatus(orderInfo.getStatus()));
         jsonObject.put("orderStatusTime",orderInfo.getUtime());
         jsonObject.put("orderStartTime","");
         jsonObject.put("orderConfirmTime","");
@@ -671,7 +673,7 @@ public class SysFacadeService {
         jsonObject.put("poiPhone","");
         jsonObject.put("orderIndex",order.getRestaurantnumber());
         jsonObject.put("orderType","");
-        jsonObject.put("orderStatus",order.getStatuscode());
+        jsonObject.put("orderStatus",tranELOrderStatus(order.getStatuscode()));
         jsonObject.put("orderStatusTime","");
         jsonObject.put("orderStartTime",order.getCreatedat());
         jsonObject.put("orderConfirmTime","");
@@ -880,4 +882,73 @@ public class SysFacadeService {
     public void updSynLog(Log log){
           sysInnerService.updSynLog( log);
     }
+
+    //格式化百度订单状态
+    private int tranBdOrderStatus(int status){
+        switch (status){
+            case Constants.BD_SUSPENDING:
+                return Constants.POS_ORDER_SUSPENDING;
+            case Constants.BD_CONFIRMED:
+               return Constants.POS_ORDER_CONFIRMED;
+            case Constants.BD_DELIVERY:
+                return Constants.POS_ORDER_DELIVERY;
+            case Constants.BD_COMPLETED:
+                return Constants.POS_ORDER_COMPLETED;
+            case Constants.BD_CANCELED:
+                return Constants.POS_ORDER_CANCELED;
+            default:
+                return Constants.POS_ORDER_OTHER;
+        }
+    }
+
+    //格式化京东到家订单状态
+    private int tranJHOrderStatus(int status){
+        switch (status){
+            case Constants.JH_ORDER_WAITING:
+                return Constants.POS_ORDER_SUSPENDING;
+            case Constants.JH_ORDER_RECEIVED:
+                return Constants.POS_ORDER_CONFIRMED;
+            case Constants.JH_ORDER_DELIVERING:
+                return Constants.POS_ORDER_DELIVERY;
+            case Constants.JH_ORDER_CONFIRMED:
+                return Constants.POS_ORDER_COMPLETED;
+            case Constants.JH_ORDER_USER_CANCELLED:
+                return Constants.POS_ORDER_CANCELED;
+            default:
+                return Constants.POS_ORDER_OTHER;
+        }
+    }
+
+    //格式化美团订单状态
+    private int tranMTOrderStatus(int status){
+        switch (status){
+            case Constants.MT_STATUS_CODE_UNPROCESSED:
+                return Constants.POS_ORDER_SUSPENDING;
+            case Constants.MT_STATUS_CODE_CONFIRMED:
+                return Constants.POS_ORDER_CONFIRMED;
+            case Constants.MT_STATUS_CODE_COMPLETED:
+                return Constants.POS_ORDER_COMPLETED;
+            case Constants.MT_STATUS_CODE_CANCELED:
+                return Constants.POS_ORDER_CANCELED;
+            default:
+                return Constants.POS_ORDER_OTHER;
+        }
+    }
+
+    //格式化饿了么订单状态
+    private int tranELOrderStatus(int status){
+        switch (status){
+            case Constants.EL_STATUS_CODE_UNPROCESSED:
+                return Constants.POS_ORDER_SUSPENDING;
+            case Constants.EL_STATUS_CODE_PROCESSED_AND_VALID:
+                return Constants.POS_ORDER_CONFIRMED;
+            case Constants.EL_STATUS_CODE_SUCCESS:
+                return Constants.POS_ORDER_COMPLETED;
+            case Constants.EL_STATUS_CODE_INVALID:
+                return Constants.POS_ORDER_CANCELED;
+            default:
+                return Constants.POS_ORDER_OTHER;
+        }
+    }
+
 }

@@ -469,10 +469,10 @@ public class JdHomeFacadeService {
             if("0".equals(jsonObject.getString("code")) && "0".equals(apiJson.getString("code"))){
                int status = 0;
                if(isAgree){
-                   status = Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderReceived,Enum.OrderStatusJdHome.OrderReceived.toString()).get("code").getAsInt();
+                   status =Constants.JH_ORDER_RECEIVED;
                }
                if(!isAgree){
-                   status = Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderSysCancelled,Enum.OrderStatusJdHome.OrderSysCancelled.toString()).get("code").getAsInt();
+                   status = Constants.JH_ORDER_USER_CANCELLED;
                }
                jdHomeInnerService.updateStatus(Long.parseLong(orderId),status);
             }
@@ -777,6 +777,54 @@ public class JdHomeFacadeService {
             if (log1 !=null){
                 log1.setLogId(log1.getLogId());
                 log1.setTitle(MessageFormat.format("订单妥投推送失败{0}！",orderId));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}",orderId)).concat("}"));
+                sysFacadeService.updSynLog(log1);
+            }
+            return gson.toJson(result);
+        }
+    }
+
+    /**
+     * 用户取消消息
+     * @param jsonObject
+     * @return
+     */
+    public String userCancelOrder(JSONObject jsonObject){
+        Result result = new Result();
+        Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new RtnSerializer()).disableHtmlEscaping().create();
+        String billId = jsonObject.getString("billId");
+        String statusId = jsonObject.getString("statusId");
+
+        int status = Integer.parseInt(statusId);
+        if(StringUtil.isEmpty(billId)){
+            result.setCode(-1);
+            result.setMsg("failure");
+            result.setData("用户取消消息接口订单号为空");
+            return gson.toJson(result);
+        }
+        Long orderId = Long.parseLong(billId);
+        if(jdHomeInnerService.getOrder(orderId)==null){
+            result.setCode(-1);
+            result.setMsg("failure");
+            result.setData("用户取消消息接口订单号没有匹配到订单");
+            return gson.toJson(result);
+        }
+        try {
+            jdHomeInnerService.updateStatus(orderId,status);
+            result.setCode(0);
+            result.setMsg("success");
+            result.setData("用户取消推送成功");
+        }catch (Exception ex){
+            log1 = sysFacadeService.functionRtn.apply(ex);
+            result.setCode(-99);
+            result.setMsg("failure");
+            result.setData("用户取消推送失败");
+        }finally {
+            if (log1 !=null){
+                log1.setLogId(log1.getLogId());
+                log1.setTitle(MessageFormat.format("用户取消推送失败{0}！",orderId));
                 if (StringUtil.isEmpty(log1.getRequest()))
                     log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}",orderId)).concat("}"));
                 sysFacadeService.updSynLog(log1);
