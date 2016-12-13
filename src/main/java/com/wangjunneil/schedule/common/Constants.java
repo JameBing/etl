@@ -192,11 +192,17 @@ public final class Constants {
     public static final String UPDATE_STORE_INFO ="https://openo2o.jd.com/djapi/store/updateStoreInfo4Open";
 
     public static final int JH_ORDER_LOCK=20010;  // 锁定
+
     public static final int JH_ORDER_USER_CANCELLED=20020;  // 用户取消
+
     public static final int JH_ORDER_SYS_CANCELLED=20040;  // 系统取消
+
     public static final int JH_ORDER_WAITING=41000;  // 待接单
+
     public static final int JH_ORDER_RECEIVED=41010;  // 已接单
+
     public static final int JH_ORDER_DELIVERING=33040;  // 配送中
+
     public static final int JH_ORDER_CONFIRMED=33060;  // 已妥投
 
 
@@ -242,9 +248,13 @@ public final class Constants {
     public static final String URL_ELEME_BINGDING_RESTAURANTID = "http://v2.openapi.ele.me/restaurant/binding/";
 
     public static final int EL_STATUS_CODE_INVALID=-1;  // 订单已取消
+
     public static final int EL_STATUS_CODE_UNPROCESSED=0;  // 订单未处理
+
     public static final int EL_STATUS_CODE_PROCESSING=1;  // 订单等待餐厅确认
+
     public static final int EL_STATUS_CODE_PROCESSED_AND_VALID=2;  // 订单已处理
+
     public static final int EL_STATUS_CODE_SUCCESS=9;  // 订单已完成
 
     //endregion
@@ -252,17 +262,26 @@ public final class Constants {
     /*************************************************************************************************************************/
     //美团订单状态
     public static final int MT_STATUS_CODE_UNPROCESSED=3;  // 商家已收到
+
     public static final int MT_STATUS_CODE_CONFIRMED=4;  // 商家已确认
+
     public static final int MT_STATUS_CODE_COMPLETED=8;  // 已完成
+
     public static final int MT_STATUS_CODE_CANCELED=9;  // 已取消
 
     /*************************************************************************************************************************/
     //pos订单状态
     public static final int POS_ORDER_SUSPENDING = 10;  // 待处理
+
     public static final int POS_ORDER_CONFIRMED = 20;  // 已确认
+
     public static final int POS_ORDER_DELIVERY = 30;  // 送货中
+
     public static final int POS_ORDER_COMPLETED = 40;  // 已完成
+
     public static final int POS_ORDER_CANCELED = 50;  //   已取消
+
     public static final int POS_ORDER_REFUSED = 60;  // 已拒绝
+    
     public static final int POS_ORDER_OTHER = 90;  // 其它
 }
