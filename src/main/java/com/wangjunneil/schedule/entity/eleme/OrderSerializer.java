@@ -48,6 +48,8 @@ public class OrderSerializer implements JsonSerializer<Order> {
         object.add("activity_total",jsonSerializationContext.serialize(order.getActivitytotal()));
         object.add("phone_list",jsonSerializationContext.serialize(order.getPhonelist()));
         object.add("distribution",jsonSerializationContext.serialize(order.getDistribution()));
+        object.add("deliver_status",jsonSerializationContext.serialize(order.getDeliverstatus()));
+        object.add("inner_id",jsonSerializationContext.serialize(order.getDeliverstatus()));
         return object;
     }
 }
