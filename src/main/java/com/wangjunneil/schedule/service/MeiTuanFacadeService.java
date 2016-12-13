@@ -4,8 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sankuai.meituan.waimai.opensdk.exception.ApiOpException;
+import com.sankuai.meituan.waimai.opensdk.exception.ApiSysException;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
-import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.MeiTuanException;
 import com.wangjunneil.schedule.common.ScheduleException;
@@ -14,7 +15,6 @@ import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.entity.meituan.*;
-import com.wangjunneil.schedule.entity.mt.*;
 import com.wangjunneil.schedule.service.meituan.MeiTuanApiService;
 import com.wangjunneil.schedule.service.meituan.MeiTuanInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -60,26 +60,24 @@ public class MeiTuanFacadeService {
         rtn.setDynamic(code);
         Log log1 = null;
         try {
-             json = mtApiService.openShop(code); //SUCCESS {"data":"ok",}   ERROR {"code":"","msg":""}
-             JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-             if (jsonObject.get("data")!=null || jsonObject.get("code").toString() == "200"){
-                 rtn.setCode(0);
-                 rtn.setDesc("success");
-                 rtn.setRemark("成功");
-             }
-            else {
-                 rtn.setCode(Integer.valueOf(jsonObject.get("code").toString()));
-                 rtn.setDesc(jsonObject.get("msg").toString());
-                 rtn.setRemark(jsonObject.get("msg").toString());
-             }
+            json = mtApiService.openShop(code);
+            if (json.equals("ok") || json.equals("200")){
+                rtn.setCode(0);
+                rtn.setDesc("success");
+                rtn.setRemark("成功");
+            }
         }catch (MeiTuanException ex){
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException ex){
            rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ApiOpException e){
+            rtn.setCode(e.getCode());
+            rtn.setDesc("error");
+            rtn.setRemark(e.getMsg());
         }catch (Exception ex){
-           rtn.setCode(-998);
+            rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
         }finally {
             //有异常产生
@@ -110,16 +108,10 @@ public class MeiTuanFacadeService {
         Log log1 = null;
         try {
             json = mtApiService.closeShop(code);
-            JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-            if (jsonObject.get("data")!=null || jsonObject.get("code").toString() == "200"){
+            if (json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
                 rtn.setDesc("success");
                 rtn.setRemark("成功");
-            }
-            else {
-                rtn.setCode(Integer.valueOf(jsonObject.get("code").toString()));
-                rtn.setDesc(jsonObject.get("msg").toString());
-                rtn.setRemark(jsonObject.get("msg").toString());
             }
         }catch (MeiTuanException ex){
             rtn.setCode(-997);
@@ -127,6 +119,10 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ApiOpException e){
+            rtn.setCode(e.getCode());
+            rtn.setDesc("error");
+            rtn.setRemark(e.getMsg());
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
@@ -161,10 +157,10 @@ public class MeiTuanFacadeService {
         try {
             json = mtApiService.foodCreate(foodParam);
             return json;
-        }catch (MeiTuanException ex){
-
         }
+        catch (MeiTuanException ex){}
         catch (ScheduleException ex){}
+        catch (ApiOpException ex){}
         catch (Exception ex){}
         finally {
             return json;
@@ -180,8 +176,10 @@ public class MeiTuanFacadeService {
         FoodParam foodParam = null;
         try {
             foodParam = mtApiService.foodList(appPoiCode, foodCode);
-        }catch (MeiTuanException ex){}
+        }
+        catch (MeiTuanException ex){}
         catch (ScheduleException ex){}
+        catch (ApiOpException ex){}
         catch (Exception ex){}
         finally {
             return  foodParam;
@@ -197,20 +195,13 @@ public class MeiTuanFacadeService {
         Rtn rtn = new Rtn();
         rtn.setDynamic(appPoiCode);
         rtn.setDynamic(foodCode);
-
         Log log1 = null;
         try {
             json = mtApiService.upFrame(appPoiCode, foodCode);
-            JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-            if (jsonObject.get("data")!=null || jsonObject.get("code").toString() == "200"){
+            if (json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
                 rtn.setDesc("success");
                 rtn.setRemark("成功");
-            }
-            else {
-                rtn.setCode(Integer.valueOf(jsonObject.get("code").toString()));
-                rtn.setDesc(jsonObject.get("msg").toString());
-                rtn.setRemark(jsonObject.get("msg").toString());
             }
         }catch (MeiTuanException ex){
             rtn.setCode(-997);
@@ -218,6 +209,10 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ApiOpException e){
+            rtn.setCode(e.getCode());
+            rtn.setDesc("error");
+            rtn.setRemark(e.getMsg());
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
@@ -248,20 +243,13 @@ public class MeiTuanFacadeService {
         Rtn rtn = new Rtn();
         rtn.setDynamic(appPoiCode);
         rtn.setDynamic(foodCode);
-
         Log log1 = null;
         try {
             json = mtApiService.downFrame(appPoiCode, foodCode);
-            JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-            if (jsonObject.get("data")!=null || jsonObject.get("code").toString() == "200"){
+            if (json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
                 rtn.setDesc("success");
                 rtn.setRemark("成功");
-            }
-            else {
-                rtn.setCode(Integer.valueOf(jsonObject.get("code").toString()));
-                rtn.setDesc(jsonObject.get("msg").toString());
-                rtn.setRemark(jsonObject.get("msg").toString());
             }
         }catch (MeiTuanException ex){
             rtn.setCode(-997);
@@ -269,6 +257,10 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ApiOpException e) {
+            rtn.setCode(e.getCode());
+            rtn.setDesc("error");
+            rtn.setRemark(e.getMsg());
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
@@ -306,16 +298,10 @@ public class MeiTuanFacadeService {
         Log log1 = null;
         try {
             json = mtApiService.getConfirmOrder(orderId);
-            JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-            if (jsonObject.get("data")!=null || jsonObject.get("code").toString() == "200"){
+            if (json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
                 rtn.setDesc("success");
                 rtn.setRemark("成功");
-            }
-            else {
-                rtn.setCode(Integer.valueOf(jsonObject.get("code").toString()));
-                rtn.setDesc(jsonObject.get("msg").toString());
-                rtn.setRemark(jsonObject.get("msg").toString());
             }
         }catch (MeiTuanException ex){
             rtn.setCode(-997);
@@ -323,6 +309,10 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ApiOpException ex){
+            rtn.setCode(ex.getCode());
+            rtn.setDesc("error");
+            rtn.setRemark(ex.getMsg());
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
@@ -355,16 +345,10 @@ public class MeiTuanFacadeService {
         Log log1 = null;
         try {
             json = mtApiService.getCancelOrder(orderId,reason,reason_code);
-            JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-            if (jsonObject.get("data")!=null || jsonObject.get("code").toString() == "200"){
+            if(json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
                 rtn.setDesc("success");
                 rtn.setRemark("成功");
-            }
-            else {
-                rtn.setCode(Integer.valueOf(jsonObject.get("code").toString()));
-                rtn.setDesc(jsonObject.get("msg").toString());
-                rtn.setRemark(jsonObject.get("msg").toString());
             }
         }catch (MeiTuanException ex){
             rtn.setCode(-997);
@@ -372,6 +356,11 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ApiOpException ex)
+        {
+            rtn.setCode(ex.getCode());
+            rtn.setDesc("error");
+            rtn.setRemark(ex.getMsg());
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
@@ -436,14 +425,44 @@ public class MeiTuanFacadeService {
 
     /**
      * 推送订单订单状态（已确认、已完成）
-     * @param orderId 订单Id
+     * @return
      */
-    public String getChangeOrderStatus(String orderId,String status) {
-            if (orderId ==null || "".equals(orderId)){
-                return "订单id列表为空";
+    public String getChangeOrderStatus(JsonObject jsonObject) {
+        String result = "";
+        Gson gson = new GsonBuilder().registerTypeAdapter(OrderInfo.class,new OrderInfoSerializer())
+            .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderExtraParam.class, new OrderExtraParamSerializer())
+            .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderFoodDetailParam.class, new OrderFoodDetailParamSerializer()) .disableHtmlEscaping().create();
+        try {
+            String json =gson.toJson(jsonObject);
+            json = java.net.URLDecoder.decode(json,"utf-8");
+            OrderInfo order = gson.fromJson(json, OrderInfo.class);
+            //商家门店ID
+            String shopId = order.getApppoicode();
+            //美团订单ID
+            String platformOrderId = String.valueOf(order.getOrderid());
+            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_MEITUAN,platformOrderId);
+            //如果订单已经存在则商家订单ID不重新获取
+            if (orderWaiMai !=null&&orderWaiMai.getPlatform().equals(Constants.PLATFORM_WAIMAI_MEITUAN)&&orderWaiMai.getPlatformOrderId().equals(platformOrderId)){
+                orderWaiMai.setOrderId(orderWaiMai.getOrderId());
+            }else {
+                orderWaiMai = new OrderWaiMai();
+                //商家订单ID
+                String orderId = sysFacadeService.getOrderNum(shopId);
+                orderWaiMai.setOrderId(orderId);
             }
-            mtInnerService.updateStatus(orderId,Integer.parseInt(status));
-        return  null;
+            orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
+            orderWaiMai.setPlatformOrderId(platformOrderId);
+            orderWaiMai.setOrder(order);
+            orderWaiMai.setShopId(shopId);
+            sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
+            result = "{\"data\" : \"ok\"}" ;
+        }
+        catch (Exception ex){
+            result = "{\"code\":700,\"msg\":\"系统异常\"}";
+        }
+        finally {
+            return result;
+        }
     }
 
 //endregion

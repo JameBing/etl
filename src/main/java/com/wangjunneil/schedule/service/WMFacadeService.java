@@ -314,7 +314,7 @@ public class WMFacadeService {
                         result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderConfirm(id);
                         break;
                     case 1:
-                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderCancel(id);
+                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderCancel(id,parsFromPos.getBaidu ().getReason(),parsFromPos.getBaidu().getReasonCode());
                         break;
                     default:break;
                 }

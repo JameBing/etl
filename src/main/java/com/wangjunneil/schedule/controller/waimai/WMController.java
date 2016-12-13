@@ -304,7 +304,7 @@ public class WMController {
      */
     @RequestMapping(value = "/orderConfirm.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     public String orderConfirm(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
-        response.setContentType("application/json;charset=uft-8");
+        //response.setContentType("application/json;charset=uft-8");
         String reponseStr = wmFacadeService.orderConfirm(parsFromPos);
         out.println(reponseStr);
         return  null;
@@ -322,7 +322,7 @@ public class WMController {
     @RequestMapping(value = "/orderCancel.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     @ResponseBody
     public String orderCancel(@RequestBody ParsFromPos parsFromPos,PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
-        response.setContentType("application/json;charset=uft-8");
+        //response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.orderCancel(parsFromPos));
         return  null;
     }

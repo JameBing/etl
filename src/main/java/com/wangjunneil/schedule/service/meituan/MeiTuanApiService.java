@@ -4,7 +4,6 @@ import com.sankuai.meituan.waimai.opensdk.factory.APIFactory;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
 import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
 import com.sankuai.meituan.waimai.opensdk.vo.SystemParam;
-import com.wangjunneil.schedule.entity.meituan.OrderInfo;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +41,8 @@ public class MeiTuanApiService {
 
     //新增商品 foodCreate
     public String foodCreate(FoodParam foodParam) throws Exception {
-        return APIFactory.getFoodAPI().foodSave(sysPram, foodParam);
+        String json = APIFactory.getFoodAPI().foodSave(sysPram, foodParam);
+        return json;
     }
 
     //查询所有商品

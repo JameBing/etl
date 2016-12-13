@@ -287,9 +287,9 @@ public class BaiDuFacadeService {
             try {
                 Dish dish = new Dish();
                 dish.setShopId(shopId);
-                dish.setBaiduShopId(baiduShopId);
+               // dish.setBaiduShopId(baiduShopId);
                 dish.setDishId(dishId);
-                dish.setBaiduDishId(baiduDishId);
+               // dish.setBaiduDishId(baiduDishId);
                 switch (cmd){
                     case "dish.online":
                         result = baiDuApiService.dishOnline(dish);
@@ -458,13 +458,15 @@ public class BaiDuFacadeService {
     }
 
    //取消订单
-    public String orderCancel(String params){
+    public String orderCancel(String params,String reason,String reason_code){
             String result = null;
             Rtn rtn = new Rtn();
             Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
             try {
                 Order order = new Order();
                 order.setOrderId(params);
+                order.setType(reason_code);
+                order.setReason(reason);
                 result = baiDuApiService.orderCancel(order);
                 rtn = gson1.fromJson(result,Rtn.class);
                 rtn.setDynamic(params);

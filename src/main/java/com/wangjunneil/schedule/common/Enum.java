@@ -69,6 +69,23 @@ public class Enum {
         OrderConfirmed
     }
 
+    //订单状态--美团外卖
+    public enum OrderTypeMeiTuan
+    {
+        @EnumDescription(code = 1,desc = "用户已提交订单")
+        R1,
+        @EnumDescription(code = 2,desc = "可推送到APP方平台也可推送到商家")
+        R5,
+        @EnumDescription(code = 3,desc = "商家已收到")
+        R7,
+        @EnumDescription(code = 4,desc = "商家已确认")
+        R8,
+        @EnumDescription(code = 8,desc = "已完成")
+        R9,
+        @EnumDescription(code = 9,desc = "已取消")
+        R10
+    }
+
     //错误码--饿了么
     public enum ReturnCodeEleMe{
         @EnumDescription(code = 1000,desc = "权限错误")
@@ -162,6 +179,8 @@ public class Enum {
         @EnumDescription(code = 14,desc = "餐厅长时间未接单，订单自动取消")
         TYPE_SYSTEM_AUTO_CANCEL,
     }
+
+
     //根据枚举类型值获取枚举注释
       public static JsonObject getEnumDesc(Object obj,String name){
         JsonObject json = new JsonObject();

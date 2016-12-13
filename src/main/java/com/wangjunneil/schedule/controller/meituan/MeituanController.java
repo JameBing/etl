@@ -2,9 +2,7 @@ package com.wangjunneil.schedule.controller.meituan;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
-import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
 import com.wangjunneil.schedule.common.ScheduleException;
-import com.wangjunneil.schedule.entity.meituan.UpordownFrame;
 import com.wangjunneil.schedule.service.MeiTuanFacadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,7 +34,7 @@ public class MeituanController {
     @RequestMapping(value = "/mtapi/openshop",method = RequestMethod.GET)
     public String openShop(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws ScheduleException{
         resp.setContentType("text/html;charset=utf-8");
-        String code = "test_poi_01";
+        String code = "6666";
         String params = mtFacadeService.openShop(code);
         out.println(params);
         out.close();
@@ -47,7 +45,7 @@ public class MeituanController {
     @RequestMapping(value = "/mtapi/closeshop",method = RequestMethod.GET)
     public String closeShop(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws ScheduleException{
         resp.setContentType("text/html;charset=utf-8");
-        String code = "test_poi_01";
+        String code = "6666";
         String params = mtFacadeService.closeShop(code);
         out.println(params);
         out.close();
@@ -93,7 +91,7 @@ public class MeituanController {
     @RequestMapping(value = "/mtapi/downFrame",method = RequestMethod.GET)
     public String downFrame(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws Exception
     {
-        String app_poi_code = "test_poi_01";
+        String app_poi_code = "6666";
         String foodCode = "test_poi_01";
         String params = mtFacadeService.downFrame(app_poi_code,foodCode);
         out.println(params);
@@ -104,7 +102,7 @@ public class MeituanController {
     @RequestMapping(value = "mtapi/foodList",method = RequestMethod.GET)
     public String foodList(PrintWriter out,HttpServletRequest resq,HttpServletResponse resp) throws Exception {
         resp.setContentType("text/html,charset=utf-8");
-        String app_poi_code = "test_poi_01";
+        String app_poi_code = "6666";
         String foodCode = "test_poi_01";
         FoodParam params = mtFacadeService.foodList(app_poi_code, foodCode);
         out.println(params);
@@ -118,9 +116,9 @@ public class MeituanController {
     {
         resp.setContentType("text/html;charset=utf-8");
         FoodParam param = new FoodParam();
-        param.setApp_poi_code("test_poi_01");
-        param.setApp_food_code("test_poi_02");
-        param.setName("菜菜阿123");
+        param.setApp_poi_code("6666");
+        //param.setApp_food_code("test_poi_03");
+        param.setName("菜菜阿1233");
 
         param.setDescription("今天创建的");
         param.setPrice(15.5F);
