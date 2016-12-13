@@ -2,6 +2,8 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
+import com.wangjunneil.schedule.activemq.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.baidu.OrderProductsDish;
@@ -27,9 +29,11 @@ import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ConstantException;
 import org.springframework.stereotype.Service;
 
+import javax.jms.Destination;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -52,6 +56,14 @@ public class SysFacadeService {
 
     @Autowired
     private SysFacadeService sysFacadeService;
+
+    @Autowired
+    @Qualifier("topicMessageProducer")
+    private TopicMessageProducer topicMessageProducer;
+
+    @Autowired
+    @Qualifier("topicDestination")
+    private Destination topicDestination;
 
     public Cfg findJdCfg() {
         return sysInnerService.findCfg(Constants.PLATFORM_JD);
@@ -149,8 +161,21 @@ public class SysFacadeService {
     }
 
     //订单插入
-    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
-         sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  BaiDuException,JdHomeException,ElemeException,MeiTuanException{
+            try{
+            sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+            //topic message to MQ Server
+          //  topicMessageProducer.sendMessage(topicDestination,formatOrder2Pos(orderWaiMai));
+            } catch (Exception ex){
+              switch (orderWaiMai.getPlatform()){
+                  case Constants.PLATFORM_WAIMAI_BAIDU:
+                   //  throw  BaiDuException();
+                      break;
+                  default:
+
+                      break;
+              }
+        }
     }
 
     //订单查询
@@ -159,35 +184,41 @@ public class SysFacadeService {
     }
 
     //订单插入 list
-    public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws  ScheduleException{
+    public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws  BaiDuException,JdHomeException,ElemeException,MeiTuanException{
         orderWaiMaiList.forEach(v->{
+          try   {
             sysInnerService.updSynWaiMaiOrder(v);
+            topicMessageProducer.sendMessage(topicDestination,formatOrder2Pos(v));
+          }catch (Exception ex){
+              //待补充
+          }
         });
     }
 
     //格式化订单返回给Pos
     public JSONObject formatOrder2Pos(OrderWaiMai orderWaiMai){
         JSONObject jsonObject = new JSONObject();
+        JSONObject rtn = new JSONObject();
         jsonObject.put("platform",orderWaiMai.getPlatform());
         jsonObject.put("shopId",orderWaiMai.getShopId());
         jsonObject.put("orderId",orderWaiMai.getOrderId());
         jsonObject.put("platOrderId",orderWaiMai.getPlatformOrderId());
         switch (orderWaiMai.getPlatform()){
             case Constants.PLATFORM_WAIMAI_BAIDU :
-                formatBaiDuOrder((Data)orderWaiMai.getOrder(),jsonObject);
+                rtn =  formatBaiDuOrder((Data) orderWaiMai.getOrder(), jsonObject);
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME :
-                formatJdHomeOrder((OrderInfoDTO)orderWaiMai.getOrder(),jsonObject);
+                rtn =  formatJdHomeOrder((OrderInfoDTO)orderWaiMai.getOrder(),jsonObject);
                 break;
             case Constants.PLATFORM_WAIMAI_MEITUAN :
-                formatMeiTuanOrder((OrderInfo)orderWaiMai.getOrder(),jsonObject);
+                rtn =  formatMeiTuanOrder((OrderInfo)orderWaiMai.getOrder(),jsonObject);
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME :
-                formatEleme((Order)orderWaiMai.getOrder(),jsonObject);
+                rtn =  formatEleme((Order)orderWaiMai.getOrder(),jsonObject);
                 break;
             default:break;
         }
-        return jsonObject;
+        return rtn;
     }
 
     //格式化百度订单
