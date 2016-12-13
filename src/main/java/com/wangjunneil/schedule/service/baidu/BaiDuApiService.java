@@ -159,7 +159,7 @@ public class BaiDuApiService {
         }
 
     //创建商户
-    public String shopCreate(JsonObject jsonBody) throws ScheduleException {
+    public String shopCreate(JsonObject jsonBody) throws ScheduleException,BaiDuException {
         SysParams sysParams = new SysParams();
         sysParams.setCmd("shop.create");
         sysParams.setBody(jsonBody);
@@ -252,7 +252,7 @@ public class BaiDuApiService {
      * @param jsonBody 菜品分类
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String dishCategoryCreate(JsonObject jsonBody) throws ScheduleException {
+    public String dishCategoryCreate(JsonObject jsonBody) throws  ScheduleException,BaiDuException {
         SysParams sysParams = new SysParams();
         sysParams.setBody(jsonBody);
         sysParams.setCmd("dish.category.create");
@@ -295,7 +295,7 @@ public class BaiDuApiService {
      * @param jsonBody 菜品
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String dishCreate(JsonObject jsonBody) throws ScheduleException {
+    public String dishCreate(JsonObject jsonBody) throws ScheduleException,BaiDuException {
         SysParams sysParams = new SysParams();
         sysParams.setBody(jsonBody);
         sysParams.setCmd("dish.create");
@@ -406,7 +406,7 @@ public class BaiDuApiService {
      * @param order 订单实体对象
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String orderConfirm(Order order) throws  ScheduleException,BaiDuException{
+    public String orderConfirm(Order order) throws  Exception{
         String requestStr = getRequestPars("order.confirm", order);
         String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
@@ -431,7 +431,7 @@ public class BaiDuApiService {
      * @param order 订单实体对象
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String orderCancel(Order order) throws ScheduleException,BaiDuException{
+    public String orderCancel(Order order) throws Exception{
         String requestStr = getRequestPars("order.cancel", order);
         String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
@@ -519,7 +519,7 @@ public class BaiDuApiService {
      * @param
      * @return "{code:0,desc:\"成功\",remark:\"\"}"
      */
-    public String shopUpdate(JsonObject jsonObject) throws ScheduleException {
+    public String shopUpdate(JsonObject jsonObject) throws ScheduleException,BaiDuException {
         SysParams sysParams = new SysParams();
         sysParams.setCmd("shop.update");
         sysParams.setBody(jsonObject);
