@@ -1,6 +1,7 @@
 package com.wangjunneil.schedule.entity.baidu;
 
 import com.google.gson.annotations.SerializedName;
+import com.wangjunneil.schedule.utility.StringUtil;
 
 /**
  * Created by yangwanbin on 2016-11-16.
@@ -18,6 +19,15 @@ public class User {
 
     //送餐地址
     private String address;
+
+    //客户所在省份
+    private String province;
+
+    //客户所在城市
+    private String city;
+
+    //客户所在区
+    private String district;
 
     //百度地图经纬度信息
     private Coord coord;
@@ -72,5 +82,29 @@ public class User {
 
     public CoordAmap getCoordAmap(){
         return this.coordAmap;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 }

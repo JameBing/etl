@@ -1,11 +1,21 @@
 package com.wangjunneil.schedule.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.*;
+import com.wangjunneil.schedule.entity.baidu.Data;
+import com.wangjunneil.schedule.entity.baidu.OrderProductsDish;
+import com.wangjunneil.schedule.entity.baidu.OrderShop;
+import com.wangjunneil.schedule.entity.baidu.User;
 import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.Rtn;
+import com.wangjunneil.schedule.entity.eleme.Order;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
+import com.wangjunneil.schedule.entity.jdhome.OrderExtend;
+import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
 import com.wangjunneil.schedule.entity.jp.JPAccessToken;
+import com.wangjunneil.schedule.entity.meituan.OrderInfo;
 import com.wangjunneil.schedule.entity.sys.Cfg;
 import com.wangjunneil.schedule.entity.sys.Status;
 import com.wangjunneil.schedule.entity.tm.TmallAccessToken;
@@ -14,6 +24,7 @@ import com.wangjunneil.schedule.service.jp.JpApiService;
 import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpUtil;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ConstantException;
@@ -154,80 +165,682 @@ public class SysFacadeService {
         });
     }
 
+    //格式化订单返回给Pos
+    public JSONObject formatOrder2Pos(OrderWaiMai orderWaiMai){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("platform",orderWaiMai.getPlatform());
+        jsonObject.put("shopId",orderWaiMai.getShopId());
+        jsonObject.put("orderId",orderWaiMai.getOrderId());
+        jsonObject.put("platOrderId",orderWaiMai.getPlatformOrderId());
+        switch (orderWaiMai.getPlatform()){
+            case Constants.PLATFORM_WAIMAI_BAIDU :
+                formatBaiDuOrder((Data)orderWaiMai.getOrder(),jsonObject);
+                break;
+            case Constants.PLATFORM_WAIMAI_JDHOME :
+                formatJdHomeOrder((OrderInfoDTO)orderWaiMai.getOrder(),jsonObject);
+                break;
+            case Constants.PLATFORM_WAIMAI_MEITUAN :
+                formatMeiTuanOrder((OrderInfo)orderWaiMai.getOrder(),jsonObject);
+                break;
+            case Constants.PLATFORM_WAIMAI_ELEME :
+                formatEleme((Order)orderWaiMai.getOrder(),jsonObject);
+                break;
+            default:break;
+        }
+        return jsonObject;
+    }
+
+    //格式化百度订单
+    private JSONObject formatBaiDuOrder(Data data ,JSONObject jsonObject){
+        if(StringUtil.isEmpty(data)){
+            data = new Data();
+        }
+        JSONObject rtnJson = new JSONObject();
+        rtnJson.put("header",getBaiDuHeader(data,jsonObject));
+        rtnJson.put("user",getBaiDuUsers(data));
+        rtnJson.put("productList",getBaiDuProducts(data));
+        rtnJson.put("discountList",getBaiDuDiscount(data));
+        return rtnJson;
+    }
+
+    //获取百度订单头部信息
+    private JSONArray getBaiDuHeader(Data data,JSONObject jsonObject){
+        JSONArray jsonArray = new JSONArray();
+
+        if(StringUtil.isEmpty(data.getOrder())){
+            return jsonArray;
+        }
+        if(StringUtil.isEmpty(data.getShop())){
+            data.setShop(new OrderShop());
+        }
+        jsonObject.put("platShopId", data.getShop().getBaiduShopId());
+        jsonObject.put("platStationName",data.getShop().getName());
+        jsonObject.put("poiCode","");
+        jsonObject.put("poiName","");
+        jsonObject.put("poiAddress","");
+        jsonObject.put("poiPhone","");
+        jsonObject.put("orderIndex",data.getOrder().getOrderIndex());
+        jsonObject.put("orderType","");
+        jsonObject.put("orderStatus",data.getOrder().getStatus());
+        jsonObject.put("orderStatusTime","");
+        jsonObject.put("orderStartTime","");
+        jsonObject.put("orderConfirmTime",data.getOrder().getConfirmTime());
+        jsonObject.put("orderPurchaseTime", "");
+        jsonObject.put("orderAgingType","");
+        jsonObject.put("deliveryImmediately",data.getOrder().getSendImmediately());
+        jsonObject.put("expectTimeMode",data.getOrder().getExpectTimeMode());
+        jsonObject.put("orderPreDeliveryTime","");
+        jsonObject.put("expectSendTime",data.getOrder().getSendTime());
+        jsonObject.put("riderArrivalTime",data.getOrder().getDeliveryTime());
+        jsonObject.put("riderPickupTime",data.getOrder().getPickupTime());
+        jsonObject.put("riderPickupNo",data.getOrder().getDeliveryPhone());
+        jsonObject.put("riderPhone","");
+        jsonObject.put("orderCancelTime",data.getOrder().getCancelTime());
+        jsonObject.put("orderCancelRemark","");
+        jsonObject.put("is_third_shipping",data.getOrder().getDeliveryParty());
+        jsonObject.put("deliveryStationNo",data.getShop().getShopId());
+        jsonObject.put("deliveryStationName",data.getShop().getName());
+        jsonObject.put("deliveryCarrierNo","");
+        jsonObject.put("deliveryCarrierName","");
+        jsonObject.put("deliveryBillNo","");
+        jsonObject.put("deliveryPackageWeight","");
+        jsonObject.put("deliveryConfirmTime", "");
+        jsonObject.put("orderFinishTime",data.getOrder().getFinishedTime());
+        jsonObject.put("orderPayType",data.getOrder().getPayType());
+        jsonObject.put("orderTotalMoney",data.getOrder().getTotalFee());
+        jsonObject.put("orderDiscountMoney",data.getOrder().getDiscountFee());
+        jsonObject.put("orderFreightMoney",data.getOrder().getSendFee());
+        jsonObject.put("packagingMoney",data.getOrder().getPackageFee());
+        jsonObject.put("orderBuyerPayableMoney",data.getOrder().getUserFee());
+        jsonObject.put("orderShopFee",data.getOrder().getShopFee());
+        jsonObject.put("orderOriginPrice","");
+        jsonObject.put("serviceRate","");
+        jsonObject.put("serviceFee","");
+        jsonObject.put("hongbao","");
+        jsonObject.put("orderBuyerRemark",data.getOrder().getRemark());
+        jsonObject.put("orderInvoiceOpenMark",data.getOrder().getNeedInvoice());
+        jsonObject.put("orderInvoiceType","");
+        jsonObject.put("orderInvoiceTitle",data.getOrder().getInvoiceTitle());
+        jsonObject.put("orderInvoiceContent","");
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    //获取百度订单用户信息
+    private JSONArray getBaiDuUsers(Data data ){
+        JSONArray jsonArray = new JSONArray();
+
+        if(StringUtil.isEmpty(data.getUser())){
+            return jsonArray;
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("platOrderId",StringUtil.isEmpty(data.getOrder())?"":data.getOrder().getOrderId());
+        jsonObject.put("buyerFullName",data.getUser().getName());
+        jsonObject.put("buyerFullAddress",data.getUser().getAddress());
+        jsonObject.put("buyerTelephone",data.getUser().getPhone());
+        jsonObject.put("buyerMobile",data.getUser().getPhone());
+        jsonObject.put("province",data.getUser().getProvince());
+        jsonObject.put("city",data.getUser().getCity());
+        jsonObject.put("district",data.getUser().getDistrict());
+        jsonObject.put("gender",data.getUser().getGender());
+        jsonObject.put("buyerLng",StringUtil.isEmpty(data.getUser().getCoord())?"":data.getUser().getCoord().getLongitude());
+        jsonObject.put("buyerLat",StringUtil.isEmpty(data.getUser().getCoord())?"":data.getUser().getCoord().getLatitude());
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    //获取百度订单商品信息
+    private JSONArray getBaiDuProducts(Data data){
+        JSONArray jsonArray = new JSONArray();
+
+        if(data.getProducts()==null || data.getProducts().size()==0){
+            return jsonArray;
+        }
+        for(int i=0;i<data.getProducts().size();i++){
+            for (int j=0;j<data.getProducts().get(i).length;j++){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("platOrderId",StringUtil.isEmpty(data.getOrder())?"":data.getOrder().getOrderId());
+                jsonObject.put("skuType",data.getProducts().get(i)[j].getType());
+                jsonObject.put("skuId",data.getProducts().get(i)[j].getBaiduProductId());
+                jsonObject.put("skuName",data.getProducts().get(i)[j].getProductName());
+                jsonObject.put("skuIdIsv",data.getProducts().get(i)[j].getOtherDishId());
+                jsonObject.put("price",data.getProducts().get(i)[j].getProductPrice());
+                jsonObject.put("quantity",data.getProducts().get(i)[j].getProductAmount());
+                jsonObject.put("isGift","");
+                jsonObject.put("upcCode",data.getProducts().get(i)[j].getUpc());
+                jsonObject.put("boxNum",data.getProducts().get(i)[j].getPackageAmount());
+                jsonObject.put("boxPrice",data.getProducts().get(i)[j].getPackagePrice());
+                jsonObject.put("productFee",data.getProducts().get(i)[j].getPackageFee());
+                jsonObject.put("unit","");
+                jsonArray.add(jsonObject);
+            }
+        }
+        return jsonArray;
+    }
+
+    //获取百度订单折扣信息
+    private JSONArray getBaiDuDiscount(Data data){
+        JSONArray jsonArray = new JSONArray();
+
+        if(data.getDiscount()==null && data.getDiscount().size()==0){
+            return jsonArray;
+        }
+        data.getDiscount().forEach(discount->{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("platOrderId",StringUtil.isEmpty(data.getOrder().getOrderId())?"":data.getOrder().getOrderId());
+            jsonObject.put("discountType",discount.getType());
+            jsonObject.put("discountCode","");
+            jsonObject.put("discountPrice",discount.getFee());
+            jsonObject.put("skuId","");
+            jsonArray.add(jsonObject);
+        });
+        return jsonArray;
+    }
+
+
+    //格式化京东到家订单
+    private JSONObject formatJdHomeOrder(OrderInfoDTO orderInfoDTO,JSONObject jsonObject){
+        if(StringUtil.isEmpty(orderInfoDTO)){
+            orderInfoDTO = new OrderInfoDTO();
+        }
+        JSONObject rtnJson = new JSONObject();
+        rtnJson.put("header",getJdHomeHeader(orderInfoDTO,jsonObject));
+        rtnJson.put("user",getJdHomeUsers(orderInfoDTO));
+        rtnJson.put("productList",getJdHomeProducts(orderInfoDTO));
+        rtnJson.put("discountList",getJdHomeDiscount(orderInfoDTO));
+        return rtnJson;
+    }
+
+    //获取京东到家订单头部信息
+    private JSONArray getJdHomeHeader(OrderInfoDTO orderInfo,JSONObject jsonObject){
+        JSONArray jsonArray = new JSONArray();
+
+        jsonObject.put("platShopId",orderInfo.getProduceStationNo());
+        jsonObject.put("platStationName",orderInfo.getProduceStationName());
+        jsonObject.put("poiCode",orderInfo.getOrgCode());
+        jsonObject.put("poiName","");
+        jsonObject.put("poiAddress","");
+        jsonObject.put("poiPhone","");
+        jsonObject.put("orderIndex","");
+        jsonObject.put("orderType",orderInfo.getOrderType());
+        jsonObject.put("orderStatus",orderInfo.getOrderStatus());
+        jsonObject.put("orderStatusTime",orderInfo.getOrderStartTime());
+        jsonObject.put("orderStartTime",orderInfo.getOrderStartTime());
+        jsonObject.put("orderConfirmTime","");
+        jsonObject.put("orderPurchaseTime", orderInfo.getOrderPurchaseTime());
+        jsonObject.put("orderAgingType",orderInfo.getOrderAgingType());
+        jsonObject.put("deliveryImmediately","");
+        jsonObject.put("expectTimeMode","");
+        jsonObject.put("orderPreDeliveryTime",orderInfo.getOrderPreEndDeliveryTime());
+        jsonObject.put("expectSendTime","");
+        jsonObject.put("riderArrivalTime","");
+        jsonObject.put("riderPickupTime","");
+        jsonObject.put("riderPickupNo","");
+        jsonObject.put("riderPhone","");
+        jsonObject.put("orderCancelTime",orderInfo.getOrderCancelTime());
+        jsonObject.put("orderCancelRemark",orderInfo.getOrderCancelRemark());
+        jsonObject.put("is_third_shipping","");
+        jsonObject.put("deliveryStationNo",orderInfo.getProduceStationNoIsv());
+        jsonObject.put("deliveryStationName","");
+        jsonObject.put("deliveryCarrierNo",orderInfo.getProduceStationNoIsv());
+        jsonObject.put("deliveryCarrierName","");
+        jsonObject.put("deliveryBillNo",orderInfo.getDeliveryBillNo());
+        jsonObject.put("deliveryPackageWeight",orderInfo.getDeliveryPackageWeight());
+        jsonObject.put("deliveryConfirmTime", orderInfo.getDeliveryConfirmTime());
+        jsonObject.put("orderFinishTime","");
+        jsonObject.put("orderPayType",orderInfo.getOrderPayType());
+        jsonObject.put("orderTotalMoney",orderInfo.getOrderTotalMoney());
+        jsonObject.put("orderDiscountMoney",orderInfo.getOrderDiscountMoney());
+        jsonObject.put("orderFreightMoney",orderInfo.getOrderFreightMoney());
+        jsonObject.put("packagingMoney",orderInfo.getPackagingMoney());
+        jsonObject.put("orderBuyerPayableMoney",orderInfo.getOrderBuyerPayableMoney());
+        jsonObject.put("orderShopFee","");
+        jsonObject.put("orderOriginPrice","");
+        jsonObject.put("serviceRate","");
+        jsonObject.put("serviceFee","");
+        jsonObject.put("hongbao","");
+        jsonObject.put("orderBuyerRemark","");
+        jsonObject.put("orderInvoiceOpenMark",orderInfo.getOrderInvoiceOpenMark());
+        jsonObject.put("orderInvoiceType",StringUtil.isEmpty(orderInfo.getOrderExtend())?"":orderInfo.getOrderExtend().getOrderInvoiceType());
+        jsonObject.put("orderInvoiceTitle",StringUtil.isEmpty(orderInfo.getOrderExtend())?"":orderInfo.getOrderExtend().getOrderInvoiceTitle());
+        jsonObject.put("orderInvoiceContent",StringUtil.isEmpty(orderInfo.getOrderExtend())?"":orderInfo.getOrderExtend().getOrderInvoiceContent());
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    //获取京东到家订单用户信息
+    private JSONArray getJdHomeUsers(OrderInfoDTO orderInfo ){
+        JSONArray jsonArray = new JSONArray();
+
+        if(StringUtil.isEmpty(orderInfo.getOrderExtend())){
+            orderInfo.setOrderExtend(new OrderExtend());
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("platOrderId",orderInfo.getOrderId());
+        jsonObject.put("buyerFullName",orderInfo.getBuyerFullName());
+        jsonObject.put("buyerFullAddress",orderInfo.getBuyerFullAddress());
+        jsonObject.put("buyerTelephone",orderInfo.getBuyerTelephone());
+        jsonObject.put("buyerMobile",orderInfo.getBuyerMobile());
+        jsonObject.put("province","");
+        jsonObject.put("city","");
+        jsonObject.put("district","");
+        jsonObject.put("gender","");
+        jsonObject.put("buyerLng",orderInfo.getOrderExtend().getBuyerLng());
+        jsonObject.put("buyerLat",orderInfo.getOrderExtend().getBuyerLat());
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    //获取京东到家订单商品信息
+    private JSONArray getJdHomeProducts(OrderInfoDTO orderInfo){
+        JSONArray jsonArray = new JSONArray();
+
+        if(orderInfo.getProductList()==null || orderInfo.getProductList().size()==0){
+            return jsonArray;
+        }
+        orderInfo.getProductList().forEach(product->{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("platOrderId",orderInfo.getOrderId());
+            jsonObject.put("skuType","");
+            jsonObject.put("skuId",product.getSkuId());
+            jsonObject.put("skuName",product.getSkuName());
+            jsonObject.put("skuIdIsv",product.getSkuIdIsv());
+            jsonObject.put("price",product.getSkuJdPrice());
+            jsonObject.put("quantity",product.getSkuCount());
+            jsonObject.put("isGift",product.getIsGift());
+            jsonObject.put("upcCode",product.getUpcCode());
+            jsonObject.put("boxNum","");
+            jsonObject.put("boxPrice","");
+            jsonObject.put("productFee","");
+            jsonObject.put("unit","");
+            jsonArray.add(jsonObject);
+        });
+        return jsonArray;
+    }
+
+    //获取京东到家订单折扣信息
+    private JSONArray getJdHomeDiscount(OrderInfoDTO orderInfo){
+        JSONArray jsonArray = new JSONArray();
+
+        if(orderInfo.getDiscountList()==null && orderInfo.getDiscountList().size()==0){
+            return jsonArray;
+        }
+        orderInfo.getDiscountList().forEach(discount -> {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("platOrderId", orderInfo.getOrderId());
+            jsonObject.put("discountType", discount.getDiscountType());
+            jsonObject.put("discountCode", discount.getDiscountCode());
+            jsonObject.put("discountPrice", discount.getDiscountPrice());
+            jsonObject.put("skuId", discount.getSkuId());
+            jsonArray.add(jsonObject);
+        });
+        return jsonArray;
+    }
+
+    //格式化美团订单
+    private JSONObject formatMeiTuanOrder(OrderInfo orderInfo ,JSONObject jsonObject){
+        if(StringUtil.isEmpty(orderInfo)){
+            orderInfo = new OrderInfo();
+        }
+        JSONObject rtnJson = new JSONObject();
+        rtnJson.put("header",getMeiTuanHeader(orderInfo, jsonObject));
+        rtnJson.put("user",getMeiTuanUsers(orderInfo));
+        rtnJson.put("productList",getMeiTuanProducts(orderInfo));
+        rtnJson.put("discountList",getMeiTuanDiscount(orderInfo));
+
+        return rtnJson;
+    }
+
+    //获取美团订单头部信息
+    private JSONArray getMeiTuanHeader(OrderInfo orderInfo,JSONObject jsonObject){
+        JSONArray jsonArray = new JSONArray();
+
+        jsonObject.put("platShopId","");
+        jsonObject.put("platStationName","");
+        jsonObject.put("poiCode",orderInfo.getApppoicode());
+        jsonObject.put("poiName",orderInfo.getWmpoiname());
+        jsonObject.put("poiAddress",orderInfo.getWmpoiaddress());
+        jsonObject.put("poiPhone",orderInfo.getWmpoiphone());
+        jsonObject.put("orderIndex",orderInfo.getDayseq());
+        jsonObject.put("orderType","");
+        jsonObject.put("orderStatus",orderInfo.getStatus());
+        jsonObject.put("orderStatusTime",orderInfo.getUtime());
+        jsonObject.put("orderStartTime","");
+        jsonObject.put("orderConfirmTime","");
+        jsonObject.put("orderPurchaseTime", "");
+        jsonObject.put("orderAgingType","");
+        jsonObject.put("deliveryImmediately","");
+        jsonObject.put("expectTimeMode","");
+        jsonObject.put("orderPreDeliveryTime",orderInfo.getDeliverytime());
+        jsonObject.put("expectSendTime","");
+        jsonObject.put("riderArrivalTime","");
+        jsonObject.put("riderPickupTime","");
+        jsonObject.put("riderPickupNo","");
+        jsonObject.put("riderPhone",orderInfo.getShipperphone());
+        jsonObject.put("orderCancelTime","");
+        jsonObject.put("orderCancelRemark","");
+        jsonObject.put("is_third_shipping",orderInfo.getIsthirdshipping());
+        jsonObject.put("deliveryStationNo","");
+        jsonObject.put("deliveryStationName","");
+        jsonObject.put("deliveryCarrierNo","");
+        jsonObject.put("deliveryCarrierName","");
+        jsonObject.put("deliveryBillNo","");
+        jsonObject.put("deliveryPackageWeight","");
+        jsonObject.put("deliveryConfirmTime", "");
+        jsonObject.put("orderFinishTime","");
+        jsonObject.put("orderPayType",orderInfo.getPaytype());
+        jsonObject.put("orderTotalMoney",orderInfo.getTotal());
+        jsonObject.put("orderDiscountMoney","");
+        jsonObject.put("orderFreightMoney",orderInfo.getShippingfee());
+        jsonObject.put("packagingMoney","");
+        jsonObject.put("orderBuyerPayableMoney","");
+        jsonObject.put("orderShopFee","");
+        jsonObject.put("orderOriginPrice",orderInfo.getOriginalprice());
+        jsonObject.put("serviceRate","");
+        jsonObject.put("serviceFee","");
+        jsonObject.put("hongbao","");
+        jsonObject.put("orderBuyerRemark",orderInfo.getCaution());
+        jsonObject.put("orderInvoiceOpenMark",orderInfo.getHasinvoiced());
+        jsonObject.put("orderInvoiceType","");
+        jsonObject.put("orderInvoiceTitle",orderInfo.getInvoicetitle());
+        jsonObject.put("orderInvoiceContent","");
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    //获取美团订单用户信息
+    private JSONArray getMeiTuanUsers(OrderInfo orderInfo ){
+        JSONArray jsonArray = new JSONArray();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("platOrderId",orderInfo.getOrderid());
+        jsonObject.put("buyerFullName",orderInfo.getRecipientname());
+        jsonObject.put("buyerFullAddress",orderInfo.getRecipientaddress());
+        jsonObject.put("buyerTelephone",orderInfo.getRecipientphone());
+        jsonObject.put("buyerMobile",orderInfo.getRecipientphone());
+        jsonObject.put("province","");
+        jsonObject.put("city",orderInfo.getCityid());
+        jsonObject.put("district","");
+        jsonObject.put("gender","");
+        jsonObject.put("buyerLng",orderInfo.getLongitude());
+        jsonObject.put("buyerLat",orderInfo.getLatitude());
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    //获取美团订单商品信息
+    private JSONArray getMeiTuanProducts(OrderInfo orderInfo){
+        JSONArray jsonArray = new JSONArray();
+
+        if(orderInfo.getDetail()==null || orderInfo.getDetail().length==0){
+            return jsonArray;
+        }
+        for(int i=0;i<orderInfo.getDetail().length;i++){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("platOrderId",orderInfo.getOrderid());
+            jsonObject.put("skuType","");
+            jsonObject.put("skuId",orderInfo.getDetail()[i].getSku_id());
+            jsonObject.put("skuName",orderInfo.getDetail()[i].getFood_name());
+            jsonObject.put("skuIdIsv",orderInfo.getDetail()[i].getApp_food_code());
+            jsonObject.put("price",orderInfo.getDetail()[i].getPrice());
+            jsonObject.put("quantity",orderInfo.getDetail()[i].getQuantity());
+            jsonObject.put("isGift","");
+            jsonObject.put("upcCode","");
+            jsonObject.put("boxNum",orderInfo.getDetail()[i].getBox_num());
+            jsonObject.put("boxPrice",orderInfo.getDetail()[i].getBox_price());
+            jsonObject.put("productFee","");
+            jsonObject.put("unit",orderInfo.getDetail()[i].getUnit());
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
+
+    //获取美团订单折扣信息
+    private JSONArray getMeiTuanDiscount(OrderInfo orderInfo){
+        JSONArray jsonArray = new JSONArray();
+
+        if(orderInfo.getExtras()==null && orderInfo.getExtras().length==0){
+            return jsonArray;
+        }
+       for(int i=0;i<orderInfo.getExtras().length;i++){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("platOrderId", orderInfo.getOrderid());
+            jsonObject.put("discountType", orderInfo.getExtras()[i].getType());
+            jsonObject.put("discountCode",orderInfo.getExtras()[i].getRemark());
+            jsonObject.put("discountPrice", orderInfo.getExtras()[i].getReduce_fee());
+            jsonObject.put("skuId", "");
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
+
+
+    //格式化饿了么订单
+    private  JSONObject formatEleme(Order order ,JSONObject jsonObject){
+        if(StringUtil.isEmpty(order)){
+            order = new Order();
+        }
+        JSONObject rtnJson = new JSONObject();
+        rtnJson.put("header",getElemeHeader(order, jsonObject));
+        rtnJson.put("user",getElemeUsers(order));
+        rtnJson.put("productList",getElmeProducts(order));
+        rtnJson.put("discountList",getElemeDiscount(order));
+        return rtnJson;
+    }
+
+    //获取饿了么订单头部信息
+    private JSONArray getElemeHeader(Order order,JSONObject jsonObject){
+        JSONArray jsonArray = new JSONArray();
+
+        jsonObject.put("platShopId",order.getRestaurantid());
+        jsonObject.put("platStationName",order.getRestaurantname());
+        jsonObject.put("poiCode","");
+        jsonObject.put("poiName","");
+        jsonObject.put("poiAddress","");
+        jsonObject.put("poiPhone","");
+        jsonObject.put("orderIndex",order.getRestaurantnumber());
+        jsonObject.put("orderType","");
+        jsonObject.put("orderStatus",order.getStatuscode());
+        jsonObject.put("orderStatusTime","");
+        jsonObject.put("orderStartTime",order.getCreatedat());
+        jsonObject.put("orderConfirmTime","");
+        jsonObject.put("orderPurchaseTime", order.getActiveat());
+        jsonObject.put("orderAgingType","");
+        jsonObject.put("deliveryImmediately","");
+        jsonObject.put("expectTimeMode","");
+        jsonObject.put("orderPreDeliveryTime",order.getDelivertime());
+        jsonObject.put("expectSendTime","");
+        jsonObject.put("riderArrivalTime","");
+        jsonObject.put("riderPickupTime","");
+        jsonObject.put("riderPickupNo","");
+        jsonObject.put("riderPhone","");
+        jsonObject.put("orderCancelTime","");
+        jsonObject.put("orderCancelRemark","");
+        jsonObject.put("is_third_shipping","");
+        jsonObject.put("deliveryStationNo",order.getRestaurantid());
+        jsonObject.put("deliveryStationName",order.getRestaurantname());
+        jsonObject.put("deliveryCarrierNo","");
+        jsonObject.put("deliveryCarrierName","");
+        jsonObject.put("deliveryBillNo","");
+        jsonObject.put("deliveryPackageWeight","");
+        jsonObject.put("deliveryConfirmTime", "");
+        jsonObject.put("orderFinishTime","");
+        jsonObject.put("orderPayType",order.getIsonlinepaid());
+        jsonObject.put("orderTotalMoney",order.getTotalprice());
+        jsonObject.put("orderDiscountMoney","");
+        jsonObject.put("orderFreightMoney",order.getDeliverfee());
+        jsonObject.put("packagingMoney",order.getPackagefee());
+        jsonObject.put("orderBuyerPayableMoney","");
+        jsonObject.put("orderShopFee","");
+        jsonObject.put("orderOriginPrice",order.getOriginalprice());
+        jsonObject.put("serviceRate",order.getServicerate());
+        jsonObject.put("serviceFee",order.getServicefee());
+        jsonObject.put("hongbao",order.getHongbao());
+        jsonObject.put("orderBuyerRemark",order.getDescription());
+        jsonObject.put("orderInvoiceOpenMark","");
+        jsonObject.put("orderInvoiceType","");
+        jsonObject.put("orderInvoiceTitle",order.getInvoice());
+        jsonObject.put("orderInvoiceContent","");
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    //获取饿了么订单用户信息
+    private JSONArray getElemeUsers(Order order ){
+        JSONArray jsonArray = new JSONArray();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("platOrderId",order.getOrderid());
+        jsonObject.put("buyerFullName",order.getConsignee());
+        jsonObject.put("buyerFullAddress",order.getDeliverypoiaddress());
+        if(order.getPhonelist()!=null && order.getPhonelist().size()>0){
+            String str ="";
+            for (int i=0;i<order.getPhonelist().size();i++){
+               str = str+order.getPhonelist().get(i).toString()+",";
+            }
+            jsonObject.put("buyerTelephone",str.substring(0,str.length()-1));
+            jsonObject.put("buyerMobile",str.substring(0,str.length()-1));
+        }else {
+            jsonObject.put("buyerTelephone","");
+            jsonObject.put("buyerMobile","");
+        }
+        jsonObject.put("province","");
+        jsonObject.put("city","");
+        jsonObject.put("district","");
+        jsonObject.put("gender","");
+        jsonObject.put("buyerLng",order.getDeliverygeo());
+        jsonObject.put("buyerLat",order.getDeliverygeo());
+        jsonArray.add(jsonObject);
+        return jsonArray;
+    }
+
+    //获取饿了么订单商品信息
+    private JSONArray getElmeProducts(Order order){
+        JSONArray jsonArray = new JSONArray();
+
+        if(StringUtil.isEmpty(order.getDetail())){
+            return jsonArray;
+        }
+        if(order.getDetail().getGroup()==null ||order.getDetail().getGroup().size()==0){
+            return jsonArray;
+        }
+        for(int i=0;i<order.getDetail().getGroup().size();i++){
+            for(int j=0;j<order.getDetail().getGroup().get(i).size();j++){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("platOrderId",order.getOrderid());
+                jsonObject.put("skuType","");
+                jsonObject.put("skuId",order.getDetail().getGroup().get(i).get(j).getId());
+                jsonObject.put("skuName",order.getDetail().getGroup().get(i).get(j).getName());
+                jsonObject.put("skuIdIsv","");
+                jsonObject.put("price",order.getDetail().getGroup().get(i).get(j).getPrice());
+                jsonObject.put("quantity",order.getDetail().getGroup().get(i).get(j).getQuantity());
+                jsonObject.put("isGift","");
+                jsonObject.put("upcCode","");
+                jsonObject.put("boxNum","");
+                jsonObject.put("boxPrice","");
+                jsonObject.put("productFee","");
+                jsonObject.put("unit","");
+                jsonArray.add(jsonObject);
+            }
+        }
+        return jsonArray;
+    }
+
+    //获取饿了么订单折扣信息
+    private JSONArray getElemeDiscount(Order order){
+        JSONArray jsonArray = new JSONArray();
+
+        if(StringUtil.isEmpty(order.getDetail())){
+            return jsonArray;
+        }
+        if(order.getDetail().getExtra()==null && order.getDetail().getExtra().size()==0){
+            return jsonArray;
+        }
+        for(int i=0;i<order.getDetail().getExtra().size();i++){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("platOrderId", order.getOrderid());
+            jsonObject.put("discountType", "");
+            jsonObject.put("discountCode",order.getDetail().getExtra().get(i).getName());
+            jsonObject.put("discountPrice", order.getDetail().getExtra().get(i).getPrice());
+            jsonObject.put("skuId", "");
+            jsonArray.add(jsonObject);
+        }
+        return jsonArray;
+    }
+
     //异常处理 匿名函数  ?需要验证代码可行性
-                        public    Function<Object,Log> functionRtn =(t)->{
-                            Log log1 = new Log();
-                            String logId = DateTimeUtil.dateFormat(DateTimeUtil.now(),"yyyyMMddHHmmssSSS");
-                            log1.setLogId(logId);
-                            log1.setType("E");
-                            log1.setDateTime(log1.getDateTime());
-                            switch (t.getClass().getName().toLowerCase()){
-                                case "com.wangjunneil.schedule.common.baiduexception":
-                        BaiDuException baiDuException = (BaiDuException)t;
-                        log1.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
+        public    Function<Object,Log> functionRtn =(t)->{
+            Log log1 = new Log();
+            String logId = DateTimeUtil.dateFormat(DateTimeUtil.now(),"yyyyMMddHHmmssSSS");
+            log1.setLogId(logId);
+            log1.setType("E");
+            log1.setDateTime(log1.getDateTime());
+            switch (t.getClass().getName().toLowerCase()){
+                case "com.wangjunneil.schedule.common.baiduexception":
+                BaiDuException baiDuException = (BaiDuException)t;
+                log1.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
                 log1.setMessage(baiDuException.getMessage());
                 log1.setRequest(baiDuException.getRequestStr());
                 log1.setCatchExName("BaiduException");
                 log1.setInnerExName(baiDuException.getInnerExName());
                 log1.setStackInfo(baiDuException.getStackInfo());
+                break;
+                case "com.wangjunneil.schedule.common.jdhomeexception":
+                    JdHomeException jdHomeException = (JdHomeException)t;
+                    log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+                    log1.setMessage(jdHomeException.getMessage());
+                    log1.setRequest(jdHomeException.getRequestStr());
+                    log1.setCatchExName("JdHomeException");
+                    log1.setInnerExName(jdHomeException.getInnerExName());
+                    log1.setStackInfo(jdHomeException.getStackInfo());
+                    break;
+                case "com.wangjunneil.schedule.common.elemeexception":
+                    ElemeException elemeException = (ElemeException)t;
+                    log1.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+                    log1.setMessage(elemeException.getMessage());
+                    log1.setRequest(elemeException.getRequestStr());
+                    log1.setCatchExName("ElemeException");
+                    log1.setInnerExName(elemeException.getInnerExName());
+                    log1.setStackInfo(elemeException.getStackInfo());
 
-                break;
-            case "com.wangjunneil.schedule.common.jdhomeexception":
-                JdHomeException jdHomeException = (JdHomeException)t;
-                log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
-                log1.setMessage(jdHomeException.getMessage());
-                log1.setRequest(jdHomeException.getRequestStr());
-                log1.setCatchExName("JdHomeException");
-                log1.setInnerExName(jdHomeException.getInnerExName());
-                log1.setStackInfo(jdHomeException.getStackInfo());
-                break;
-            case "com.wangjunneil.schedule.common.elemeexception":
-                ElemeException elemeException = (ElemeException)t;
-                log1.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-                log1.setMessage(elemeException.getMessage());
-                log1.setRequest(elemeException.getRequestStr());
-                log1.setCatchExName("ElemeException");
-                log1.setInnerExName(elemeException.getInnerExName());
-                log1.setStackInfo(elemeException.getStackInfo());
-
-                break;
-            case "com.wangjunneil.schedule.common.meituanexception":
-                MeiTuanException meiTuanException = (MeiTuanException)t;
-                 log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
-                 log1.setMessage(meiTuanException.getMessage());
-                log1.setRequest(meiTuanException.getRequestStr());
-                log1.setCatchExName("MeiTuanException");
-                log1.setInnerExName(meiTuanException.getInnerExName());
-                log1.setStackInfo(meiTuanException.getStackInfo());
-                break;
-            case "java.lang.exception":
-                Exception exception = (Exception)t;
-                 log1.setMessage(exception.getMessage());
-                log1.setCatchExName("Exception");
-                log1.setInnerExName(exception.getClass().getName());
-                StringBuffer sb = new StringBuffer();
-                StackTraceElement[] traces = exception.getStackTrace();
-                for (int i = 0; i < traces.length; i++) {
-                    StackTraceElement element = traces[i];
-                    sb.append(element.toString() + "\n");
-                }
-                log1.setStackInfo(sb.toString());
-                break;
-            case "com.wangjunneil.schedule.common.scheduleexception":
-               ScheduleException scheduleException = (ScheduleException)t;
-                log1.setMessage(scheduleException.getMessage());
-                log1.setCatchExName("ScheduleException");
-                log1.setInnerExName(scheduleException.getClass().getName());
-                StringBuffer sb1 = new StringBuffer();
-                StackTraceElement[] traces2 = scheduleException.getStackTrace();
-                for (int i = 0; i < traces2.length; i++) {
-                    StackTraceElement element = traces2[i];
-                    sb1.append(element.toString() + "\n");
-                }
-                log1.setStackInfo(sb1.toString());
-                break;
-            default:
-                break;
+                    break;
+                case "com.wangjunneil.schedule.common.meituanexception":
+                    MeiTuanException meiTuanException = (MeiTuanException)t;
+                     log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
+                     log1.setMessage(meiTuanException.getMessage());
+                    log1.setRequest(meiTuanException.getRequestStr());
+                    log1.setCatchExName("MeiTuanException");
+                    log1.setInnerExName(meiTuanException.getInnerExName());
+                    log1.setStackInfo(meiTuanException.getStackInfo());
+                    break;
+                case "java.lang.exception":
+                    Exception exception = (Exception)t;
+                     log1.setMessage(exception.getMessage());
+                    log1.setCatchExName("Exception");
+                    log1.setInnerExName(exception.getClass().getName());
+                    StringBuffer sb = new StringBuffer();
+                    StackTraceElement[] traces = exception.getStackTrace();
+                    for (int i = 0; i < traces.length; i++) {
+                        StackTraceElement element = traces[i];
+                        sb.append(element.toString() + "\n");
+                    }
+                    log1.setStackInfo(sb.toString());
+                    break;
+                case "com.wangjunneil.schedule.common.scheduleexception":
+                   ScheduleException scheduleException = (ScheduleException)t;
+                    log1.setMessage(scheduleException.getMessage());
+                    log1.setCatchExName("ScheduleException");
+                    log1.setInnerExName(scheduleException.getClass().getName());
+                    StringBuffer sb1 = new StringBuffer();
+                    StackTraceElement[] traces2 = scheduleException.getStackTrace();
+                    for (int i = 0; i < traces2.length; i++) {
+                        StackTraceElement element = traces2[i];
+                        sb1.append(element.toString() + "\n");
+                    }
+                    log1.setStackInfo(sb1.toString());
+                    break;
+                default:
+                    break;
         }
         return  log1;
     } ;

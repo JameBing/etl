@@ -43,7 +43,7 @@ public class JdHomeFacadeService {
      * 门店开业/歇业
      * @param shopId 商家门店编号
      * @param status 门店状态，0正常营业1休息中
-     * @return
+     * @return String
      */
     public String openOrCloseStore(String shopId,int status){
         Rtn rtn = new Rtn();
@@ -57,7 +57,7 @@ public class JdHomeFacadeService {
             return gson.toJson(rtn);
         }
         String stationNo = getStoreInfoPageBean(shopId);
-        String operator = "admin";
+        String operator = "zybwjzb";
         try {
             String json = jdHomeApiService.changeCloseStatus(shopId,stationNo,operator,status);
             log.info("=====门店开业/歇业接口返回信息:"+json+"=====");

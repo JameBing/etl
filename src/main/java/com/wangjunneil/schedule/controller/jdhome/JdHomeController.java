@@ -4,11 +4,13 @@ package com.wangjunneil.schedule.controller.jdhome;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.Constants;
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.shopCategory;
 import com.wangjunneil.schedule.service.JdHomeFacadeService;
+import com.wangjunneil.schedule.service.SysFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpsUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -37,6 +39,10 @@ public class JdHomeController {
 
     @Autowired
     private JdHomeFacadeService jdHomeFacadeService;
+
+    @Autowired
+    private SysFacadeService sysFacadeService;
+
 
     /**
      * 门店/歇业开业
@@ -176,8 +182,14 @@ public class JdHomeController {
         jdHomeFacadeService.pickFinishOrder(jsonObject);*/
        /* String shopId = "";
         String json = jdHomeFacadeService.openOrCloseStore(shopId,1);*/
-        String aa = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
-        String json = jdHomeFacadeService.newOrder(aa,"6666");
+       /* String aa = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
+        String json = jdHomeFacadeService.newOrder(aa,"6666");*/
+        OrderWaiMai orderWaiMai = new OrderWaiMai();
+        orderWaiMai.setShopId("6666");
+        orderWaiMai.setPlatform("baidu");
+        Object object = null;
+        orderWaiMai.setOrder(object);
+        JSONObject json = sysFacadeService.formatOrder2Pos(orderWaiMai);
         out.println(json);
         out.close();
         return null;

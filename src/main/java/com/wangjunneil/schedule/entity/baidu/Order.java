@@ -21,9 +21,45 @@ public class Order {
     @SerializedName("send_immediately")
     private Integer sendImmediately;
 
+    //订单当日流水号
+    @SerializedName("order_index")
+    private Integer orderIndex;
+
+    //送达时间类型 1定时达 2限时达
+    @SerializedName("expect_time_mode")
+    private Integer expectTimeMode;
+
     //期望送达时间,立即配送值为1,非立即配送为时间戳
     @SerializedName("send_time")
     private String sendTime;
+
+    //取餐时间
+    @SerializedName("pickup_time")
+    private String pickupTime;
+
+    //到店时间
+    @SerializedName("atshop_time")
+    private String atshopTime;
+
+    //骑士到店时间
+    @SerializedName("delivery_time")
+    private String deliveryTime;
+
+    //骑士取餐号
+    @SerializedName("delivery_phone")
+    private String deliveryPhone;
+
+    //完成时间
+    @SerializedName("finished_time")
+    private String finishedTime;
+
+    //确认时间
+    @SerializedName("confirm_time")
+    private String confirmTime;
+
+    //取消时间
+    @SerializedName("cancel_time")
+    private String cancelTime;
 
     //配送费，单位：分
     @SerializedName("send_fee")
@@ -75,6 +111,7 @@ public class Order {
     @SerializedName("pay_status")
     private String payStatus;
 
+    //订单状态
     private Integer status;
 
     public void setOrderId(String orderId){
@@ -218,5 +255,77 @@ public class Order {
 
     public Integer getStatus(){
         return this.status;
+    }
+
+    public Integer getOrderIndex() {
+        return orderIndex;
+    }
+
+    public void setOrderIndex(Integer orderIndex) {
+        this.orderIndex = orderIndex;
+    }
+
+    public Integer getExpectTimeMode() {
+        return expectTimeMode;
+    }
+
+    public void setExpectTimeMode(Integer expectTimeMode) {
+        this.expectTimeMode = expectTimeMode;
+    }
+
+    public String getPickupTime() {
+        return pickupTime;
+    }
+
+    public void setPickupTime(String pickupTime) {
+        this.pickupTime = pickupTime;
+    }
+
+    public String getAtshopTime() {
+        return atshopTime;
+    }
+
+    public void setAtshopTime(String atshopTime) {
+        this.atshopTime = atshopTime;
+    }
+
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+
+    public String getDeliveryPhone() {
+        return deliveryPhone;
+    }
+
+    public void setDeliveryPhone(String deliveryPhone) {
+        this.deliveryPhone = deliveryPhone;
+    }
+
+    public String getFinishedTime() {
+        return finishedTime;
+    }
+
+    public void setFinishedTime(String finishedTime) {
+        this.finishedTime = finishedTime;
+    }
+
+    public String getConfirmTime() {
+        return confirmTime;
+    }
+
+    public void setConfirmTime(String confirmTime) {
+        this.confirmTime = confirmTime;
+    }
+
+    public String getCancelTime() {
+        return cancelTime;
+    }
+
+    public void setCancelTime(String cancelTime) {
+        this.cancelTime = cancelTime;
     }
 }
