@@ -1,5 +1,4 @@
-import com.wangjunneil.schedule.activemq.TopicMessageConsumer;
-import com.wangjunneil.schedule.activemq.TopicMessageProducer;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.service.jdhome;
 
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
@@ -85,18 +86,18 @@ public class JdHomeInnerService {
     }
 
     //获取单个订单
-    public OrderInfoDTO getOrder(Long orderId){
+    public OrderWaiMai getOrder(Long orderId){
         Query query = new Query(Criteria.where("platformOrderId").is(orderId).is("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
-        OrderInfoDTO order = mongoTemplate.findOne(query,OrderInfoDTO.class);
+        OrderWaiMai order = mongoTemplate.findOne(query,OrderWaiMai.class);
         return order;
     }
 
     //修改订单状态
     public void updateStatus(Long orderId,int status){
-        Query query = new Query(Criteria.where("platformOrderId").is(orderId));
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
         Update update = new Update().set("orderStatus",status)
             .set("latestTime",new Date());
-        mongoTemplate.updateFirst(query, update, OrderInfoDTO.class);
+        mongoTemplate.updateFirst(query, update, OrderWaiMai.class);
     }
 
     //添加/修改token

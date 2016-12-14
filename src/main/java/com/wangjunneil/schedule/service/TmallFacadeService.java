@@ -5,7 +5,7 @@ import com.taobao.api.FileItem;
 import com.taobao.api.domain.Order;
 import com.taobao.api.internal.tmc.Message;
 import com.taobao.api.request.LogisticsOnlineSendRequest;
-import com.wangjunneil.schedule.activemq.QueueMessageProducer;
+import com.wangjunneil.schedule.activemq.Queue.QueueMessageProducer;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.sys.Cfg;

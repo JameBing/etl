@@ -1,4 +1,4 @@
-package com.wangjunneil.schedule.activemq;
+package com.wangjunneil.schedule.activemq.Topic;
 
 
 import org.springframework.jms.support.converter.MessageConverter;
@@ -16,7 +16,7 @@ public class ConsumerMessageListener implements MessageListener{
         try {
             if (message instanceof TextMessage) {
                 TextMessage textMessage = (TextMessage) message;
-                System.out.println("接收到一个纯文本消息:".concat(((TextMessage) message).getText()));
+                System.out.println("接收到一个纯文本消息(ConsumerMessageListener):".concat(((TextMessage) message).getText()));
             } else if (message instanceof MapMessage) {
                 MapMessage mapMessage = (MapMessage) message;
 

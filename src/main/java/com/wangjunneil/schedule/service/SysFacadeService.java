@@ -2,7 +2,7 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.wangjunneil.schedule.activemq.TopicMessageProducer;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.baidu.OrderShop;
@@ -53,14 +53,12 @@ public class SysFacadeService {
     private SysFacadeService sysFacadeService;
 
     @Autowired
-    @Qualifier("topicMessageProducer")
-    private TopicMessageProducer topicMessageProducer;
+    @Qualifier("topicMessageProducerWaiMaiOrder")
+    private TopicMessageProducer topicMessageProducerWaiMaiOrder;
 
     @Autowired
-    @Qualifier("topicDestination")
-
-
-    private Destination topicDestination;
+    @Qualifier("topicDestinationWaiMaiOrder")
+    private Destination topicDestinationWaiMaiOrder;
 
     public Cfg findJdCfg() {
         return sysInnerService.findCfg(Constants.PLATFORM_JD);
@@ -159,34 +157,34 @@ public class SysFacadeService {
 
     //订单插入
     public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  BaiDuException,JdHomeException,ElemeException,MeiTuanException,JMException{
-            try{
+        try{
             //order Insert/update
             sysInnerService.updSynWaiMaiOrder(orderWaiMai);
             //topic message to MQ Server
-            topicMessageProducer.sendMessage(topicDestination,formatOrder2Pos(orderWaiMai).toJSONString());
-            }catch (ScheduleException ex){
-                switch (orderWaiMai.getPlatform()){
-                    case Constants.PLATFORM_WAIMAI_BAIDU:
-                        throw new BaiDuException(ex.getClass().getName(),"百度订单插入失败!","",new Throwable().getStackTrace());
-                    case Constants.PLATFORM_WAIMAI_JDHOME:
-                        throw new JdHomeException("京东订单插入失败!",ex);
-                    case Constants.PLATFORM_WAIMAI_MEITUAN:
-                        throw new MeiTuanException("美团订单插入失败!",ex);
-                    case Constants.PLATFORM_WAIMAI_ELEME:
-                        throw new ElemeException("饿了么订单插入失败!",ex);
-                }
-            }catch (Exception e){
-                switch (orderWaiMai.getPlatform()){
-                    case Constants.PLATFORM_WAIMAI_BAIDU:
-                        throw new JMException("发送百度订单消息失败");
-                    case Constants.PLATFORM_WAIMAI_JDHOME:
-                        throw new JMException("发送京东订单消息失败");
-                    case Constants.PLATFORM_WAIMAI_MEITUAN:
-                        throw new JMException("发送美团订单消息失败");
-                    case Constants.PLATFORM_WAIMAI_ELEME:
-                        throw new JMException("发送饿了么订单消息失败");
-                }
+            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(orderWaiMai));
+        }catch (ScheduleException ex){
+            switch (orderWaiMai.getPlatform()){
+                case Constants.PLATFORM_WAIMAI_BAIDU:
+                    throw new BaiDuException(ex.getClass().getName(),"百度订单插入失败!","",new Throwable().getStackTrace());
+                case Constants.PLATFORM_WAIMAI_JDHOME:
+                    throw new JdHomeException("京东订单插入失败!",ex);
+                case Constants.PLATFORM_WAIMAI_MEITUAN:
+                    throw new MeiTuanException("美团订单插入失败!",ex);
+                case Constants.PLATFORM_WAIMAI_ELEME:
+                    throw new ElemeException("饿了么订单插入失败!",ex);
             }
+        }catch (Exception e){
+            switch (orderWaiMai.getPlatform()){
+                case Constants.PLATFORM_WAIMAI_BAIDU:
+                    throw new JMException("发送百度订单消息失败");
+                case Constants.PLATFORM_WAIMAI_JDHOME:
+                    throw new JMException("发送京东订单消息失败");
+                case Constants.PLATFORM_WAIMAI_MEITUAN:
+                    throw new JMException("发送美团订单消息失败");
+                case Constants.PLATFORM_WAIMAI_ELEME:
+                    throw new JMException("发送饿了么订单消息失败");
+            }
+        }
     }
 
     //订单查询
@@ -195,15 +193,15 @@ public class SysFacadeService {
     }
 
     //订单插入 list
-    public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws  BaiDuException,JdHomeException,ElemeException,MeiTuanException,JMException{
+    public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws JdHomeException{
         orderWaiMaiList.forEach(v->{
           try   {
             sysInnerService.updSynWaiMaiOrder(v);
-            topicMessageProducer.sendMessage(topicDestination, formatOrder2Pos(v).toJSONString());
+            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(v));
           }catch (ScheduleException ex){
-          }catch (Exception e){
 
-        }});
+          }
+        });
     }
 
     //格式化订单返回给Pos

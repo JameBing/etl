@@ -10,7 +10,7 @@ import com.jd.open.api.sdk.response.crm.CrmMemberSearchResponse;
 import com.jd.open.api.sdk.response.order.OrderSopOutstorageResponse;
 import com.jd.open.api.sdk.response.seller.SellerVenderInfoGetResponse;
 import com.jd.open.api.sdk.response.seller.VenderShopQueryResponse;
-import com.wangjunneil.schedule.activemq.QueueMessageProducer;
+import com.wangjunneil.schedule.activemq.Queue.QueueMessageProducer;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.jd.*;

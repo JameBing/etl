@@ -1,4 +1,4 @@
-package com.wangjunneil.schedule.activemq;
+package com.wangjunneil.schedule.activemq.Topic;
 
 import org.springframework.stereotype.Component;
 
