@@ -1,5 +1,6 @@
 package com.wangjunneil.schedule.service.eleme;
 
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.eleme.Order;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,17 +66,17 @@ public class EleMeInnerService {
     }
 
     //批量更新订单状态(根据订单号)
-    public int updSyncElemeOrderStastus(String ids,int status){
+    public void updSyncElemeOrderStastus(String ids,int status){
         Query query = new Query();
         Criteria criteria = new Criteria();
         List<String> listIds = new ArrayList<String>();
         Collections.addAll(listIds, ids.split(","));
         listIds.forEach((id)->{
-            criteria.orOperator(new Criteria().where("orderid").is(id));
+            criteria.orOperator(Criteria.where("platformOrderId").is(id),Criteria.where("platform").is("eleme"));
         });
         query.addCriteria(criteria);
-        Update update = new Update().set("statuscode",status);
-        return mongoTemplate.updateMulti(query,update,Order.class).getN();
+        Update update = new Update().set("order.statuscode",status);
+        mongoTemplate.updateFirst(query, update, OrderWaiMai.class);
     }
 
     //批量更新配送状态(根据订单号)
