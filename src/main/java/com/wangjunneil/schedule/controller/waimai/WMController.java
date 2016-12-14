@@ -43,7 +43,6 @@ public class WMController {
     @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842","/jdhome/72171","/jdhome/74723"})
     public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
         String result = "",platform,requestUrl,sid = null;
-
         Map<String,String[]> stringMap = new HashMap<>();
         response.setContentType("application/json;charset=uft-8");
         requestUrl = request.getPathInfo().toLowerCase();
@@ -306,6 +305,8 @@ public class WMController {
      *
      * @param out   响应输出流对象
      * @param response  浏览器响应对象
+     *
+     *
      * @return
      */
     @RequestMapping(value = "/orderGet.php", method = RequestMethod.GET)
@@ -353,7 +354,6 @@ public class WMController {
     //region  Other
     /**
      * 获取供应商信息
-     *
      * @param out   响应输出流对象
      * @param response  浏览器响应对象
      * @return
