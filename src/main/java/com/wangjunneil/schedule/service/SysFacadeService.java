@@ -886,6 +886,17 @@ public class SysFacadeService {
                     log1.setStackInfo(sb1.toString());
                     break;
                 default:
+                    Exception exception1 = (Exception)t;
+                    log1.setMessage(exception1.getMessage());
+                    log1.setCatchExName("Exception");
+                    log1.setInnerExName(exception1.getClass().getName());
+                    StringBuffer stringBuffer = new StringBuffer();
+                    StackTraceElement[] stackTrace = exception1.getStackTrace();
+                    for (int i = 0; i < stackTrace.length; i++) {
+                        StackTraceElement element = stackTrace[i];
+                        stringBuffer.append(element.toString() + "\n");
+                    }
+                    log1.setStackInfo(stringBuffer.toString());
                     break;
         }
         return  log1;
