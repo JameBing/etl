@@ -476,7 +476,7 @@ public class JdHomeFacadeService {
                if(!isAgree){
                    status = Constants.JH_ORDER_USER_CANCELLED;
                }
-               jdHomeInnerService.updateStatus(Long.parseLong(orderId),status);
+               jdHomeInnerService.updateStatus(orderId,status);
             }
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
@@ -662,14 +662,14 @@ public class JdHomeFacadeService {
             return gson.toJson(result);
         }
         Long orderId = Long.parseLong(billId);
-        if(jdHomeInnerService.getOrder(orderId)==null){
+        if(jdHomeInnerService.getOrder(billId)==null){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("拣货完成推送接口消息推送的订单号没有匹配到订单");
             return gson.toJson(result);
         }
         try {
-            jdHomeInnerService.updateStatus(orderId,status);
+            jdHomeInnerService.updateStatus(billId,status);
             result.setCode(0);
             result.setMsg("success");
             result.setData("拣货完成推送成功");
@@ -710,15 +710,14 @@ public class JdHomeFacadeService {
             result.setData("开始配送推送消息接口订单号为空");
             return gson.toJson(result);
         }
-        Long orderId = Long.parseLong(billId);
-        if(jdHomeInnerService.getOrder(orderId)==null){
+        if(jdHomeInnerService.getOrder(billId)==null){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("开始配送推送消息接口订单号没有匹配到订单");
             return gson.toJson(result);
         }
         try {
-            jdHomeInnerService.updateStatus(orderId,status);
+            jdHomeInnerService.updateStatus(billId,status);
             result.setCode(0);
             result.setMsg("success");
             result.setData("开始配送推送成功");
@@ -730,9 +729,9 @@ public class JdHomeFacadeService {
         }finally {
             if (log1 !=null){
                 log1.setLogId(log1.getLogId());
-                log1.setTitle(MessageFormat.format("开始配送推送失败{0}！",orderId));
+                log1.setTitle(MessageFormat.format("开始配送推送失败{0}！",billId));
                 if (StringUtil.isEmpty(log1.getRequest()))
-                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}",orderId)).concat("}"));
+                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}",billId)).concat("}"));
                 sysFacadeService.updSynLog(log1);
             }
             return gson.toJson(result);
@@ -759,14 +758,14 @@ public class JdHomeFacadeService {
             return gson.toJson(result);
         }
         Long orderId = Long.parseLong(billId);
-        if(jdHomeInnerService.getOrder(orderId)==null){
+        if(jdHomeInnerService.getOrder(billId)==null){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("订单妥投消息接口订单号没有匹配到订单");
             return gson.toJson(result);
         }
         try {
-            jdHomeInnerService.updateStatus(orderId,status);
+            jdHomeInnerService.updateStatus(billId,status);
             result.setCode(0);
             result.setMsg("success");
             result.setData("订单妥投推送成功");
@@ -806,15 +805,14 @@ public class JdHomeFacadeService {
             result.setData("用户取消消息接口订单号为空");
             return gson.toJson(result);
         }
-        Long orderId = Long.parseLong(billId);
-        if(jdHomeInnerService.getOrder(orderId)==null){
+        if(jdHomeInnerService.getOrder(billId)==null){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("用户取消消息接口订单号没有匹配到订单");
             return gson.toJson(result);
         }
         try {
-            jdHomeInnerService.updateStatus(orderId,status);
+            jdHomeInnerService.updateStatus(billId,status);
             result.setCode(0);
             result.setMsg("success");
             result.setData("用户取消推送成功");
@@ -826,9 +824,9 @@ public class JdHomeFacadeService {
         }finally {
             if (log1 !=null){
                 log1.setLogId(log1.getLogId());
-                log1.setTitle(MessageFormat.format("用户取消推送失败{0}！",orderId));
+                log1.setTitle(MessageFormat.format("用户取消推送失败{0}！",billId));
                 if (StringUtil.isEmpty(log1.getRequest()))
-                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}",orderId)).concat("}"));
+                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}",billId)).concat("}"));
                 sysFacadeService.updSynLog(log1);
             }
             return gson.toJson(result);

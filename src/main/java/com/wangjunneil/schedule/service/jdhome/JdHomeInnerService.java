@@ -7,6 +7,7 @@ import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -86,14 +87,14 @@ public class JdHomeInnerService {
     }
 
     //获取单个订单
-    public OrderWaiMai getOrder(Long orderId){
-        Query query = new Query(Criteria.where("platformOrderId").is(orderId).is("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+    public OrderWaiMai getOrder(String  orderId){
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
         OrderWaiMai order = mongoTemplate.findOne(query,OrderWaiMai.class);
         return order;
     }
 
     //修改订单状态
-    public void updateStatus(Long orderId,int status){
+    public void updateStatus(String  orderId,int status){
         Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
         Update update = new Update().set("orderStatus",status)
             .set("latestTime",new Date());
