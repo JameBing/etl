@@ -339,6 +339,8 @@ public class JdHomeFacadeService {
             }
         }catch (JdHomeException ex) {
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException e) {
+            log1 = sysFacadeService.functionRtn.apply(e);
         }catch(Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
         }finally {
@@ -479,14 +481,9 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
-        }catch (ScheduleException e) {
-            rtn.setCode(-999);
-            rtn.setRemark(e.getMessage());
-            log1 = sysFacadeService.functionRtn.apply(e);
         }catch(Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
             rtn.setCode(-998);
-            rtn.setRemark(ex.getMessage());
         }finally {
             if (log1 !=null){
                 log1.setLogId(orderId.concat(log1.getLogId()));
@@ -861,11 +858,14 @@ public class JdHomeFacadeService {
             return gson.toJson(result);
         }
         //配送中……
-        if(Integer.parseInt(statusId)==Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderDelivering,Enum.OrderStatusJdHome.OrderDelivering.toString()).get("code").getAsInt()){
+        if(Integer.parseInt(statusId)==Constants.JH_ORDER_DELIVERING){
             this.deliveryOrder(jsonObject);
         //妥投成功
-        }else if(Integer.parseInt(statusId)==Enum.getEnumDesc(Enum.OrderStatusJdHome.OrderConfirmed,Enum.OrderStatusJdHome.OrderConfirmed.toString()).get("code").getAsInt()){
+        }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_CONFIRMED){
             this.finishOrder(jsonObject);
+        //用户取消
+        }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_USER_CANCELLED){
+            this.userCancelOrder(jsonObject);
         }else {
             result.setCode(-1);
             result.setMsg("error");

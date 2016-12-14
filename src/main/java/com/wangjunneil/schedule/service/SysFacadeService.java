@@ -197,7 +197,7 @@ public class SysFacadeService {
     }
 
     //订单插入 list
-    public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws  BaiDuException,JdHomeException,ElemeException,MeiTuanException{
+    public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws JdHomeException{
         orderWaiMaiList.forEach(v->{
           try   {
             sysInnerService.updSynWaiMaiOrder(v);
@@ -207,9 +207,7 @@ public class SysFacadeService {
               }
           }catch (Exception ex){
               //待补充
-          }
-            formatOrder2Pos(v);
-        });
+        }});
     }
 
     //格式化订单返回给Pos
