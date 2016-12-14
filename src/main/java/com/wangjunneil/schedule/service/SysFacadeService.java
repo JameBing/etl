@@ -2,17 +2,12 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
-import com.wangjunneil.schedule.activemq.TopicMessageProducer;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
-import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.entity.baidu.Data;
-import com.wangjunneil.schedule.entity.baidu.OrderProductsDish;
 import com.wangjunneil.schedule.entity.baidu.OrderShop;
-import com.wangjunneil.schedule.entity.baidu.User;
 import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
-import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.eleme.Order;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderExtend;
@@ -26,12 +21,10 @@ import com.wangjunneil.schedule.entity.z8.Z8AccessToken;
 import com.wangjunneil.schedule.service.jp.JpApiService;
 import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
-import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ConstantException;
 import org.springframework.stereotype.Service;
 
 import javax.jms.Destination;
@@ -59,12 +52,12 @@ public class SysFacadeService {
     private SysFacadeService sysFacadeService;
 
     @Autowired
-    @Qualifier("topicMessageProducer")
-    private TopicMessageProducer topicMessageProducer;
+    @Qualifier("topicMessageProducerWaiMaiOrder")
+    private TopicMessageProducer topicMessageProducerWaiMaiOrder;
 
     @Autowired
-    @Qualifier("topicDestination")
-    private Destination topicDestination;
+    @Qualifier("topicDestinationWaiMaiOrder")
+    private Destination topicDestinationWaiMaiOrder;
 
     public Cfg findJdCfg() {
         return sysInnerService.findCfg(Constants.PLATFORM_JD);
@@ -165,8 +158,9 @@ public class SysFacadeService {
     public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  BaiDuException,JdHomeException,ElemeException,MeiTuanException{
             try{
             sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+                System.out.println(formatOrder2Pos(orderWaiMai));
             //topic message to MQ Server
-          //  topicMessageProducer.sendMessage(topicDestination,formatOrder2Pos(orderWaiMai));
+            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(orderWaiMai));
             } catch (Exception ex){
               switch (orderWaiMai.getPlatform()){
                   case Constants.PLATFORM_WAIMAI_BAIDU:
@@ -189,7 +183,7 @@ public class SysFacadeService {
         orderWaiMaiList.forEach(v->{
           try   {
             sysInnerService.updSynWaiMaiOrder(v);
-            topicMessageProducer.sendMessage(topicDestination,formatOrder2Pos(v));
+            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(v));
           }catch (Exception ex){
               //待补充
           }
