@@ -160,7 +160,7 @@ public final class Constants {
     public static final int BD_DELIVERY=8;  // 送货中
 
     public static final int BD_COMPLETED=9;  // 已完成
-    
+
     public static final int BD_CANCELED=10;  // 已取消
 
     /**
@@ -266,7 +266,10 @@ public final class Constants {
 
     /*************************************************************************************************************************/
     //美团订单状态
-    public static final int MT_STATUS_CODE_UNPROCESSED=3;  // 商家已收到
+
+    public static final int MT_STATUS_CODE_UNPROCESSED=2;
+
+    public static final int MT_STATUS_CODE_RECEIVED=3;  // 商家已收到
 
     public static final int MT_STATUS_CODE_CONFIRMED=4;  // 商家已确认
 

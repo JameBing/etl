@@ -392,7 +392,7 @@ public class EleMeFacadeService {
 //                    eleMeInnerService.addSyncOrder(order);
                     OrderWaiMai orderWaiMai = new OrderWaiMai();
                     orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-                    orderWaiMai.setPlatformOrderId(order.getOrderid());
+                    orderWaiMai.setPlatformOrderId(order.getOrderid().toString());
                     String orderId = sysFacadeService.getOrderNum(order.getRestaurantid());
                     orderWaiMai.setOrder(order);
                     orderWaiMai.setOrderId(orderId);

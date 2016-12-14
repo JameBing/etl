@@ -287,6 +287,8 @@ public class WMController {
      *
      * @param out   响应输出流对象
      * @param response  浏览器响应对象
+     *
+     *
      * @return
      */
     @RequestMapping(value = "/orderGet.php", method = RequestMethod.GET)
@@ -357,7 +359,6 @@ public class WMController {
 
     /**
      * 获取供应商信息
-     *
      * @param out   响应输出流对象
      * @param response  浏览器响应对象
      * @return

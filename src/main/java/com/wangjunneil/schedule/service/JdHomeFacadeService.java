@@ -479,9 +479,14 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException e) {
+            rtn.setCode(-999);
+            rtn.setRemark(e.getMessage());
+            log1 = sysFacadeService.functionRtn.apply(e);
         }catch(Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
             rtn.setCode(-998);
+            rtn.setRemark(ex.getMessage());
         }finally {
             if (log1 !=null){
                 log1.setLogId(orderId.concat(log1.getLogId()));
