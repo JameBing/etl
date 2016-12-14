@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.Data;
@@ -161,7 +162,10 @@ public class SysFacadeService {
             //order Insert/update
             sysInnerService.updSynWaiMaiOrder(orderWaiMai);
             //topic message to MQ Server
-            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(orderWaiMai));
+            System.out.println(formatOrder2Pos(orderWaiMai));
+            if (StaticObj.mqTransportTopicOrder){
+            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai));
+            }
         }catch (ScheduleException ex){
             switch (orderWaiMai.getPlatform()){
                 case Constants.PLATFORM_WAIMAI_BAIDU:
@@ -197,7 +201,10 @@ public class SysFacadeService {
         orderWaiMaiList.forEach(v->{
           try   {
             sysInnerService.updSynWaiMaiOrder(v);
-            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(v));
+              System.out.println(formatOrder2Pos(v));
+              if (StaticObj.mqTransportTopicOrder){
+                 topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(v));
+              }
           }catch (Exception ex){
               //待补充
           }

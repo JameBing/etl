@@ -279,7 +279,7 @@ public class WMController {
      * @param request  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/status","/djsw/pickFinishOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/status","/djsw/userCancelOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
     public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         String platform = null;
         String requestUrl = request.getPathInfo().toLowerCase();

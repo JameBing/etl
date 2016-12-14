@@ -85,7 +85,7 @@ public class WMFacadeService {
             case Constants.PLATFORM_WAIMAI_ELEME:
                 switch (stringMap.get("push_action")[0]){
                     case "1": //新订单
-                      result =    eleMeFacadeService.getNewOrder(stringMap.get("eleme_order_ids")[0]);
+                        result =    eleMeFacadeService.getNewOrder(stringMap.get("eleme_order_ids")[0]);
                         break;
                     case "2": //订单状态变更
                       result =    eleMeFacadeService.orderChange(stringMap.get("eleme_order_id")[0], stringMap.get("new_status")[0]);
@@ -163,6 +163,13 @@ public class WMFacadeService {
                   break;
               case Constants.PLATFORM_WAIMAI_JDHOME:
                     result = jdHomeFacadeService.changeStatus(stringMap.get("jd_param_json")[0]);
+                  break;
+              case Constants.PLATFORM_WAIMAI_MEITUAN:
+                  Map<String, String[]> map = new HashMap<String, String[]>();
+                  map.putAll(stringMap);
+                  String[] strArr = {"extras", "detail"};
+                  map.put("ZY_ETL_JSON_KEYS", strArr);
+                  result = meiTuanFacadeService.getChangeOrderStatus(functionMap2Json.apply(map));
                   break;
               default:break;
           }
