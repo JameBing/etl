@@ -998,7 +998,7 @@ public class SysFacadeService {
                 }else   {
                     shop = orderWaiMai.getShopId();
                 }
-                jsonMessage.addProperty("baidu", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":status,orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("baidu", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":tranBdOrderStatus(status),orderWaiMai==null?"":shop));
                 jsonMessage.addProperty("jdhome",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
                 jsonMessage.addProperty("meituan",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
                 jsonMessage.addProperty("eleme",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
@@ -1011,14 +1011,14 @@ public class SysFacadeService {
                     shop = orderWaiMai.getShopId();
                 }
                 jsonMessage.addProperty("baidu",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("jdhome", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":status,orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("jdhome", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":tranJHOrderStatus(status),orderWaiMai==null?"":shop));
                 jsonMessage.addProperty("meituan",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
                 jsonMessage.addProperty("eleme",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
                 break;
             case  Constants.PLATFORM_WAIMAI_MEITUAN:
                 jsonMessage.addProperty("baidu",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
                 jsonMessage.addProperty("jdhome", MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("meituan",MessageFormat.format(tmp,orderId,status,shop));
+                jsonMessage.addProperty("meituan",MessageFormat.format(tmp,orderId,tranMTOrderStatus(status),shop));
                 jsonMessage.addProperty("eleme",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
                 break;
             case  Constants.PLATFORM_WAIMAI_ELEME:
@@ -1031,7 +1031,7 @@ public class SysFacadeService {
                 jsonMessage.addProperty("baidu",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
                 jsonMessage.addProperty("jdhome",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
                 jsonMessage.addProperty("meituan",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("eleme", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":status,orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("eleme", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":tranELOrderStatus(status),orderWaiMai==null?"":shop));
                 break;
             default:
                 boolSend = false;
