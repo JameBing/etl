@@ -144,7 +144,7 @@ public class StringUtil {
     }
 
     //map对象转字符串
-    public static String getUrlParamsByMap(Map<String, Object> map) throws IOException {
+    public static String getUrlParamsByMap(Map<String, Object> map) throws ScheduleException {
 
         if (map == null || map.isEmpty()) {
             return null;
@@ -163,7 +163,11 @@ public class StringUtil {
                 } else {
                     hasParam = true;
                 }
-                query.append(name).append("=").append(URLEncoder.encode(value.toString(), "UTF-8"));
+                try {
+                    query.append(name).append("=").append(URLEncoder.encode(value.toString(), "UTF-8"));
+                }catch (Exception e){
+                    throw new ScheduleException("转码失败");
+                }
             }
         }
         return query.toString();

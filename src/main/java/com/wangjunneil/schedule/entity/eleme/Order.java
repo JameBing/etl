@@ -61,7 +61,7 @@ public class Order {
     private Double deliverfee;
     //是否预订单
     @SerializedName("is_book")
-    private Boolean isbook;
+    private int  isbook;
     //店铺承担活动费用
     @SerializedName("restaurant_part")
     private Double restaurantpart;
@@ -88,7 +88,7 @@ public class Order {
     private Double hongbao;
     //是否在线支付
     @SerializedName("is_online_paid")
-    private Boolean isonlinepaid;
+    private int  isonlinepaid;
     //顾客送餐详情地址
     @SerializedName("delivery_poi_address")
     private String deliverypoiaddress;
@@ -248,11 +248,11 @@ public class Order {
         this.deliverfee = deliverfee;
     }
 
-    public Boolean getIsbook() {
+    public int getIsbook() {
         return isbook;
     }
 
-    public void setIsbook(Boolean isbook) {
+    public void setIsbook(int isbook) {
         this.isbook = isbook;
     }
 
@@ -320,11 +320,11 @@ public class Order {
         this.hongbao = hongbao;
     }
 
-    public Boolean getIsonlinepaid() {
+    public int getIsonlinepaid() {
         return isonlinepaid;
     }
 
-    public void setIsonlinepaid(Boolean isonlinepaid) {
+    public void setIsonlinepaid(int isonlinepaid) {
         this.isonlinepaid = isonlinepaid;
     }
 

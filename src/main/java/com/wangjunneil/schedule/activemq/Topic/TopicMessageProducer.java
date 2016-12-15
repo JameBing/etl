@@ -1,6 +1,7 @@
 package com.wangjunneil.schedule.activemq.Topic;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,7 @@ import javax.jms.*;
                              @Override
                              public Message createMessage(Session session) throws JMSException {
 
-                                 ObjectMessage textMessage = session.createObjectMessage(jsonObject);
+                                 TextMessage textMessage = session.createTextMessage(new Gson().toJson(jsonObject));
                                  textMessage.setJMSReplyTo(destination);
                                  return textMessage;
                              }

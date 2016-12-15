@@ -68,8 +68,10 @@ public class JdHomeFacadeService {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException ex){
             rtn.setCode(-999);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (Exception ex){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
             rtn.setCode(-998);
         }finally {
@@ -89,21 +91,6 @@ public class JdHomeFacadeService {
         }
     }
 
-    /**
-     * 批量修改商品上下架
-     * @param stockRequests 商品列表
-     * @param shopId 商家编号
-     * @return String 接口响应信息
-     */
-    public String updateAllStockOn(List<QueryStockRequest> stockRequests ,String shopId){
-        try{
-            String json = jdHomeApiService.updateAllStockOn(stockRequests,shopId);
-            log.info("=====批量商品上下架接口返回信息:"+json+"=====");
-            return json;
-        }catch (Exception ex){
-           return "商品批量上下架失败";
-        }
-    }
 
     /**
      * 新增商品分类
@@ -128,7 +115,12 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(ex);
         }catch(Exception ex){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
             rtn.setCode(-998);
         }finally {
@@ -170,7 +162,12 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(ex);
         }catch(Exception ex){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
             rtn.setCode(-998);
         }finally {
@@ -212,7 +209,12 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(ex);
         }catch(Exception ex){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
             rtn.setCode(-998);
         }finally {
@@ -264,7 +266,6 @@ public class JdHomeFacadeService {
                 result.setMsg("failure");
                 result.setData("订单推送失败");
                 return gson.toJson(result);
-               // return "{\"code\":\"1\",\"msg\":\"failure\",\"data\":\"订单推送失败\"}";
             }
             JSONArray jsonArray = JSONObject.parseObject(apiJson.getString("result")).getJSONArray("resultList");
             if(jsonArray!=null && jsonArray.size()>0){
@@ -343,8 +344,10 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex) {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException e) {
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
         }catch(Exception ex){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
         }finally {
             if (log1 !=null){
@@ -479,12 +482,17 @@ public class JdHomeFacadeService {
                if(!isAgree){
                    status = Constants.JH_ORDER_USER_CANCELLED;
                }
-               jdHomeInnerService.updateStatus(Long.parseLong(orderId),status);
+               jdHomeInnerService.updateStatus(orderId,status);
             }
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(ex);
         }catch(Exception ex){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
             rtn.setCode(-998);
         }finally {
@@ -511,15 +519,27 @@ public class JdHomeFacadeService {
      */
     public void callback(String tokenJson,String companyId) {
         log.info("=====京东到家回调token数据:"+tokenJson+"=====");
+        Log log1 = null;
         // token入库
         JdHomeAccessToken jdAccessToken = JSONObject.parseObject(tokenJson, JdHomeAccessToken.class);
         jdAccessToken.setCompanyId(companyId);
-        if(!StringUtil.isEmpty(jdAccessToken.getCode())){
-            //添加code
-            jdHomeInnerService.addBackCode(jdAccessToken);
-        }else {
-            //添加token
-            jdHomeInnerService.addRefreshToken(jdAccessToken);
+        try {
+            if(!StringUtil.isEmpty(jdAccessToken.getCode())){
+                //添加code
+                jdHomeInnerService.addBackCode(jdAccessToken);
+            }else {
+                //添加token
+                jdHomeInnerService.addRefreshToken(jdAccessToken);
+            }
+        }catch (ScheduleException e){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setLogId(log1.getLogId());
+            log1.setTitle(MessageFormat.format("接受京东传入的code:", jdAccessToken.getCode()));
+            if (StringUtil.isEmpty(log1.getRequest()))
+                log1.setRequest("{".concat(MessageFormat.format("\"Code\":{0}", jdAccessToken.getCode())).concat("}"));
+                log1.setRequest("{".concat(MessageFormat.format("\"Code\":{0}", jdAccessToken.getCode())).concat("}"));
+            sysFacadeService.updSynLog(log1);
         }
     }
 
@@ -568,7 +588,12 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(ex);
         }catch(Exception ex){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
             rtn.setCode(-998);
         }finally {
@@ -598,6 +623,7 @@ public class JdHomeFacadeService {
      */
     public String querySkuInfo(ParsFromPosInner posInner,QueryStockRequest stockRequest){
         String rtn = "";
+        Log log1 = null;
         try {
             String json = jdHomeApiService.querySkuInfos(posInner.getDishId(),posInner.getShopId());
             log.info("=====查询商家商品信息接口返回信息:"+json+"=====");
@@ -612,8 +638,12 @@ public class JdHomeFacadeService {
                     }
                 }
             }
-        }catch (Exception e){
+        }catch (JdHomeException ex) {
+        log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException e){
             return "获取平台商品信息失败";
+        }catch (Exception e){
+
         }
         return rtn;
     }
@@ -665,14 +695,14 @@ public class JdHomeFacadeService {
             return gson.toJson(result);
         }
         Long orderId = Long.parseLong(billId);
-        if(jdHomeInnerService.getOrder(orderId)==null){
+        if(jdHomeInnerService.getOrder(billId)==null){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("拣货完成推送接口消息推送的订单号没有匹配到订单");
             return gson.toJson(result);
         }
         try {
-            jdHomeInnerService.updateStatus(orderId,status);
+            jdHomeInnerService.updateStatus(billId,status);
             result.setCode(0);
             result.setMsg("success");
             result.setData("拣货完成推送成功");
@@ -713,15 +743,14 @@ public class JdHomeFacadeService {
             result.setData("开始配送推送消息接口订单号为空");
             return gson.toJson(result);
         }
-        Long orderId = Long.parseLong(billId);
-        if(jdHomeInnerService.getOrder(orderId)==null){
+        if(jdHomeInnerService.getOrder(billId)==null){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("开始配送推送消息接口订单号没有匹配到订单");
             return gson.toJson(result);
         }
         try {
-            jdHomeInnerService.updateStatus(orderId,status);
+            jdHomeInnerService.updateStatus(billId,status);
             result.setCode(0);
             result.setMsg("success");
             result.setData("开始配送推送成功");
@@ -733,9 +762,9 @@ public class JdHomeFacadeService {
         }finally {
             if (log1 !=null){
                 log1.setLogId(log1.getLogId());
-                log1.setTitle(MessageFormat.format("开始配送推送失败{0}！",orderId));
+                log1.setTitle(MessageFormat.format("开始配送推送失败{0}！",billId));
                 if (StringUtil.isEmpty(log1.getRequest()))
-                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}",orderId)).concat("}"));
+                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}",billId)).concat("}"));
                 sysFacadeService.updSynLog(log1);
             }
             return gson.toJson(result);
@@ -762,14 +791,14 @@ public class JdHomeFacadeService {
             return gson.toJson(result);
         }
         Long orderId = Long.parseLong(billId);
-        if(jdHomeInnerService.getOrder(orderId)==null){
+        if(jdHomeInnerService.getOrder(billId)==null){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("订单妥投消息接口订单号没有匹配到订单");
             return gson.toJson(result);
         }
         try {
-            jdHomeInnerService.updateStatus(orderId,status);
+            jdHomeInnerService.updateStatus(billId,status);
             result.setCode(0);
             result.setMsg("success");
             result.setData("订单妥投推送成功");
@@ -809,15 +838,14 @@ public class JdHomeFacadeService {
             result.setData("用户取消消息接口订单号为空");
             return gson.toJson(result);
         }
-        Long orderId = Long.parseLong(billId);
-        if(jdHomeInnerService.getOrder(orderId)==null){
+        if(jdHomeInnerService.getOrder(billId)==null){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("用户取消消息接口订单号没有匹配到订单");
             return gson.toJson(result);
         }
         try {
-            jdHomeInnerService.updateStatus(orderId,status);
+            jdHomeInnerService.updateStatus(billId,status);
             result.setCode(0);
             result.setMsg("success");
             result.setData("用户取消推送成功");
@@ -829,9 +857,9 @@ public class JdHomeFacadeService {
         }finally {
             if (log1 !=null){
                 log1.setLogId(log1.getLogId());
-                log1.setTitle(MessageFormat.format("用户取消推送失败{0}！",orderId));
+                log1.setTitle(MessageFormat.format("用户取消推送失败{0}！",billId));
                 if (StringUtil.isEmpty(log1.getRequest()))
-                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}",orderId)).concat("}"));
+                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}",billId)).concat("}"));
                 sysFacadeService.updSynLog(log1);
             }
             return gson.toJson(result);

@@ -117,6 +117,7 @@
         <property name="password" value="${mq.host.password}" />
         <property name="useAsyncSend" value="true"></property>
         <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
+        <property name="transportListener" ref="topicTransportListenerOrder" />
     </bean>
 
     <!-- Spring用于管理真正的ConnectionFactory的ConnectionFactory 继承了SingleConnectionFactory ====-->
@@ -191,6 +192,10 @@
         <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
     <property name="receiveTimeout" value="20000"/>
     <property name="durableSubscriptionName" value="${mq.topic.clientID.waimai.order}" />
-    <!--<property name="subscriptionDurable" value="true"  />-->
+    <property name="subscriptionDurable" value="true"  />
 </bean>
+
+    <bean id="topicTransportListenerOrder" class="com.wangjunneil.schedule.activemq.MQTransportListener">
+        <property name="destination" value="topicDestinationWaiMaiOrder" />
+    </bean>
 </beans>

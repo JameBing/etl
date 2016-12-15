@@ -7,6 +7,7 @@ import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -86,16 +87,16 @@ public class JdHomeInnerService {
     }
 
     //获取单个订单
-    public OrderWaiMai getOrder(Long orderId)throws ScheduleException{
-        Query query = new Query(Criteria.where("platformOrderId").is(orderId).is("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+    public OrderWaiMai getOrder(String  orderId){
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
         OrderWaiMai order = mongoTemplate.findOne(query,OrderWaiMai.class);
         return order;
     }
 
     //修改订单状态
-    public void updateStatus(Long orderId,int status)throws ScheduleException{
+    public void updateStatus(String  orderId,int status){
         Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
-        Update update = new Update().set("orderStatus",status)
+        Update update = new Update().set("order.orderStatus",status)
             .set("latestTime", new Date());
         mongoTemplate.updateFirst(query, update, OrderWaiMai.class);
     }
@@ -127,7 +128,7 @@ public class JdHomeInnerService {
     }
 
     //根据门店Id获取token值
-    public JdHomeAccessToken getAccessToken(String shopId) throws ScheduleException{
+    public JdHomeAccessToken getAccessToken(String shopId){
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("shopIds").elemMatch(Criteria.where("shopId").is(shopId)));
         JdHomeAccessToken jdHomeAccessToken = mongoTemplate.findOne(query, JdHomeAccessToken.class);
         if(jdHomeAccessToken == null){
@@ -137,7 +138,7 @@ public class JdHomeInnerService {
     }
 
     //根据商家Id获取token值
-    public JdHomeAccessToken getAccessTokenByComId(String companyId) throws ScheduleException{
+    public JdHomeAccessToken getAccessTokenByComId(String companyId){
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(companyId));
         JdHomeAccessToken jdHomeAccessToken = mongoTemplate.findOne(query, JdHomeAccessToken.class);
         return jdHomeAccessToken;

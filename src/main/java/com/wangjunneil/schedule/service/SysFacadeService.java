@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.Data;
@@ -161,7 +162,10 @@ public class SysFacadeService {
             //order Insert/update
             sysInnerService.updSynWaiMaiOrder(orderWaiMai);
             //topic message to MQ Server
-            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(orderWaiMai));
+            System.out.println(formatOrder2Pos(orderWaiMai));
+            if (StaticObj.mqTransportTopicOrder){
+            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai));
+            }
         }catch (ScheduleException ex){
             switch (orderWaiMai.getPlatform()){
                 case Constants.PLATFORM_WAIMAI_BAIDU:
@@ -197,11 +201,13 @@ public class SysFacadeService {
         orderWaiMaiList.forEach(v->{
           try   {
             sysInnerService.updSynWaiMaiOrder(v);
-            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(v));
-          }catch (ScheduleException ex){
-
-          }
-        });
+              System.out.println(formatOrder2Pos(v));
+              if (StaticObj.mqTransportTopicOrder){
+                 topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(v));
+              }
+          }catch (Exception ex){
+              //待补充
+        }});
     }
 
     //格式化订单返回给Pos
@@ -263,7 +269,7 @@ public class SysFacadeService {
         jsonObject.put("orderType","");
         jsonObject.put("orderStatus",tranBdOrderStatus(data.getOrder().getStatus()));
         jsonObject.put("orderStatusTime","");
-        jsonObject.put("orderStartTime",data.getOrder().getCreateTime());
+        jsonObject.put("orderStartTime",data.getOrder().getCreateTime()==0?"":DateTimeUtil.dateFormat(new Date(data.getOrder().getCreateTime()),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime",data.getOrder().getConfirmTime());
         jsonObject.put("orderPurchaseTime", "");
         jsonObject.put("orderAgingType","");
@@ -404,20 +410,20 @@ public class SysFacadeService {
         jsonObject.put("orderIndex","");
         jsonObject.put("orderType",orderInfo.getOrderType());
         jsonObject.put("orderStatus",tranJHOrderStatus(orderInfo.getOrderStatus()));
-        jsonObject.put("orderStatusTime",orderInfo.getOrderStartTime());
-        jsonObject.put("orderStartTime",orderInfo.getOrderStartTime());
+        jsonObject.put("orderStatusTime",StringUtil.isEmpty(orderInfo.getOrderStatusTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderStatusTime(),"yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderStartTime",StringUtil.isEmpty(orderInfo.getOrderStartTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderStartTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime","");
-        jsonObject.put("orderPurchaseTime", orderInfo.getOrderPurchaseTime());
+        jsonObject.put("orderPurchaseTime", StringUtil.isEmpty(orderInfo.getOrderPurchaseTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderPurchaseTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderAgingType",orderInfo.getOrderAgingType());
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",orderInfo.getOrderPreEndDeliveryTime());
+        jsonObject.put("orderPreDeliveryTime",StringUtil.isEmpty(orderInfo.getOrderPreEndDeliveryTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderPreEndDeliveryTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("expectSendTime","");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
         jsonObject.put("riderPickupNo","");
         jsonObject.put("riderPhone","");
-        jsonObject.put("orderCancelTime",orderInfo.getOrderCancelTime());
+        jsonObject.put("orderCancelTime",StringUtil.isEmpty(orderInfo.getOrderCancelTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderCancelTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderCancelRemark",orderInfo.getOrderCancelRemark());
         jsonObject.put("is_third_shipping","");
         jsonObject.put("deliveryStationNo",orderInfo.getProduceStationNoIsv());
@@ -426,7 +432,7 @@ public class SysFacadeService {
         jsonObject.put("deliveryCarrierName","");
         jsonObject.put("deliveryBillNo",orderInfo.getDeliveryBillNo());
         jsonObject.put("deliveryPackageWeight",orderInfo.getDeliveryPackageWeight());
-        jsonObject.put("deliveryConfirmTime", orderInfo.getDeliveryConfirmTime());
+        jsonObject.put("deliveryConfirmTime", StringUtil.isEmpty(orderInfo.getDeliveryConfirmTime())?"":DateTimeUtil.dateFormat(orderInfo.getDeliveryConfirmTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderFinishTime","");
         jsonObject.put("orderPayType",orderInfo.getOrderPayType());
         jsonObject.put("orderTotalMoney",orderInfo.getOrderTotalMoney());
@@ -544,14 +550,14 @@ public class SysFacadeService {
         jsonObject.put("orderIndex",orderInfo.getDayseq());
         jsonObject.put("orderType","");
         jsonObject.put("orderStatus",tranMTOrderStatus(orderInfo.getStatus()));
-        jsonObject.put("orderStatusTime",orderInfo.getUtime());
+        jsonObject.put("orderStatusTime",orderInfo.getUtime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getUtime()), "yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderStartTime","");
         jsonObject.put("orderConfirmTime","");
         jsonObject.put("orderPurchaseTime", "");
         jsonObject.put("orderAgingType","");
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",orderInfo.getDeliverytime());
+        jsonObject.put("orderPreDeliveryTime",orderInfo.getDeliverytime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getDeliverytime()), "yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("expectSendTime","");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
@@ -682,13 +688,13 @@ public class SysFacadeService {
         jsonObject.put("orderType","");
         jsonObject.put("orderStatus",tranELOrderStatus(order.getStatuscode()));
         jsonObject.put("orderStatusTime","");
-        jsonObject.put("orderStartTime",order.getCreatedat());
+        jsonObject.put("orderStartTime",StringUtil.isEmpty(order.getCreatedat())?"":DateTimeUtil.dateFormat(order.getCreatedat(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime","");
-        jsonObject.put("orderPurchaseTime", order.getActiveat());
+        jsonObject.put("orderPurchaseTime", StringUtil.isEmpty(order.getActiveat())?"":DateTimeUtil.dateFormat(order.getActiveat(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderAgingType","");
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",order.getDelivertime());
+        jsonObject.put("orderPreDeliveryTime",StringUtil.isEmpty(order.getDelivertime())?"":DateTimeUtil.dateFormat(order.getDelivertime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("expectSendTime","");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
@@ -880,6 +886,17 @@ public class SysFacadeService {
                     log1.setStackInfo(sb1.toString());
                     break;
                 default:
+                    Exception exception1 = (Exception)t;
+                    log1.setMessage(exception1.getMessage());
+                    log1.setCatchExName("Exception");
+                    log1.setInnerExName(exception1.getClass().getName());
+                    StringBuffer stringBuffer = new StringBuffer();
+                    StackTraceElement[] stackTrace = exception1.getStackTrace();
+                    for (int i = 0; i < stackTrace.length; i++) {
+                        StackTraceElement element = stackTrace[i];
+                        stringBuffer.append(element.toString() + "\n");
+                    }
+                    log1.setStackInfo(stringBuffer.toString());
                     break;
         }
         return  log1;
