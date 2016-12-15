@@ -433,6 +433,11 @@ public class EleMeFacadeService {
     public String orderChange(String elemeOrderIds,String newStatus){
         //温馨提醒：单个参数传输都使用String类型，因为Request对象的getparamter方法返回的均是String类型，外层做类型转换的话，如果发生异常则无法捕获，异常处理均在这一层处理，所以放在这里做类型转换更合适
         eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds, Integer.parseInt(newStatus));
+        List<String> listIds = new ArrayList<String>();
+        Collections.addAll(listIds, elemeOrderIds.split(","));
+        listIds.forEach((id)->{
+            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,Integer.valueOf(newStatus),id,null,null);
+        });
         return null;
     }
     //退单状态接收  refund_status:退单订单状态

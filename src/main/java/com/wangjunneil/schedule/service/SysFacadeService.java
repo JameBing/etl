@@ -2,6 +2,8 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
@@ -30,11 +32,10 @@ import org.springframework.stereotype.Service;
 
 import javax.jms.Destination;
 import javax.management.JMException;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
-
-
 /**
  *
  * Created by wangjun on 8/8/16.
@@ -60,6 +61,14 @@ public class SysFacadeService {
     @Autowired
     @Qualifier("topicDestinationWaiMaiOrder")
     private Destination topicDestinationWaiMaiOrder;
+
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrderStatus")
+    private TopicMessageProducer topicMessageProducerOrderStatus;
+
+    @Autowired
+    @Qualifier("topicDestinationWaiMaiOrderStatus")
+    private Destination topicDestinationWaiMaiOrderStatus;
 
     public Cfg findJdCfg() {
         return sysInnerService.findCfg(Constants.PLATFORM_JD);
@@ -164,7 +173,7 @@ public class SysFacadeService {
             //topic message to MQ Server
             System.out.println(formatOrder2Pos(orderWaiMai));
             if (StaticObj.mqTransportTopicOrder){
-            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai));
+            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
             }
         }catch (ScheduleException ex){
             switch (orderWaiMai.getPlatform()){
@@ -178,15 +187,15 @@ public class SysFacadeService {
                     throw new ElemeException("饿了么订单插入失败!",ex);
             }
         }catch (Exception e){
-            switch (orderWaiMai.getPlatform()){
-                case Constants.PLATFORM_WAIMAI_BAIDU:
-                    throw new JMException("发送百度订单消息失败");
-                case Constants.PLATFORM_WAIMAI_JDHOME:
-                    throw new JMException("发送京东订单消息失败");
-                case Constants.PLATFORM_WAIMAI_MEITUAN:
-                    throw new JMException("发送美团订单消息失败");
-                case Constants.PLATFORM_WAIMAI_ELEME:
-                    throw new JMException("发送饿了么订单消息失败");
+                    switch (orderWaiMai.getPlatform()){
+                        case Constants.PLATFORM_WAIMAI_BAIDU:
+                            throw new JMException("发送百度订单消息失败");
+                        case Constants.PLATFORM_WAIMAI_JDHOME:
+                            throw new JMException("发送京东订单消息失败");
+                        case Constants.PLATFORM_WAIMAI_MEITUAN:
+                            throw new JMException("发送美团订单消息失败");
+                        case Constants.PLATFORM_WAIMAI_ELEME:
+                            throw new JMException("发送饿了么订单消息失败");
             }
         }
     }
@@ -203,7 +212,7 @@ public class SysFacadeService {
             sysInnerService.updSynWaiMaiOrder(v);
               System.out.println(formatOrder2Pos(v));
               if (StaticObj.mqTransportTopicOrder){
-                 topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(v));
+                 topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(v),v.getShopId());
               }
           }catch (Exception ex){
               //待补充
@@ -908,7 +917,7 @@ public class SysFacadeService {
     }
 
     //格式化百度订单状态
-    private int tranBdOrderStatus(int status){
+    private int tranBdOrderStatus(Integer status){
         switch (status){
             case Constants.BD_SUSPENDING:
                 return Constants.POS_ORDER_SUSPENDING;
@@ -972,6 +981,64 @@ public class SysFacadeService {
                 return Constants.POS_ORDER_CANCELED;
             default:
                 return Constants.POS_ORDER_OTHER;
+        }
+    }
+
+    //topic message to mq server  [message:order status]
+    public  void topicMessageOrderStatus(String platform,Integer status,String platformOrderId,String orderId,String shopId){
+        OrderWaiMai orderWaiMai = null;
+        String tmp = "\"orderId\":\"{0}\"，\"orderStatus\":\"{1}\",\"shopId\":\"{2}\"",shop = shopId;
+        boolean boolSend = true;
+        JsonObject jsonMessage = new JsonObject();
+        switch (platform){
+            case Constants.PLATFORM_WAIMAI_BAIDU:
+                orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_BAIDU,platformOrderId);
+                if (orderWaiMai==null){
+                    boolSend = false;  //不发送message
+                }else   {
+                    shop = orderWaiMai.getShopId();
+                }
+                jsonMessage.addProperty("baidu", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":status,orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("jdhome",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("meituan",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("eleme",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                break;
+            case  Constants.PLATFORM_WAIMAI_JDHOME:
+                orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_JDHOME,platformOrderId);
+                if (orderWaiMai==null){
+                    boolSend = false;  //不发送message
+                }else   {
+                    shop = orderWaiMai.getShopId();
+                }
+                jsonMessage.addProperty("baidu",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("jdhome", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":status,orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("meituan",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("eleme",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                break;
+            case  Constants.PLATFORM_WAIMAI_MEITUAN:
+                jsonMessage.addProperty("baidu",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("jdhome", MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("meituan",MessageFormat.format(tmp,orderId,status,shop));
+                jsonMessage.addProperty("eleme",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                break;
+            case  Constants.PLATFORM_WAIMAI_ELEME:
+                orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_ELEME,platformOrderId);
+                if (orderWaiMai==null){
+                    boolSend = false;  //不发送message
+                }else   {
+                    shop = orderWaiMai.getShopId();
+                }
+                jsonMessage.addProperty("baidu",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("jdhome",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("meituan",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("eleme", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":status,orderWaiMai==null?"":shop));
+                break;
+            default:
+                boolSend = false;
+                break;
+        }
+        if (boolSend & StaticObj.MqTransportTopicOrderStatus){
+            topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
         }
     }
 

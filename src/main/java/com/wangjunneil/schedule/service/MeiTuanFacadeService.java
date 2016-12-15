@@ -7,6 +7,8 @@ import com.google.gson.JsonParser;
 import com.sankuai.meituan.waimai.opensdk.exception.ApiOpException;
 import com.sankuai.meituan.waimai.opensdk.exception.ApiSysException;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
+import com.wangjunneil.schedule.activemq.StaticObj;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.MeiTuanException;
 import com.wangjunneil.schedule.common.ScheduleException;
@@ -20,8 +22,10 @@ import com.wangjunneil.schedule.service.meituan.MeiTuanInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.jms.Destination;
 import java.net.URLDecoder;
 import java.text.MessageFormat;
 
@@ -42,6 +46,14 @@ public class MeiTuanFacadeService {
 
     @Autowired
     private SysFacadeService sysFacadeService;
+
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrderStatus")
+    private TopicMessageProducer topicMessageProducerOrderStatus;
+
+    @Autowired
+    @Qualifier("topicDestinationWaiMaiOrderStatus")
+    private Destination topicDestinationWaiMaiOrderStatus;
 
     //日志配置
     private static Logger log = Logger.getLogger(JdHomeFacadeService.class.getName());
@@ -451,7 +463,8 @@ public class MeiTuanFacadeService {
                 orderWaiMai.setOrderId(orderId);
             }
             //sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
-            mtInnerService.updateStatus(String.valueOf(order.getOrderid()),order.getStatus());
+            mtInnerService.updateStatus(String.valueOf(order.getOrderid()), order.getStatus());
+            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId);
             result = "{\"data\" : \"ok\"}" ;
         }
         catch (Exception ex){

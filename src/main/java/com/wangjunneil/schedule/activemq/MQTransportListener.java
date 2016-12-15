@@ -46,7 +46,7 @@ public class MQTransportListener implements org.apache.activemq.transport.Transp
                     }else  return;
                 break;
             case "topicDestinationWaiMaiOrderStatus":   //推送订单状态的topic queue
-                if (StaticObj.isMqTransportTopicOrderStatus){
+                if (StaticObj.MqTransportTopicOrderStatus){
                     setTransportFlag(false);
                 }else  return;
                 break;
@@ -78,8 +78,8 @@ public class MQTransportListener implements org.apache.activemq.transport.Transp
                 StaticObj.mqTransportTopicOrder = boolValue;
                 break;
             case "topicDestinationWaiMaiOrderStatus":   //推送订单状态的topic queue
-                if (StaticObj.isMqTransportTopicOrderStatus != boolValue)
-                    StaticObj.isMqTransportTopicOrderStatus = boolValue;
+                if (StaticObj.MqTransportTopicOrderStatus != boolValue)
+                    StaticObj.MqTransportTopicOrderStatus = boolValue;
                 break;
             default:
                 break;

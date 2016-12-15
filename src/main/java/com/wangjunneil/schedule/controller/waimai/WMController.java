@@ -377,7 +377,7 @@ public class WMController {
     public String test1(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
         try {
             response.setContentType("text/html; charset=utf-8");
-            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,"杨大山,你辛苦了:"+ DateTimeUtil.dateFormat(new Date(), "yyyyMMddHHmmss"));
+            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,"杨大山,你辛苦了:"+ DateTimeUtil.dateFormat(new Date(), "yyyyMMddHHmmss"),"6666");
             out.println("测试MQ");
         }catch (Exception ex){
 
