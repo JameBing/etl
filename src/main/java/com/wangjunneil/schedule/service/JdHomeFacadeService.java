@@ -639,11 +639,22 @@ public class JdHomeFacadeService {
                 }
             }
         }catch (JdHomeException ex) {
-        log1 = sysFacadeService.functionRtn.apply(ex);
+            log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException e){
-            return "获取平台商品信息失败";
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(e);
         }catch (Exception e){
-
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(e);
+        }finally {
+            if (log1 !=null){
+                log1.setLogId(log1.getLogId());
+                log1.setTitle(MessageFormat.format("查询商家商品信息{0}失败！", posInner.getDishId()));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"dishId\":{0}", posInner.getDishId())).concat("}"));
+                sysFacadeService.updSynLog(log1);
+                return "查询商家商品信息失败";
+            }
         }
         return rtn;
     }
@@ -655,6 +666,7 @@ public class JdHomeFacadeService {
      */
     public String getStoreInfoPageBean(String shopId){
         String rtn ="";
+        Log log1 =null;
         try {
             String storeJson = jdHomeApiService.getStoreInfoPageBean(shopId);
             log.info("=====查询商家门店接口返回信息:"+storeJson+"=====");
@@ -669,8 +681,23 @@ public class JdHomeFacadeService {
                     }
                 }
             }
+        }catch (JdHomeException ex) {
+            log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException e){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(e);
         }catch (Exception e){
-            return "获取平台门店信息失败";
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(e);
+        }finally {
+            if (log1 !=null){
+                log1.setLogId(log1.getLogId());
+                log1.setTitle(MessageFormat.format("查询商家门店{0}失败！", shopId));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"dishId\":{0}", shopId)).concat("}"));
+                sysFacadeService.updSynLog(log1);
+                return "查询商家门店消息失败";
+            }
         }
         return rtn;
     }
@@ -706,8 +733,11 @@ public class JdHomeFacadeService {
             result.setCode(0);
             result.setMsg("success");
             result.setData("拣货完成推送成功");
-           // return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"拣货完成推送成功\"}";
+        }catch (ScheduleException e){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(e);
         }catch (Exception ex){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
             result.setCode(-99);
             result.setMsg("failure");
@@ -754,6 +784,9 @@ public class JdHomeFacadeService {
             result.setCode(0);
             result.setMsg("success");
             result.setData("开始配送推送成功");
+        }catch (ScheduleException e){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(e);
         }catch (Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
             result.setCode(-99);
@@ -802,6 +835,9 @@ public class JdHomeFacadeService {
             result.setCode(0);
             result.setMsg("success");
             result.setData("订单妥投推送成功");
+        }catch (ScheduleException e){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(e);
         }catch (Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
             result.setCode(-99);
@@ -849,7 +885,11 @@ public class JdHomeFacadeService {
             result.setCode(0);
             result.setMsg("success");
             result.setData("用户取消推送成功");
+        }catch (ScheduleException e){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            log1 = sysFacadeService.functionRtn.apply(e);
         }catch (Exception ex){
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
             result.setCode(-99);
             result.setMsg("failure");
