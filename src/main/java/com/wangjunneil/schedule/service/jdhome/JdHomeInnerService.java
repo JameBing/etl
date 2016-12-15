@@ -86,22 +86,22 @@ public class JdHomeInnerService {
     }
 
     //获取单个订单
-    public OrderWaiMai getOrder(Long orderId){
+    public OrderWaiMai getOrder(Long orderId)throws ScheduleException{
         Query query = new Query(Criteria.where("platformOrderId").is(orderId).is("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
         OrderWaiMai order = mongoTemplate.findOne(query,OrderWaiMai.class);
         return order;
     }
 
     //修改订单状态
-    public void updateStatus(Long orderId,int status){
+    public void updateStatus(Long orderId,int status)throws ScheduleException{
         Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
         Update update = new Update().set("orderStatus",status)
-            .set("latestTime",new Date());
+            .set("latestTime", new Date());
         mongoTemplate.updateFirst(query, update, OrderWaiMai.class);
     }
 
     //添加/修改token
-    public void addAccessToken(JdHomeAccessToken jdHomeAccessToken) {
+    public void addAccessToken(JdHomeAccessToken jdHomeAccessToken) throws ScheduleException{
         // 计算token到期时间
         long time = Long.parseLong(jdHomeAccessToken.getTime());
         int expire_in = jdHomeAccessToken.getExpires_in();
@@ -127,7 +127,7 @@ public class JdHomeInnerService {
     }
 
     //根据门店Id获取token值
-    public JdHomeAccessToken getAccessToken(String shopId) {
+    public JdHomeAccessToken getAccessToken(String shopId) throws ScheduleException{
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("shopIds").elemMatch(Criteria.where("shopId").is(shopId)));
         JdHomeAccessToken jdHomeAccessToken = mongoTemplate.findOne(query, JdHomeAccessToken.class);
         if(jdHomeAccessToken == null){
@@ -137,14 +137,14 @@ public class JdHomeInnerService {
     }
 
     //根据商家Id获取token值
-    public JdHomeAccessToken getAccessTokenByComId(String companyId) {
+    public JdHomeAccessToken getAccessTokenByComId(String companyId) throws ScheduleException{
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(companyId));
         JdHomeAccessToken jdHomeAccessToken = mongoTemplate.findOne(query, JdHomeAccessToken.class);
         return jdHomeAccessToken;
     }
 
     //添加/修改回调token
-    public void addRefreshToken(JdHomeAccessToken jdHomeAccessToken){
+    public void addRefreshToken(JdHomeAccessToken jdHomeAccessToken)throws ScheduleException{
         // 计算token到期时间
         long time = Long.parseLong(jdHomeAccessToken.getTime());
         int expire_in = jdHomeAccessToken.getExpires_in();
@@ -166,7 +166,7 @@ public class JdHomeInnerService {
     }
 
     //添加回调Code
-    public void addBackCode(JdHomeAccessToken jdHomeAccessToken){
+    public void addBackCode(JdHomeAccessToken jdHomeAccessToken)throws ScheduleException{
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(jdHomeAccessToken.getCompanyId()));
         Update update = new Update()
             .set("code", jdHomeAccessToken.getCode());
