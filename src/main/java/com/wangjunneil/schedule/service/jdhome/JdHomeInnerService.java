@@ -94,7 +94,7 @@ public class JdHomeInnerService {
     }
 
     //修改订单状态
-    public void updateStatus(String  orderId,int status){
+    public void updateStatus(String  orderId,int status)throws ScheduleException{
         Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
         Update update = new Update().set("order.orderStatus",status)
             .set("latestTime", new Date());
