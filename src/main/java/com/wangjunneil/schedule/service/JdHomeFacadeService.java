@@ -66,6 +66,9 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex){
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
             rtn.setCode(-998);
@@ -650,7 +653,7 @@ public class JdHomeFacadeService {
     public String pickFinishOrder( JSONObject jsonObject){
         Result result = new Result();
         Log log1 = null;
-        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new RtnSerializer()).disableHtmlEscaping().create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
         String billId = jsonObject.getString("billId");
         String statusId = jsonObject.getString("statusId");
 
@@ -699,7 +702,7 @@ public class JdHomeFacadeService {
     public String deliveryOrder(JSONObject jsonObject){
         Result result = new Result();
         Log log1 = null;
-        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new RtnSerializer()).disableHtmlEscaping().create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
         String billId = jsonObject.getString("billId");
         String statusId = jsonObject.getString("statusId");
 
@@ -747,7 +750,7 @@ public class JdHomeFacadeService {
     public String finishOrder(JSONObject jsonObject){
         Result result = new Result();
         Log log1 = null;
-        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new RtnSerializer()).disableHtmlEscaping().create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
         String billId = jsonObject.getString("billId");
         String statusId = jsonObject.getString("statusId");
 
@@ -795,7 +798,7 @@ public class JdHomeFacadeService {
     public String userCancelOrder(JSONObject jsonObject){
         Result result = new Result();
         Log log1 = null;
-        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new RtnSerializer()).disableHtmlEscaping().create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
         String billId = jsonObject.getString("billId");
         String statusId = jsonObject.getString("statusId");
 
@@ -842,7 +845,7 @@ public class JdHomeFacadeService {
      */
     public String changeStatus(String jdParamJson){
         Result result = new Result();
-        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new RtnSerializer()).disableHtmlEscaping().create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(jdParamJson)){
             result.setCode(-1);
             result.setMsg("failure");
@@ -898,7 +901,7 @@ public class JdHomeFacadeService {
     //接口返回结果转换标准格式
     private String getResultList(String rtnJson){
         String str = "";
-        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new RtnSerializer()).disableHtmlEscaping().create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
         for (String json0 :rtnJson.split("#")){
             Rtn rtn = new Rtn();
             Result result = JSONObject.parseObject(json0, Result.class);

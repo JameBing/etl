@@ -559,7 +559,7 @@ public class SysFacadeService {
         jsonObject.put("riderPhone",orderInfo.getShipperphone());
         jsonObject.put("orderCancelTime","");
         jsonObject.put("orderCancelRemark","");
-        jsonObject.put("is_third_shipping",orderInfo.getIsthirdshipping());
+        jsonObject.put("isThirdShipping",orderInfo.getIsthirdshipping());
         jsonObject.put("deliveryStationNo","");
         jsonObject.put("deliveryStationName","");
         jsonObject.put("deliveryCarrierNo","");
@@ -696,7 +696,7 @@ public class SysFacadeService {
         jsonObject.put("riderPhone","");
         jsonObject.put("orderCancelTime","");
         jsonObject.put("orderCancelRemark","");
-        jsonObject.put("is_third_shipping","");
+        jsonObject.put("isThirdShipping","");
         jsonObject.put("deliveryStationNo",order.getRestaurantid());
         jsonObject.put("deliveryStationName",order.getRestaurantname());
         jsonObject.put("deliveryCarrierNo","");
