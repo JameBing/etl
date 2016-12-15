@@ -450,11 +450,8 @@ public class MeiTuanFacadeService {
                 String orderId = sysFacadeService.getOrderNum(shopId);
                 orderWaiMai.setOrderId(orderId);
             }
-            orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
-            orderWaiMai.setPlatformOrderId(platformOrderId);
-            orderWaiMai.setOrder(order);
-            orderWaiMai.setShopId(shopId);
-            sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
+            //sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
+            mtInnerService.updateStatus(String.valueOf(order.getOrderid()),order.getStatus());
             result = "{\"data\" : \"ok\"}" ;
         }
         catch (Exception ex){
