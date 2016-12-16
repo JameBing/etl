@@ -34,7 +34,7 @@ public class MeituanController {
     @RequestMapping(value = "/mtapi/openshop",method = RequestMethod.GET)
     public String openShop(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws ScheduleException{
         resp.setContentType("text/html;charset=utf-8");
-        String code = "6666";
+        String code = "7777";
         String params = mtFacadeService.openShop(code);
         out.println(params);
         out.close();

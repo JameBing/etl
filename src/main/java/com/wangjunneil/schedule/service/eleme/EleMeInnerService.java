@@ -1,5 +1,6 @@
 package com.wangjunneil.schedule.service.eleme;
 
+import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.eleme.Order;
 import org.apache.log4j.Logger;
@@ -66,7 +67,7 @@ public class EleMeInnerService {
     }
 
     //批量更新订单状态(根据订单号)
-    public void updSyncElemeOrderStastus(String ids,int status){
+    public void updSyncElemeOrderStastus(String ids,int status) throws ScheduleException{
         Query query = new Query();
         Criteria criteria = new Criteria();
         List<String> listIds = new ArrayList<String>();

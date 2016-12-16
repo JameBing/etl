@@ -327,7 +327,7 @@ public class JdHomeFacadeService {
                     orders.forEach(o->{
                         OrderWaiMai orderWaiMai = new OrderWaiMai();
                         orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
-                        orderWaiMai.setShopId(o.getProduceStationNoIsv());
+                        orderWaiMai.setShopId(shopId);
                         orderWaiMai.setOrderId(sysFacadeService.getOrderNum(o.getProduceStationNoIsv()));
                         orderWaiMai.setPlatformOrderId(String.valueOf(o.getOrderId()));
                         orderWaiMai.setOrder(o);
@@ -955,9 +955,6 @@ public class JdHomeFacadeService {
 
     //接口返回结果转换标准格式
     private void getResult(String rtnJson,Rtn rtn){
-        for (String json :rtnJson.split(",")){
-
-        }
         Result result = JSONObject.parseObject(rtnJson, Result.class);
         if(result.getCode()==0){
             JSONObject json = JSONObject.parseObject(result.getData());
