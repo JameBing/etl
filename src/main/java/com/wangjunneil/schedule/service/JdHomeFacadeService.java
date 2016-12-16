@@ -327,7 +327,7 @@ public class JdHomeFacadeService {
                     orders.forEach(o->{
                         OrderWaiMai orderWaiMai = new OrderWaiMai();
                         orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
-                        orderWaiMai.setShopId(o.getProduceStationNoIsv());
+                        orderWaiMai.setShopId(shopId);
                         orderWaiMai.setOrderId(sysFacadeService.getOrderNum(o.getProduceStationNoIsv()));
                         orderWaiMai.setPlatformOrderId(String.valueOf(o.getOrderId()));
                         orderWaiMai.setOrder(o);
@@ -914,45 +914,49 @@ public class JdHomeFacadeService {
      * @return
      */
     public String changeStatus(String jdParamJson){
+        String res = null;
         Result result = new Result();
         Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(jdParamJson)){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("订单状态推送接口请求参数为空");
-            return gson.toJson(result);
-        }
-        JSONObject jsonObject  = JSONObject.parseObject(jdParamJson);
-        String statusId = jsonObject.getString("statusId");
-        if(StringUtil.isEmpty(statusId)){
-            result.setCode(-1);
-            result.setMsg("failure");
-            result.setData("订单状态推送接口订单状态为空");
-            return gson.toJson(result);
-        }
-        //配送中……
-        if(Integer.parseInt(statusId)==Constants.JH_ORDER_DELIVERING){
-            this.deliveryOrder(jsonObject);
-        //妥投成功
-        }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_CONFIRMED){
-            this.finishOrder(jsonObject);
-        //用户取消
-        }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_USER_CANCELLED){
-            this.userCancelOrder(jsonObject);
+            res = gson.toJson(result);
         }else {
-            result.setCode(-1);
-            result.setMsg("error");
-            result.setData("此订单状态无需修改");
-            return gson.toJson(result);
+            JSONObject jsonObject  = JSONObject.parseObject(jdParamJson);
+            String statusId = jsonObject.getString("statusId");
+            if(StringUtil.isEmpty(statusId)){
+                result.setCode(-1);
+                result.setMsg("failure");
+                result.setData("订单状态推送接口订单状态为空");
+                res =  gson.toJson(result);
+            }
+            else    {
+                //配送中……
+                if(Integer.parseInt(statusId)==Constants.JH_ORDER_DELIVERING){
+                   res =    this.deliveryOrder(jsonObject);
+                    //妥投成功
+                }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_CONFIRMED){
+                    res = this.finishOrder(jsonObject);
+                    //用户取消
+                }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_USER_CANCELLED){
+                   res =     this.userCancelOrder(jsonObject);
+                }else {
+                    result.setCode(-1);
+                    result.setMsg("error");
+                    result.setData("此订单状态无需修改");
+                    res = gson.toJson(result);
+                }
+                if (!StringUtil.isEmpty(res) && (new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create().fromJson(res,Result.class).getCode() == 0)){
+                    sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,null);
+                }
+            }
         }
-        return null;
+        return  res;
     }
 
     //接口返回结果转换标准格式
     private void getResult(String rtnJson,Rtn rtn){
-        for (String json :rtnJson.split(",")){
-
-        }
         Result result = JSONObject.parseObject(rtnJson, Result.class);
         if(result.getCode()==0){
             JSONObject json = JSONObject.parseObject(result.getData());

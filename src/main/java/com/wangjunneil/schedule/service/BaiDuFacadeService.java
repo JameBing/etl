@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.BaiDuException;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.Enum;
@@ -17,9 +18,16 @@ import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.service.baidu.BaiDuInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import javax.jms.Destination;
+import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by yangwanbin on 2016-11-17.
@@ -499,12 +507,18 @@ public class BaiDuFacadeService {
         try{
         Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
         Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
+        Integer status = Integer.valueOf(data.getOrder().getStatus());
        //？是否多个订单号存在
-       int intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.getEnumDesc(Enum.OrderTypeBaiDu.R5, data.getOrder().getStatus()).get("code").getAsString()));
+       int intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.getEnumDesc(Enum.OrderTypeBaiDu.R5, status).get("code").getAsString()));
         if (intR > 0){
             result.setErrno("0");
             result.setError("success");
             result.setData("");
+            List<String> listIds = new ArrayList<String>();
+            Collections.addAll(listIds,data.getOrder().getOrderId().split(","));
+            listIds.forEach((id)->{
+               sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_BAIDU,status,id,null,null);
+            });
             sysParams.setBody(result);
         }else{
             result.setErrno("1");
@@ -525,27 +539,50 @@ public class BaiDuFacadeService {
     }
 
     //确认订单
-    public String orderConfirm(String params){
+    public String orderConfirm(String params,String shopId){
+        Rtn rtn = new Rtn();
+        Log log = null;
+        rtn.setDynamic(params);
         String result = null;
-        Body bodyresult = new Body();
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
             Order order = new Order();
             order.setOrderId(params);
             result = baiDuApiService.orderConfirm(order);
-        }catch (Exception ex){
-            bodyresult.setErrno("1");
-            bodyresult.setError("error");
-            bodyresult.setData("Exception");
-            //日志记录,异常分析
+            rtn = gson1.fromJson(result,Rtn.class);
+        }catch (BaiDuException ex){
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
+
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
         }
+        catch (Exception ex){
+            log =  sysFacadeService.functionRtn.apply(ex);
+            rtn.setCode(-998);
+        }
+        if (log !=null){
+            log.setLogId(shopId.concat(log.getLogId()));
+            log.setTitle(MessageFormat.format("门店{0}确认订单{1}失败", shopId,params));
+            if (StringUtil.isEmpty(log.getRequest()))
+                log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"baidu_order_id\":{1}", shopId, params)).concat("}"));
+            sysFacadeService.updSynLog(log);
+            rtn.setDynamic(shopId);
+            rtn.setDesc("发生异常");
+            rtn.setLogId(log.getLogId());
+            rtn.setRemark(MessageFormat.format("门店{0}确认订单{1}失败！",shopId,params));
+        }
+        result = gson1.toJson(rtn);
         return  result;
     }
 
    //取消订单
-    public String orderCancel(String params,String reason,String reason_code){
+    public String orderCancel(String params,String reason,String reason_code,String shopId){
+        Rtn rtn = new Rtn();
+        Log log = null;
+        rtn.setDynamic(params);
             String result = null;
-            Body bodyresult = new Body();
             Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
             try {
                 Order order = new Order();
@@ -553,13 +590,30 @@ public class BaiDuFacadeService {
                 order.setType(reason_code);
                 order.setReason(reason);
                 result = baiDuApiService.orderCancel(order);
+                rtn = gson1.fromJson(result,Rtn.class);
+            }catch (BaiDuException ex){
+                rtn.setCode(-997);
+                log = sysFacadeService.functionRtn.apply(ex);
 
-            }catch (Exception ex){
-                bodyresult.setErrno("1");
-                bodyresult.setError("error");
-                bodyresult.setData("Exception");
-                //日志记录,异常分析
+            }catch (ScheduleException ex){
+                rtn.setCode(-999);
+                log = sysFacadeService.functionRtn.apply(ex);
             }
+            catch (Exception ex){
+                log =  sysFacadeService.functionRtn.apply(ex);
+                rtn.setCode(-998);
+            }
+        if (log !=null){
+            log.setLogId(shopId.concat(log.getLogId()));
+            log.setTitle(MessageFormat.format("门店{0}取消订单{1}失败", shopId,params));
+            if (StringUtil.isEmpty(log.getRequest()))
+                log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"baidu_order_id\":{1}", shopId, params)).concat("}"));
+            sysFacadeService.updSynLog(log);
+            rtn.setDynamic(shopId);
+            rtn.setDesc("发生异常");
+            rtn.setLogId(log.getLogId());
+            rtn.setRemark(MessageFormat.format("门店{0}取消订单{1}失败！",shopId,params));
+        }
         return  result;
     }
     //修改商户信息

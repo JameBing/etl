@@ -25,6 +25,6 @@ public class SpringJmsTest {
 
 @Test
     public void testTopic(){
-        topicMessageProducer.sendMessage(topicDestination,"1112");
+        topicMessageProducer.sendMessage(topicDestination,"1112","1212");
     }
 }

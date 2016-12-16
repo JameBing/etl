@@ -42,12 +42,12 @@ public class MQTransportListener implements org.apache.activemq.transport.Transp
         switch (this.destination){
             case "topicDestinationWaiMaiOrder":   //推送外卖订单的 topic queue
                     if (StaticObj.mqTransportTopicOrder){
-                        setTransportFlag(false);
+                        //setTransportFlag(false);
                     }else  return;
                 break;
             case "topicDestinationWaiMaiOrderStatus":   //推送订单状态的topic queue
-                if (StaticObj.isMqTransportTopicOrderStatus){
-                    setTransportFlag(false);
+                if (StaticObj.MqTransportTopicOrderStatus){
+                 //   setTransportFlag(false);
                 }else  return;
                 break;
             default:
@@ -78,8 +78,8 @@ public class MQTransportListener implements org.apache.activemq.transport.Transp
                 StaticObj.mqTransportTopicOrder = boolValue;
                 break;
             case "topicDestinationWaiMaiOrderStatus":   //推送订单状态的topic queue
-                if (StaticObj.isMqTransportTopicOrderStatus != boolValue)
-                    StaticObj.isMqTransportTopicOrderStatus = boolValue;
+                if (StaticObj.MqTransportTopicOrderStatus != boolValue)
+                    StaticObj.MqTransportTopicOrderStatus = boolValue;
                 break;
             default:
                 break;
