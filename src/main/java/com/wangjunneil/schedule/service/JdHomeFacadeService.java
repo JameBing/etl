@@ -68,11 +68,11 @@ public class JdHomeFacadeService {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException ex){
             rtn.setCode(-999);
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }catch (Exception ex){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             rtn.setCode(-998);
         }finally {
             //有异常产生
@@ -117,11 +117,11 @@ public class JdHomeFacadeService {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException ex){
             rtn.setCode(-999);
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }catch(Exception ex){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             rtn.setCode(-998);
         }finally {
             if (log1 !=null){
@@ -164,11 +164,11 @@ public class JdHomeFacadeService {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException ex){
             rtn.setCode(-999);
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }catch(Exception ex){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             rtn.setCode(-998);
         }finally {
             if (log1 !=null){
@@ -211,11 +211,11 @@ public class JdHomeFacadeService {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException ex){
             rtn.setCode(-999);
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }catch(Exception ex){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             rtn.setCode(-998);
         }finally {
             if (log1 !=null){
@@ -344,11 +344,11 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex) {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException e) {
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
-        }catch(Exception ex){
             log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+        }catch(Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }finally {
             if (log1 !=null){
                 log1.setLogId(billId.concat(log1.getLogId()));
@@ -489,11 +489,11 @@ public class JdHomeFacadeService {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException ex){
             rtn.setCode(-999);
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }catch(Exception ex){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             rtn.setCode(-998);
         }finally {
             if (log1 !=null){
@@ -532,8 +532,8 @@ public class JdHomeFacadeService {
                 jdHomeInnerService.addRefreshToken(jdAccessToken);
             }
         }catch (ScheduleException e){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1.setLogId(log1.getLogId());
             log1.setTitle(MessageFormat.format("接受京东传入的code:", jdAccessToken.getCode()));
             if (StringUtil.isEmpty(log1.getRequest()))
@@ -590,11 +590,11 @@ public class JdHomeFacadeService {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException ex){
             rtn.setCode(-999);
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }catch(Exception ex){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             rtn.setCode(-998);
         }finally {
             if (log1 !=null){
@@ -641,11 +641,11 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex) {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException e){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }catch (Exception e){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }finally {
             if (log1 !=null){
                 log1.setLogId(log1.getLogId());
@@ -684,11 +684,11 @@ public class JdHomeFacadeService {
         }catch (JdHomeException ex) {
             log1 = sysFacadeService.functionRtn.apply(ex);
         }catch (ScheduleException e){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }catch (Exception e){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }finally {
             if (log1 !=null){
                 log1.setLogId(log1.getLogId());
@@ -734,11 +734,11 @@ public class JdHomeFacadeService {
             result.setMsg("success");
             result.setData("拣货完成推送成功");
         }catch (ScheduleException e){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
-        }catch (Exception ex){
             log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+        }catch (Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             result.setCode(-99);
             result.setMsg("failure");
             result.setData("拣货完成推送失败");
@@ -785,10 +785,11 @@ public class JdHomeFacadeService {
             result.setMsg("success");
             result.setData("开始配送推送成功");
         }catch (ScheduleException e){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }catch (Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             result.setCode(-99);
             result.setMsg("failure");
             result.setData("开始配送推送失败");
@@ -836,10 +837,11 @@ public class JdHomeFacadeService {
             result.setMsg("success");
             result.setData("订单妥投推送成功");
         }catch (ScheduleException e){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
         }catch (Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             result.setCode(-99);
             result.setMsg("failure");
             result.setData("订单妥投推送失败");
@@ -886,11 +888,11 @@ public class JdHomeFacadeService {
             result.setMsg("success");
             result.setData("用户取消推送成功");
         }catch (ScheduleException e){
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             log1 = sysFacadeService.functionRtn.apply(e);
-        }catch (Exception ex){
             log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+        }catch (Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
             result.setCode(-99);
             result.setMsg("failure");
             result.setData("用户取消推送失败");
@@ -973,6 +975,7 @@ public class JdHomeFacadeService {
         for (String json0 :rtnJson.split("#")){
             Rtn rtn = new Rtn();
             Result result = JSONObject.parseObject(json0, Result.class);
+
             if(result.getCode()==0){
                 JSONObject json = JSONObject.parseObject(result.getData());
                 rtn.setCode(json.getInteger("retCode"));
