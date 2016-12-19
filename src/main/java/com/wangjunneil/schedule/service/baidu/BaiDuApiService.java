@@ -96,8 +96,8 @@ public class BaiDuApiService {
             .disableHtmlEscaping().create();
         String ticket = sysParams.getTicket();
         String params = "body={0}&cmd={1}&timestamp={2}&version={3}&ticket={4}&source={5}&encrypt={6}&secret={7}";
-        params =  MessageFormat.format(params,gson.toJson(sysParams.getBody()),sysParams.getCmd(),sysParams.getTimestamp(),sysParams.getVersion(),ticket
-            ,String.valueOf(sysParams.getSource()),sysParams.getEncrypt(),sysParams.getSecret());
+        params =  MessageFormat.format(params, gson.toJson(sysParams.getBody()), sysParams.getCmd(), sysParams.getTimestamp(), sysParams.getVersion(), ticket
+            , String.valueOf(sysParams.getSource()), sysParams.getEncrypt(), sysParams.getSecret());
         params = StringUtil.retParamAsc(params);
         params = StringUtil.chinaToUnicode(params);
 
@@ -267,6 +267,9 @@ public class BaiDuApiService {
         SysParams sysParams = gson.fromJson(response, SysParams.class);
         //暂不考虑验证返回值中的sign签名合法性
         Body body = gson.fromJson(gson.toJson(sysParams.getBody()), Body.class);
+        if(!body.getErrno().equals("0")){
+            throw  new BaiDuException("ScheduleException","门店不存在",requestStr,new Throwable().getStackTrace());
+        }
         Shop shop1 = gson.fromJson(body.getData().toString(), Shop.class);
         JsonObject jsonObject = Enum.getEnumDesc(Enum.ReturnCodeBaiDu.R0, Integer.valueOf(body.getErrno()));
         jsonObject.addProperty("baidu_shop_id", shop1.getBaiduShopId());
