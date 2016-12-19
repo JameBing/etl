@@ -937,7 +937,7 @@ public class SysFacadeService {
     //格式化京东到家订单状态
     private int tranJHOrderStatus(int status){
         switch (status){
-            case Constants.JH_ORDER_WAITING:
+            case 90000:
                 return Constants.POS_ORDER_SUSPENDING;
             case Constants.JH_ORDER_RECEIVED:
                 return Constants.POS_ORDER_CONFIRMED;
@@ -955,7 +955,7 @@ public class SysFacadeService {
     //格式化美团订单状态
     private int tranMTOrderStatus(int status){
         switch (status){
-            case Constants.MT_STATUS_CODE_UNPROCESSED:
+            case 90000:
                 return Constants.POS_ORDER_SUSPENDING;
             case Constants.MT_STATUS_CODE_CONFIRMED:
                 return Constants.POS_ORDER_CONFIRMED;
@@ -990,6 +990,12 @@ public class SysFacadeService {
         String tmp = "\"orderId\":\"{0}\"，\"orderStatus\":\"{1}\",\"shopId\":\"{2}\"",shop = shopId;
         boolean boolSend = true;
         JsonObject jsonMessage = new JsonObject();
+        JsonObject jsonObject = new JsonObject();
+        JsonObject jsonObjectEmpty = new JsonObject();
+        jsonObjectEmpty.addProperty("orderId","");
+        jsonObjectEmpty.addProperty("orderStatus","");
+        jsonObjectEmpty.addProperty("shopId","");
+        String jsonStr = new  Gson().toJson(jsonObjectEmpty);
         switch (platform){
             case Constants.PLATFORM_WAIMAI_BAIDU:
                 orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_BAIDU,platformOrderId);
@@ -998,10 +1004,13 @@ public class SysFacadeService {
                 }else   {
                     shop = orderWaiMai.getShopId();
                 }
-                jsonMessage.addProperty("baidu", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":tranBdOrderStatus(status),orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("jdhome",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("meituan",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("eleme",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonObject.addProperty("orderId",orderWaiMai==null?"":orderWaiMai.getOrderId());
+                jsonObject.addProperty("orderStatus",orderWaiMai==null?"":String.valueOf(tranBdOrderStatus(status)));
+                jsonObject.addProperty("shopId",shop);
+                jsonMessage.addProperty("baidu",new Gson().toJson(jsonObject));
+                jsonMessage.addProperty("jdhome",jsonStr);
+                jsonMessage.addProperty("meituan",jsonStr);
+                jsonMessage.addProperty("eleme",jsonStr);
                 break;
             case  Constants.PLATFORM_WAIMAI_JDHOME:
                 orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_JDHOME,platformOrderId);
@@ -1010,16 +1019,23 @@ public class SysFacadeService {
                 }else   {
                     shop = orderWaiMai.getShopId();
                 }
-                jsonMessage.addProperty("baidu",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("jdhome", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":tranJHOrderStatus(status),orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("meituan",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("eleme",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+
+                jsonMessage.addProperty("baidu",jsonStr);
+                jsonObject.addProperty("orderId",orderWaiMai==null?"":platformOrderId);
+                jsonObject.addProperty("orderStatus",orderWaiMai==null?"":String.valueOf(tranJHOrderStatus(status)));
+                jsonObject.addProperty("shopId",shop);
+                jsonMessage.addProperty("jdhome", new Gson().toJson(jsonObject));
+                jsonMessage.addProperty("meituan",jsonStr);
+                jsonMessage.addProperty("eleme",jsonStr);
                 break;
             case  Constants.PLATFORM_WAIMAI_MEITUAN:
-                jsonMessage.addProperty("baidu",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("jdhome", MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("meituan",MessageFormat.format(tmp,orderId,tranMTOrderStatus(status),shop));
-                jsonMessage.addProperty("eleme",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("baidu",jsonStr);
+                jsonMessage.addProperty("jdhome",jsonStr);
+                jsonObject.addProperty("orderId",orderId);
+                jsonObject.addProperty("orderStatus",tranMTOrderStatus(status));
+                jsonObject.addProperty("shopId",shop);
+                jsonMessage.addProperty("meituan",new Gson().toJson(jsonObject));
+                jsonMessage.addProperty("eleme",jsonStr);
                 break;
             case  Constants.PLATFORM_WAIMAI_ELEME:
                 orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_ELEME,platformOrderId);
@@ -1028,10 +1044,13 @@ public class SysFacadeService {
                 }else   {
                     shop = orderWaiMai.getShopId();
                 }
-                jsonMessage.addProperty("baidu",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("jdhome",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("meituan",MessageFormat.format(tmp,"","",orderWaiMai==null?"":shop));
-                jsonMessage.addProperty("eleme", MessageFormat.format(tmp,orderWaiMai==null?"":orderWaiMai.getOrderId(),orderWaiMai==null?"":tranELOrderStatus(status),orderWaiMai==null?"":shop));
+                jsonMessage.addProperty("baidu",jsonStr);
+                jsonMessage.addProperty("jdhome",jsonStr);
+                jsonMessage.addProperty("meituan",jsonStr);
+                jsonObject.addProperty("orderId",orderWaiMai==null?"":orderWaiMai.getOrderId());
+                jsonObject.addProperty("orderStatus",orderWaiMai==null?"":String.valueOf(tranELOrderStatus(status)));
+                jsonObject.addProperty("shopId",shop);
+                jsonMessage.addProperty("eleme", new Gson().toJson(jsonObject));
                 break;
             default:
                 boolSend = false;

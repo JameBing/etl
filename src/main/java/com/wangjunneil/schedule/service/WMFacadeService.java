@@ -224,6 +224,17 @@ public class WMFacadeService {
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
+    //查询门店状态
+    public String getStoreStatus(ParsFromPos parsFromPos){
+        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = null, result_jdhome = null, result_eleme = null, result_meituan = null;
+        result_baidu = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        result_jdhome = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        result_eleme = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        result_meituan = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        return "{".concat(MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme)).concat("}");
+    }
+
+
     //===============菜品=================/
     //新增菜品分类
     public String dishCategoryCreate(JsonObject json){
@@ -314,26 +325,26 @@ public class WMFacadeService {
             result_jdhome = null,
             result_eleme = null,
             result_meituan = null;
-        if(parsFromPos.getBaidu()!=null){
-            for(String id:parsFromPos.getBaidu().getOrderId().split(",")){
+        if(parsFromPos.getBaidu()!=null  && !StringUtil.isEmpty(parsFromPos.getBaidu().getPlatformOrderId())){
+            for(String id:parsFromPos.getBaidu().getPlatformOrderId().split(",")){
                 switch (isAgree){
                     case 0:
-                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderConfirm(id);
+                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderConfirm(id,parsFromPos.getBaidu().getShopId());
                         break;
                     case 1:
-                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderCancel(id,parsFromPos.getBaidu ().getReason(),parsFromPos.getBaidu().getReasonCode());
+                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderCancel(id,parsFromPos.getBaidu ().getReason(),parsFromPos.getBaidu().getReasonCode(),parsFromPos.getBaidu().getShopId());
                         break;
                     default:break;
                 }
             }
         }
-        if(parsFromPos.getJdhome()!=null){
-            for(String id:parsFromPos.getJdhome().getOrderId().split(",")){
+        if(parsFromPos.getJdhome()!=null  && !StringUtil.isEmpty(parsFromPos.getJdhome().getPlatformOrderId())){
+            for(String id:parsFromPos.getJdhome().getPlatformOrderId().split(",")){
                   result_jdhome =(result_jdhome == null?"":result_jdhome+",")+jdHomeFacadeService.orderAcceptOperate(id, parsFromPos.getJdhome().getShopId(),isAgree==0?true:false);
                 }
             }
-        if(parsFromPos.getMeituan()!=null){
-            for(String id:parsFromPos.getMeituan().getOrderId().split(",")){
+        if(parsFromPos.getMeituan()!=null && !StringUtil.isEmpty(parsFromPos.getMeituan().getPlatformOrderId())){
+            for(String id:parsFromPos.getMeituan().getPlatformOrderId().split(",")){
                 switch (isAgree){
                     case 0:
                         result_meituan =(result_meituan == null?"":result_meituan+",")+meiTuanFacadeService.getConfirmOrder(Long.parseLong(id));
@@ -345,8 +356,8 @@ public class WMFacadeService {
                 }
             }
         }
-        if(parsFromPos.getEleme()!=null){
-            for(String id:parsFromPos.getEleme().getOrderId().split(",")){
+        if(parsFromPos.getEleme()!=null  && !StringUtil.isEmpty(parsFromPos.getEleme().getPlatformOrderId())){
+            for(String id:parsFromPos.getEleme().getPlatformOrderId().split(",")){
                 result_eleme =(result_eleme == null?"":result_eleme+",")+eleMeFacadeService.upOrderStatus(id,isAgree==0?"2":"-1",parsFromPos.getEleme().getReason());
             }
         }

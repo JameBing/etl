@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.controller.waimai;
 
 
 import com.google.gson.JsonObject;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageConsumer;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.common.ParsFormPos2;
@@ -124,9 +125,24 @@ public class WMController {
      */
     @RequestMapping(value = "/shop/close", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
-    public String shopClose(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    public String shopClose(@RequestBody(required = false) ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.shopClose(parsFromPos));
+        return  null;
+    }
+
+    /**
+     * 查询门店状态
+     * @param out   响应输出流对象
+     * @param request 请求对象  {baidu:{shopId:""},jdhome:{shopId:""},meituan:{shopId:""},eleme:{shopId:""}}
+     * @param response  浏览器响应对象
+     * @return  {baidu: [{code:0,desc:"success",remark:"营业中",dynamic:""}],jdhome:[{code:1,desc:"success",remark:"休息中",dynamic:""}],...}
+     */
+    @RequestMapping(value = "/shop/getShopStatus", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String getStoreStatus(@RequestBody(required = false) ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+        response.setContentType("application/json;charset=uft-8");
+        out.println(wmFacadeService.getStoreStatus(parsFromPos));
         return  null;
     }
 
@@ -319,13 +335,14 @@ public class WMController {
      * 确认订单
      * @param out   响应输出流对象
      * @param response  浏览器响应对象
-     * @request request 浏览器请求对象 约定格式：{baidu:{orderId:"0001,0002",shopId:""},jdhome:{orderId:"0003,0004",shopId:""},meituan:{},eleme:{}}
+     * @request request 浏览器请求对象 约定格式：{baidu:{platformOrderId:"0001,0002",shopId:""},jdhome:{platformOrderId:"0003,0004",shopId:""},meituan:{},eleme:{}}
      * @return
      */
-    @RequestMapping(value = "/orderConfirm.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
+    @RequestMapping(value = "/order/confirm", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     public String orderConfirm(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         //response.setContentType("application/json;charset=uft-8");
         String reponseStr = wmFacadeService.orderConfirm(parsFromPos);
+
         out.println(reponseStr);
         return  null;
     }
@@ -335,11 +352,11 @@ public class WMController {
      * 取消订单
      *
      * @param out   响应输出流对象
-     * @request request 浏览器请求对象 约定格式：{baidu:{orderId:"0001,0002",shopId:"",reason:"",reasonCode:""},jdhome:{orderId:"0003,0004",shopId:"",reason:"",reasonCode:""},meituan:{},eleme:{}}
+     * @request request 浏览器请求对象 约定格式：{baidu:{platOrderId:"0001,0002",shopId:"",reason:"",reasonCode:""},jdhome:{platOrderId:"0003,0004",shopId:"",reason:"",reasonCode:""},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/orderCancel.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
+    @RequestMapping(value = "/order/cancel", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     @ResponseBody
     public String orderCancel(@RequestBody ParsFromPos parsFromPos,PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         //response.setContentType("application/json;charset=uft-8");
@@ -384,6 +401,7 @@ public class WMController {
         }
         return null;
     }
+
     //endregion
 
     //备注：需要提供接口用于中台系统下发门店编码对照信息

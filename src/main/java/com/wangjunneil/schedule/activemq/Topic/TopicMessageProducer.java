@@ -41,7 +41,9 @@ import javax.jms.*;
                          topicJmsTemplate.send(destination, new MessageCreator() {
                              @Override
                              public Message createMessage(Session session) throws JMSException {
-                                 TextMessage textMessage = session.createTextMessage(new Gson().toJson(jsonObject) + ( StringUtil.isEmpty(selector)?"":(",receiver:".concat(selector))));
+                                 //TextMessage textMessage = session.createTextMessage(new Gson().toJson(jsonObject) + ( StringUtil.isEmpty(selector)?"":(",receiver:".concat(selector))));
+                                 TextMessage textMessage = session.createTextMessage(new Gson().toJson(jsonObject) );
+                                 textMessage.setStringProperty("Selector",selector);
                                  textMessage.setJMSReplyTo(destination);
                                  return textMessage;
                              }

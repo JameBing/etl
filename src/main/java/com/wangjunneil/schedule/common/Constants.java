@@ -173,19 +173,19 @@ public final class Constants {
     public static final String  URL_JDHOME_STORE_ON = "https://openo2o.jd.com/djapi/stock/updateVendibility";
 
     //京东到家新增商家店内分类信息
-    public static final String  URL_ADD_SHOP_CATEGORY = "https://openo2o.jd.com/mockapi/pms/addShopCategory";
+    public static final String  URL_ADD_SHOP_CATEGORY = "https://openo2o.jd.com/djapi/pms/addShopCategory";
 
     //京东到家修改商家店内分类信息
-    public static final String URL_UPDATE_SHOP_CATEGORY = "https://openo2o.jd.com/mockapi/pms/updateShopCategory";
+    public static final String URL_UPDATE_SHOP_CATEGORY = "https://openo2o.jd.com/djapi/pms/updateShopCategory";
 
     //京东到家删除商家店内分类信息
-    public static final String URL_DELETE_SHOP_CATEGORY = "https://openo2o.jd.com/mockapi/pms/delShopCategory";
+    public static final String URL_DELETE_SHOP_CATEGORY = "https://openo2o.jd.com/djapi/pms/delShopCategory";
 
     //京东到家新增推送订单
-    public static final String URL_NEW_ORDER =  "https://openo2o.jd.com/mockapi/order/es/query";
+    public static final String URL_NEW_ORDER =  "https://openo2o.jd.com/djapi/order/es/query";
 
     //京东到家商家确认接单接口
-    public static final String URL_ORDER_ACCEPT_OPERATE ="https://openo2o.jd.com/mockapi/ocs/orderAcceptOperate";
+    public static final String URL_ORDER_ACCEPT_OPERATE ="https://openo2o.jd.com/djapi/ocs/orderAcceptOperate";
 
     //京东到家查询商家商品信息列表
     public static final String URL_QUERY_SKU_INFO ="https://openo2o.jd.com/djapi/pms/querySkuInfos";
