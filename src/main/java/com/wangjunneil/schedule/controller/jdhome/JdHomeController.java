@@ -63,7 +63,7 @@ public class JdHomeController {
         listBaseStockCenterRequest.add(inner);*/
         for(int i=0;i<10;i++){
             ParsFromPosInner inner = new ParsFromPosInner();
-            inner.setDishId("6666");
+            inner.setDishId("88888");
             inner.setShopId(shopId);
             listBaseStockCenterRequest.add(inner);
         }
@@ -180,8 +180,8 @@ public class JdHomeController {
        /* String json = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
         JSONObject jsonObject = JSON.parseObject(json);
         jdHomeFacadeService.pickFinishOrder(jsonObject);*/
-       /* String shopId = "";
-        String json = jdHomeFacadeService.openOrCloseStore(shopId,1);*/
+        String shopId = "72171";
+        String json = jdHomeFacadeService.getStoreStatus(shopId);
        /* String aa = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
         String json = jdHomeFacadeService.newOrder(aa,"6666");*/
       /*  OrderWaiMai orderWaiMai = new OrderWaiMai();
@@ -190,11 +190,11 @@ public class JdHomeController {
         Object object = null;
         orderWaiMai.setOrder(object);
         JSONObject json = sysFacadeService.formatOrder2Pos(orderWaiMai);*/
-        JSONObject json = new JSONObject();
+      /*  JSONObject json = new JSONObject();
         json.put("billId","222");
         json.put("statusId","333");
         json.put("timestamp","3333");
-        jdHomeFacadeService.newOrder(json.toJSONString(),"6666");
+        jdHomeFacadeService.newOrder(json.toJSONString(),"6666");*/
         out.println(json);
         out.close();
         return null;

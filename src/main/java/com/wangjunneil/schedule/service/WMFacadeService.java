@@ -224,6 +224,17 @@ public class WMFacadeService {
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
+    //查询门店状态
+    public String getStoreStatus(ParsFromPos parsFromPos){
+        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = null, result_jdhome = null, result_eleme = null, result_meituan = null;
+        result_baidu = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        result_jdhome = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        result_eleme = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        result_meituan = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        return "{".concat(MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme)).concat("}");
+    }
+
+
     //===============菜品=================/
     //新增菜品分类
     public String dishCategoryCreate(JsonObject json){
