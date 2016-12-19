@@ -3,7 +3,9 @@ package com.wangjunneil.schedule.service.meituan;
 import com.sankuai.meituan.waimai.opensdk.factory.APIFactory;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
 import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
+import com.sankuai.meituan.waimai.opensdk.vo.PoiParam;
 import com.sankuai.meituan.waimai.opensdk.vo.SystemParam;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,6 @@ public class MeiTuanApiService {
     public String openShop(String code) throws Exception {
         return APIFactory.getPoiAPI().poiOpen(sysPram, code);
     }
-
     //门店歇业
     public String closeShop(String code) throws Exception {
         return APIFactory.getPoiAPI().poiClose(sysPram, code);
@@ -45,7 +46,16 @@ public class MeiTuanApiService {
         return json;
     }
 
-    //查询所有商品
+
+    //查询门店详细信息
+    public List<PoiParam> poiMget(String appPoiCode) throws Exception {
+        List<PoiParam> poiList = APIFactory.getPoiAPI().poiMget(sysPram, appPoiCode);
+        return poiList;
+    }
+
+
+
+    //查询所有商品信息
     public FoodParam foodList(String appPoiCode,String foodCode) throws Exception {
         List<FoodParam> foodList = APIFactory.getFoodAPI().foodList(sysPram, appPoiCode);
         if(foodList !=null && foodList.size()>0){
@@ -61,6 +71,9 @@ public class MeiTuanApiService {
     //批量上架商品 upFrame   (0：未卖光 )
     public String upFrame(String appPoiCode,String foodCode) throws Exception {
         FoodParam food = foodList(appPoiCode,foodCode);
+        if(StringUtil.isEmpty(food)){
+            return null;
+        }
         FoodParam foodParam = new FoodParam();
         foodParam.setApp_poi_code(appPoiCode);
         foodParam.setApp_food_code(foodCode);
@@ -74,6 +87,9 @@ public class MeiTuanApiService {
     //批量下架商品 downFrame (1：卖光)
     public String downFrame(String appPoiCode,String foodCode) throws Exception {
         FoodParam food = foodList(appPoiCode,foodCode);
+        if(StringUtil.isEmpty(food)){
+            return null;
+        }
         FoodParam foodParam = new FoodParam();
         foodParam.setApp_poi_code(appPoiCode);
         foodParam.setApp_food_code(foodCode);

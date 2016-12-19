@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.sankuai.meituan.waimai.opensdk.exception.ApiOpException;
 import com.sankuai.meituan.waimai.opensdk.exception.ApiSysException;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
+import com.sankuai.meituan.waimai.opensdk.vo.PoiParam;
 import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.Constants;
@@ -28,6 +29,8 @@ import org.springframework.stereotype.Service;
 import javax.jms.Destination;
 import java.net.URLDecoder;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -71,6 +74,13 @@ public class MeiTuanFacadeService {
         Rtn rtn = new Rtn();
         rtn.setDynamic(code);
         Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(code)){
+            rtn.setCode(-1);
+            rtn.setDesc("error");
+            rtn.setRemark("门店Id为空，请检查");
+            return gson.toJson(rtn);
+        }
         try {
             json = mtApiService.openShop(code);
             if (json.equals("ok") || json.equals("200")){
@@ -104,7 +114,7 @@ public class MeiTuanFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("门店{0}开业失败！",code));
             }
-            return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+            return gson.toJson(rtn);
         }
     }
 
@@ -118,6 +128,13 @@ public class MeiTuanFacadeService {
         Rtn rtn = new Rtn();
         rtn.setDynamic(code);
         Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(code)){
+            rtn.setCode(-1);
+            rtn.setDesc("error");
+            rtn.setRemark("门店Id为空，请检查");
+            return gson.toJson(rtn);
+        }
         try {
             json = mtApiService.closeShop(code);
             if (json.equals("ok") || json.equals("200")){
@@ -151,7 +168,7 @@ public class MeiTuanFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("门店{0}关店失败！",code));
             }
-            return new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+            return gson.toJson(rtn);
         }
     }
 
@@ -198,6 +215,74 @@ public class MeiTuanFacadeService {
         }
     }
 
+
+    /**
+     * 批量获取门店详细信息  open_level - 0.未上线  1.正常营业  3.休息状态
+     * @params appPoiCode  APP方门店id
+     */
+    public String findShopStatus(String appPoiCode)throws Exception{
+        Rtn rtn = new Rtn();
+        rtn.setDynamic(appPoiCode);
+        Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        List<PoiParam> poiParam = new ArrayList<>();
+        try {
+            poiParam = mtApiService.poiMget(appPoiCode);
+            if(poiParam!=null && poiParam.size()>0){
+                PoiParam poi = poiParam.get(0);
+                int level =poi.getOpen_level();
+                if(level==0){
+                    rtn.setCode(0);
+                    rtn.setDesc("error");
+                    rtn.setRemark("此门店未上线");
+                    return gson.toJson(rtn);
+                }else if(level==1){
+                    rtn.setCode(1);
+                    rtn.setDesc("success");
+                    rtn.setRemark("正常营业");
+                    return gson.toJson(rtn);
+                }else if(level==3){
+                    rtn.setCode(3);
+                    rtn.setDesc("success");
+                    rtn.setRemark("门店休息");
+                    return gson.toJson(rtn);
+                }
+            }
+        }catch (MeiTuanException ex){
+            rtn.setCode(-997);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ApiOpException e){
+            rtn.setCode(e.getCode());
+            rtn.setDesc("error");
+            rtn.setRemark(e.getMsg());
+        }catch (Exception ex){
+            rtn.setCode(-998);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+        }finally {
+            //有异常产生
+            if (log1 !=null){
+                log1.setLogId(appPoiCode.concat(log1.getLogId()));
+                log1.setTitle(MessageFormat.format("门店{0}信息获取失败", appPoiCode));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"meituan_shop_id\":{1}", appPoiCode, "")).concat("}"));
+                sysFacadeService.updSynLog(log1);
+                rtn.setDynamic(appPoiCode);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log1.getLogId());
+                rtn.setRemark(MessageFormat.format("门店{0}信息获取失败！",appPoiCode));
+            }
+            return gson.toJson(rtn);
+        }
+    }
+
+
+
+    //新增所有菜品
+
+
     /**
      * 商品上架
      * @parama
@@ -208,8 +293,15 @@ public class MeiTuanFacadeService {
         rtn.setDynamic(appPoiCode);
         rtn.setDynamic(foodCode);
         Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class, new RtnSerializer()).disableHtmlEscaping().create();
         try {
             json = mtApiService.upFrame(appPoiCode, foodCode);
+            if(StringUtil.isEmpty(json)){
+                rtn.setCode(0);
+                rtn.setDesc("error");
+                rtn.setRemark("上架失败,无此商品!");
+                return gson.toJson(rtn);
+            }
             if (json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
                 rtn.setDesc("success");
@@ -241,7 +333,7 @@ public class MeiTuanFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("商品{0}上架失败！",appPoiCode));
             }
-            return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+            return gson.toJson(rtn);
         }
     }
 
@@ -256,8 +348,15 @@ public class MeiTuanFacadeService {
         rtn.setDynamic(appPoiCode);
         rtn.setDynamic(foodCode);
         Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         try {
             json = mtApiService.downFrame(appPoiCode, foodCode);
+            if(StringUtil.isEmpty(json)){
+                rtn.setCode(0);
+                rtn.setDesc("error");
+                rtn.setRemark("下架失败,无此商品!");
+                return gson.toJson(rtn);
+            }
             if (json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
                 rtn.setDesc("success");
@@ -289,7 +388,7 @@ public class MeiTuanFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("商品{0}下架失败！",appPoiCode));
             }
-            return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+            return gson.toJson(rtn);
         }
     }
 
