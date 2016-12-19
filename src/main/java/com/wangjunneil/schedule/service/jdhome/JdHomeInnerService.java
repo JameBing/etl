@@ -2,10 +2,12 @@ package com.wangjunneil.schedule.service.jdhome;
 
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -85,22 +87,22 @@ public class JdHomeInnerService {
     }
 
     //获取单个订单
-    public OrderInfoDTO getOrder(Long orderId){
-        Query query = new Query(Criteria.where("platformOrderId").is(orderId).is("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
-        OrderInfoDTO order = mongoTemplate.findOne(query,OrderInfoDTO.class);
+    public OrderWaiMai getOrder(String  orderId){
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+        OrderWaiMai order = mongoTemplate.findOne(query,OrderWaiMai.class);
         return order;
     }
 
     //修改订单状态
-    public void updateStatus(Long orderId,int status){
-        Query query = new Query(Criteria.where("platformOrderId").is(orderId));
-        Update update = new Update().set("orderStatus",status)
-            .set("latestTime",new Date());
-        mongoTemplate.updateFirst(query, update, OrderInfoDTO.class);
+    public void updateStatus(String  orderId,int status)throws ScheduleException{
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+        Update update = new Update().set("order.orderStatus",status)
+            .set("order.latestTime", new Date());
+        mongoTemplate.updateFirst(query, update, OrderWaiMai.class);
     }
 
     //添加/修改token
-    public void addAccessToken(JdHomeAccessToken jdHomeAccessToken) {
+    public void addAccessToken(JdHomeAccessToken jdHomeAccessToken) throws ScheduleException{
         // 计算token到期时间
         long time = Long.parseLong(jdHomeAccessToken.getTime());
         int expire_in = jdHomeAccessToken.getExpires_in();
@@ -126,7 +128,7 @@ public class JdHomeInnerService {
     }
 
     //根据门店Id获取token值
-    public JdHomeAccessToken getAccessToken(String shopId) {
+    public JdHomeAccessToken getAccessToken(String shopId){
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("shopIds").elemMatch(Criteria.where("shopId").is(shopId)));
         JdHomeAccessToken jdHomeAccessToken = mongoTemplate.findOne(query, JdHomeAccessToken.class);
         if(jdHomeAccessToken == null){
@@ -136,14 +138,14 @@ public class JdHomeInnerService {
     }
 
     //根据商家Id获取token值
-    public JdHomeAccessToken getAccessTokenByComId(String companyId) {
+    public JdHomeAccessToken getAccessTokenByComId(String companyId){
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(companyId));
         JdHomeAccessToken jdHomeAccessToken = mongoTemplate.findOne(query, JdHomeAccessToken.class);
         return jdHomeAccessToken;
     }
 
     //添加/修改回调token
-    public void addRefreshToken(JdHomeAccessToken jdHomeAccessToken){
+    public void addRefreshToken(JdHomeAccessToken jdHomeAccessToken)throws ScheduleException{
         // 计算token到期时间
         long time = Long.parseLong(jdHomeAccessToken.getTime());
         int expire_in = jdHomeAccessToken.getExpires_in();
@@ -165,7 +167,7 @@ public class JdHomeInnerService {
     }
 
     //添加回调Code
-    public void addBackCode(JdHomeAccessToken jdHomeAccessToken){
+    public void addBackCode(JdHomeAccessToken jdHomeAccessToken)throws ScheduleException{
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).and("companyId").is(jdHomeAccessToken.getCompanyId()));
         Update update = new Update()
             .set("code", jdHomeAccessToken.getCode());

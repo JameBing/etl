@@ -94,8 +94,9 @@ public class BaiDuApiService {
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
             .registerTypeAdapter(Body.class, new BodySerializer())
             .disableHtmlEscaping().create();
+        String ticket = sysParams.getTicket();
         String params = "body={0}&cmd={1}&timestamp={2}&version={3}&ticket={4}&source={5}&encrypt={6}&secret={7}";
-        params =  MessageFormat.format(params,gson.toJson(sysParams.getBody()),Constants.BAIDU_CMD_RESP.concat(".").concat(sysParams.getCmd()),sysParams.getTimestamp(),sysParams.getVersion(),sysParams.getTicket()
+        params =  MessageFormat.format(params,gson.toJson(sysParams.getBody()),sysParams.getCmd(),sysParams.getTimestamp(),sysParams.getVersion(),ticket
             ,String.valueOf(sysParams.getSource()),sysParams.getEncrypt(),sysParams.getSecret());
         params = StringUtil.retParamAsc(params);
         params = StringUtil.chinaToUnicode(params);
@@ -103,22 +104,23 @@ public class BaiDuApiService {
         JsonObject json = new JsonObject();
         JsonObject jsonBody = new JsonObject();
         JsonObject jsonData = new JsonObject();
+        jsonBody.addProperty("errno", 0);
+        jsonBody.addProperty("error","success");
        switch (sysParams.getCmd()){
-           case Constants.BAIDU_CMD_ORDER_CREATE:
-               jsonData.addProperty("source_order_id","123456789");
+           case Constants.BAIDU_CMD_RESP+"."+Constants.BAIDU_CMD_ORDER_CREATE:
+               String data = new JsonParser().parse(new JsonParser().parse(gson.toJson(sysParams.getBody())).getAsJsonObject().get("data").toString()).getAsJsonObject().get("source_order_id").toString();
+               jsonData.addProperty("source_order_id",data.replaceAll("\"",""));
                jsonBody.add("data", jsonData);
                break;
-           case Constants.BAIDU_CMD_ORDER_STATUS_PUSH:
+           case Constants.BAIDU_CMD_RESP +"."+Constants.BAIDU_CMD_ORDER_STATUS_PUSH:
                break;
            default:
                break;
        }
-        jsonBody.addProperty("errno", 0);
-        jsonBody.addProperty("error","success");
         json.add("body",jsonBody);
-        json.addProperty("cmd", Constants.BAIDU_CMD_RESP.concat(".").concat(sysParams.getCmd()));
+        json.addProperty("cmd", sysParams.getCmd());
         json.addProperty("source",sysParams.getSource());
-        json.addProperty("ticket",sysParams.getTicket());
+        json.addProperty("ticket",ticket);
         json.addProperty("timestamp",sysParams.getTimestamp());
         json.addProperty("version",3);
         json.addProperty("sign",StringUtil.getMD5(params));

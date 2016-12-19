@@ -2,14 +2,16 @@ package com.wangjunneil.schedule.controller.waimai;
 
 
 import com.google.gson.JsonObject;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.common.ParsFormPos2;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
-import com.wangjunneil.schedule.service.MeiTuanFacadeService;
 import com.wangjunneil.schedule.service.WMFacadeService;
+import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +19,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
+import javax.jms.Destination;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -123,10 +124,27 @@ public class WMController {
      */
     @RequestMapping(value = "/shop/close", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
-    public String shopClose(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+    public String shopClose(@RequestBody(required = false) ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.shopClose(parsFromPos));
         return  null;
+    }
+
+    /**
+     * 修改商户信息
+     *
+     * @param out   响应输出流对象
+     * @param response  浏览器响应对象
+     * @return
+     */
+    @RequestMapping(value = "/shop/update",method = RequestMethod.POST)
+    @ResponseBody
+    public String shopUpdate( @RequestBody JsonObject jsonObject,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
+        response.setContentType("application/json;charset=uft-8");
+        //request.getParameter("minBuyFree");
+        //request.getParameter("minOrderPrice");
+        out.println(wmFacadeService.shopUpdate(jsonObject));
+        return null;
     }
 
 //endregion
@@ -261,7 +279,7 @@ public class WMController {
      * @param request  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/status","/djsw/pickFinishOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/status","/djsw/userCancelOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
     public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         String platform = null;
         String requestUrl = request.getPathInfo().toLowerCase();
@@ -287,6 +305,8 @@ public class WMController {
      *
      * @param out   响应输出流对象
      * @param response  浏览器响应对象
+     *
+     *
      * @return
      */
     @RequestMapping(value = "/orderGet.php", method = RequestMethod.GET)
@@ -299,10 +319,10 @@ public class WMController {
      * 确认订单
      * @param out   响应输出流对象
      * @param response  浏览器响应对象
-     * @request request 浏览器请求对象 约定格式：{baidu:{orderId:"0001,0002",shopId:""},jdhome:{orderId:"0003,0004",shopId:""},meituan:{},eleme:{}}
+     * @request request 浏览器请求对象 约定格式：{baidu:{platformOrderId:"0001,0002",shopId:""},jdhome:{platformOrderId:"0003,0004",shopId:""},meituan:{},eleme:{}}
      * @return
      */
-    @RequestMapping(value = "/orderConfirm.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
+    @RequestMapping(value = "/order/confirm", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     public String orderConfirm(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         //response.setContentType("application/json;charset=uft-8");
         String reponseStr = wmFacadeService.orderConfirm(parsFromPos);
@@ -315,11 +335,11 @@ public class WMController {
      * 取消订单
      *
      * @param out   响应输出流对象
-     * @request request 浏览器请求对象 约定格式：{baidu:{orderId:"0001,0002",shopId:"",reason:"",reasonCode:""},jdhome:{orderId:"0003,0004",shopId:"",reason:"",reasonCode:""},meituan:{},eleme:{}}
+     * @request request 浏览器请求对象 约定格式：{baidu:{platOrderId:"0001,0002",shopId:"",reason:"",reasonCode:""},jdhome:{platOrderId:"0003,0004",shopId:"",reason:"",reasonCode:""},meituan:{},eleme:{}}
      * @param response  浏览器响应对象
      * @return
      */
-    @RequestMapping(value = "/orderCancel.php", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
+    @RequestMapping(value = "/order/cancel", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     @ResponseBody
     public String orderCancel(@RequestBody ParsFromPos parsFromPos,PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         //response.setContentType("application/json;charset=uft-8");
@@ -331,33 +351,9 @@ public class WMController {
 
 //endregion
 
-    //备注：需要提供接口用于中台系统下发门店编码对照信息
-    @RequestMapping(value = "/test2",method = RequestMethod.POST)
-    public String test2(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
-        try {
-            StringBuffer sb = new StringBuffer();
-            InputStream is = request.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String s = "";
-            while ((s = br.readLine()) != null) {
-                sb.append(s);
-            }
-            String str = sb.toString();
-            //out.println(wmFacadeService.online(request.getParameterMap()));
-            out.println(str);
-        }catch (Exception ex){
-
-        }
-//        HttpServletRequest httpRequest = (HttpServletRequest)request;
-//        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(httpRequest.getSession().getServletContext());
-//        MultipartHttpServletRequest multipartRequest = commonsMultipartResolver.resolveMultipart(httpRequest);
-        return null;
-    }
-
+    //region  Other
     /**
      * 获取供应商信息
-     *
      * @param out   响应输出流对象
      * @param response  浏览器响应对象
      * @return
@@ -369,21 +365,27 @@ public class WMController {
         return null;
     }
 
-    /**
-     * 修改商户信息
-     *
-     * @param out   响应输出流对象
-     * @param response  浏览器响应对象
-     * @return
-     */
-    @RequestMapping(value = "/shop/update",method = RequestMethod.POST)
-    @ResponseBody
-    public String shopUpdate( @RequestBody JsonObject jsonObject,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
-        response.setContentType("application/json;charset=uft-8");
-        //request.getParameter("minBuyFree");
-        //request.getParameter("minOrderPrice");
-        out.println(wmFacadeService.shopUpdate(jsonObject));
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrder")
+    private TopicMessageProducer topicMessageProducerWaiMaiOrder;
+
+    @Autowired
+    @Qualifier("topicDestinationWaiMaiOrder")
+    private Destination topicDestinationWaiMaiOrder;
+
+    @RequestMapping(value = "/test1",method = RequestMethod.GET)
+    public String test1(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
+        try {
+            response.setContentType("text/html; charset=utf-8");
+            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,"杨大山,你辛苦了:"+ DateTimeUtil.dateFormat(new Date(), "yyyyMMddHHmmss"),"6666");
+            out.println("测试MQ");
+        }catch (Exception ex){
+
+        }
         return null;
     }
+    //endregion
+
+    //备注：需要提供接口用于中台系统下发门店编码对照信息
 
 }

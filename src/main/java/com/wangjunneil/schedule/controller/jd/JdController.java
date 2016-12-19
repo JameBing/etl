@@ -2,7 +2,7 @@ package com.wangjunneil.schedule.controller.jd;
 
 import com.jd.open.api.sdk.JdException;
 import com.jd.open.api.sdk.request.order.OrderSopOutstorageRequest;
-import com.wangjunneil.schedule.activemq.QueueMessageProducer;
+import com.wangjunneil.schedule.activemq.Queue.QueueMessageProducer;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.crontab.JdOrderJob;
@@ -11,7 +11,6 @@ import com.wangjunneil.schedule.entity.jd.JdMemberRequest;
 import com.wangjunneil.schedule.entity.sys.*;
 import com.wangjunneil.schedule.entity.jd.JdCrmOrder;
 import com.wangjunneil.schedule.entity.jd.JdOrderRequest;
-import com.wangjunneil.schedule.entity.tm.TmallOrderRequest;
 import com.wangjunneil.schedule.service.JdFacadeService;
 import com.wangjunneil.schedule.service.SysFacadeService;
 import org.apache.log4j.Logger;

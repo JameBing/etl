@@ -85,7 +85,7 @@ public class WMFacadeService {
             case Constants.PLATFORM_WAIMAI_ELEME:
                 switch (stringMap.get("push_action")[0]){
                     case "1": //新订单
-                      result =    eleMeFacadeService.getNewOrder(stringMap.get("eleme_order_ids")[0]);
+                        result =    eleMeFacadeService.getNewOrder(stringMap.get("eleme_order_ids")[0]);
                         break;
                     case "2": //订单状态变更
                       result =    eleMeFacadeService.orderChange(stringMap.get("eleme_order_id")[0], stringMap.get("new_status")[0]);
@@ -163,6 +163,13 @@ public class WMFacadeService {
                   break;
               case Constants.PLATFORM_WAIMAI_JDHOME:
                     result = jdHomeFacadeService.changeStatus(stringMap.get("jd_param_json")[0]);
+                  break;
+              case Constants.PLATFORM_WAIMAI_MEITUAN:
+                  Map<String, String[]> map = new HashMap<String, String[]>();
+                  map.putAll(stringMap);
+                  String[] strArr = {"extras", "detail"};
+                  map.put("ZY_ETL_JSON_KEYS", strArr);
+                  result = meiTuanFacadeService.getChangeOrderStatus(functionMap2Json.apply(map));
                   break;
               default:break;
           }
@@ -307,26 +314,26 @@ public class WMFacadeService {
             result_jdhome = null,
             result_eleme = null,
             result_meituan = null;
-        if(parsFromPos.getBaidu()!=null){
-            for(String id:parsFromPos.getBaidu().getOrderId().split(",")){
+        if(parsFromPos.getBaidu()!=null  && !StringUtil.isEmpty(parsFromPos.getBaidu().getPlatformOrderId())){
+            for(String id:parsFromPos.getBaidu().getPlatformOrderId().split(",")){
                 switch (isAgree){
                     case 0:
-                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderConfirm(id);
+                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderConfirm(id,parsFromPos.getBaidu().getShopId());
                         break;
                     case 1:
-                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderCancel(id,parsFromPos.getBaidu ().getReason(),parsFromPos.getBaidu().getReasonCode());
+                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderCancel(id,parsFromPos.getBaidu ().getReason(),parsFromPos.getBaidu().getReasonCode(),parsFromPos.getBaidu().getShopId());
                         break;
                     default:break;
                 }
             }
         }
-        if(parsFromPos.getJdhome()!=null){
-            for(String id:parsFromPos.getJdhome().getOrderId().split(",")){
+        if(parsFromPos.getJdhome()!=null  && !StringUtil.isEmpty(parsFromPos.getJdhome().getPlatformOrderId())){
+            for(String id:parsFromPos.getJdhome().getPlatformOrderId().split(",")){
                   result_jdhome =(result_jdhome == null?"":result_jdhome+",")+jdHomeFacadeService.orderAcceptOperate(id, parsFromPos.getJdhome().getShopId(),isAgree==0?true:false);
                 }
             }
-        if(parsFromPos.getMeituan()!=null){
-            for(String id:parsFromPos.getMeituan().getOrderId().split(",")){
+        if(parsFromPos.getMeituan()!=null && !StringUtil.isEmpty(parsFromPos.getMeituan().getPlatformOrderId())){
+            for(String id:parsFromPos.getMeituan().getPlatformOrderId().split(",")){
                 switch (isAgree){
                     case 0:
                         result_meituan =(result_meituan == null?"":result_meituan+",")+meiTuanFacadeService.getConfirmOrder(Long.parseLong(id));
@@ -338,8 +345,8 @@ public class WMFacadeService {
                 }
             }
         }
-        if(parsFromPos.getEleme()!=null){
-            for(String id:parsFromPos.getEleme().getOrderId().split(",")){
+        if(parsFromPos.getEleme()!=null  && !StringUtil.isEmpty(parsFromPos.getEleme().getPlatformOrderId())){
+            for(String id:parsFromPos.getEleme().getPlatformOrderId().split(",")){
                 result_eleme =(result_eleme == null?"":result_eleme+",")+eleMeFacadeService.upOrderStatus(id,isAgree==0?"2":"-1",parsFromPos.getEleme().getReason());
             }
         }

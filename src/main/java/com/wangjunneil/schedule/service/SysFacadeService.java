@@ -2,14 +2,15 @@ package com.wangjunneil.schedule.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.wangjunneil.schedule.activemq.StaticObj;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.Data;
-import com.wangjunneil.schedule.entity.baidu.OrderProductsDish;
 import com.wangjunneil.schedule.entity.baidu.OrderShop;
-import com.wangjunneil.schedule.entity.baidu.User;
 import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
-import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.eleme.Order;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderExtend;
@@ -23,18 +24,18 @@ import com.wangjunneil.schedule.entity.z8.Z8AccessToken;
 import com.wangjunneil.schedule.service.jp.JpApiService;
 import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
-import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ConstantException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.jms.Destination;
+import javax.management.JMException;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
-
-
 /**
  *
  * Created by wangjun on 8/8/16.
@@ -52,6 +53,22 @@ public class SysFacadeService {
 
     @Autowired
     private SysFacadeService sysFacadeService;
+
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrder")
+    private TopicMessageProducer topicMessageProducerWaiMaiOrder;
+
+    @Autowired
+    @Qualifier("topicDestinationWaiMaiOrder")
+    private Destination topicDestinationWaiMaiOrder;
+
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrderStatus")
+    private TopicMessageProducer topicMessageProducerOrderStatus;
+
+    @Autowired
+    @Qualifier("topicDestinationWaiMaiOrderStatus")
+    private Destination topicDestinationWaiMaiOrderStatus;
 
     public Cfg findJdCfg() {
         return sysInnerService.findCfg(Constants.PLATFORM_JD);
@@ -149,8 +166,38 @@ public class SysFacadeService {
     }
 
     //订单插入
-    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  ScheduleException{
-         sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  BaiDuException,JdHomeException,ElemeException,MeiTuanException,JMException{
+        try{
+            //order Insert/update
+            sysInnerService.updSynWaiMaiOrder(orderWaiMai);
+            //topic message to MQ Server
+            System.out.println(formatOrder2Pos(orderWaiMai));
+            if (StaticObj.mqTransportTopicOrder){
+            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
+            }
+        }catch (ScheduleException ex){
+            switch (orderWaiMai.getPlatform()){
+                case Constants.PLATFORM_WAIMAI_BAIDU:
+                    throw new BaiDuException(ex.getClass().getName(),"百度订单插入失败!","",new Throwable().getStackTrace());
+                case Constants.PLATFORM_WAIMAI_JDHOME:
+                    throw new JdHomeException("京东订单插入失败!",ex);
+                case Constants.PLATFORM_WAIMAI_MEITUAN:
+                    throw new MeiTuanException("美团订单插入失败!",ex);
+                case Constants.PLATFORM_WAIMAI_ELEME:
+                    throw new ElemeException("饿了么订单插入失败!",ex);
+            }
+        }catch (Exception e){
+                    switch (orderWaiMai.getPlatform()){
+                        case Constants.PLATFORM_WAIMAI_BAIDU:
+                            throw new JMException("发送百度订单消息失败");
+                        case Constants.PLATFORM_WAIMAI_JDHOME:
+                            throw new JMException("发送京东订单消息失败");
+                        case Constants.PLATFORM_WAIMAI_MEITUAN:
+                            throw new JMException("发送美团订单消息失败");
+                        case Constants.PLATFORM_WAIMAI_ELEME:
+                            throw new JMException("发送饿了么订单消息失败");
+            }
+        }
     }
 
     //订单查询
@@ -159,35 +206,43 @@ public class SysFacadeService {
     }
 
     //订单插入 list
-    public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws  ScheduleException{
+    public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws JdHomeException{
         orderWaiMaiList.forEach(v->{
+          try   {
             sysInnerService.updSynWaiMaiOrder(v);
-        });
+              System.out.println(formatOrder2Pos(v));
+              if (StaticObj.mqTransportTopicOrder){
+                 topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(v),v.getShopId());
+              }
+          }catch (Exception ex){
+              //待补充
+        }});
     }
 
     //格式化订单返回给Pos
     public JSONObject formatOrder2Pos(OrderWaiMai orderWaiMai){
         JSONObject jsonObject = new JSONObject();
+        JSONObject rtn = new JSONObject();
         jsonObject.put("platform",orderWaiMai.getPlatform());
         jsonObject.put("shopId",orderWaiMai.getShopId());
         jsonObject.put("orderId",orderWaiMai.getOrderId());
         jsonObject.put("platOrderId",orderWaiMai.getPlatformOrderId());
         switch (orderWaiMai.getPlatform()){
             case Constants.PLATFORM_WAIMAI_BAIDU :
-                formatBaiDuOrder((Data)orderWaiMai.getOrder(),jsonObject);
+                rtn =  formatBaiDuOrder((Data) orderWaiMai.getOrder(), jsonObject);
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME :
-                formatJdHomeOrder((OrderInfoDTO)orderWaiMai.getOrder(),jsonObject);
+                rtn =  formatJdHomeOrder((OrderInfoDTO)orderWaiMai.getOrder(),jsonObject);
                 break;
             case Constants.PLATFORM_WAIMAI_MEITUAN :
-                formatMeiTuanOrder((OrderInfo)orderWaiMai.getOrder(),jsonObject);
+                rtn =  formatMeiTuanOrder((OrderInfo)orderWaiMai.getOrder(),jsonObject);
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME :
-                formatEleme((Order)orderWaiMai.getOrder(),jsonObject);
+                rtn =  formatEleme((Order)orderWaiMai.getOrder(),jsonObject);
                 break;
             default:break;
         }
-        return jsonObject;
+        return rtn;
     }
 
     //格式化百度订单
@@ -221,9 +276,9 @@ public class SysFacadeService {
         jsonObject.put("poiPhone","");
         jsonObject.put("orderIndex",data.getOrder().getOrderIndex());
         jsonObject.put("orderType","");
-        jsonObject.put("orderStatus",data.getOrder().getStatus());
+        jsonObject.put("orderStatus",tranBdOrderStatus(data.getOrder().getStatus()));
         jsonObject.put("orderStatusTime","");
-        jsonObject.put("orderStartTime","");
+        jsonObject.put("orderStartTime",data.getOrder().getCreateTime()==0?"":DateTimeUtil.dateFormat(new Date(data.getOrder().getCreateTime()),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime",data.getOrder().getConfirmTime());
         jsonObject.put("orderPurchaseTime", "");
         jsonObject.put("orderAgingType","");
@@ -363,21 +418,21 @@ public class SysFacadeService {
         jsonObject.put("poiPhone","");
         jsonObject.put("orderIndex","");
         jsonObject.put("orderType",orderInfo.getOrderType());
-        jsonObject.put("orderStatus",orderInfo.getOrderStatus());
-        jsonObject.put("orderStatusTime",orderInfo.getOrderStartTime());
-        jsonObject.put("orderStartTime",orderInfo.getOrderStartTime());
+        jsonObject.put("orderStatus",tranJHOrderStatus(orderInfo.getOrderStatus()));
+        jsonObject.put("orderStatusTime",StringUtil.isEmpty(orderInfo.getOrderStatusTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderStatusTime(),"yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderStartTime",StringUtil.isEmpty(orderInfo.getOrderStartTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderStartTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime","");
-        jsonObject.put("orderPurchaseTime", orderInfo.getOrderPurchaseTime());
+        jsonObject.put("orderPurchaseTime", StringUtil.isEmpty(orderInfo.getOrderPurchaseTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderPurchaseTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderAgingType",orderInfo.getOrderAgingType());
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",orderInfo.getOrderPreEndDeliveryTime());
+        jsonObject.put("orderPreDeliveryTime",StringUtil.isEmpty(orderInfo.getOrderPreEndDeliveryTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderPreEndDeliveryTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("expectSendTime","");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
         jsonObject.put("riderPickupNo","");
         jsonObject.put("riderPhone","");
-        jsonObject.put("orderCancelTime",orderInfo.getOrderCancelTime());
+        jsonObject.put("orderCancelTime",StringUtil.isEmpty(orderInfo.getOrderCancelTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderCancelTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderCancelRemark",orderInfo.getOrderCancelRemark());
         jsonObject.put("is_third_shipping","");
         jsonObject.put("deliveryStationNo",orderInfo.getProduceStationNoIsv());
@@ -386,7 +441,7 @@ public class SysFacadeService {
         jsonObject.put("deliveryCarrierName","");
         jsonObject.put("deliveryBillNo",orderInfo.getDeliveryBillNo());
         jsonObject.put("deliveryPackageWeight",orderInfo.getDeliveryPackageWeight());
-        jsonObject.put("deliveryConfirmTime", orderInfo.getDeliveryConfirmTime());
+        jsonObject.put("deliveryConfirmTime", StringUtil.isEmpty(orderInfo.getDeliveryConfirmTime())?"":DateTimeUtil.dateFormat(orderInfo.getDeliveryConfirmTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderFinishTime","");
         jsonObject.put("orderPayType",orderInfo.getOrderPayType());
         jsonObject.put("orderTotalMoney",orderInfo.getOrderTotalMoney());
@@ -503,15 +558,15 @@ public class SysFacadeService {
         jsonObject.put("poiPhone",orderInfo.getWmpoiphone());
         jsonObject.put("orderIndex",orderInfo.getDayseq());
         jsonObject.put("orderType","");
-        jsonObject.put("orderStatus",orderInfo.getStatus());
-        jsonObject.put("orderStatusTime",orderInfo.getUtime());
+        jsonObject.put("orderStatus",tranMTOrderStatus(orderInfo.getStatus()));
+        jsonObject.put("orderStatusTime",orderInfo.getUtime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getUtime()), "yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderStartTime","");
         jsonObject.put("orderConfirmTime","");
         jsonObject.put("orderPurchaseTime", "");
         jsonObject.put("orderAgingType","");
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",orderInfo.getDeliverytime());
+        jsonObject.put("orderPreDeliveryTime",orderInfo.getDeliverytime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getDeliverytime()), "yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("expectSendTime","");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
@@ -519,7 +574,7 @@ public class SysFacadeService {
         jsonObject.put("riderPhone",orderInfo.getShipperphone());
         jsonObject.put("orderCancelTime","");
         jsonObject.put("orderCancelRemark","");
-        jsonObject.put("is_third_shipping",orderInfo.getIsthirdshipping());
+        jsonObject.put("isThirdShipping",orderInfo.getIsthirdshipping());
         jsonObject.put("deliveryStationNo","");
         jsonObject.put("deliveryStationName","");
         jsonObject.put("deliveryCarrierNo","");
@@ -640,15 +695,15 @@ public class SysFacadeService {
         jsonObject.put("poiPhone","");
         jsonObject.put("orderIndex",order.getRestaurantnumber());
         jsonObject.put("orderType","");
-        jsonObject.put("orderStatus",order.getStatuscode());
+        jsonObject.put("orderStatus",tranELOrderStatus(order.getStatuscode()));
         jsonObject.put("orderStatusTime","");
-        jsonObject.put("orderStartTime",order.getCreatedat());
+        jsonObject.put("orderStartTime",StringUtil.isEmpty(order.getCreatedat())?"":DateTimeUtil.dateFormat(order.getCreatedat(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime","");
-        jsonObject.put("orderPurchaseTime", order.getActiveat());
+        jsonObject.put("orderPurchaseTime", StringUtil.isEmpty(order.getActiveat())?"":DateTimeUtil.dateFormat(order.getActiveat(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderAgingType","");
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",order.getDelivertime());
+        jsonObject.put("orderPreDeliveryTime",StringUtil.isEmpty(order.getDelivertime())?"":DateTimeUtil.dateFormat(order.getDelivertime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("expectSendTime","");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
@@ -656,7 +711,7 @@ public class SysFacadeService {
         jsonObject.put("riderPhone","");
         jsonObject.put("orderCancelTime","");
         jsonObject.put("orderCancelRemark","");
-        jsonObject.put("is_third_shipping","");
+        jsonObject.put("isThirdShipping","");
         jsonObject.put("deliveryStationNo",order.getRestaurantid());
         jsonObject.put("deliveryStationName",order.getRestaurantname());
         jsonObject.put("deliveryCarrierNo","");
@@ -840,6 +895,17 @@ public class SysFacadeService {
                     log1.setStackInfo(sb1.toString());
                     break;
                 default:
+                    Exception exception1 = (Exception)t;
+                    log1.setMessage(exception1.getMessage());
+                    log1.setCatchExName("Exception");
+                    log1.setInnerExName(exception1.getClass().getName());
+                    StringBuffer stringBuffer = new StringBuffer();
+                    StackTraceElement[] stackTrace = exception1.getStackTrace();
+                    for (int i = 0; i < stackTrace.length; i++) {
+                        StackTraceElement element = stackTrace[i];
+                        stringBuffer.append(element.toString() + "\n");
+                    }
+                    log1.setStackInfo(stringBuffer.toString());
                     break;
         }
         return  log1;
@@ -849,4 +915,150 @@ public class SysFacadeService {
     public void updSynLog(Log log){
           sysInnerService.updSynLog( log);
     }
+
+    //格式化百度订单状态
+    private int tranBdOrderStatus(Integer status){
+        switch (status){
+            case Constants.BD_SUSPENDING:
+                return Constants.POS_ORDER_SUSPENDING;
+            case Constants.BD_CONFIRMED:
+               return Constants.POS_ORDER_CONFIRMED;
+            case Constants.BD_DELIVERY:
+                return Constants.POS_ORDER_DELIVERY;
+            case Constants.BD_COMPLETED:
+                return Constants.POS_ORDER_COMPLETED;
+            case Constants.BD_CANCELED:
+                return Constants.POS_ORDER_CANCELED;
+            default:
+                return Constants.POS_ORDER_OTHER;
+        }
+    }
+
+    //格式化京东到家订单状态
+    private int tranJHOrderStatus(int status){
+        switch (status){
+            case 90000:
+                return Constants.POS_ORDER_SUSPENDING;
+            case Constants.JH_ORDER_RECEIVED:
+                return Constants.POS_ORDER_CONFIRMED;
+            case Constants.JH_ORDER_DELIVERING:
+                return Constants.POS_ORDER_DELIVERY;
+            case Constants.JH_ORDER_CONFIRMED:
+                return Constants.POS_ORDER_COMPLETED;
+            case Constants.JH_ORDER_USER_CANCELLED:
+                return Constants.POS_ORDER_CANCELED;
+            default:
+                return Constants.POS_ORDER_OTHER;
+        }
+    }
+
+    //格式化美团订单状态
+    private int tranMTOrderStatus(int status){
+        switch (status){
+            case 90000:
+                return Constants.POS_ORDER_SUSPENDING;
+            case Constants.MT_STATUS_CODE_CONFIRMED:
+                return Constants.POS_ORDER_CONFIRMED;
+            case Constants.MT_STATUS_CODE_COMPLETED:
+                return Constants.POS_ORDER_COMPLETED;
+            case Constants.MT_STATUS_CODE_CANCELED:
+                return Constants.POS_ORDER_CANCELED;
+            default:
+                return Constants.POS_ORDER_OTHER;
+        }
+    }
+
+    //格式化饿了么订单状态
+    private int tranELOrderStatus(int status){
+        switch (status){
+            case Constants.EL_STATUS_CODE_UNPROCESSED:
+                return Constants.POS_ORDER_SUSPENDING;
+            case Constants.EL_STATUS_CODE_PROCESSED_AND_VALID:
+                return Constants.POS_ORDER_CONFIRMED;
+            case Constants.EL_STATUS_CODE_SUCCESS:
+                return Constants.POS_ORDER_COMPLETED;
+            case Constants.EL_STATUS_CODE_INVALID:
+                return Constants.POS_ORDER_CANCELED;
+            default:
+                return Constants.POS_ORDER_OTHER;
+        }
+    }
+
+    //topic message to mq server  [message:order status]
+    public  void topicMessageOrderStatus(String platform,Integer status,String platformOrderId,String orderId,String shopId){
+        OrderWaiMai orderWaiMai = null;
+        String tmp = "\"orderId\":\"{0}\"，\"orderStatus\":\"{1}\",\"shopId\":\"{2}\"",shop = shopId;
+        boolean boolSend = true;
+        JsonObject jsonMessage = new JsonObject();
+        JsonObject jsonObject = new JsonObject();
+        JsonObject jsonObjectEmpty = new JsonObject();
+        jsonObjectEmpty.addProperty("orderId","");
+        jsonObjectEmpty.addProperty("orderStatus","");
+        jsonObjectEmpty.addProperty("shopId","");
+        String jsonStr = new  Gson().toJson(jsonObjectEmpty);
+        switch (platform){
+            case Constants.PLATFORM_WAIMAI_BAIDU:
+                orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_BAIDU,platformOrderId);
+                if (orderWaiMai==null){
+                    boolSend = false;  //不发送message
+                }else   {
+                    shop = orderWaiMai.getShopId();
+                }
+                jsonObject.addProperty("orderId",orderWaiMai==null?"":orderWaiMai.getOrderId());
+                jsonObject.addProperty("orderStatus",orderWaiMai==null?"":String.valueOf(tranBdOrderStatus(status)));
+                jsonObject.addProperty("shopId",shop);
+                jsonMessage.addProperty("baidu",new Gson().toJson(jsonObject));
+                jsonMessage.addProperty("jdhome",jsonStr);
+                jsonMessage.addProperty("meituan",jsonStr);
+                jsonMessage.addProperty("eleme",jsonStr);
+                break;
+            case  Constants.PLATFORM_WAIMAI_JDHOME:
+                orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_JDHOME,platformOrderId);
+                if (orderWaiMai==null){
+                    boolSend = false;  //不发送message
+                }else   {
+                    shop = orderWaiMai.getShopId();
+                }
+
+                jsonMessage.addProperty("baidu",jsonStr);
+                jsonObject.addProperty("orderId",orderWaiMai==null?"":platformOrderId);
+                jsonObject.addProperty("orderStatus",orderWaiMai==null?"":String.valueOf(tranJHOrderStatus(status)));
+                jsonObject.addProperty("shopId",shop);
+                jsonMessage.addProperty("jdhome", new Gson().toJson(jsonObject));
+                jsonMessage.addProperty("meituan",jsonStr);
+                jsonMessage.addProperty("eleme",jsonStr);
+                break;
+            case  Constants.PLATFORM_WAIMAI_MEITUAN:
+                jsonMessage.addProperty("baidu",jsonStr);
+                jsonMessage.addProperty("jdhome",jsonStr);
+                jsonObject.addProperty("orderId",orderId);
+                jsonObject.addProperty("orderStatus",tranMTOrderStatus(status));
+                jsonObject.addProperty("shopId",shop);
+                jsonMessage.addProperty("meituan",new Gson().toJson(jsonObject));
+                jsonMessage.addProperty("eleme",jsonStr);
+                break;
+            case  Constants.PLATFORM_WAIMAI_ELEME:
+                orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_ELEME,platformOrderId);
+                if (orderWaiMai==null){
+                    boolSend = false;  //不发送message
+                }else   {
+                    shop = orderWaiMai.getShopId();
+                }
+                jsonMessage.addProperty("baidu",jsonStr);
+                jsonMessage.addProperty("jdhome",jsonStr);
+                jsonMessage.addProperty("meituan",jsonStr);
+                jsonObject.addProperty("orderId",orderWaiMai==null?"":orderWaiMai.getOrderId());
+                jsonObject.addProperty("orderStatus",orderWaiMai==null?"":String.valueOf(tranELOrderStatus(status)));
+                jsonObject.addProperty("shopId",shop);
+                jsonMessage.addProperty("eleme", new Gson().toJson(jsonObject));
+                break;
+            default:
+                boolSend = false;
+                break;
+        }
+        if (boolSend & StaticObj.MqTransportTopicOrderStatus){
+            topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
+        }
+    }
+
 }

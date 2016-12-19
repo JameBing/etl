@@ -365,13 +365,13 @@ public class EleMeFacadeService {
      */
     public String getNewOrder(String elemeOrderIds){
         List<String> listIds = new ArrayList<String>();
-        Rtn rtn = new Rtn();
         Log[] log = {null};
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        String [] rtnStr = {null};
+        Result rtn = new Result();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(elemeOrderIds)) {
             rtn.setCode(1);
-            rtn.setDesc("订单ID为空");
-            rtn.setRemark("订单ID为空");
+            rtn.setMessage("订单ID为空");
         }else {
             Collections.addAll(listIds, elemeOrderIds.split(","));
             listIds.forEach((id)->{
@@ -392,14 +392,13 @@ public class EleMeFacadeService {
 //                    eleMeInnerService.addSyncOrder(order);
                     OrderWaiMai orderWaiMai = new OrderWaiMai();
                     orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-                    orderWaiMai.setPlatformOrderId(order.getOrderid());
+                    orderWaiMai.setPlatformOrderId(order.getOrderid().toString());
                     String orderId = sysFacadeService.getOrderNum(order.getRestaurantid());
                     orderWaiMai.setOrder(order);
                     orderWaiMai.setOrderId(orderId);
                     orderWaiMai.setShopId(order.getRestaurantid());
                     sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
-                    rtn.setCode(0);
-                    rtn.setDesc(obj.getMessage());
+                    rtnStr [0]= "{\"message\": \"ok\"}";
                 }catch (ElemeException ex){
                     rtn.setCode(-997);
                     log[0] = sysFacadeService.functionRtn.apply(ex);
@@ -418,32 +417,73 @@ public class EleMeFacadeService {
                             log[0].setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
                         }
                         sysFacadeService.updSynLog(log[0]);
-                        rtn.setDynamic(elemeOrderIds);
-                        rtn.setDesc("发生异常");
-                        rtn.setLogId(log[0].getLogId());
-                        rtn.setRemark(MessageFormat.format("接收新订单{0}or获取新订单{1}配送信息失败!",elemeOrderIds, elemeOrderIds));
+                        rtnStr[0] = "{\"message\": \"error\"}";
                     }
                 }
             });
         }
-        return gson1.toJson(rtn);
+        return rtnStr[0];
     }
 
     //订单状态变更接收   new_status：订单状态
     public String orderChange(String elemeOrderIds,String newStatus){
         //温馨提醒：单个参数传输都使用String类型，因为Request对象的getparamter方法返回的均是String类型，外层做类型转换的话，如果发生异常则无法捕获，异常处理均在这一层处理，所以放在这里做类型转换更合适
-        eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds, Integer.parseInt(newStatus));
-        return null;
+        Log log =null;
+        try {
+            eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds, Integer.parseInt(newStatus));
+        }catch (ScheduleException e){
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            log = sysFacadeService.functionRtn.apply(e);
+            log .setLogId(elemeOrderIds.concat(log.getLogId()));
+            log.setTitle(MessageFormat.format("饿了么订单:{0}修改失败", elemeOrderIds));
+            if (StringUtil.isEmpty(log.getRequest())) {
+                log.setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
+            }
+            sysFacadeService.updSynLog(log);
+            return "{\"message\": \"error\"}";
+        }
+        List<String> listIds = new ArrayList<String>();
+        Collections.addAll(listIds, elemeOrderIds.split(","));
+        listIds.forEach((id)->{
+            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,Integer.valueOf(newStatus),id,null,null);
+        });
+        return  "{\"message\": \"ok\"}";
     }
     //退单状态接收  refund_status:退单订单状态
-    public String chargeBack(String elemeOrderIds,String refundStatus){
-        eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds,Integer.parseInt(refundStatus));
-        return  null;
+    public String chargeBack(String elemeOrderIds,String refundStatus) {
+        Log log = null;
+        try {
+            eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds,Integer.parseInt(refundStatus));
+        }catch (ScheduleException e){
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            log = sysFacadeService.functionRtn.apply(e);
+            log .setLogId(elemeOrderIds.concat(log.getLogId()));
+            log.setTitle(MessageFormat.format("饿了么订单:{0}退单失败", elemeOrderIds));
+            if (StringUtil.isEmpty(log.getRequest())) {
+                log.setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
+            }
+            sysFacadeService.updSynLog(log);
+            return "{\"message\": \"error\"}";
+        }
+        return  "{\"message\": \"ok\"}";
     }
     //订单配送状态接收
     public String distributionStatus(String elemeOrderIds,String statusCode,int sub_status_code){
-        eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds,Integer.parseInt(statusCode));
-        return  null;
+        Log log =null;
+        try {
+            eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds,Integer.parseInt(statusCode));
+        }catch (ScheduleException e){
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            log = sysFacadeService.functionRtn.apply(e);
+            log .setLogId(elemeOrderIds.concat(log.getLogId()));
+            log.setTitle(MessageFormat.format("饿了么订单:{0}获取配送失败", elemeOrderIds));
+            if (StringUtil.isEmpty(log.getRequest())) {
+                log.setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
+            }
+            sysFacadeService.updSynLog(log);
+            return "{\"message\": \"error\"}";
+        }
+        return  "{\"message\": \"ok\"}";
     }
 
     /**

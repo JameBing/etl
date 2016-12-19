@@ -1,11 +1,9 @@
 package com.wangjunneil.schedule.crontab;
 
 import com.alibaba.fastjson.JSONObject;
-import com.wangjunneil.schedule.activemq.QueueMessageProducer;
+import com.wangjunneil.schedule.activemq.Queue.QueueMessageProducer;
 import com.wangjunneil.schedule.common.Constants;
-import com.wangjunneil.schedule.entity.jd.JdCrmOrder;
 import com.wangjunneil.schedule.entity.z8.Z8CrmOrder;
-import com.wangjunneil.schedule.service.JdFacadeService;
 import com.wangjunneil.schedule.service.Z8FacadeService;
 import org.quartz.JobDataMap;
 import org.slf4j.Logger;

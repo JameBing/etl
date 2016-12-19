@@ -1,8 +1,10 @@
 package com.wangjunneil.schedule.service.baidu;
 
+import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.Body;
 import com.wangjunneil.schedule.entity.baidu.Data;
+import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -38,17 +40,16 @@ public class BaiDuInnerService {
 
     //批量更新订单状态(根据订单号)
     public  int updSyncBaiDuOrderStastus(String ids,int status){
-
         Query query = new Query();
         Criteria criteria = new Criteria();
         List<String> listIds = new ArrayList<String>();
         Collections.addAll(listIds,ids.split(","));
-        listIds.forEach((id)->{
-            criteria.orOperator(new Criteria().where("order_id").is(id));
+        listIds.forEach((id) -> {
+            criteria.orOperator(new Criteria().where("platform").is(Constants.PLATFORM_WAIMAI_BAIDU).where("platformOrderId").is(id));
         });
         query.addCriteria(criteria);
-        Update update = new Update().set("order.$.status",status);
-       return mongoTemplate.updateMulti(query,update,Body.class).getN();
+        Update update = new Update().set("order.order.status",status);
+       return mongoTemplate.updateMulti(query,update,OrderWaiMai.class).getN();
     }
 
     //多条件查询（完全匹配）
@@ -65,5 +66,4 @@ public class BaiDuInnerService {
         List<Body> bodies = mongoTemplate.find(query,Body.class);
         return  bodies;
     }
-
 }

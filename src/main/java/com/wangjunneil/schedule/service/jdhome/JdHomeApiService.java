@@ -3,6 +3,7 @@ package com.wangjunneil.schedule.service.jdhome;
 import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.JdHomeException;
+import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.jdhome.*;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -34,7 +35,7 @@ public class JdHomeApiService {
     private JdHomeInnerService jdHomeInnerService;
 
     //开业/歇业
-    public String changeCloseStatus(String shopId,String stationNo,String operator,int status) throws Exception{
+    public String changeCloseStatus(String shopId,String stationNo,String operator,int status) throws JdHomeException,ScheduleException{
         SignParams signParams = getSignParams(shopId);
         Map<String,Object> param = getSysMap(signParams);
         JSONObject jsonObject = new JSONObject();
@@ -55,7 +56,7 @@ public class JdHomeApiService {
     }
 
     //批量修改商品上架
-    public String updateAllStockOn(List<QueryStockRequest> stockRequests,String shopId)throws Exception{
+    public String updateAllStockOn(List<QueryStockRequest> stockRequests,String shopId)throws JdHomeException,ScheduleException{
         SignParams signParams = getSignParams(shopId);//签名参数
         Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
@@ -104,7 +105,7 @@ public class JdHomeApiService {
 
 
     //查询商家商品信息
-    public String querySkuInfos(String upcCode,String shopId)throws Exception{
+    public String querySkuInfos(String upcCode,String shopId)throws JdHomeException,ScheduleException{
         SignParams signParams = getSignParams(shopId);
         Map<String,Object> param = getSysMap(signParams);
         JSONObject jsonObject = new JSONObject();
@@ -123,7 +124,7 @@ public class JdHomeApiService {
     }
 
     //根据查询条件分页获取门店基本信息
-    public String getStoreInfoPageBean(String shopId) throws Exception{
+    public String getStoreInfoPageBean(String shopId) throws JdHomeException,ScheduleException{
         SignParams signParams = getSignParams(shopId);
         Map<String,Object> param = getSysMap(signParams);
         JSONObject jsonObject = new JSONObject();
@@ -143,7 +144,7 @@ public class JdHomeApiService {
     }
 
     //新增商品分类
-    public String addShopCategory(shopCategory shopCategory)throws Exception{
+    public String addShopCategory(shopCategory shopCategory)throws JdHomeException,ScheduleException{
         SignParams signParams = getSignParams(shopCategory.getShopId());//签名参数
         Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
@@ -166,7 +167,7 @@ public class JdHomeApiService {
     }
 
     //修改商品分类
-    public String updateShopCategory(shopCategory shopCategory) throws Exception{
+    public String updateShopCategory(shopCategory shopCategory) throws JdHomeException,ScheduleException{
         SignParams signParams = getSignParams(shopCategory.getShopId());//签名参数
         Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
@@ -186,7 +187,7 @@ public class JdHomeApiService {
     }
 
     //删除商品分类
-    public String deleteShopCategory(shopCategory shopCategory) throws Exception{
+    public String deleteShopCategory(shopCategory shopCategory) throws JdHomeException,ScheduleException{
         SignParams signParams = getSignParams(shopCategory.getShopId());//签名参数
         Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
@@ -205,7 +206,7 @@ public class JdHomeApiService {
     }
 
     //新增订单
-    public String newOrder(String billId,String statusId,String timestamp,String shopId) throws Exception{
+    public String newOrder(String billId,String statusId,String timestamp,String shopId) throws JdHomeException,ScheduleException{
         SignParams signParams = getSignParams(shopId);//签名参数
         Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();
@@ -224,7 +225,7 @@ public class JdHomeApiService {
     }
 
     //商家确认/取消接单接口
-    public String orderAcceptOperate(String orderId,String shopId,Boolean isAgree,String operator)throws Exception{
+    public String orderAcceptOperate(String orderId,String shopId,Boolean isAgree,String operator)throws JdHomeException,ScheduleException{
         SignParams signParams = getSignParams(shopId);//签名参数
         Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();

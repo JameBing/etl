@@ -1,4 +1,4 @@
-package com.wangjunneil.schedule.activemq;
+package com.wangjunneil.schedule.activemq.Queue;
 
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;

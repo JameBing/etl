@@ -184,12 +184,17 @@ public class JdHomeController {
         String json = jdHomeFacadeService.openOrCloseStore(shopId,1);*/
        /* String aa = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
         String json = jdHomeFacadeService.newOrder(aa,"6666");*/
-        OrderWaiMai orderWaiMai = new OrderWaiMai();
+      /*  OrderWaiMai orderWaiMai = new OrderWaiMai();
         orderWaiMai.setShopId("6666");
         orderWaiMai.setPlatform("baidu");
         Object object = null;
         orderWaiMai.setOrder(object);
-        JSONObject json = sysFacadeService.formatOrder2Pos(orderWaiMai);
+        JSONObject json = sysFacadeService.formatOrder2Pos(orderWaiMai);*/
+        JSONObject json = new JSONObject();
+        json.put("billId","222");
+        json.put("statusId","333");
+        json.put("timestamp","3333");
+        jdHomeFacadeService.newOrder(json.toJSONString(),"6666");
         out.println(json);
         out.close();
         return null;

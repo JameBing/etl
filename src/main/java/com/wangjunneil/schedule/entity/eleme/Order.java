@@ -17,10 +17,10 @@ public class Order {
     //餐厅名字
     @SerializedName("restaurant_name")
     private String restaurantname;
-    //退款代码
+    //退单状态
     @SerializedName("refund_code")
     private int refundcode;
-    //状态码
+    //订单状态
     @SerializedName("status_code")
     private int statuscode;
     //餐厅id
@@ -28,14 +28,14 @@ public class Order {
     private String restaurantid;
     //服务费
     @SerializedName("service_fee")
-    private double servicefee;
-    //客户名字
+    private Double servicefee;
+    //收货人
     @SerializedName("consignee")
     private String consignee;
-    //发票
+    //发票抬头
     @SerializedName("invoice")
     private String invoice;
-    //描述
+    //订单备注
     @SerializedName("description")
     private String description;
     //用户id
@@ -47,36 +47,37 @@ public class Order {
     //详情
     @SerializedName("detail")
     private Body detail;
-    //活跃时间
+    //生效时间
     @SerializedName("active_at")
     private Date activeat;
-    //发票
+    //是否需要发票
     @SerializedName("invoiced")
-    private String invoiced;
+    private int invoiced;
     //用户名
     @SerializedName("user_name")
     private String username;
-    //快递费
+    //配送费
     @SerializedName("deliver_fee")
     private Double deliverfee;
+    //是否预订单
     @SerializedName("is_book")
-    private int isbook;
-    //餐厅部分费用
+    private int  isbook;
+    //店铺承担活动费用
     @SerializedName("restaurant_part")
     private Double restaurantpart;
-    //交付时间
+    //送餐时间
     @SerializedName("deliver_time")
     private Date delivertime;
     //订单ID
     @SerializedName("order_id")
-    private String orderid;
-    //eleme部分费用
+    private Long orderid;
+    //饿了么承担活动费用
     @SerializedName("eleme_part")
     private Double elemepart;
-    //收入
+    //店铺实收
     @SerializedName("income")
     private Double income;
-    //餐厅编号
+    //餐厅当日订单序号
     @SerializedName("restaurant_number")
     private String restaurantnumber;
     //配送地址
@@ -87,14 +88,14 @@ public class Order {
     private Double hongbao;
     //是否在线支付
     @SerializedName("is_online_paid")
-    private int isonlinepaid;
-    //交货地址
+    private int  isonlinepaid;
+    //顾客送餐详情地址
     @SerializedName("delivery_poi_address")
     private String deliverypoiaddress;
     //总价
     @SerializedName("total_price")
     private Double totalprice;
-    //创建于
+    //下单时间
     @SerializedName("created_at")
     private Date createdat;
     //服务率
@@ -103,14 +104,21 @@ public class Order {
     //包装费
     @SerializedName("package_fee")
     private Double packagefee;
-    //活动总数
+    //订单活动总额
     @SerializedName("activity_total")
-    private int activitytotal;
+    private Double activitytotal;
     //联系列表
     @SerializedName("phone_list")
     private List phonelist;
     @SerializedName("distribution")
     private Distribution distribution;
+    //配送状态（仅第三方配送）
+    @SerializedName("deliver_status")
+    private int deliverstatus;
+    //饿了么内部餐厅id,提交给业务人员绑定时使用的ID
+    @SerializedName("inner_id")
+    private String innerid;
+
 
     public Double getOriginalprice() {
         return originalprice;
@@ -152,11 +160,11 @@ public class Order {
         this.restaurantid = restaurantid;
     }
 
-    public double getServicefee() {
+    public Double getServicefee() {
         return servicefee;
     }
 
-    public void setServicefee(double servicefee) {
+    public void setServicefee(Double servicefee) {
         this.servicefee = servicefee;
     }
 
@@ -216,11 +224,11 @@ public class Order {
         this.activeat = activeat;
     }
 
-    public String getInvoiced() {
+    public int getInvoiced() {
         return invoiced;
     }
 
-    public void setInvoiced(String invoiced) {
+    public void setInvoiced(int invoiced) {
         this.invoiced = invoiced;
     }
 
@@ -264,11 +272,11 @@ public class Order {
         this.delivertime = delivertime;
     }
 
-    public String getOrderid() {
+    public Long getOrderid() {
         return orderid;
     }
 
-    public void setOrderid(String orderid) {
+    public void setOrderid(Long orderid) {
         this.orderid = orderid;
     }
 
@@ -360,11 +368,11 @@ public class Order {
         this.packagefee = packagefee;
     }
 
-    public int getActivitytotal() {
+    public Double getActivitytotal() {
         return activitytotal;
     }
 
-    public void setActivitytotal(int activitytotal) {
+    public void setActivitytotal(Double activitytotal) {
         this.activitytotal = activitytotal;
     }
 
@@ -382,5 +390,21 @@ public class Order {
 
     public void setDistribution(Distribution distribution) {
         this.distribution = distribution;
+    }
+
+    public int getDeliverstatus() {
+        return deliverstatus;
+    }
+
+    public void setDeliverstatus(int deliverstatus) {
+        this.deliverstatus = deliverstatus;
+    }
+
+    public String getInnerid() {
+        return innerid;
+    }
+
+    public void setInnerid(String innerid) {
+        this.innerid = innerid;
     }
 }
