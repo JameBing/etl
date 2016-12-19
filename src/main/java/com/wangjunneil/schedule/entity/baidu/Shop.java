@@ -87,6 +87,28 @@ public class Shop {
     @SerializedName("business_form_id")
     private String businessFormId;
 
+    @SerializedName("sys_status")
+    private  Integer sysStatus;
+
+    @SerializedName("business_stauts")
+    private  Integer businessStauts;
+
+    public Integer getSysStatus() {
+        return sysStatus;
+    }
+
+    public void setSysStatus(Integer sysStatus) {
+        this.sysStatus = sysStatus;
+    }
+
+    public Integer getBusinessStauts() {
+        return businessStauts;
+    }
+
+    public void setBusinessStauts(Integer businessStauts) {
+        this.businessStauts = businessStauts;
+    }
+
     public String getShopId() {
         return shopId;
     }

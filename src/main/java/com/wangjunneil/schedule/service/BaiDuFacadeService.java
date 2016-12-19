@@ -1,5 +1,6 @@
 package com.wangjunneil.schedule.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.*;
@@ -640,5 +641,64 @@ public class BaiDuFacadeService {
             }
         }
         return  getGson().toJson(rtn);
+    }
+
+    //查看商户状态
+    public String shopStatus(String params) {
+        Rtn rtn = new Rtn();
+        String result = null;
+        Body body = new Body();
+        Log log = null;
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class, new RtnSerializer()).disableHtmlEscaping().create();
+        try {
+            Shop shop = new Shop();
+            shop.setShopId(params);
+            result = baiDuApiService.shopStatus(shop);
+            Shop shop1 = getGson().fromJson(result, Shop.class);
+           switch (shop1.getBusinessStauts()){
+               case 1:
+                   rtn.setCode(0);
+                   rtn.setDynamic(params);
+                   rtn.setDesc("success");
+                   rtn.setRemark(MessageFormat.format("商店{0}正常营业！", params));
+                   break;
+               case  3:
+                   rtn.setCode(1);
+                   rtn.setDynamic(params);
+                   rtn.setDesc("success");
+                   rtn.setRemark(MessageFormat.format("商店{0}休息中！", params));
+                   break;
+               case 9:
+                   rtn.setCode(2);
+                   rtn.setDynamic(params);
+                   rtn.setDesc("success");
+                   rtn.setRemark(MessageFormat.format("商店{0}停止营业！", params));
+                   break;
+           }
+        } catch (BaiDuException ex) {
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
+        } catch (ScheduleException ex) {
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+        } catch (Exception ex) {
+            rtn.setCode(-998);
+            log = sysFacadeService.functionRtn.apply(ex);
+        } finally {
+            //有异常产生
+            if (log != null) {
+                log.setLogId(params.concat(log.getLogId()));
+                log.setTitle(MessageFormat.format("查看{0}商户状态失败", params));
+                if (StringUtil.isEmpty(log.getRequest()))
+                    log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},", params)).concat("}"));
+                sysFacadeService.updSynLog(log);
+                rtn.setDynamic(params);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log.getLogId());
+                rtn.setRemark(MessageFormat.format("查看{0}商户状态失败！", params));
+            }
+        }
+        result = gson1.toJson(rtn);
+        return result;
     }
 }
