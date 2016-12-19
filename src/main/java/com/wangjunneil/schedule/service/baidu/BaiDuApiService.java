@@ -241,6 +241,38 @@ public class BaiDuApiService {
         return gson.toJson(Enum.getEnumDesc(Enum.ReturnCodeBaiDu.R0, Integer.valueOf(body.getErrno())));
     }
 
+    /**
+     * 商户状态
+     *
+     * @param shop 商户实体对象
+     * @return "{code:0,desc:\"成功\",remark:\"\"}"
+     */
+    public String shopStatus(Shop shop) throws  ScheduleException,BaiDuException{
+        String requestStr = getRequestPars("shop.status.get", shop);
+        String response = HttpUtil.post2(Constants.BAIDU_URL, requestStr, null, "utf-8", null, null, Constants.PLATFORM_WAIMAI_BAIDU);
+        Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
+            .registerTypeAdapter(Shop.class, new ShopSerializer())
+            .registerTypeAdapter(Body.class, new BodySerializer())
+            .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
+                @Override
+                public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
+                    if (aDouble == aDouble.longValue())
+                        return new JsonPrimitive(aDouble.longValue());
+                    return new JsonPrimitive(aDouble);
+                }
+            })
+            .disableHtmlEscaping().create();
+        SysParams sysParams = gson.fromJson(response, SysParams.class);
+        //暂不考虑验证返回值中的sign签名合法性
+        Body body = gson.fromJson(gson.toJson(sysParams.getBody()), Body.class);
+        Shop shop1 = gson.fromJson(body.getData().toString(), Shop.class);
+        JsonObject jsonObject = Enum.getEnumDesc(Enum.ReturnCodeBaiDu.R0, Integer.valueOf(body.getErrno()));
+        jsonObject.addProperty("baidu_shop_id", shop1.getBaiduShopId());
+        jsonObject.addProperty("sys_status",shop1.getSysStatus());
+        jsonObject.addProperty("business_stauts",shop1.getBusinessStauts());
+        return gson.toJson(jsonObject);
+    }
+
     //endregion
 
 
