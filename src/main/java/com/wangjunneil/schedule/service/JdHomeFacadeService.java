@@ -658,6 +658,7 @@ public class JdHomeFacadeService {
                     rtn.setCode(-1);
                     rtn.setDesc("error");
                     rtn.setRemark("无此商品");
+                    rtn.setDynamic(posInner.getDishId());
                     rtnStr = rtnStr+gson.toJson(rtn)+",";
                     continue;
                 }
