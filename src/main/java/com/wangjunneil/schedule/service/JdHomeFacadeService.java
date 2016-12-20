@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wangjunneil.schedule.common.Constants;
-import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.common.JdHomeException;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.common.*;
@@ -19,7 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yangyongbing
@@ -51,12 +51,16 @@ public class JdHomeFacadeService {
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         //拼装返回格式
         if(StringUtil.isEmpty(shopId)){
-            rtn.setCode(-1);
-            rtn.setDesc("error");
-            rtn.setRemark("门店Id为空，请检查");
             return gson.toJson(rtn);
         }
         String stationNo = getStoreInfoPageBean(shopId);
+        if(StringUtil.isEmpty(stationNo)){
+            rtn.setCode(-1);
+            rtn.setDesc("error");
+            rtn.setRemark("无此门店");
+            rtn.setDynamic(shopId);
+            return gson.toJson(rtn);
+        }
         String operator = "zybwjzb";
         try {
             String json = jdHomeApiService.changeCloseStatus(shopId,stationNo,operator,status);
@@ -101,10 +105,8 @@ public class JdHomeFacadeService {
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         //拼装返回格式
+        //判断参数是否有值
         if(StringUtil.isEmpty(shopId)){
-            rtn.setCode(-1);
-            rtn.setDesc("error");
-            rtn.setRemark("门店Id为空，请检查");
             return gson.toJson(rtn);
         }
         try {
@@ -136,6 +138,12 @@ public class JdHomeFacadeService {
                     rtn.setDynamic(shopId);
                     return gson.toJson(rtn);
                 }
+            }else {
+                rtn.setCode(-1);
+                rtn.setDesc("success");
+                rtn.setRemark("无此门店");
+                rtn.setDynamic(shopId);
+                return gson.toJson(rtn);
             }
 
         }catch (JdHomeException ex){
@@ -630,10 +638,8 @@ public class JdHomeFacadeService {
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         String rtnStr ="";
-        if(dishList ==null || dishList.size()==0){
-            rtn.setCode(-1);
-            rtn.setDesc("error");
-            rtn.setRemark("批量上下架请求参数为空");
+        //入参非空判断
+        if(dishList ==null || dishList.size()==0 || StringUtil.isEmpty(dishList.get(0).getShopId())){
             return gson.toJson(rtn);
         }
         //查询到家门店Id

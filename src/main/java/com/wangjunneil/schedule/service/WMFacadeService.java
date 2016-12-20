@@ -227,10 +227,10 @@ public class WMFacadeService {
     //查询门店状态
     public String getStoreStatus(ParsFromPos parsFromPos){
         String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = null, result_jdhome = null, result_eleme = null, result_meituan = null;
-        result_baidu = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        result_baidu = baiDuFacadeService.shopStatus(parsFromPos.getBaidu().getShopId());
         result_jdhome = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
-        result_eleme = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
-        result_meituan = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        result_eleme = eleMeFacadeService.getStatus(parsFromPos.getEleme().getShopId());
+        result_meituan = meiTuanFacadeService.findShopStatus(parsFromPos.getMeituan().getShopId());
         return "{".concat(MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme)).concat("}");
     }
 

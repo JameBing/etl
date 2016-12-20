@@ -39,6 +39,8 @@ public class Enum {
     R1,
     @EnumDescription(code = 20253,desc = "商户不存在",remark = "商户不存在")
     R20253,
+    @EnumDescription(code = 20270,desc = "商品不存在",remark = "商品不存在")
+    R20270,
     @EnumDescription(code = 20108,desc = "命令不支持",remark = "命令不支持")
     R20108,
     @EnumDescription(code = 20109,desc = "来源不支持",remark = "来源不支持")

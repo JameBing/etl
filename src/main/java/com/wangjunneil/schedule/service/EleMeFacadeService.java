@@ -71,9 +71,7 @@ public class EleMeFacadeService {
         Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(merchantId)) {
-            rtn.setCode(-1);
-            rtn.setDesc("门店ID为空");
-            rtn.setRemark("门店ID为空");
+           return gson1.toJson(rtn);
         }else {
             try {
                 RestaurantRequest restaurantRequest = new RestaurantRequest();
@@ -86,7 +84,7 @@ public class EleMeFacadeService {
                     rtn.setRemark(obj.getMessage().toString());
                 }else {
                     rtn.setCode(-1);
-                    rtn.setRemark(MessageFormat.format("门店{0}不存在或无权限管理", merchantId));
+                    rtn.setRemark(MessageFormat.format("门店{0}不存在", merchantId));
                 }
                 rtn.setDesc("success");
             }catch (ElemeException ex){
@@ -519,10 +517,7 @@ public class EleMeFacadeService {
         Rtn rtn = new Rtn();
         String reponse = "";
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        if (dishList == null || dishList.size() < 1) {
-            rtn.setCode(-1);
-            rtn.setDesc("食物ID列表为空");
-            rtn.setRemark("食物ID列表为空");
+        if (dishList == null || dishList.size() == 0 || StringUtil.isEmpty(dishList.get(0).getShopId())) {
             return gson1.toJson(rtn);
         }else {
             for (int i = 0; i < dishList.size(); i++) {
@@ -663,9 +658,7 @@ public class EleMeFacadeService {
         rtn.setDynamic(merchantId);
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(merchantId)) {
-            rtn.setCode(-1);
-            rtn.setDesc("餐厅ID为空");
-            rtn.setRemark("餐厅ID为空");
+            return gson1.toJson(rtn);
         }else {
             String info = getRestaurantInfo(merchantId);
             if ("failure".equals(info)) {
@@ -677,11 +670,11 @@ public class EleMeFacadeService {
                 if (body.getRestaurant().getIsopen() == 1) {
                     rtn.setCode(0);
                     rtn.setDesc("success");
-                    rtn.setRemark(MessageFormat.format("餐厅{0}开店", merchantId));
+                    rtn.setRemark(MessageFormat.format("餐厅{0}营业中", merchantId));
                 }else {
                     rtn.setCode(1);
                     rtn.setDesc("success");
-                    rtn.setRemark(MessageFormat.format("获取餐厅{0}关店", merchantId));
+                    rtn.setRemark(MessageFormat.format("餐厅{0}休息中", merchantId));
                 }
             }
         }
