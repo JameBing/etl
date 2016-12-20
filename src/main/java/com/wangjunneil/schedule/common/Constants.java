@@ -191,10 +191,10 @@ public final class Constants {
     public static final String URL_QUERY_SKU_INFO ="https://openo2o.jd.com/djapi/pms/querySkuInfos";
 
     //京东到家根据查询条件分页获取门店基本信息
-    public static final String STORE_INFO_PAGEBEAN ="https://openo2o.jd.com/djapi/djstore/getStoreInfoPageBean";
+    public static final String STORE_INFO_PAGEBEAN ="https://openo2o.jd.com/mockapi/djstore/getStoreInfoPageBean";
 
     //京东到家修改门店基本信息
-    public static final String UPDATE_STORE_INFO ="https://openo2o.jd.com/djapi/store/updateStoreInfo4Open";
+    public static final String UPDATE_STORE_INFO ="https://openo2o.jd.com/mockapi/store/updateStoreInfo4Open";
 
     public static final int JH_ORDER_LOCK=20010;  // 锁定
 
