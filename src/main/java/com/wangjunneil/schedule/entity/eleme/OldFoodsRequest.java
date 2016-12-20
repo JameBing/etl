@@ -1,6 +1,7 @@
 package com.wangjunneil.schedule.entity.eleme;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Map;
 
@@ -9,37 +10,53 @@ import java.util.Map;
  */
 public class OldFoodsRequest {
     //食物分类ID
+    @SerializedName("food_category_id")
     private String food_category_id;
     //食物名字
+    @SerializedName("name")
     private String name;
     //食物价格
+    @SerializedName("price")
     private String price;
     //食物描述
+    @SerializedName("description")
     private String description;
     //最大库存
+    @SerializedName("max_stock")
     private String max_stock;
     //当前库存
+    @SerializedName("stock")
     private String stock;
     //第三食物ID
+    @SerializedName("tp_food_id")
     private String tp_food_id;
     //图片
+    @SerializedName("image_hash")
     private String image_hash;
+    @SerializedName("is_new")
     private String is_new;
+    @SerializedName("is_featured")
     private String is_featured;
+    @SerializedName("is_gum")
     private String is_gum;
+    @SerializedName("is_spicy")
     private String is_spicy;
     //打包费用
+    @SerializedName("packing_fee")
     private String packing_fee;
+    @SerializedName("sort_order")
     private String sort_order;
     //更新食物用食物ID
+    @SerializedName("food_id")
     private String food_id;
     //通过第三方ID获取ID
+    @SerializedName("tp_food_ids")
     private String tp_food_ids;
     //批量删除食物ID
+    @SerializedName("food_ids")
     private String food_ids;
-
+    @SerializedName("foods_info")
     private Map<String, OldFoodsRequest> foods_info;
-
 
     public String getFood_category_id() {
         return food_category_id;

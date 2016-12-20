@@ -1,6 +1,7 @@
 package com.wangjunneil.schedule.entity.eleme;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -8,16 +9,19 @@ import java.util.List;
  * Created by admin on 2016/11/28.
  */
 public class FoodsCategoryRequest {
-    /********************共有属性***************************/
     //食物名字
+    @SerializedName("name")
     private String name;
     //描述
+    @SerializedName("description")
     private String description;
-    /*******************创建食物分类属性*******************/
     //商家id
+    @SerializedName("restaurant_id")
     private String restaurant_id;
     //权重
+    @SerializedName("weight")
     private String weight;
+    @SerializedName("display_attribute")
     private List<DisplayAttribute> display_attribute;
 
 

@@ -2,6 +2,8 @@ package com.wangjunneil.schedule.entity.eleme;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Created by admin on 2016/12/20.
  */

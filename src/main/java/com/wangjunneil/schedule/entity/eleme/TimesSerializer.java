@@ -14,8 +14,8 @@ public class TimesSerializer implements JsonSerializer<Times> {
     @Override
     public JsonElement serialize(Times times, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject object = new JsonObject();
-        object.add("start_time",jsonSerializationContext.serialize(times.getStart_time()));
-        object.add("end_time",jsonSerializationContext.serialize(times.getEnd_time()));
+        object.add("start_time",jsonSerializationContext.serialize(times.getStarttime()));
+        object.add("end_time",jsonSerializationContext.serialize(times.getEndtime()));
         return object;
     }
 }

@@ -17,7 +17,7 @@ public class ResultSerializer implements JsonSerializer<Result>{
         object.add("code", jsonSerializationContext.serialize(result.getCode()));
         object.add("data", jsonSerializationContext.serialize(result.getData()));
         object.add("message", jsonSerializationContext.serialize(result.getMessage()));
-        object.add("request_id", jsonSerializationContext.serialize(result.getRequest_id()));
+        object.add("request_id", jsonSerializationContext.serialize(result.getRequestid()));
         return object;
     }
 }
