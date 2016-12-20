@@ -91,6 +91,7 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
            rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }catch (ApiOpException e){
             rtn.setCode(e.getCode());
             rtn.setDesc("error");
@@ -98,6 +99,7 @@ public class MeiTuanFacadeService {
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }finally {
             //有异常产生
             if (log1 !=null){
@@ -145,6 +147,7 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }catch (ApiOpException e){
             rtn.setCode(e.getCode());
             rtn.setDesc("error");
@@ -152,6 +155,7 @@ public class MeiTuanFacadeService {
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }finally {
             //有异常产生
             if (log1 !=null){
@@ -260,6 +264,7 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }catch (ApiOpException e){
             rtn.setCode(e.getCode());
             rtn.setDesc("error");
@@ -267,6 +272,7 @@ public class MeiTuanFacadeService {
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }finally {
             //有异常产生
             if (log1 !=null){
@@ -316,6 +322,7 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }catch (ApiOpException e){
             rtn.setCode(e.getCode());
             rtn.setDesc("error");
@@ -323,6 +330,7 @@ public class MeiTuanFacadeService {
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }finally {
             //有异常产生
             if (log1 !=null){
@@ -374,6 +382,7 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }catch (ApiOpException e) {
             rtn.setCode(e.getCode());
             rtn.setDesc("error");
@@ -381,6 +390,7 @@ public class MeiTuanFacadeService {
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }finally {
             //有异常产生
             if (log1 !=null){
@@ -429,6 +439,7 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }catch (ApiOpException ex){
             rtn.setCode(ex.getCode());
             rtn.setDesc("error");
@@ -436,6 +447,7 @@ public class MeiTuanFacadeService {
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }finally {
             //有异常产生
             if (log1 !=null){
@@ -479,6 +491,7 @@ public class MeiTuanFacadeService {
         }catch (ScheduleException ex){
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }catch (ApiOpException ex)
         {
             rtn.setCode(ex.getCode());
@@ -487,6 +500,7 @@ public class MeiTuanFacadeService {
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
         }finally {
             //有异常产生
             if (log1 !=null){

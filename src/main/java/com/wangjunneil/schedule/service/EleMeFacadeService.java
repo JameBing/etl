@@ -94,10 +94,12 @@ public class EleMeFacadeService {
             catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }
             catch (Exception ex){
                 rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log!=null){
                     log.setLogId(merchantId.concat(log.getLogId()));
@@ -136,8 +138,10 @@ public class EleMeFacadeService {
             }
             catch (ScheduleException ex) {
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }catch (Exception ex){
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             } finally {
                 if (log != null) {
                     log.setLogId(merchantId.concat(log.getLogId()));
@@ -173,8 +177,10 @@ public class EleMeFacadeService {
             }
             catch (ScheduleException ex) {
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }catch (Exception ex){
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             } finally {
                 if (log != null) {
                     log.setLogId(merchantId.concat(log.getLogId()));
@@ -229,9 +235,11 @@ public class EleMeFacadeService {
             catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }catch (Exception ex){
                 rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log != null) {
                     log.setLogId(elemeOrderId.concat(log.getLogId()));
@@ -284,9 +292,11 @@ public class EleMeFacadeService {
             catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }catch (Exception ex){
                 rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log != null) {
                     log.setLogId(log.getLogId());
@@ -323,8 +333,10 @@ public class EleMeFacadeService {
             }
             catch (ScheduleException ex) {
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }catch (Exception ex){
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log != null) {
                     log.setLogId(merchantId.concat(log.getLogId()));
@@ -382,8 +394,10 @@ public class EleMeFacadeService {
                 }
                 catch (ScheduleException ex) {
                     log[0] = sysFacadeService.functionRtn.apply(ex);
+                    log[0].setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
                 }catch (Exception ex){
                     log[0] = sysFacadeService.functionRtn.apply(ex);
+                    log[0].setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
                 }finally {
                     if (log[0] != null) {
                         log[0].setLogId(elemeOrderIds.concat(log[0].getLogId()));
@@ -489,8 +503,10 @@ public class EleMeFacadeService {
             }
             catch (ScheduleException ex) {
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }catch (Exception ex){
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log != null) {
                     log.setLogId(parms.concat(log.getLogId()));
@@ -584,10 +600,12 @@ public class EleMeFacadeService {
             catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }
             catch (Exception ex){
                 rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log != null) {
                     log.setLogId(log.getLogId());
@@ -628,9 +646,11 @@ public class EleMeFacadeService {
             }
             catch (ScheduleException ex) {
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }
             catch (Exception ex){
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log != null) {
                     log.setLogId(log.getLogId());
@@ -724,10 +744,12 @@ public class EleMeFacadeService {
             catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }
             catch (Exception ex){
                 rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log != null) {
                     log.setLogId(log.getLogId());
@@ -768,12 +790,14 @@ public class EleMeFacadeService {
             }catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             } catch (ElemeException ex) {
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
             }catch (Exception ex) {
                 rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log != null) {
                     log.setLogId(elemeOrderIds.concat(log.getLogId()));
@@ -819,12 +843,14 @@ public class EleMeFacadeService {
             }catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             } catch (ElemeException ex) {
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
             }catch (Exception ex) {
                 rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log != null) {
                     log.setLogId(elemeOrderIds.concat(log.getLogId()));
@@ -860,12 +886,14 @@ public class EleMeFacadeService {
         }catch (ScheduleException ex) {
             rtn.setCode(-999);
             log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
         } catch (ElemeException ex) {
             rtn.setCode(-997);
             log = sysFacadeService.functionRtn.apply(ex);
         }catch (Exception ex) {
             rtn.setCode(-998);
             log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
         }finally {
             if (log != null) {
                 log.setLogId(tpRestaurantId.concat(log.getLogId()));
@@ -925,10 +953,12 @@ public class EleMeFacadeService {
             catch (ScheduleException ex){
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }
             catch (Exception ex) {
                 rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log!=null){
                     for (int i = 0; i < dishList.size(); i++) {
