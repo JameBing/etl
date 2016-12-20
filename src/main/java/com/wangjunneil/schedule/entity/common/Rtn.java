@@ -11,7 +11,7 @@ public class Rtn {
     private String logId;
 
     //code
-    private int code;
+    private Integer code;
 
     //desc
     private String desc;
@@ -31,11 +31,11 @@ public class Rtn {
         return  this.logId;
     }
 
-    public void setCode(int code){
+    public void setCode(Integer code){
         this.code = code;
     }
 
-    public int getCode(){
+    public Integer getCode(){
         return this.code;
     }
 
@@ -51,8 +51,9 @@ public class Rtn {
         this.remark = remark;
     }
 
+
     public String getRemark(){
-        return StringUtil.isEmpty(remark)?"":remark;
+        return this.remark;
     }
 
     public void setDynamic(String dynamic){

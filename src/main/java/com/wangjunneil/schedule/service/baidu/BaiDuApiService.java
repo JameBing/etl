@@ -268,7 +268,7 @@ public class BaiDuApiService {
         //暂不考虑验证返回值中的sign签名合法性
         Body body = gson.fromJson(gson.toJson(sysParams.getBody()), Body.class);
         if(!body.getErrno().equals("0")){
-            throw  new BaiDuException("ScheduleException","门店不存在",requestStr,new Throwable().getStackTrace());
+            return Enum.getEnumDesc(Enum.ReturnCodeBaiDu.R0, Integer.valueOf(body.getErrno())).toString();
         }
         Shop shop1 = gson.fromJson(body.getData().toString(), Shop.class);
         JsonObject jsonObject = Enum.getEnumDesc(Enum.ReturnCodeBaiDu.R0, Integer.valueOf(body.getErrno()));

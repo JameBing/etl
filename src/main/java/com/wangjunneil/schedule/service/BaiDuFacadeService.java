@@ -212,8 +212,11 @@ public class BaiDuFacadeService {
         Rtn rtn = new Rtn();
         Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        //判断入参数非空
+        if(StringUtil.isEmpty(shopId)){
+            return gson1.toJson(rtn);
+        }
         try {
-
             Shop shop = new Shop();
             shop.setShopId(shopId);
             shop.setBaiduShopId(baiduShopId);
@@ -348,25 +351,28 @@ public class BaiDuFacadeService {
 
     //菜品上架 & 下架
     public String dishOpt(String baiduShopId,String shopId,String baiduDishId,String dishId,String cmd){
-            String result = "";
-            Rtn rtn = new Rtn();
-            Log log = null;
+        String result = "";
+        Rtn rtn = new Rtn();
+        Log log = null;
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(shopId) || StringUtil.isEmpty(dishId)){
+            return gson1.toJson(rtn);
+        }
+        try {
+            Dish dish = new Dish();
+            dish.setShopId(shopId);
+            dish.setDishId(dishId);
+            switch (cmd){
+                case "dish.online":
+                    result = baiDuApiService.dishOnline(dish);
+                    break;
+                case "dish.offline":
+                    result = baiDuApiService.dishOffline(dish);
+                    break;
+                default:break;
+            }
+            rtn = gson1.fromJson(result,Rtn.class);
             rtn.setDynamic(StringUtil.isEmpty(dishId)?baiduDishId:dishId);
-            Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-            try {
-                Dish dish = new Dish();
-                dish.setShopId(shopId);
-                dish.setDishId(dishId);
-                switch (cmd){
-                    case "dish.online":
-                        result = baiDuApiService.dishOnline(dish);
-                        break;
-                    case "dish.offline":
-                        result = baiDuApiService.dishOffline(dish);
-                        break;
-                    default:break;
-                }
-                rtn = gson1.fromJson(result,Rtn.class);
         }catch (BaiDuException ex){
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -546,6 +552,9 @@ public class BaiDuFacadeService {
         rtn.setDynamic(params);
         String result = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(params) || StringUtil.isEmpty(shopId)){
+            return gson1.toJson(rtn);
+        }
         try {
             Order order = new Order();
             order.setOrderId(params);
@@ -583,27 +592,30 @@ public class BaiDuFacadeService {
         Rtn rtn = new Rtn();
         Log log = null;
         rtn.setDynamic(params);
-            String result = null;
-            Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-            try {
-                Order order = new Order();
-                order.setOrderId(params);
-                order.setType(reason_code);
-                order.setReason(reason);
-                result = baiDuApiService.orderCancel(order);
-                rtn = gson1.fromJson(result,Rtn.class);
-            }catch (BaiDuException ex){
-                rtn.setCode(-997);
-                log = sysFacadeService.functionRtn.apply(ex);
+        String result = null;
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(params) || StringUtil.isEmpty(shopId)){
+            return gson1.toJson(rtn);
+        }
+        try {
+            Order order = new Order();
+            order.setOrderId(params);
+            order.setType(reason_code);
+            order.setReason(reason);
+            result = baiDuApiService.orderCancel(order);
+            rtn = gson1.fromJson(result,Rtn.class);
+        }catch (BaiDuException ex){
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
 
-            }catch (ScheduleException ex){
-                rtn.setCode(-999);
-                log = sysFacadeService.functionRtn.apply(ex);
-            }
-            catch (Exception ex){
-                log =  sysFacadeService.functionRtn.apply(ex);
-                rtn.setCode(-998);
-            }
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }
+        catch (Exception ex){
+            log =  sysFacadeService.functionRtn.apply(ex);
+            rtn.setCode(-998);
+        }
         if (log !=null){
             log.setLogId(shopId.concat(log.getLogId()));
             log.setTitle(MessageFormat.format("门店{0}取消订单{1}失败", shopId,params));
@@ -650,10 +662,17 @@ public class BaiDuFacadeService {
         Body body = new Body();
         Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class, new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(params)){
+            return gson1.toJson(rtn);
+        }
         try {
             Shop shop = new Shop();
             shop.setShopId(params);
             result = baiDuApiService.shopStatus(shop);
+            rtn = gson1.fromJson(result,Rtn.class);
+            if(rtn.getCode()!=0){
+                return gson1.toJson(rtn);
+            }
             Shop shop1 = getGson().fromJson(result, Shop.class);
            switch (shop1.getBusinessStauts()){
                case 1:

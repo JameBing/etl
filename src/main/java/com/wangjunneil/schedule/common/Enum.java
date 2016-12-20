@@ -39,6 +39,8 @@ public class Enum {
     R1,
     @EnumDescription(code = 20253,desc = "商户不存在",remark = "商户不存在")
     R20253,
+    @EnumDescription(code = 20270,desc = "商品不存在",remark = "商品不存在")
+    R20270,
     @EnumDescription(code = 20108,desc = "命令不支持",remark = "命令不支持")
     R20108,
     @EnumDescription(code = 20109,desc = "来源不支持",remark = "来源不支持")
@@ -48,7 +50,11 @@ public class Enum {
     @EnumDescription(code = 20113,desc = "ticket格式不正确",remark = "ticket格式不正确")
     R20113,
     @EnumDescription(code = 20114,desc = "签名不匹配",remark = "签名不匹配")
-    R20114
+    R20114,
+    @EnumDescription(code = 20212,desc = "订单不存在",remark = "订单不存在")
+    R20212,
+    @EnumDescription(code = 20216,desc = "订单已取消",remark = "订单已取消")
+    R20216
     }
 
     //订单状态--京东到家
