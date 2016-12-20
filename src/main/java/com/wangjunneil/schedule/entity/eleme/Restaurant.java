@@ -42,7 +42,7 @@ public class Restaurant {
     @SerializedName("latitude")
     private Double latitude;//纬度
     @SerializedName("serving_time")
-    private List<Object> servingtime;//服务时间
+    private List<String> servingtime;//服务时间
     @SerializedName("city_code")
     private String citycode;//城市代码
     @SerializedName("online_payment")
@@ -64,9 +64,9 @@ public class Restaurant {
     @SerializedName("deliver_spent")
     private int deliverspent;//配送
     @SerializedName("num_ratings")
-    private List<Integer> numratings;//额定值
+    private List<Integer> numratings;//餐厅评价
     @SerializedName("deliver_times")
-    private List<Object> delivertimes;//交货时间
+    private List<String> delivertimes;//交货时间
     @SerializedName("mobile")
     private String mobile;//手机
     @SerializedName("order_mode")
@@ -84,7 +84,7 @@ public class Restaurant {
     @SerializedName("is_bookable")
     private int isbookable;//是否可预订
     @SerializedName("phone_list")
-    private List<Object> phonelist;//联系列表
+    private List<String> phonelist;//联系列表
     @SerializedName("busy_level")
     private int busylevel;//
     @SerializedName("agent_fee")
@@ -218,11 +218,11 @@ public class Restaurant {
         this.latitude = latitude;
     }
 
-    public List<Object> getServingtime() {
+    public List<String> getServingtime() {
         return servingtime;
     }
 
-    public void setServingtime(List<Object> servingtime) {
+    public void setServingtime(List<String> servingtime) {
         this.servingtime = servingtime;
     }
 
@@ -314,11 +314,11 @@ public class Restaurant {
         this.numratings = numratings;
     }
 
-    public List<Object> getDelivertimes() {
+    public List<String> getDelivertimes() {
         return delivertimes;
     }
 
-    public void setDelivertimes(List<Object> delivertimes) {
+    public void setDelivertimes(List<String> delivertimes) {
         this.delivertimes = delivertimes;
     }
 
@@ -386,11 +386,11 @@ public class Restaurant {
         this.isbookable = isbookable;
     }
 
-    public List<Object> getPhonelist() {
+    public List<String> getPhonelist() {
         return phonelist;
     }
 
-    public void setPhonelist(List<Object> phonelist) {
+    public void setPhonelist(List<String> phonelist) {
         this.phonelist = phonelist;
     }
 

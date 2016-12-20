@@ -10,7 +10,7 @@ public class Result {
     //返回结果
     private Object data;
     //返回转态信息
-    private String message;
+    private Object message;
     //返回请求id
     private String request_id;
 
@@ -22,11 +22,11 @@ public class Result {
         this.code = code;
     }
 
-    public String getMessage() {
+    public Object getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(Object message) {
         this.message = message;
     }
 

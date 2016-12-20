@@ -24,6 +24,12 @@ public class EleMeApiService {
     @Autowired
     private SysFacadeService sysFacadeService;
 
+    /**
+     * 对url进行签名
+     * @param pathUrl
+     * @param obj 参与签名参数
+     * @return
+     */
     public String getSystemUrl(String pathUrl, Object obj) throws ScheduleException,ElemeException {
         try {
             Cfg elemeCfg = sysFacadeService.findElemeCfg();
@@ -44,8 +50,7 @@ public class EleMeApiService {
 
     /**
      * 获取所属餐厅ID
-            * @throws ScheduleException
-            */
+     */
         public String getAffiliationShop() throws ScheduleException,ElemeException {
             String url = getSystemUrl(Constants.URL_ELEME_RESTAURANT_ID, null);
         return HttpUtil.get2(url);
@@ -55,7 +60,6 @@ public class EleMeApiService {
      * 餐厅状态
      * @param obj 属性is_open ：1营业/0不营业
      * @return
-     * @throws ScheduleException
      */
     public String setRestaurantStatus(RestaurantRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
            String pathURL = MessageFormat.format(Constants.URL_ELEME_RESTAURANT_ON, obj.getRestaurant_id().toString());
@@ -68,7 +72,6 @@ public class EleMeApiService {
      * 添加食品接口
      * @param obj
      * @return
-     * @throws ScheduleException
      */
     public String addFoods(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String url = getSystemUrl(Constants.URL_ELEME_ADD_FOODS, obj);
@@ -79,7 +82,6 @@ public class EleMeApiService {
      * 拉取新订单
      * @param obj
      * @return
-     * @throws ScheduleException
      */
     public String pullNewOrder(OrderRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException{
         String url = getSystemUrl(Constants.URL_ELEME_PULL_NEW_ORDER, obj);
@@ -88,10 +90,20 @@ public class EleMeApiService {
     }
 
     /**
+     * 获取新订单
+     * @param obj
+     * @return
+     */
+    public String findNewOrder(OrderRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException{
+        String url = getSystemUrl(Constants.URL_ELENE_NEW_ORDER, obj);
+        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+        return HttpUtil.get2(requstUrl);
+    }
+
+    /**
      * 更新食物接口
      * @param obj
      * @return
-     * @throws ScheduleException
      */
     public String upFoods(OldFoodsRequest obj)throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException{
         String pathURL = MessageFormat.format(Constants.URL_ELEME_UPORDOWNFRAME_FOODS, obj.getFood_id().toString());
@@ -103,11 +115,9 @@ public class EleMeApiService {
     /**
      * 获取餐厅食物分类ID food_category_id
      * @return
-     * @throws ScheduleException
      */
-
     public String foodsClassify(String restaurantId)throws ScheduleException,ElemeException{
-        String pathURL = MessageFormat.format(Constants.URL_ELEME_CLASSIFY_FOODS, restaurantId);
+        String pathURL = MessageFormat.format(Constants.URL_ELEME_RESTAURANT_FOODCATEGORY, restaurantId);
         String url = getSystemUrl(pathURL, null);
         return HttpUtil.get2(url);
     }
@@ -115,9 +125,7 @@ public class EleMeApiService {
     /**
      * 查询食物列表
     * @return
-        * @throws ScheduleException
     */
-
     public String getFoodsList(String categoryId)throws ScheduleException,ElemeException{
         String pathURL = MessageFormat.format(Constants.URL_ELEME_GETFOODSID, categoryId);
         String url = getSystemUrl(pathURL, null);
@@ -127,7 +135,6 @@ public class EleMeApiService {
     /**
      * 查询订单详情
      * @return
-     * @throws ScheduleException
      */
     public String orderDetail(OrderRequest obj)throws ScheduleException,ElemeException{
         String pathURL = MessageFormat.format(Constants.URL_ELEME_ORDER_DETAIL, obj.getEleme_order_id().toString());
@@ -140,7 +147,6 @@ public class EleMeApiService {
      * 订单状态变更  (确认取消订单)
      * @param obj
      * @return
-     * @throws ScheduleException
      */
     public String upOrderStatus(OrderRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String pathURL = MessageFormat.format(Constants.URL_ELEME_ORDER_STATUS, obj.getEleme_order_id().toString());
@@ -153,7 +159,6 @@ public class EleMeApiService {
      * 查询餐厅菜单
      * no param
      * @return
-     * @throws ScheduleException
      */
     public String restaurantMenu(RestaurantRequest obj) throws ScheduleException,ElemeException {
         String pathURL = MessageFormat.format(Constants.URL_ELEME_RESTAURANT_MENU, obj.getRestaurant_id());
@@ -166,7 +171,6 @@ public class EleMeApiService {
      * 通过第三方id获取平台食物id
      * @param obj
      * @return
-     * @throws ScheduleException
      */
     public String getFoodId(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String url = getSystemUrl(Constants.URL_ELEME_TP_FOOD_ID, obj);
@@ -178,7 +182,6 @@ public class EleMeApiService {
      *批量上下架
      * @param obj 属性stock ：大于0上架/0下架
      * @return
-     * @throws ScheduleException
      */
     public String upBatchFrame(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String url = getSystemUrl(Constants.URL_ELEME_UPORDOWNFRAME_FOODS_LIST, obj);
@@ -189,7 +192,6 @@ public class EleMeApiService {
      * 批量删除食物
      * @param obj
      * @return
-     * @throws ScheduleException
      */
     public String delectAllFoods(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         String url = getSystemUrl(Constants.URL_ELEME_DELETE_FOODS_LIST, obj);
@@ -200,12 +202,6 @@ public class EleMeApiService {
      * 配送信息
      * @param obj
      * @return
-     * @throws ElemeException
-     * @throws ScheduleException
-     * @throws IllegalAccessException
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IOException
      */
     public String getDeliveryInfo(OrderRequest obj) throws ElemeException, ScheduleException, IllegalAccessException, IntrospectionException, InvocationTargetException, IOException {
         String url = getSystemUrl(Constants.URL_ELEME_DELIVERY, obj);
@@ -217,8 +213,6 @@ public class EleMeApiService {
      * 同意退单
      * @param orderid
      * @return
-     * @throws ElemeException
-     * @throws ScheduleException
      */
     public String agreeRefund(String orderid) throws ElemeException, ScheduleException {
         String pathURL = MessageFormat.format(Constants.URL_ELEME_AGREE_REFUND, orderid);
@@ -230,12 +224,6 @@ public class EleMeApiService {
      * 不同意退单
      * @param obj
      * @return
-     * @throws ElemeException
-     * @throws ScheduleException
-     * @throws IllegalAccessException
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IOException
      */
     public String disAgreeRefund(OrderRequest obj) throws ElemeException, ScheduleException, IllegalAccessException, IntrospectionException, InvocationTargetException, IOException {
         String pathURL = MessageFormat.format(Constants.URL_ELEME_DISAGREE_REFUND, obj.getEleme_order_id().toString());
@@ -248,12 +236,6 @@ public class EleMeApiService {
      * 绑定商户ID
      * @param obj
      * @return
-     * @throws ElemeException
-     * @throws ScheduleException
-     * @throws IllegalAccessException
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IOException
      */
     public String bingDing(RestaurantRequest obj) throws ElemeException, ScheduleException, IllegalAccessException, IntrospectionException, InvocationTargetException, IOException {
         String url = getSystemUrl(Constants.URL_ELEME_BINGDING_RESTAURANTID, obj);
@@ -264,12 +246,6 @@ public class EleMeApiService {
      * 重新绑定商户ID
      * @param obj
      * @return
-     * @throws ElemeException
-     * @throws ScheduleException
-     * @throws IllegalAccessException
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IOException
      */
     public String againBingDing(RestaurantRequest obj) throws ElemeException, ScheduleException, IllegalAccessException, IntrospectionException, InvocationTargetException, IOException {
         String url = getSystemUrl(Constants.URL_ELEME_BINGDING_RESTAURANTID, obj);
@@ -280,15 +256,30 @@ public class EleMeApiService {
      * 通过第三方ID查询餐厅ID
      * @param obj
      * @return
-     * @throws ElemeException
-     * @throws ScheduleException
-     * @throws IllegalAccessException
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IOException
      */
     public String getRestaurantId(RestaurantRequest obj) throws ElemeException, ScheduleException, IllegalAccessException, IntrospectionException, InvocationTargetException, IOException {
         String url = getSystemUrl(Constants.URL_ELEME_BINGDING_RESTAURANTID, obj);
+        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+        return HttpUtil.get2(requstUrl);
+    }
+
+    /**
+     * 获取餐厅信息
+     * @return
+     */
+    public String getRestaurantInfo(RestaurantRequest obj) throws ElemeException, ScheduleException {
+        String pathURL = MessageFormat.format(Constants.URL_ELEME_RESTAURANT_INFO, obj.getRestaurant_id().toString());
+        String url = getSystemUrl(pathURL, null);
+        return HttpUtil.get2(url);
+    }
+
+    /**
+     * 获取餐厅状态
+     * @param obj
+     * @return
+     */
+    public String getRestaurantStatus(RestaurantRequest obj) throws ElemeException, ScheduleException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+        String url = getSystemUrl(Constants.URL_ELEME_RESTAURANT_STATUS, obj);
         String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
         return HttpUtil.get2(requstUrl);
     }
