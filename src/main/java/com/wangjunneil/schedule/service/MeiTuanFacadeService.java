@@ -413,6 +413,9 @@ public class MeiTuanFacadeService {
         Rtn rtn = new Rtn();
         rtn.setDynamic(String.valueOf(orderId));
         Log log1 = null;
+        if(StringUtil.isEmpty(orderId)){
+            return new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+        }
         try {
             json = mtApiService.getConfirmOrder(orderId);
             if (json.equals("ok") || json.equals("200")){
@@ -460,6 +463,9 @@ public class MeiTuanFacadeService {
         Rtn rtn = new Rtn();
         rtn.setDynamic(String.valueOf(orderId));
         Log log1 = null;
+        if(StringUtil.isEmpty(orderId)){
+            return new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+        }
         try {
             json = mtApiService.getCancelOrder(orderId,reason,reason_code);
             if(json.equals("ok") || json.equals("200")){

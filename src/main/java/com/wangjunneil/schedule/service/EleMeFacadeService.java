@@ -203,9 +203,7 @@ public class EleMeFacadeService {
         Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(elemeOrderId)) {
-            rtn.setCode(-1);
-            rtn.setDesc("订单ID为空");
-            rtn.setRemark("订单ID为空");
+            return gson1.toJson(rtn);
         }else {
             try {
                 OrderRequest orderRequest = new OrderRequest();

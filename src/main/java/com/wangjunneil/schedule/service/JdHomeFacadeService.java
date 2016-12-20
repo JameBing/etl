@@ -543,9 +543,6 @@ public class JdHomeFacadeService {
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(orderId) || StringUtil.isEmpty(shopId) || StringUtil.isEmpty(isAgree)){
-            rtn.setCode(-1);
-            rtn.setDesc("error");
-            rtn.setRemark("商家订单确认/取消接口请求参数为空");
             return gson.toJson(rtn);
         }
         try {

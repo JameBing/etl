@@ -552,6 +552,9 @@ public class BaiDuFacadeService {
         rtn.setDynamic(params);
         String result = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(params) || StringUtil.isEmpty(shopId)){
+            return gson1.toJson(rtn);
+        }
         try {
             Order order = new Order();
             order.setOrderId(params);
@@ -589,27 +592,30 @@ public class BaiDuFacadeService {
         Rtn rtn = new Rtn();
         Log log = null;
         rtn.setDynamic(params);
-            String result = null;
-            Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-            try {
-                Order order = new Order();
-                order.setOrderId(params);
-                order.setType(reason_code);
-                order.setReason(reason);
-                result = baiDuApiService.orderCancel(order);
-                rtn = gson1.fromJson(result,Rtn.class);
-            }catch (BaiDuException ex){
-                rtn.setCode(-997);
-                log = sysFacadeService.functionRtn.apply(ex);
+        String result = null;
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(params) || StringUtil.isEmpty(shopId)){
+            return gson1.toJson(rtn);
+        }
+        try {
+            Order order = new Order();
+            order.setOrderId(params);
+            order.setType(reason_code);
+            order.setReason(reason);
+            result = baiDuApiService.orderCancel(order);
+            rtn = gson1.fromJson(result,Rtn.class);
+        }catch (BaiDuException ex){
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
 
-            }catch (ScheduleException ex){
-                rtn.setCode(-999);
-                log = sysFacadeService.functionRtn.apply(ex);
-            }
-            catch (Exception ex){
-                log =  sysFacadeService.functionRtn.apply(ex);
-                rtn.setCode(-998);
-            }
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }
+        catch (Exception ex){
+            log =  sysFacadeService.functionRtn.apply(ex);
+            rtn.setCode(-998);
+        }
         if (log !=null){
             log.setLogId(shopId.concat(log.getLogId()));
             log.setTitle(MessageFormat.format("门店{0}取消订单{1}失败", shopId,params));
