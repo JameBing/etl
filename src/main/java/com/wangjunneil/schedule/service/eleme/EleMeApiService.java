@@ -199,6 +199,18 @@ public class EleMeApiService {
     }
 
     /**
+     * 删除食物
+     * @param obj
+     * @return
+     */
+    public String delecFoods(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+        String pathURL = MessageFormat.format(Constants.URL_ELEME_DELETE_FOODS, obj.getFood_id().toString());
+        obj.setFood_id("");
+        String url = getSystemUrl(pathURL, obj);
+        return HttpUtil.delete(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+    }
+
+    /**
      * 配送信息
      * @param obj
      * @return

@@ -270,6 +270,8 @@ public final class Constants {
     public static final String URL_ELEME_UPORDOWNFRAME_FOODS_LIST = URL_ELEME_URL + "foods/batch_update/";
     //批量删除食物
     public static final String URL_ELEME_DELETE_FOODS_LIST = URL_ELEME_URL + "foods/batch_delete/";
+    //删除食物
+    public static final String URL_ELEME_DELETE_FOODS = URL_ELEME_ADD_FOODS + "{0}/";
 
     public static final int EL_STATUS_CODE_INVALID=-1;  // 订单已取消
 

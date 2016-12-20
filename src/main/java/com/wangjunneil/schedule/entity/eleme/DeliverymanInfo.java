@@ -7,9 +7,9 @@ import com.google.gson.annotations.SerializedName;
  */
 public class DeliverymanInfo {
     @SerializedName("deliveryman_name")
-    private String deliverymanname;
+    private String deliverymanname;//送货员名称
     @SerializedName("deliveryman_phone")
-    private String deliverymanphone;
+    private String deliverymanphone;//送货员电话
 
     public String getDeliverymanname() {
         return deliverymanname;
