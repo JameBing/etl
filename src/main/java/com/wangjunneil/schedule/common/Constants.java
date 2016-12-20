@@ -125,7 +125,7 @@ public final class Constants {
 
     public static final String Z8_URL = "https://openapi.zhe800.com/api/erp/v2/";
 
-   //region 外卖平台相关
+    //region 外卖平台相关
 
     //百度外卖=================================================================================//
     public static final  String BAIDU_URL = "http://api.waimai.baidu.com";
@@ -173,28 +173,28 @@ public final class Constants {
     public static final String  URL_JDHOME_STORE_ON = "https://openo2o.jd.com/djapi/stock/updateVendibility";
 
     //京东到家新增商家店内分类信息
-    public static final String  URL_ADD_SHOP_CATEGORY = "https://openo2o.jd.com/djapi/pms/addShopCategory";
+    public static final String  URL_ADD_SHOP_CATEGORY = "https://openo2o.jd.com/mockapi/pms/addShopCategory";
 
     //京东到家修改商家店内分类信息
-    public static final String URL_UPDATE_SHOP_CATEGORY = "https://openo2o.jd.com/djapi/pms/updateShopCategory";
+    public static final String URL_UPDATE_SHOP_CATEGORY = "https://openo2o.jd.com/mockapi/pms/updateShopCategory";
 
     //京东到家删除商家店内分类信息
-    public static final String URL_DELETE_SHOP_CATEGORY = "https://openo2o.jd.com/djapi/pms/delShopCategory";
+    public static final String URL_DELETE_SHOP_CATEGORY = "https://openo2o.jd.com/mockapi/pms/delShopCategory";
 
     //京东到家新增推送订单
-    public static final String URL_NEW_ORDER =  "https://openo2o.jd.com/djapi/order/es/query";
+    public static final String URL_NEW_ORDER =  "https://openo2o.jd.com/mockapi/order/es/query";
 
     //京东到家商家确认接单接口
-    public static final String URL_ORDER_ACCEPT_OPERATE ="https://openo2o.jd.com/djapi/ocs/orderAcceptOperate";
+    public static final String URL_ORDER_ACCEPT_OPERATE ="https://openo2o.jd.com/mockapi/ocs/orderAcceptOperate";
 
     //京东到家查询商家商品信息列表
-    public static final String URL_QUERY_SKU_INFO ="https://openo2o.jd.com/djapi/pms/querySkuInfos";
+    public static final String URL_QUERY_SKU_INFO ="https://openo2o.jd.com/mockapi/pms/querySkuInfos";
 
     //京东到家根据查询条件分页获取门店基本信息
-    public static final String STORE_INFO_PAGEBEAN ="https://openo2o.jd.com/djapi/djstore/getStoreInfoPageBean";
+    public static final String STORE_INFO_PAGEBEAN ="https://openo2o.jd.com/mockapi/djstore/getStoreInfoPageBean";
 
     //京东到家修改门店基本信息
-    public static final String UPDATE_STORE_INFO ="https://openo2o.jd.com/djapi/store/updateStoreInfo4Open";
+    public static final String UPDATE_STORE_INFO ="https://openo2o.jd.com/mockapi/store/updateStoreInfo4Open";
 
     public static final int JH_ORDER_LOCK=20010;  // 锁定
 
@@ -215,42 +215,61 @@ public final class Constants {
     /**
      * 饿了吗接口url
      */
-    //获取所属餐厅Id
-    public static final String URL_ELEME_RESTAURANT_ID = "http://v2.openapi.ele.me/restaurant/own/";
+    //饿了么URL
+    public static final String URL_ELEME_URL = "http://v2.openapi.ele.me/";
+    /*
+        eleme餐厅URL
+     */
+    //饿了么餐厅URL
+    public static final String URL_ELEME_RESTAURANT_URL = URL_ELEME_URL + "restaurant/";
     //饿了么商家开关店
-    public static final String URL_ELEME_RESTAURANT_ON = "http://v2.openapi.ele.me/restaurant/{0}/business_status/";
-    //饿了么查询新订单
-    public static final String URL_ELENE_NEW_ORDER = "http://v2.openapi.ele.me/order/new/";
-    //饿了么拉取新订单
-    public static final String URL_ELEME_PULL_NEW_ORDER = "http://v2.openapi.ele.me/order/pull/new/";
-    //饿了么修改订单状态
-    public static final String URL_ELEME_ORDER_STATUS = "http://v2.openapi.ele.me/order/{0}/status/";
-    //添加食物
-    public static final String URL_ELEME_ADD_FOODS = "http://v2.openapi.ele.me/food/";
-    //更新食物
-    public static final String URL_ELEME_UPORDOWNFRAME_FOODS = "http://v2.openapi.ele.me/food/{0}/";
+    public static final String URL_ELEME_RESTAURANT_ON = URL_ELEME_RESTAURANT_URL + "{0}/business_status/";
     //获取餐厅食物分类
-    public static final String URL_ELEME_CLASSIFY_FOODS = "http://v2.openapi.ele.me/restaurant/{0}/food_categories/";
-    //获取餐厅食物ID
-    public static final String URL_ELEME_GETFOODSID = "http://v2.openapi.ele.me/food_category/{0}/foods/";
-    //查询订单详情
-    public static final String URL_ELEME_ORDER_DETAIL = "http://v2.openapi.ele.me/order/{0}/";
+    public static final String URL_ELEME_RESTAURANT_FOODCATEGORY = URL_ELEME_RESTAURANT_URL + "{0}/food_categories/";
     //查询餐厅菜单
-    public static final String URL_ELEME_RESTAURANT_MENU = "http://v2.openapi.ele.me/restaurant/{0}/menu/";
-    //通过地单方id获取餐厅食物ID
-    public static final String URL_ELEME_TP_FOOD_ID = "http://v2.openapi.ele.me/foods/tp_food_id/";
-    //批量上下架and批量修改食物
-    public static final String URL_ELEME_UPORDOWNFRAME_FOODS_LIST = "http://v2.openapi.ele.me/foods/batch_update/";
-    //批量删除食物
-    public static final String URL_ELEME_DELETE_FOODS_LIST = "http://v2.openapi.ele.me/foods/batch_delete/";
-    //查询配送信息
-    public static final String URL_ELEME_DELIVERY = "http://v2.openapi.ele.me/order/delivery/";
-    //同意退单
-    public static final String URL_ELEME_AGREE_REFUND = "http://v2.openapi.ele.me/order/{0}/agree_refund/";
-    //不同意退单
-    public static final String URL_ELEME_DISAGREE_REFUND = "http://v2.openapi.ele.me/order/{0}/disagree_refund/";
+    public static final String URL_ELEME_RESTAURANT_MENU = URL_ELEME_RESTAURANT_URL + "{0}/menu/";
+    //获取所属餐厅Id
+    public static final String URL_ELEME_RESTAURANT_ID = URL_ELEME_RESTAURANT_URL + "own/";
     //绑定商户Id
-    public static final String URL_ELEME_BINGDING_RESTAURANTID = "http://v2.openapi.ele.me/restaurant/binding/";
+    public static final String URL_ELEME_BINGDING_RESTAURANTID = URL_ELEME_RESTAURANT_URL + "binding/";
+    //查询餐厅信息
+    public static final String URL_ELEME_RESTAURANT_INFO = URL_ELEME_RESTAURANT_URL + "{0}/";
+    //获取餐厅状态
+    public static final String URL_ELEME_RESTAURANT_STATUS = URL_ELEME_URL + "restaurants/batch_status/";
+    /*
+        eleme订单URL
+     */
+    //饿了么订单URL
+    public static final String URL_ELEME_ORDER_URL = URL_ELEME_URL + "order/";
+    //饿了么查询新订单
+    public static final String URL_ELENE_NEW_ORDER = URL_ELEME_ORDER_URL + "new/";
+    //饿了么拉取新订单
+    public static final String URL_ELEME_PULL_NEW_ORDER = URL_ELEME_ORDER_URL + "pull/new/";
+    //饿了么修改订单状态
+    public static final String URL_ELEME_ORDER_STATUS = URL_ELEME_ORDER_URL + "{0}/status/";
+    //查询订单详情
+    public static final String URL_ELEME_ORDER_DETAIL = URL_ELEME_ORDER_URL + "{0}/";
+    //查询配送信息
+    public static final String URL_ELEME_DELIVERY = URL_ELEME_ORDER_URL + "delivery/";
+    //同意退单
+    public static final String URL_ELEME_AGREE_REFUND = URL_ELEME_ORDER_URL + "{0}/agree_refund/";
+    //不同意退单
+    public static final String URL_ELEME_DISAGREE_REFUND = URL_ELEME_ORDER_URL + "{0}/disagree_refund/";
+    /*
+        eleme食物URL
+     */
+    //添加食物
+    public static final String URL_ELEME_ADD_FOODS = URL_ELEME_URL + "food/";
+    //更新食物
+    public static final String URL_ELEME_UPORDOWNFRAME_FOODS = URL_ELEME_ADD_FOODS + "{0}/";
+    //获取食物ID
+    public static final String URL_ELEME_GETFOODSID = URL_ELEME_URL + "food_category/{0}/foods/";
+    //通过第三方id获取餐厅食物ID
+    public static final String URL_ELEME_TP_FOOD_ID = URL_ELEME_URL + "foods/tp_food_id/";
+    //批量上下架and批量修改食物
+    public static final String URL_ELEME_UPORDOWNFRAME_FOODS_LIST = URL_ELEME_URL + "foods/batch_update/";
+    //批量删除食物
+    public static final String URL_ELEME_DELETE_FOODS_LIST = URL_ELEME_URL + "foods/batch_delete/";
 
     public static final int EL_STATUS_CODE_INVALID=-1;  // 订单已取消
 

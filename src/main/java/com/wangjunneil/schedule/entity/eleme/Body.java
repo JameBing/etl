@@ -30,8 +30,19 @@ public class Body {
     @SerializedName("food_ids")
     private Map<String,List<FoodIds>> foodids;
     /***************************************************/
+    @SerializedName("data")
     private List data;
 
+    @SerializedName("batch_status")
+    private BatchStatus batch_status;
+
+    public BatchStatus getBatch_status() {
+        return batch_status;
+    }
+
+    public void setBatch_status(BatchStatus batch_status) {
+        this.batch_status = batch_status;
+    }
 
     public Foods getFood() {
         return food;

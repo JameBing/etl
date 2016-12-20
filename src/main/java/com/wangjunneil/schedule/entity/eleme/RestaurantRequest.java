@@ -15,7 +15,7 @@ public class RestaurantRequest {
     //经纬度用,隔开
     private String geo;
     //配送费
-    private int agent_fee;
+    private String agent_fee;
     //关闭描述
     private String close_description;
     //配送额外说明
@@ -25,7 +25,7 @@ public class RestaurantRequest {
     //餐厅名字
     private String name;
     //是否接受预定
-    private int is_bookable;
+    private String is_bookable;
     //餐厅营业时间，多个时间段用逗号隔开
     private String open_time;
     //餐厅联系号码
@@ -35,7 +35,7 @@ public class RestaurantRequest {
     //餐厅logo
     private String logo_image_hash;
     //是否支持开发票
-    private int invoice;
+    private String invoice;
     //支持的最小发票金额
     private String invoice_min_amount;
     //满xx元免配送费
@@ -43,11 +43,21 @@ public class RestaurantRequest {
     //餐厅是否有效
     private String is_valid;
     //订单打包费
-    private String packing_fee="-1";
+    private String packing_fee;
     /************设置配送范围***********/
     private String tp_id;
 
     private String tp_restaurant_id;
+
+    private String restaurant_ids;
+
+    public String getRestaurant_ids() {
+        return restaurant_ids;
+    }
+
+    public void setRestaurant_ids(String restaurant_ids) {
+        this.restaurant_ids = restaurant_ids;
+    }
 
     public String getRestaurant_id() {
         return restaurant_id;
@@ -81,11 +91,11 @@ public class RestaurantRequest {
         this.geo = geo;
     }
 
-    public int getAgent_fee() {
+    public String getAgent_fee() {
         return agent_fee;
     }
 
-    public void setAgent_fee(int agent_fee) {
+    public void setAgent_fee(String agent_fee) {
         this.agent_fee = agent_fee;
     }
 
@@ -121,11 +131,11 @@ public class RestaurantRequest {
         this.name = name;
     }
 
-    public int getIs_bookable() {
+    public String getIs_bookable() {
         return is_bookable;
     }
 
-    public void setIs_bookable(int is_bookable) {
+    public void setIs_bookable(String is_bookable) {
         this.is_bookable = is_bookable;
     }
 
@@ -161,11 +171,11 @@ public class RestaurantRequest {
         this.logo_image_hash = logo_image_hash;
     }
 
-    public int getInvoice() {
+    public String getInvoice() {
         return invoice;
     }
 
-    public void setInvoice(int invoice) {
+    public void setInvoice(String invoice) {
         this.invoice = invoice;
     }
 

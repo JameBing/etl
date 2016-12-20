@@ -15,6 +15,6 @@ public class RestaurantRequestSerializer implements JsonSerializer<RestaurantReq
     public JsonElement serialize(RestaurantRequest restaurantRequest, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject object = new JsonObject();
         //注意：此处必须按照字母顺序依次加入元素
-        return null;
+        return object;
     }
 }

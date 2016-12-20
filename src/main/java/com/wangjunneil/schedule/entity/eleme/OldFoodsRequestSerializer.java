@@ -14,6 +14,8 @@ public class OldFoodsRequestSerializer implements JsonSerializer<OldFoodsRequest
     @Override
     public JsonElement serialize(OldFoodsRequest oldFoodsRequest, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject object = new JsonObject();
+        object.add("food_id",jsonSerializationContext.serialize(oldFoodsRequest.getFood_id()));
+        object.add("stock",jsonSerializationContext.serialize(oldFoodsRequest.getStock()));
         return object;
     }
 }

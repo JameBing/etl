@@ -1,6 +1,5 @@
 package com.wangjunneil.schedule.service;
 
-
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ElemeException;
@@ -10,7 +9,6 @@ import com.wangjunneil.schedule.entity.eleme.*;
 import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
-import org.apache.taglibs.standard.lang.jstl.ELEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +16,6 @@ import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,6 +42,7 @@ public class EleMeFacadeService {
                 .registerTypeAdapter(OldFoodsRequest.class,new OldFoodsRequestSerializer())
                 .registerTypeAdapter(Distribution.class,new DistributionSerializer())
                 .registerTypeAdapter(Restaurant.class,new RestaurantSerializer())
+                .registerTypeAdapter(OldFoodsRequest.class,new OldFoodsRequestSerializer())
                 .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
                     @Override
                     public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
@@ -66,7 +64,6 @@ public class EleMeFacadeService {
      * @param status 1:开店/0:关店
      * @return
      */
-    //门店开关店
     public String setRestaurantStatus(String merchantId,String status){
         String result = "";
         Rtn rtn = new Rtn();
@@ -74,65 +71,24 @@ public class EleMeFacadeService {
         Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(merchantId)) {
-            rtn.setCode(1);
-            rtn.setDesc("门店ID为空");
-            rtn.setRemark("门店ID为空");
-        }else {
-        try {
-            RestaurantRequest restaurantRequest = new RestaurantRequest();
-            restaurantRequest.setRestaurant_id(merchantId);
-            restaurantRequest.setIs_open(status);
-            result = eleMeApiService.setRestaurantStatus(restaurantRequest);
-            Result obj = getGson().fromJson(result, Result.class);
-            rtn.setCode(0);
-            rtn.setDesc(obj.getMessage());
-        }catch (ElemeException ex){
-            rtn.setCode(-997);
-            log = sysFacadeService.functionRtn.apply(ex);
-        }
-        catch (ScheduleException ex) {
-            rtn.setCode(-999);
-            log = sysFacadeService.functionRtn.apply(ex);
-        }
-        catch (Exception ex){
-            rtn.setCode(-998);
-            log = sysFacadeService.functionRtn.apply(ex);
-        }finally {
-            if (log!=null){
-                log.setLogId(merchantId.concat(log.getLogId()));
-                log.setTitle(MessageFormat.format("门店{0}{1}失败", merchantId,status=="1"?"开业":"歇业"));
-                if (StringUtil.isEmpty(log.getRequest()))
-                    log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"eleme_shop_id\":{1}", merchantId, "")).concat("}"));
-                sysFacadeService.updSynLog(log);
-                rtn.setDynamic(merchantId);
-                rtn.setDesc("发生异常");
-                rtn.setLogId(log.getLogId());
-                rtn.setRemark(MessageFormat.format("门店{0}{1}失败！",merchantId,status=="1"?"开业":"歇业"));
-            }
-          }
-        }
-        return  gson1.toJson(rtn);
-    }
-
-    /**
-     * 拉取新订单
-     * @param merchantId 商户Id
-     * @return
-     */
-    public String pullNewOrder(String merchantId){
-        Rtn rtn = new Rtn();
-        rtn.setDynamic(merchantId);
-        Log log = null;
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        if (StringUtil.isEmpty(merchantId)) {
-            rtn.setCode(1);
+            rtn.setCode(-1);
             rtn.setDesc("门店ID为空");
             rtn.setRemark("门店ID为空");
         }else {
             try {
-                OrderRequest orderRequest = new OrderRequest();
-                orderRequest.setRestaurant_id(merchantId);
-                return eleMeApiService.pullNewOrder(orderRequest);
+                RestaurantRequest restaurantRequest = new RestaurantRequest();
+                restaurantRequest.setRestaurant_id(merchantId);
+                restaurantRequest.setIs_open(status);
+                result = eleMeApiService.setRestaurantStatus(restaurantRequest);
+                Result obj = getGson().fromJson(result, Result.class);
+                if("ok".equals(obj.getMessage())) {
+                    rtn.setCode(0);
+                    rtn.setRemark(obj.getMessage().toString());
+                }else {
+                    rtn.setCode(-1);
+                    rtn.setRemark(MessageFormat.format("门店{0}不存在或无权限管理", merchantId));
+                }
+                rtn.setDesc("success");
             }catch (ElemeException ex){
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -140,8 +96,49 @@ public class EleMeFacadeService {
             catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
-            }catch (Exception ex){
+            }
+            catch (Exception ex){
                 rtn.setCode(-998);
+                log = sysFacadeService.functionRtn.apply(ex);
+            }finally {
+                if (log!=null){
+                    log.setLogId(merchantId.concat(log.getLogId()));
+                    log.setTitle(MessageFormat.format("门店{0}{1}失败", merchantId,status=="1"?"开业":"歇业"));
+                    if (StringUtil.isEmpty(log.getRequest()))
+                        log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"eleme_shop_id\":{1}", merchantId, "")).concat("}"));
+                    sysFacadeService.updSynLog(log);
+                    rtn.setDesc("发生异常");
+                    rtn.setLogId(log.getLogId());
+                    rtn.setRemark(MessageFormat.format("门店{0}{1}失败！",merchantId,status=="1"?"开业":"歇业"));
+                }
+            }
+        }
+        return  gson1.toJson(rtn);
+    }
+
+    /**
+     * 主动拉取新订单
+     * @param merchantId 商户Id
+     * 获取前30分钟的最新订单，参数可以空值。
+     * @return
+     */
+    public String pullNewOrder(String merchantId){
+        Log log = null;
+        if (!StringUtil.isEmpty(merchantId)) {
+            try {
+                OrderRequest orderRequest = new OrderRequest();
+                orderRequest.setRestaurant_id(merchantId);
+                String result = eleMeApiService.pullNewOrder(orderRequest);
+                Result obj = getGson().fromJson(result, Result.class);
+                if ("ok".equals(obj.getMessage().toString())) {
+                    return getGson().toJson(obj.getData());
+                }
+            }catch (ElemeException ex){
+                log = sysFacadeService.functionRtn.apply(ex);
+            }
+            catch (ScheduleException ex) {
+                log = sysFacadeService.functionRtn.apply(ex);
+            }catch (Exception ex){
                 log = sysFacadeService.functionRtn.apply(ex);
             } finally {
                 if (log != null) {
@@ -151,14 +148,47 @@ public class EleMeFacadeService {
                         log.setRequest("{".concat(MessageFormat.format("\"eleme_shop_id\":{0}", merchantId)).concat("}"));
                     }
                     sysFacadeService.updSynLog(log);
-                    rtn.setDynamic(merchantId);
-                    rtn.setDesc("发生异常");
-                    rtn.setLogId(log.getLogId());
-                    rtn.setRemark(MessageFormat.format("拉取门店{0}新订单失败！",merchantId));
                 }
             }
         }
-        return gson1.toJson(rtn);
+        return "failure";
+    }
+    /**
+     * 查询新订单
+     * @param merchantId 商户Id
+     * 获取前30分钟的最新订单，参数可以空值。
+     * @return
+     */
+    public String findNewOrder(String merchantId){
+        Log log = null;
+        if (!StringUtil.isEmpty(merchantId)) {
+            try {
+                OrderRequest orderRequest = new OrderRequest();
+                orderRequest.setRestaurant_id(merchantId);
+                String result = eleMeApiService.findNewOrder(orderRequest);
+                Result obj = getGson().fromJson(result, Result.class);
+                if ("ok".equals(obj.getMessage().toString())) {
+                    return getGson().toJson(obj.getData());
+                }
+            }catch (ElemeException ex){
+                log = sysFacadeService.functionRtn.apply(ex);
+            }
+            catch (ScheduleException ex) {
+                log = sysFacadeService.functionRtn.apply(ex);
+            }catch (Exception ex){
+                log = sysFacadeService.functionRtn.apply(ex);
+            } finally {
+                if (log != null) {
+                    log.setLogId(merchantId.concat(log.getLogId()));
+                    log.setTitle(MessageFormat.format("拉取门店{0}新订单失败", merchantId));
+                    if (StringUtil.isEmpty(log.getRequest())) {
+                        log.setRequest("{".concat(MessageFormat.format("\"eleme_shop_id\":{0}", merchantId)).concat("}"));
+                    }
+                    sysFacadeService.updSynLog(log);
+                }
+            }
+        }
+        return "failure";
     }
 
     /**
@@ -175,7 +205,7 @@ public class EleMeFacadeService {
         Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(elemeOrderId)) {
-            rtn.setCode(1);
+            rtn.setCode(-1);
             rtn.setDesc("订单ID为空");
             rtn.setRemark("订单ID为空");
         }else {
@@ -188,8 +218,14 @@ public class EleMeFacadeService {
                 }
                 result = eleMeApiService.upOrderStatus(orderRequest);
                 Result obj = getGson().fromJson(result, Result.class);
-                rtn.setCode(0);
-                rtn.setDesc(obj.getMessage());
+                if ("ok".equals(obj.getMessage())) {
+                    rtn.setCode(0);
+                    rtn.setRemark(obj.getMessage().toString());
+                }else {
+                    rtn.setCode(-1);
+                    rtn.setRemark(MessageFormat.format("订单{0}不存在或无权限管理", elemeOrderId));
+                }
+                rtn.setDesc("success");
             }catch (ElemeException ex){
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -208,7 +244,6 @@ public class EleMeFacadeService {
                         log.setRequest("{".concat(MessageFormat.format("\"eleme_order_id\":{0},\"status\":{1},\"reason\":{2}", elemeOrderId, status, reason)).concat("}"));
                     }
                     sysFacadeService.updSynLog(log);
-                    rtn.setDynamic(elemeOrderId);
                     rtn.setDesc("发生异常");
                     rtn.setLogId(log.getLogId());
                     rtn.setRemark(MessageFormat.format("修改订单{0}状态失败!",elemeOrderId));
@@ -230,7 +265,7 @@ public class EleMeFacadeService {
         Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(json)) {
-            rtn.setCode(1);
+            rtn.setCode(-1);
             rtn.setDesc("食物数据为空");
             rtn.setRemark("食物数据为空");
         }else {
@@ -238,8 +273,14 @@ public class EleMeFacadeService {
                 OldFoodsRequest oldFoodsRequest = getGson().fromJson(json, OldFoodsRequest.class);
                 result = eleMeApiService.addFoods(oldFoodsRequest);
                 Result obj = getGson().fromJson(result, Result.class);
-                rtn.setCode(0);
-                rtn.setDesc(obj.getMessage());
+                if ("ok".equals(obj.getMessage().toString())) {
+                    rtn.setCode(0);
+                    rtn.setRemark(obj.getMessage().toString());
+                }else {
+                    rtn.setCode(-1);
+                    rtn.setRemark(MessageFormat.format("添加食物失败,{0}必填", obj.getMessage().toString()));
+                }
+                rtn.setDesc("success");
             }catch (ElemeException ex){
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -271,28 +312,22 @@ public class EleMeFacadeService {
      * @return
      */
     public String restaurantMenu(String merchantId){
-        Rtn rtn = new Rtn();
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        rtn.setDynamic(merchantId);
         Log log = null;
-        if (StringUtil.isEmpty(merchantId)) {
-            rtn.setCode(1);
-            rtn.setDesc("门店ID为空");
-            rtn.setRemark("门店ID为空");
-        }else {
+        if (!StringUtil.isEmpty(merchantId)) {
             try {
-                    RestaurantRequest restaurantRequest = new RestaurantRequest();
-                    restaurantRequest.setRestaurant_id(merchantId);
-                    return eleMeApiService.restaurantMenu(restaurantRequest);
+                RestaurantRequest restaurantRequest = new RestaurantRequest();
+                restaurantRequest.setRestaurant_id(merchantId);
+                String result = eleMeApiService.restaurantMenu(restaurantRequest);
+                Result obj = getGson().fromJson(result, Result.class);
+                if ("ok".equals(obj.getMessage().toString())) {
+                    return getGson().toJson(obj.getData());
+                }
             }catch (ElemeException ex){
-                rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
             }
             catch (ScheduleException ex) {
-                rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
             }catch (Exception ex){
-                rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
             }finally {
                 if (log != null) {
@@ -302,60 +337,10 @@ public class EleMeFacadeService {
                         log.setRequest("{".concat(MessageFormat.format("\"restaurant_id\":{0}", merchantId)).concat("}"));
                     }
                     sysFacadeService.updSynLog(log);
-                    rtn.setDynamic(merchantId);
-                    rtn.setDesc("发生异常");
-                    rtn.setLogId(log.getLogId());
-                    rtn.setRemark(MessageFormat.format("查询门店{0}菜单失败!",merchantId));
                 }
             }
         }
-        return  gson1.toJson(rtn);
-    }
-
-    /**
-     * 更新食物
-     * @param json json字符串(保证key与实体属性对应)
-     * @return
-     */
-    public String uporDownFrame(String json){
-        String result = null;
-        Log log = null;
-        Rtn rtn = new Rtn();
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        if (StringUtil.isEmpty(json)) {
-            rtn.setCode(1);
-            rtn.setDesc("食物数据为空");
-            rtn.setRemark("食物数据为空");
-        }else {
-            try {
-                OldFoodsRequest oldFoodsRequest = getGson().fromJson(json, OldFoodsRequest.class);
-                result = eleMeApiService.upFoods(oldFoodsRequest);
-                Result obj = getGson().fromJson(result, Result.class);
-                rtn.setCode(0);
-                rtn.setDesc(obj.getMessage());
-            }catch (ElemeException ex){
-                rtn.setCode(-997);
-                log = sysFacadeService.functionRtn.apply(ex);
-            }
-            catch (ScheduleException ex) {
-                rtn.setCode(-999);
-                log = sysFacadeService.functionRtn.apply(ex);
-            }
-            catch (Exception ex){
-                rtn.setCode(-998);
-                log = sysFacadeService.functionRtn.apply(ex);
-            }finally {
-                if (log != null) {
-                    log.setLogId(log.getLogId());
-                    log.setTitle("更新食物失败!");
-                    sysFacadeService.updSynLog(log);
-                    rtn.setDesc("发生异常");
-                    rtn.setLogId(log.getLogId());
-                    rtn.setRemark("更新食物失败");
-                }
-            }
-        }
-        return  gson1.toJson(rtn);
+        return "failure";
     }
 
     /**
@@ -367,11 +352,9 @@ public class EleMeFacadeService {
         List<String> listIds = new ArrayList<String>();
         Log[] log = {null};
         String [] rtnStr = {null};
-        Result rtn = new Result();
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(elemeOrderIds)) {
-            rtn.setCode(1);
-            rtn.setMessage("订单ID为空");
+            log[0].setLogId(elemeOrderIds.concat(log[0].getLogId()));
+            log[0].setTitle(MessageFormat.format("订单{0}为空", elemeOrderIds));
         }else {
             Collections.addAll(listIds, elemeOrderIds.split(","));
             listIds.forEach((id)->{
@@ -389,7 +372,6 @@ public class EleMeFacadeService {
                         distribution = getGson().fromJson(getGson().toJson(obj1.getData().get(i)), Distribution.class);
                     }
                     order.setDistribution(distribution);
-//                    eleMeInnerService.addSyncOrder(order);
                     OrderWaiMai orderWaiMai = new OrderWaiMai();
                     orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
                     orderWaiMai.setPlatformOrderId(order.getOrderid().toString());
@@ -397,17 +379,14 @@ public class EleMeFacadeService {
                     orderWaiMai.setOrder(order);
                     orderWaiMai.setOrderId(orderId);
                     orderWaiMai.setShopId(order.getRestaurantid());
+                    rtnStr[0] = "{\"message\": \"ok\"}";
                     sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
-                    rtnStr [0]= "{\"message\": \"ok\"}";
                 }catch (ElemeException ex){
-                    rtn.setCode(-997);
                     log[0] = sysFacadeService.functionRtn.apply(ex);
                 }
                 catch (ScheduleException ex) {
-                    rtn.setCode(-999);
                     log[0] = sysFacadeService.functionRtn.apply(ex);
                 }catch (Exception ex){
-                    rtn.setCode(-998);
                     log[0] = sysFacadeService.functionRtn.apply(ex);
                 }finally {
                     if (log[0] != null) {
@@ -417,7 +396,6 @@ public class EleMeFacadeService {
                             log[0].setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
                         }
                         sysFacadeService.updSynLog(log[0]);
-                        rtnStr[0] = "{\"message\": \"error\"}";
                     }
                 }
             });
@@ -425,7 +403,13 @@ public class EleMeFacadeService {
         return rtnStr[0];
     }
 
-    //订单状态变更接收   new_status：订单状态
+
+    /**
+     * 消息订单修改状态
+     * @param elemeOrderIds
+     * @param newStatus
+     * @return
+     */
     public String orderChange(String elemeOrderIds,String newStatus){
         //温馨提醒：单个参数传输都使用String类型，因为Request对象的getparamter方法返回的均是String类型，外层做类型转换的话，如果发生异常则无法捕获，异常处理均在这一层处理，所以放在这里做类型转换更合适
         Log log =null;
@@ -449,6 +433,7 @@ public class EleMeFacadeService {
         });
         return  "{\"message\": \"ok\"}";
     }
+
     //退单状态接收  refund_status:退单订单状态
     public String chargeBack(String elemeOrderIds,String refundStatus) {
         Log log = null;
@@ -467,6 +452,7 @@ public class EleMeFacadeService {
         }
         return  "{\"message\": \"ok\"}";
     }
+
     //订单配送状态接收
     public String distributionStatus(String elemeOrderIds,String statusCode,int sub_status_code){
         Log log =null;
@@ -492,45 +478,35 @@ public class EleMeFacadeService {
      * @return
      */
     public String getFoodId(String parms) {
-        Rtn rtn = new Rtn();
-        rtn.setDynamic(parms);
         Log log = null;
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        if (StringUtil.isEmpty(parms)) {
-            rtn.setCode(1);
-            rtn.setDesc("POS食物ID为空");
-            rtn.setRemark("POS食物ID为空");
-        }else {
+        if (!StringUtil.isEmpty(parms)) {
             try {
                 OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
                 oldFoodsRequest.setTp_food_ids(parms);
-                return eleMeApiService.getFoodId(oldFoodsRequest);
+                String result = eleMeApiService.getFoodId(oldFoodsRequest);
+                Result obj = getGson().fromJson(result, Result.class);
+                if ("ok".equals(obj.getMessage().toString())) {
+                    return getGson().toJson(obj.getData());
+                }
             }catch (ElemeException ex){
-                rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
             }
             catch (ScheduleException ex) {
-                rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
             }catch (Exception ex){
-                rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
             }finally {
                 if (log != null) {
                     log.setLogId(parms.concat(log.getLogId()));
-                    log.setTitle(MessageFormat.format("通过POS食物{0}获取平台ID失败", parms));
+                    log.setTitle(MessageFormat.format("食物{0}获取平台食物ID失败", parms));
                     if (StringUtil.isEmpty(log.getRequest())) {
                         log.setRequest("{".concat(MessageFormat.format("\"parms\":{0}", parms)).concat("}"));
                     }
                     sysFacadeService.updSynLog(log);
-                    rtn.setDynamic(parms);
-                    rtn.setDesc("发生异常");
-                    rtn.setLogId(log.getLogId());
-                    rtn.setRemark(MessageFormat.format("通过POS食物{0}获取平台ID失败!",parms));
                 }
             }
         }
-        return gson1.toJson(rtn);
+        return "failure";
     }
 
     /**
@@ -541,118 +517,171 @@ public class EleMeFacadeService {
      */
     public String upBatchFrame(List<ParsFromPosInner> dishList,String status) {
         Rtn rtn = new Rtn();
-        Log log = null;
+        String reponse = "";
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (dishList == null || dishList.size() < 1) {
-            rtn.setCode(1);
-            rtn.setDesc("POS食物ID列表为空");
-            rtn.setRemark("POS食物ID列表为空");
+            rtn.setCode(-1);
+            rtn.setDesc("食物ID列表为空");
+            rtn.setRemark("食物ID列表为空");
+            return gson1.toJson(rtn);
         }else {
-            try {
-                HashMap<String, OldFoodsRequest> map = new HashMap<String, OldFoodsRequest>();
-                for (int i = 0; i < dishList.size(); i++) {
-                    String result = getFoodId(dishList.get(i).getDishId());
-                    Result obj = getGson().fromJson(result, Result.class);
-                    Body body = getGson().fromJson(getGson().toJson(obj.getData()), Body.class);
-                    if (body.getFoodids().get(dishList.get(i).getDishId()).size() > 0 ) {
-                        OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
-                        oldFoodsRequest.setStock(status);
-                        map.put(body.getFoodids().get(dishList.get(i).getDishId()).get(0).getFood_id(), oldFoodsRequest);
-                    }
-                }
-                OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
-                oldFoodsRequest.setFoods_info(map);
-                String result = eleMeApiService.upBatchFrame(oldFoodsRequest);
-                Result obj = getGson().fromJson(result, Result.class);
-                rtn.setCode(0);
-                rtn.setDesc(obj.getMessage());
-            }catch (ElemeException ex){
-                rtn.setCode(-997);
-                log = sysFacadeService.functionRtn.apply(ex);
-            }
-            catch (ScheduleException ex){
-                rtn.setCode(-999);
-                log = sysFacadeService.functionRtn.apply(ex);
-            }
-            catch (Exception ex) {
-                rtn.setCode(-998);
-                log = sysFacadeService.functionRtn.apply(ex);
-            }finally {
-                if (log!=null){
-                    for (int i = 0; i < dishList.size(); i++) {
-                        log.setLogId(dishList.get(i).getDishId().concat(log.getLogId()));
-                        log.setTitle(MessageFormat.format("食物{0}{1}失败", dishList.get(i).getDishId(),status=="0"?"下架":"上架"));
-                        if (StringUtil.isEmpty(log.getRequest()))
-                            log.setRequest("{".concat(MessageFormat.format("\"dishList\":{0}", dishList.get(i).getDishId())).concat("}"));
-                        sysFacadeService.updSynLog(log);
-                        rtn.setDesc("发生异常");
-                        rtn.setLogId(log.getLogId());
-                        rtn.setRemark(MessageFormat.format("食物{0}{1}失败！",dishList.get(i).getDishId(),status=="0"?"下架":"上架"));
-                    }
-                }
-            }
-        }
-        return gson1.toJson(rtn);
-    }
-
-    /**
-     * 删除食物
-     * @param dishList
-     * @return
-     */
-    public String deleteFoods(List<ParsFromPosInner> dishList) {
-        if (dishList == null || dishList.size() < 1) return "食物ID为空!";
-        Rtn rtn = new Rtn();
-        Log log = null;
-        StringBuilder sb = new StringBuilder();
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        if (dishList == null || dishList.size() < 1) {
-            rtn.setCode(1);
-            rtn.setDesc("POS食物ID列表为空");
-            rtn.setRemark("POS食物ID列表为空");
-        }else {
-            try {
-                for (int i = 0; i < dishList.size(); i++) {
-                    String result = getFoodId(dishList.get(i).getDishId());
-                    Result obj = getGson().fromJson(result, Result.class);
-                    Body body = getGson().fromJson(getGson().toJson(obj.getData()), Body.class);
-                    if (body.getFoodids().get(dishList.get(i).getDishId()).size() > 0 ) {
-                        if (i == 0) {
-                            sb.append(body.getFoodids().get(dishList.get(i).getDishId()).get(0).getFood_id());
-                        }else {
-                            sb.append(","+body.getFoodids().get(dishList.get(i).getDishId()).get(0).getFood_id());
+            for (int i = 0; i < dishList.size(); i++) {
+                String result = getFoodId(dishList.get(i).getDishId());
+                if ("failure".equals(result)) {
+                    rtn.setCode(-1);
+                    rtn.setDesc(MessageFormat.format("获取食物{0}出错!",dishList.get(i).getDishId()));
+                    rtn.setRemark(MessageFormat.format("获取食物{0}出错!",dishList.get(i).getDishId()));
+                    rtn.setDynamic(dishList.get(i).getDishId());
+                    reponse += gson1.toJson(rtn);
+                }else {
+                    Body body = getGson().fromJson(result, Body.class);
+                    reponse += StringUtil.isEmpty(reponse)?"":",";
+                    if (!StringUtil.isEmpty(body.getFoodids().get(dishList.get(i).getDishId()))) {
+                        for (int j = 0; j < body.getFoodids().get(dishList.get(i).getDishId()).size(); j++) {
+                            OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
+                            oldFoodsRequest.setStock(status);
+                            oldFoodsRequest.setFood_id(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getFood_id());
+                            reponse += uporDownFrame(dishList.get(i).getDishId(),getGson().toJson(oldFoodsRequest));
                         }
+                    }else {
+                        rtn.setCode(-1);
+                        rtn.setDesc(MessageFormat.format("食物{0}不存在!",dishList.get(i).getDishId()));
+                        rtn.setRemark(MessageFormat.format("食物{0}不存在!",dishList.get(i).getDishId()));
+                        rtn.setDynamic(dishList.get(i).getDishId());
+                        reponse += gson1.toJson(rtn);
                     }
                 }
-                OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
-                oldFoodsRequest.setFood_ids(sb.toString());
-                String result = eleMeApiService.delectAllFoods(oldFoodsRequest);
+            }
+        }
+        return reponse;
+    }
+
+    /**
+     * 更新食物
+     * @param json json字符串(保证key与实体属性对应)
+     * @return
+     */
+    public String uporDownFrame(String foodid, String json){
+        String result = null;
+        Log log = null;
+        Rtn rtn = new Rtn();
+        rtn.setDynamic(foodid);
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if (StringUtil.isEmpty(json)) {
+            rtn.setCode(-1);
+            rtn.setDesc("食物数据为空");
+            rtn.setRemark("食物数据为空");
+        }else {
+            try {
+                OldFoodsRequest oldFoodsRequest = getGson().fromJson(json, OldFoodsRequest.class);
+                result = eleMeApiService.upFoods(oldFoodsRequest);
                 Result obj = getGson().fromJson(result, Result.class);
-                rtn.setCode(0);
-                rtn.setDesc(obj.getMessage());
+                if ("ok".equals(obj.getMessage().toString())) {
+                    rtn.setCode(0);
+                    rtn.setRemark(obj.getMessage().toString());
+                }else {
+                    rtn.setCode(-1);
+                    rtn.setRemark(MessageFormat.format("更新食物{0}失败", foodid));
+                }
+                rtn.setDesc("success");
             }catch (ElemeException ex){
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
             }
-            catch (ScheduleException ex){
+            catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
             }
-            catch (Exception ex) {
+            catch (Exception ex){
                 rtn.setCode(-998);
                 log = sysFacadeService.functionRtn.apply(ex);
             }finally {
-                if (log!=null){
-                    for (int i = 0; i < dishList.size(); i++) {
-                        log.setLogId(dishList.get(i).getDishId().concat(log.getLogId()));
-                        log.setTitle(MessageFormat.format("删除食物{0}失败", dishList.get(i).getDishId()));
-                        if (StringUtil.isEmpty(log.getRequest()))
-                            log.setRequest("{".concat(MessageFormat.format("\"dishList\":{0}", dishList.get(i).getDishId())).concat("}"));
-                        sysFacadeService.updSynLog(log);
-                        rtn.setDesc("发生异常");
-                        rtn.setLogId(log.getLogId());
-                        rtn.setRemark(MessageFormat.format("删除食物{0}失败！",dishList.get(i).getDishId()));
+                if (log != null) {
+                    log.setLogId(log.getLogId());
+                    log.setTitle(MessageFormat.format("更新食物{0}失败", foodid));
+                    if (StringUtil.isEmpty(log.getRequest())) {
+                        log.setRequest("{".concat(MessageFormat.format("\"json\":{0}", json)).concat("}"));
                     }
+                    sysFacadeService.updSynLog(log);
+                    rtn.setDesc("发生异常");
+                    rtn.setLogId(log.getLogId());
+                    rtn.setRemark(MessageFormat.format("更新食物{0}失败", foodid));
+                }
+            }
+        }
+        return  gson1.toJson(rtn);
+    }
+
+    /**
+     * 获取餐厅信息
+     * @param merchantId
+     * @return
+     */
+    public String getRestaurantInfo(String merchantId) {
+        String result = null;
+        Log log = null;
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if (!StringUtil.isEmpty(merchantId)) {
+            try {
+                RestaurantRequest restaurantRequest= new RestaurantRequest();
+                restaurantRequest.setRestaurant_id(merchantId);
+                result = eleMeApiService.getRestaurantInfo(restaurantRequest);
+                Result obj = getGson().fromJson(result, Result.class);
+                if ("ok".equals(obj.getMessage().toString())) {
+                    return getGson().toJson(obj.getData());
+                }
+            }catch (ElemeException ex){
+                log = sysFacadeService.functionRtn.apply(ex);
+            }
+            catch (ScheduleException ex) {
+                log = sysFacadeService.functionRtn.apply(ex);
+            }
+            catch (Exception ex){
+                log = sysFacadeService.functionRtn.apply(ex);
+            }finally {
+                if (log != null) {
+                    log.setLogId(log.getLogId());
+                    log.setTitle(MessageFormat.format("获取餐厅{0}信息失败", merchantId));
+                    if (StringUtil.isEmpty(log.getRequest())) {
+                        log.setRequest("{".concat(MessageFormat.format("\"restaurant_id\":{0}", merchantId)).concat("}"));
+                    }
+                    sysFacadeService.updSynLog(log);
+                }
+            }
+        }
+        return "failure";
+    }
+
+    /**
+     * 获取门店开关店状态
+     * @param merchantId
+     * @return
+     */
+    public String getStatus(String merchantId) {
+        String result = "";
+        Rtn rtn = new Rtn();
+        rtn.setDynamic(merchantId);
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if (StringUtil.isEmpty(merchantId)) {
+            rtn.setCode(-1);
+            rtn.setDesc("餐厅ID为空");
+            rtn.setRemark("餐厅ID为空");
+        }else {
+            String info = getRestaurantInfo(merchantId);
+            if ("failure".equals(info)) {
+                rtn.setCode(-1);
+                rtn.setDesc("failure");
+                rtn.setRemark(MessageFormat.format("获取餐厅{0}信息失败或餐厅不存在", merchantId));
+            }else {
+                Body body = getGson().fromJson(info, Body.class);
+                if (body.getRestaurant().getIsopen() == 1) {
+                    rtn.setCode(0);
+                    rtn.setDesc("success");
+                    rtn.setRemark(MessageFormat.format("餐厅{0}开店", merchantId));
+                }else {
+                    rtn.setCode(1);
+                    rtn.setDesc("success");
+                    rtn.setRemark(MessageFormat.format("获取餐厅{0}关店", merchantId));
                 }
             }
         }
@@ -660,12 +689,69 @@ public class EleMeFacadeService {
     }
 
     /**
-     * 获取历史订单
+     * 获取餐厅状态
+     * @param merchantIds 多个餐厅以逗号隔开
      * @return
      */
-    public String getHistoryOrder() {
-        List<Order> orders = eleMeInnerService.findAll();
-        return getGson().toJson(orders);
+    public String getRestaurantStatus(String merchantIds) {
+        String result = null;
+        Log log = null;
+        Rtn rtn = new Rtn();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if (StringUtil.isEmpty(merchantIds)) {
+            rtn.setCode(-1);
+            rtn.setDesc("餐厅ID列表为空");
+            rtn.setRemark("餐厅ID列表为空");
+        }else {
+            try {
+                RestaurantRequest restaurantRequest= new RestaurantRequest();
+                restaurantRequest.setRestaurant_ids(merchantIds);
+                result = eleMeApiService.getRestaurantStatus(restaurantRequest);
+                Result obj = getGson().fromJson(result, Result.class);
+                Body body = getGson().fromJson(getGson().toJson(obj.getData()), Body.class);
+                String[] split = merchantIds.split(",");
+           /* for (int i = 0; i < split.length; i++) {
+                if (!StringUtil.isEmpty(body.getBatch_status().getBatchstatus())) {
+                    if ("1".equals(body.getBatch_status().getBatchstatus().get(split[i]).getIsvalid())&&"1".equals(body.getBatch_status().getBatchstatus().get(split[i]).getIsopen())){
+                        rtn.setCode(0);
+                        rtn.setRemark(MessageFormat.format("餐厅{0}开店成功", split[i]));
+                    }
+                    if ("1".equals(body.getBatch_status().getBatchstatus().get(split[i]).getIsvalid())&&"0".equals(body.getBatch_status().getBatchstatus().get(split[i]).getIsopen())){
+                        rtn.setCode(1);
+                        rtn.setRemark(MessageFormat.format("餐厅{0}关店成功", split[i]));
+                    }
+                    rtn.setDesc("success");
+                    rtn.setDynamic(split[i]);
+                }
+                if ()
+            }*/
+
+            }catch (ElemeException ex){
+                rtn.setCode(-997);
+                log = sysFacadeService.functionRtn.apply(ex);
+            }
+            catch (ScheduleException ex) {
+                rtn.setCode(-999);
+                log = sysFacadeService.functionRtn.apply(ex);
+            }
+            catch (Exception ex){
+                rtn.setCode(-998);
+                log = sysFacadeService.functionRtn.apply(ex);
+            }finally {
+                if (log != null) {
+                    log.setLogId(log.getLogId());
+                    log.setTitle(MessageFormat.format("获取餐厅{0}信息失败", merchantIds));
+                    if (StringUtil.isEmpty(log.getRequest())) {
+                        log.setRequest("{".concat(MessageFormat.format("\"restaurant_id\":{0}", merchantIds)).concat("}"));
+                    }
+                    sysFacadeService.updSynLog(log);
+                    rtn.setDesc("发生异常");
+                    rtn.setLogId(log.getLogId());
+                    rtn.setRemark(MessageFormat.format("获取餐厅{0}信息失败", merchantIds));
+                }
+            }
+        }
+        return gson1.toJson(rtn);
     }
 
     /**
@@ -687,7 +773,7 @@ public class EleMeFacadeService {
                 String result = eleMeApiService.agreeRefund(elemeOrderIds);
                 Result obj = getGson().fromJson(result, Result.class);
                 rtn.setCode(0);
-                rtn.setDesc(obj.getMessage());
+                rtn.setDesc(obj.getMessage().toString());
             }catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -738,7 +824,7 @@ public class EleMeFacadeService {
                 String result = eleMeApiService.disAgreeRefund(orderRequest);
                 Result obj = getGson().fromJson(result, Result.class);
                 rtn.setCode(0);
-                rtn.setDesc(obj.getMessage());
+                rtn.setDesc(obj.getMessage().toString());
             }catch (ScheduleException ex) {
                 rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
@@ -806,4 +892,76 @@ public class EleMeFacadeService {
         return gson1.toJson(rtn);
     }
 
+    /**
+     * 批量删除食物
+     * @param dishList
+     * @return
+     */
+    public String deleteFoods(List<ParsFromPosInner> dishList) {
+        if (dishList == null || dishList.size() < 1) return "食物ID为空!";
+        Rtn rtn = new Rtn();
+        Log log = null;
+        StringBuilder sb = new StringBuilder();
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if (dishList == null || dishList.size() < 1) {
+            rtn.setCode(1);
+            rtn.setDesc("POS食物ID列表为空");
+            rtn.setRemark("POS食物ID列表为空");
+        }else {
+            try {
+                for (int i = 0; i < dishList.size(); i++) {
+                    String result = getFoodId(dishList.get(i).getDishId());
+                    Result obj = getGson().fromJson(result, Result.class);
+                    Body body = getGson().fromJson(getGson().toJson(obj.getData()), Body.class);
+                    if (body.getFoodids().get(dishList.get(i).getDishId()).size() > 0 ) {
+                        if (i == 0) {
+                            sb.append(body.getFoodids().get(dishList.get(i).getDishId()).get(0).getFood_id());
+                        }else {
+                            sb.append(","+body.getFoodids().get(dishList.get(i).getDishId()).get(0).getFood_id());
+                        }
+                    }
+                }
+                OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
+                oldFoodsRequest.setFood_ids(sb.toString());
+                String result = eleMeApiService.delectAllFoods(oldFoodsRequest);
+                Result obj = getGson().fromJson(result, Result.class);
+                rtn.setCode(0);
+                rtn.setDesc(obj.getMessage().toString());
+            }catch (ElemeException ex){
+                rtn.setCode(-997);
+                log = sysFacadeService.functionRtn.apply(ex);
+            }
+            catch (ScheduleException ex){
+                rtn.setCode(-999);
+                log = sysFacadeService.functionRtn.apply(ex);
+            }
+            catch (Exception ex) {
+                rtn.setCode(-998);
+                log = sysFacadeService.functionRtn.apply(ex);
+            }finally {
+                if (log!=null){
+                    for (int i = 0; i < dishList.size(); i++) {
+                        log.setLogId(dishList.get(i).getDishId().concat(log.getLogId()));
+                        log.setTitle(MessageFormat.format("删除食物{0}失败", dishList.get(i).getDishId()));
+                        if (StringUtil.isEmpty(log.getRequest()))
+                            log.setRequest("{".concat(MessageFormat.format("\"dishList\":{0}", dishList.get(i).getDishId())).concat("}"));
+                        sysFacadeService.updSynLog(log);
+                        rtn.setDesc("发生异常");
+                        rtn.setLogId(log.getLogId());
+                        rtn.setRemark(MessageFormat.format("删除食物{0}失败！",dishList.get(i).getDishId()));
+                    }
+                }
+            }
+        }
+        return gson1.toJson(rtn);
+    }
+
+    /**
+     * 获取历史订单
+     * @return
+     */
+    public String getHistoryOrder() {
+        List<Order> orders = eleMeInnerService.findAll();
+        return getGson().toJson(orders);
+    }
 }
