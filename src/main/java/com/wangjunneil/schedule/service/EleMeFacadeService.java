@@ -40,7 +40,6 @@ public class EleMeFacadeService {
             gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
                 .registerTypeAdapter(Body.class, new BodySerializer())
                 .registerTypeAdapter(DeliverymanInfo.class, new DeliverymanInfoSerializer())
-                .registerTypeAdapter(DisplayAttribute.class, new DisplayAttribute())
                 .registerTypeAdapter(Distribution.class, new DistributionSerializer())
                 .registerTypeAdapter(Extra.class, new ExtraSerializer())
                 .registerTypeAdapter(FoodIds.class, new FoodIdsSerializer())
@@ -556,8 +555,8 @@ public class EleMeFacadeService {
                 String result = getFoodId(dishList.get(i).getDishId());
                 if ("failure".equals(result)) {
                     rtn.setCode(-1);
-                    rtn.setDesc(MessageFormat.format("获取食物{0}出错!",dishList.get(i).getDishId()));
-                    rtn.setRemark(MessageFormat.format("获取食物{0}出错!",dishList.get(i).getDishId()));
+                    rtn.setDesc("error");
+                    rtn.setRemark("无此商品");
                     rtn.setDynamic(dishList.get(i).getDishId());
                     reponse += gson1.toJson(rtn);
                 }else {
@@ -572,8 +571,8 @@ public class EleMeFacadeService {
                         }
                     }else {
                         rtn.setCode(-1);
-                        rtn.setDesc(MessageFormat.format("食物{0}不存在!",dishList.get(i).getDishId()));
-                        rtn.setRemark(MessageFormat.format("食物{0}不存在!",dishList.get(i).getDishId()));
+                        rtn.setDesc("error");
+                        rtn.setRemark("无此商品");
                         rtn.setDynamic(dishList.get(i).getDishId());
                         reponse += gson1.toJson(rtn);
                     }
