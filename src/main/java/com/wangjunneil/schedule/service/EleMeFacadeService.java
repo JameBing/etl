@@ -242,7 +242,7 @@ public class EleMeFacadeService {
                     rtn.setRemark(obj.getMessage().toString());
                 }else {
                     rtn.setCode(-1);
-                    rtn.setRemark(MessageFormat.format("订单{0}不存在或无权限管理", elemeOrderId));
+                    rtn.setRemark(MessageFormat.format("订单{0}不存在", elemeOrderId));
                 }
                 rtn.setDesc("success");
             }catch (ElemeException ex){

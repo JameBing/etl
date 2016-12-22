@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.entity.eleme;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.wangjunneil.schedule.utility.StringUtil;
 
 import java.util.Map;
 
@@ -55,8 +56,8 @@ public class OldFoodsRequest {
     //批量删除食物ID
     @SerializedName("food_ids")
     private String food_ids;
-    @SerializedName("foods_info")
-    private Map<String, OldFoodsRequest> foods_info;
+
+    private Object foods_info;
 
     public String getFood_category_id() {
         return food_category_id;
@@ -179,11 +180,10 @@ public class OldFoodsRequest {
     }
 
     public String getFoods_info() {
-        Gson gson = new Gson();
-        return gson.toJson(foods_info);
+        return StringUtil.isEmpty(this.foods_info)?"":new Gson().toJson(foods_info);
     }
 
-    public void setFoods_info(Map<String, OldFoodsRequest> foods_info) {
+    public void setFoods_info(Object foods_info) {
         this.foods_info = foods_info;
     }
 

@@ -27,7 +27,6 @@ public class OldFoodsRequestSerializer implements JsonSerializer<OldFoodsRequest
         object.add("is_gum",jsonSerializationContext.serialize(oldFoodsRequest.getIs_gum()));
         object.add("is_spicy",jsonSerializationContext.serialize(oldFoodsRequest.getIs_spicy()));
         object.add("packing_fee",jsonSerializationContext.serialize(oldFoodsRequest.getPacking_fee()));
-
         object.add("sort_order",jsonSerializationContext.serialize(oldFoodsRequest.getSort_order()));
         object.add("food_id",jsonSerializationContext.serialize(oldFoodsRequest.getFood_id()));
         object.add("tp_food_ids",jsonSerializationContext.serialize(oldFoodsRequest.getTp_food_ids()));

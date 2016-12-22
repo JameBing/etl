@@ -1034,7 +1034,7 @@ public class JdHomeFacadeService {
                     res = gson.toJson(result);
                 }
                 if (!StringUtil.isEmpty(res) && (new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create().fromJson(res,Result.class).getCode() == 0)){
-                    //sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,null);
+                    sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,null);
                 }
             }
         }

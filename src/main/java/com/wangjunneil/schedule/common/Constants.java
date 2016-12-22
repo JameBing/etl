@@ -204,7 +204,7 @@ public final class Constants {
 
     public static final int JH_ORDER_WAITING=41000;  // 待接单
 
-    public static final int JH_ORDER_RECEIVED=41010;  // 已接单
+    public static final int JH_ORDER_RECEIVED=32000;  // 已接单
 
     public static final int JH_ORDER_DELIVERING=33040;  // 配送中
 
@@ -288,15 +288,20 @@ public final class Constants {
     /*************************************************************************************************************************/
     //美团订单状态
 
-    public static final int MT_STATUS_CODE_UNPROCESSED=2;
+    public static final int MT_STATUS_CODE_UNPROCESSED=2;//已推单
 
     public static final int MT_STATUS_CODE_RECEIVED=3;  // 商家已收到
 
     public static final int MT_STATUS_CODE_CONFIRMED=4;  // 商家已确认
 
+    public static final int MT_STATUS_CODE_DELIVERY=6;  // 正在配送
+
+    public static final int MT_STATUS_CODE_ARRIVED=7;  // 已送达
+
     public static final int MT_STATUS_CODE_COMPLETED=8;  // 已完成
 
     public static final int MT_STATUS_CODE_CANCELED=9;  // 已取消
+
 
     /*************************************************************************************************************************/
     //pos订单状态

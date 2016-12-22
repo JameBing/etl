@@ -182,7 +182,7 @@ public class JdHomeApiService {
         Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("orderId",billId);
-        jsonObject.put("orderStatus",statusId);
+        //jsonObject.put("orderStatus",statusId);
         signParams.setJd_param_json(jsonObject.toJSONString());
         param.put("jd_param_json",jsonObject);
         try {
