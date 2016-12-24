@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.sankuai.meituan.waimai.opensdk.exception.ApiOpException;
 import com.sankuai.meituan.waimai.opensdk.exception.ApiSysException;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
+import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
 import com.sankuai.meituan.waimai.opensdk.vo.PoiParam;
 import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
@@ -578,6 +579,48 @@ public class MeiTuanFacadeService {
         finally {
             return result;
         }
+    }
+
+
+    /**
+     * 通过订单id,获取订单明细.
+     * @return
+     */
+    public OrderDetailParam getOrderDetail(long orderId) {
+        Rtn rtn = new Rtn();
+        rtn.setDynamic(String.valueOf(orderId));
+        Log log1 = null;
+        OrderDetailParam orderDetailParam = null;
+        if(StringUtil.isEmpty(orderId)){
+           return orderDetailParam;
+        }
+        try {
+            orderDetailParam = mtApiService.getOrderDetail(orderId);
+        } catch (MeiTuanException ex) {
+            rtn.setCode(-997);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+        } catch (ScheduleException ex) {
+            rtn.setCode(-999);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+        } catch (ApiOpException ex) {
+            rtn.setCode(ex.getCode());
+            rtn.setDesc("error");
+            rtn.setRemark(ex.getMsg());
+        } catch (Exception ex) {
+            rtn.setCode(-998);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+        } finally {
+            //有异常产生
+            if (log1 != null) {
+                log1.setLogId(String.valueOf(orderId).concat(log1.getLogId()));
+                log1.setTitle(MessageFormat.format("获取{0}订单明细失败", String.valueOf(orderId)));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"meituan_shop_id\":{1}", String.valueOf(orderId), "")).concat("}"));
+                sysFacadeService.updSynLog(log1);
+            }
+            return orderDetailParam;
+        }
+
     }
 
 //endregion
