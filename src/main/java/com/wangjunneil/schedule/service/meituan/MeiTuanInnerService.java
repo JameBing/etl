@@ -2,7 +2,6 @@ package com.wangjunneil.schedule.service.meituan;
 
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
-import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
 import com.wangjunneil.schedule.entity.meituan.OrderInfo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +11,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author liuxin
@@ -34,6 +30,12 @@ public class MeiTuanInnerService {
         mongoTemplate.insert(orders);
     }
 
+    //修改订单,把一条完整订单把数据库订单覆盖,不仅仅修改状态
+    public void updateOrderDetail(OrderInfo order){
+        Query query = new Query(Criteria.where("platformOrderId").is(order.getOrderid()).and("platform").is(Constants.PLATFORM_WAIMAI_MEITUAN));
+        Update update = new Update().set("order",order);
+        mongoTemplate.updateFirst(query,update,OrderWaiMai.class);
+    }
 
     //修改订单状态
     public void updateStatus(String orderId,int status){
@@ -41,4 +43,5 @@ public class MeiTuanInnerService {
         Update update = new Update().set("order.status",status);
         mongoTemplate.upsert(query,update, OrderWaiMai.class);
     }
+
 }
