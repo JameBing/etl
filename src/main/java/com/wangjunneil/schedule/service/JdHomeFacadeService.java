@@ -543,9 +543,6 @@ public class JdHomeFacadeService {
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(orderId) || StringUtil.isEmpty(shopId) || StringUtil.isEmpty(isAgree)){
-            rtn.setCode(-1);
-            rtn.setDesc("error");
-            rtn.setRemark("商家订单确认/取消接口请求参数为空");
             return gson.toJson(rtn);
         }
         try {
@@ -1037,7 +1034,7 @@ public class JdHomeFacadeService {
                     res = gson.toJson(result);
                 }
                 if (!StringUtil.isEmpty(res) && (new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create().fromJson(res,Result.class).getCode() == 0)){
-                    //sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,null);
+                    sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,null);
                 }
             }
         }

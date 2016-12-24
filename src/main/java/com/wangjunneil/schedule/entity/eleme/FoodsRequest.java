@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.entity.eleme;
 
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -10,23 +11,29 @@ import java.util.List;
  *
  */
 public class FoodsRequest {
-    /********************共有属性***************************/
     //食物名字
+    @SerializedName("name")
     private String name;
     //描述
+    @SerializedName("description")
     private String description;
-    /********************添加食物属性**********************/
     //食物分类Id
+    @SerializedName("food_category_id")
     private String food_category_id;
     //食物价格
+    @SerializedName("price")
     private String price;
     //图片地址
+    @SerializedName("image_hash")
     private String image_hash;
     //口味
+    @SerializedName("labels")
     private Labels labels;
     //规格
+    @SerializedName("specs")
     private List<Specs> specs;
-    /*********通过第三方id查询平台id属性******************/
+    //第三方食物id
+    @SerializedName("tp_food_ids")
     private String tp_food_ids;
 
     public String getName() {

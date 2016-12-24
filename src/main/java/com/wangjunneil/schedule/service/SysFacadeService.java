@@ -187,15 +187,15 @@ public class SysFacadeService {
                     throw new ElemeException("饿了么订单插入失败!",ex);
             }
         }catch (Exception e){
-                    switch (orderWaiMai.getPlatform()){
-                        case Constants.PLATFORM_WAIMAI_BAIDU:
-                            throw new JMException("发送百度订单消息失败");
-                        case Constants.PLATFORM_WAIMAI_JDHOME:
-                            throw new JMException("发送京东订单消息失败");
-                        case Constants.PLATFORM_WAIMAI_MEITUAN:
-                            throw new JMException("发送美团订单消息失败");
-                        case Constants.PLATFORM_WAIMAI_ELEME:
-                            throw new JMException("发送饿了么订单消息失败");
+            switch (orderWaiMai.getPlatform()){
+                case Constants.PLATFORM_WAIMAI_BAIDU:
+                    throw new JMException("发送百度订单消息失败");
+                case Constants.PLATFORM_WAIMAI_JDHOME:
+                    throw new JMException("发送京东订单消息失败");
+                case Constants.PLATFORM_WAIMAI_MEITUAN:
+                    throw new JMException("发送美团订单消息失败");
+                case Constants.PLATFORM_WAIMAI_ELEME:
+                    throw new JMException("发送饿了么订单消息失败");
             }
         }
     }
@@ -208,15 +208,15 @@ public class SysFacadeService {
     //订单插入 list
     public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws JdHomeException{
         orderWaiMaiList.forEach(v->{
-          try   {
-            sysInnerService.updSynWaiMaiOrder(v);
-              System.out.println(formatOrder2Pos(v));
-              if (StaticObj.mqTransportTopicOrder){
-                 topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,formatOrder2Pos(v),v.getShopId());
-              }
-          }catch (Exception ex){
-              //待补充
-        }});
+            try {
+                sysInnerService.updSynWaiMaiOrder(v);
+                System.out.println(formatOrder2Pos(v));
+                if (StaticObj.mqTransportTopicOrder) {
+                    topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
+                }
+             }catch (ScheduleException ex){
+             }catch (Exception ex){
+             }});
     }
 
     //格式化订单返回给Pos
@@ -937,7 +937,7 @@ public class SysFacadeService {
     //格式化京东到家订单状态
     private int tranJHOrderStatus(int status){
         switch (status){
-            case 90000:
+            case Constants.JH_ORDER_WAITING:
                 return Constants.POS_ORDER_SUSPENDING;
             case Constants.JH_ORDER_RECEIVED:
                 return Constants.POS_ORDER_CONFIRMED;
@@ -955,10 +955,12 @@ public class SysFacadeService {
     //格式化美团订单状态
     private int tranMTOrderStatus(int status){
         switch (status){
-            case 90000:
+            case Constants.MT_STATUS_CODE_UNPROCESSED:
                 return Constants.POS_ORDER_SUSPENDING;
             case Constants.MT_STATUS_CODE_CONFIRMED:
                 return Constants.POS_ORDER_CONFIRMED;
+            case Constants.MT_STATUS_CODE_DELIVERY:
+                return Constants.POS_ORDER_DELIVERY;
             case Constants.MT_STATUS_CODE_COMPLETED:
                 return Constants.POS_ORDER_COMPLETED;
             case Constants.MT_STATUS_CODE_CANCELED:

@@ -1,25 +1,28 @@
 package com.wangjunneil.schedule.entity.eleme;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by admin on 2016/11/22.
  */
 public class OrderRequest {
-    /********************共有属性*************************/
     //eleme订单id
+    @SerializedName("eleme_order_id")
     private String eleme_order_id;
     //状态
+    @SerializedName("status")
     private  String status;
-    /*****************查询订单详情属性********************/
     //第三方订单id
+    @SerializedName("tp_id")
     private String tp_id;
-    /******************取消订单属性***********************/
     //原因
+    @SerializedName("reason")
     private  String reason;
-    /******************拉取新订单请求参数***********************/
     //商户可管理商家id
+    @SerializedName("restaurant_id")
     private String restaurant_id;
+    @SerializedName("eleme_order_ids")
     private String eleme_order_ids;
-
 
     public String getEleme_order_id() {
         return eleme_order_id;
