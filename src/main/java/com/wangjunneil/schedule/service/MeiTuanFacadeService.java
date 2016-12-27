@@ -224,7 +224,7 @@ public class MeiTuanFacadeService {
      */
     public String findShopStatus(String appPoiCode){
         Rtn rtn = new Rtn();
-        rtn.setDynamic(appPoiCode);
+            rtn.setDynamic(appPoiCode);
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         List<PoiParam> poiParam = new ArrayList<>();
@@ -565,7 +565,7 @@ public class MeiTuanFacadeService {
      * 推送订单订单状态（已确认、已完成）
      * @return
      */
-    public String getChangeOrderStatus(JsonObject jsonObject) {
+    public String getChangeOrderStatus(JsonObject jsonObject,Boolean flag) {
         String result = "";
         Gson gson = new GsonBuilder().registerTypeAdapter(OrderInfo.class,new OrderInfoSerializer())
             .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderExtraParam.class, new OrderExtraParamSerializer())
@@ -588,9 +588,12 @@ public class MeiTuanFacadeService {
                 String orderId = sysFacadeService.getOrderNum(shopId);
                 orderWaiMai.setOrderId(orderId);
             }
-            //sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
-            mtInnerService.updateStatus(String.valueOf(order.getOrderid()), order.getStatus());
-            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId);
+            if(!flag){
+                mtInnerService.updateStatus(String.valueOf(order.getOrderid()), order.getStatus());
+            }else {
+                mtInnerService.updateOrderDetail(order);
+            }
+            //sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId);
             result = "{\"data\" : \"ok\"}" ;
         }
         catch (Exception ex){
