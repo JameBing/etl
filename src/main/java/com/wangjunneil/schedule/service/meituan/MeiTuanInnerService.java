@@ -25,42 +25,15 @@ public class MeiTuanInnerService {
     private MongoTemplate mongoTemplate;
 
     //把获取到的订单信息插入到sync.meituan.order
-    public void insertAllOrder(OrderInfo orders)
-    {
+    public void insertAllOrder(OrderInfo orders){
         mongoTemplate.insert(orders);
     }
 
     //修改订单,把一条完整订单把数据库订单覆盖,不仅仅修改状态
     public void updateOrderDetail(OrderInfo order){
-        Query query = new Query(Criteria.where("platformOrderId").is(order.getOrderid()).and("platform").is(Constants.PLATFORM_WAIMAI_MEITUAN));
-        Update update = new Update().set("_class", order.getClass().getName())
-            .set("order.orderid",order.getOrderid())
-            .set("order.wmorderidview",order.getWmorderidview())
-            .set("order.apppoicode",order.getApppoicode())
-            .set("order.wmpoiname",order.getWmpoiname())
-            .set("order.wmpoiaddress",order.getWmpoiaddress())
-            .set("order.wmpoiphone",order.getWmpoiphone())
-            .set("order.recipientaddress",order.getRecipientaddress())
-            .set("order.recipientphone",order.getRecipientphone())
-            .set("order.recipientname",order.getRecipientname())
-            .set("order.shippingfee",order.getShippingfee())
-            .set("order.total",order.getTotal())
-            .set("order.originalprice",order.getOriginalprice())
-            .set("order.caution",order.getCaution())
-            .set("order.shipperphone",order.getShipperphone())
-            .set("order.status",order.getStatus())
-            .set("order.cityid",order.getCityid())
-            .set("order.hasinvoiced",order.getHasinvoiced())
-            .set("order.invoicetitle",order.getInvoicetitle())
-            .set("order.ctime",order.getCtime())
-            .set("order.utime",order.getUtime())
-            .set("order.deliverytime",order.getDeliverytime())
-            .set("order.isthirdshipping",order.getIsthirdshipping())
-            .set("order.paytype",order.getPaytype())
-            .set("order.latitude",order.getLatitude())
-            .set("order.longitude",order.getLongitude())
-            .set("order.detail",order.getDetail())
-            .set("order.extras",order.getExtras());
+        String orderId = String.valueOf(order.getOrderid());
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_MEITUAN));
+        Update update = new Update().set("order",order);
         mongoTemplate.updateFirst(query,update,OrderWaiMai.class);
     }
 
