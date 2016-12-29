@@ -288,9 +288,7 @@ public final class Constants {
     /*************************************************************************************************************************/
     //美团订单状态
 
-    public static final int MT_STATUS_CODE_UNPROCESSED=2;//已推单
-
-    public static final int MT_STATUS_CODE_RECEIVED=3;  // 商家已收到
+    public static final int MT_STATUS_CODE_UNPROCESSED=2;//待处理
 
     public static final int MT_STATUS_CODE_CONFIRMED=4;  // 商家已确认
 

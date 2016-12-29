@@ -437,21 +437,38 @@ public class EleMeFacadeService {
      * @param newStatus
      * @return
      */
-    public String orderChange(String elemeOrderIds,String newStatus){
+    public String orderChange(String elemeOrderIds,String newStatus,Boolean flag){
         //温馨提醒：单个参数传输都使用String类型，因为Request对象的getparamter方法返回的均是String类型，外层做类型转换的话，如果发生异常则无法捕获，异常处理均在这一层处理，所以放在这里做类型转换更合适
         Log log =null;
         try {
-            eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds, Integer.parseInt(newStatus));
-        }catch (ScheduleException e){
-            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-            log = sysFacadeService.functionRtn.apply(e);
-            log .setLogId(elemeOrderIds.concat(log.getLogId()));
-            log.setTitle(MessageFormat.format("饿了么订单:{0}修改失败", elemeOrderIds));
-            if (StringUtil.isEmpty(log.getRequest())) {
-                log.setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
+            //查询新订单
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setEleme_order_id(elemeOrderIds);
+            orderRequest.setStatus(newStatus);
+            String result = eleMeApiService.orderDetail(orderRequest);
+            Result obj = getGson().fromJson(result, Result.class);
+            Order order = getGson().fromJson(getGson().toJson(obj.getData()), Order.class);
+            if(!flag){
+                eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds, Integer.parseInt(newStatus));
+            }else {
+                eleMeInnerService.updateSysOrder(order);
             }
-            sysFacadeService.updSynLog(log);
-            return "{\"message\": \"error\"}";
+        }catch (ElemeException ex){
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }catch (ScheduleException e){
+            log = sysFacadeService.functionRtn.apply(e);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }finally {
+            if(log!=null){
+                log .setLogId(elemeOrderIds.concat(log.getLogId()));
+                log.setTitle(MessageFormat.format("饿了么订单:{0}修改失败", elemeOrderIds));
+                if (StringUtil.isEmpty(log.getRequest())) {
+                    log.setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
+                }
+                sysFacadeService.updSynLog(log);
+                return "{\"message\": \"error\"}";
+            }
         }
         List<String> listIds = new ArrayList<String>();
         Collections.addAll(listIds, elemeOrderIds.split(","));
@@ -462,21 +479,43 @@ public class EleMeFacadeService {
     }
 
     //退单状态接收  refund_status:退单订单状态
-    public String chargeBack(String elemeOrderIds,String refundStatus) {
+    public String chargeBack(String elemeOrderIds,String refundStatus,Boolean flag) {
         Log log = null;
         try {
-            eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds,Integer.parseInt(refundStatus));
+            //查询新订单
+            OrderRequest orderRequest = new OrderRequest();
+            orderRequest.setEleme_order_id(elemeOrderIds);
+            orderRequest.setStatus(refundStatus);
+            String result = eleMeApiService.orderDetail(orderRequest);
+            Result obj = getGson().fromJson(result, Result.class);
+            Order order = getGson().fromJson(getGson().toJson(obj.getData()), Order.class);
+            if(!flag){
+                eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds,Integer.parseInt(refundStatus));
+            }else {
+                eleMeInnerService.updateSysOrder(order);
+            }
+        }catch (ElemeException ex){
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
         }catch (ScheduleException e){
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             log = sysFacadeService.functionRtn.apply(e);
-            log .setLogId(elemeOrderIds.concat(log.getLogId()));
-            log.setTitle(MessageFormat.format("饿了么订单:{0}退单失败", elemeOrderIds));
-            if (StringUtil.isEmpty(log.getRequest())) {
-                log.setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
+        }finally {
+            if(log!=null){
+                log .setLogId(elemeOrderIds.concat(log.getLogId()));
+                log.setTitle(MessageFormat.format("饿了么订单:{0}退单失败", elemeOrderIds));
+                if (StringUtil.isEmpty(log.getRequest())) {
+                    log.setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
+                }
+                sysFacadeService.updSynLog(log);
+                return "{\"message\": \"error\"}";
             }
-            sysFacadeService.updSynLog(log);
-            return "{\"message\": \"error\"}";
         }
+        List<String> listIds = new ArrayList<String>();
+        Collections.addAll(listIds, elemeOrderIds.split(","));
+        listIds.forEach((id)->{
+            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,Integer.valueOf(refundStatus),id,null,null);
+        });
         return  "{\"message\": \"ok\"}";
     }
 

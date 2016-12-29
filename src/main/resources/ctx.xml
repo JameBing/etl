@@ -126,6 +126,7 @@
         <property name="sessionCacheSize" value="100"></property>
     </bean>
 
+    <!--order队列配置开始 -->
     <bean id="topicDestinationWaiMaiOrder" class="org.apache.activemq.command.ActiveMQTopic">
         <constructor-arg>
             <value>${mq.topic.destination.waimai.order}</value>
@@ -146,7 +147,9 @@
     <bean id="topicMessageProducerWaiMaiOrder" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer">
         <property name="topicJmsTemplate" ref="topicJmsTemplate"></property>
     </bean>
+    <!--order队列配置结束 -->
 
+    <!--orderStatus队列配置开始 -->
     <bean id="topicDestinationWaiMaiOrderStatus" class="org.apache.activemq.command.ActiveMQTopic">
         <constructor-arg>
             <value>${mq.topic.destination.waimai.order.status}</value>
@@ -166,6 +169,7 @@
     <bean id="topicMessageProducerWaiMaiOrderStatus" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer">
         <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus"></property>
     </bean>
+    <!--orderStatus队列配置结束 -->
 
     <!-- 消息主题监听者(Topic) -->
     <bean id="topicMessageListener" class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener" />
@@ -178,8 +182,8 @@
         <property name="defaultListenerMethod" value="onMessage"/>
         <property name="defaultResponseDestination" ref="topicDestinationWaiMaiOrder"/>
         <property name="messageConverter">
-            <null/>
-        </property>
+        <null/>
+    </property>
     </bean>
 
     <!-- 主题监听容器 （Topic） -->

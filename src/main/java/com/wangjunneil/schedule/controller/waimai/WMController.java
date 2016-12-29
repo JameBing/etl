@@ -134,7 +134,7 @@ public class WMController {
     /**
      * 查询门店状态
      * @param out   响应输出流对象
-     * @param request 请求对象  {baidu:{shopId:""},jdhome:{shopId:""},meituan:{shopId:""},eleme:{shopId:""}}
+         * @param request 请求对象  {baidu:{shopId:""},jdhome:{shopId:""},meituan:{shopId:""},eleme:{shopId:""}}
      * @param response  浏览器响应对象
      * @return  {baidu: [{code:0,desc:"success",remark:"营业中",dynamic:""}],jdhome:[{code:1,desc:"success",remark:"休息中",dynamic:""}],...}
      */
@@ -295,7 +295,7 @@ public class WMController {
      * @param request  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/status","/djsw/userCancelOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/status","/meituan/order/status","/djsw/userCancelOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
     public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         String platform = null;
         String requestUrl = request.getPathInfo().toLowerCase();
@@ -309,6 +309,9 @@ public class WMController {
                 break;
             case "/waimai/djsw": //京东到家
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
+                break;
+            case "/waimai/meituan/order/status": //美团
+                platform = Constants.PLATFORM_WAIMAI_MEITUAN;
                 break;
             default:break;
         }

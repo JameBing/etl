@@ -446,8 +446,7 @@ public class BaiDuFacadeService {
                                 return new JsonPrimitive(aDouble.longValue());
                             return new JsonPrimitive(aDouble);
                         }
-                    })
-                                                                                                    .disableHtmlEscaping().create();
+                    }).disableHtmlEscaping().create();
                Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
                 OrderWaiMai orderWaiMai = new OrderWaiMai();
                 orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
@@ -526,15 +525,33 @@ public class BaiDuFacadeService {
         return sysParams;
     }
 
-    //接收百度外卖推送过来的订单状态[order.status.push]
-    public String orderStatus(SysParams sysParams){
+    //接收百度外卖推送过来的订单状态[order.status.push] flag 是否推送整个订单 true 推送  false不推送
+    public String orderStatus(SysParams sysParams,Boolean flag){
         Body result = new Body();
         try{
         Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
         Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
         Integer status = Integer.valueOf(data.getOrder().getStatus());
+        String orderId = data.getOrder().getOrderId();
        //？是否多个订单号存在
-       int intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.getEnumDesc(Enum.OrderTypeBaiDu.R5, status).get("code").getAsString()));
+        int intR = 0;
+        //推送整个订单
+        if(flag){
+            Order order = getGson().fromJson(sysParams.getBody().toString(),Order.class);
+            SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order),SysParams.class);
+            String bodyStr = getGson().toJson(sysParams1.getBody());
+            body = getGson().fromJson(bodyStr,Body.class);
+            if (body.getErrno().equals("0")){
+                Data dataOrder = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
+                intR = baiDuInnerService.updateSysOrder(dataOrder);
+            }else {
+                body.setErrno("1");
+                body.setError("error");
+                body.setData("");
+            }
+        }else {
+            intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.getEnumDesc(Enum.OrderTypeBaiDu.R5, status).get("code").getAsString()));
+        }
         if (intR > 0){
             result.setErrno("0");
             result.setError("success");

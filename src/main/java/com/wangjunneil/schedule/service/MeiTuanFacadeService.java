@@ -130,9 +130,6 @@ public class MeiTuanFacadeService {
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(code)){
-            rtn.setCode(-1);
-            rtn.setDesc("error");
-            rtn.setRemark("门店Id为空，请检查");
             return gson.toJson(rtn);
         }
         try {
