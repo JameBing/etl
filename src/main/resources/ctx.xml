@@ -156,7 +156,7 @@
         </constructor-arg>
     </bean>
 
-    <!-- 配置JMS模板（Topic）WaiMai Order -->
+    <!-- 配置JMS模板（Topic）WaiMai OrderStatus -->
     <bean id="topicJmsTemplate2OrdreStatus" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="topicCachingConnectionFactory" />
         <property name="defaultDestination" ref="topicDestinationWaiMaiOrderStatus" />
@@ -170,6 +170,29 @@
         <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus"></property>
     </bean>
     <!--orderStatus队列配置结束 -->
+
+    <!--orderStatus1(整单)队列配置开始 -->
+    <bean id="topicDestinationWaiMaiOrderStatusAll" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order.statusAll}</value>
+        </constructor-arg>
+    </bean>
+
+    <!-- 配置JMS模板（Topic）WaiMai OrderStatusAll -->
+    <bean id="topicJmsTemplate2OrdreStatusAll" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrderStatusAll" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+
+    <!--topic消息发布者  WaiMai Order StatusAll-->
+    <bean id="topicMessageProducerWaiMaiOrderStatusAll" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer">
+        <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatusAll"></property>
+    </bean>
+    <!--orderStatus1(整单)队列配置结束 -->
 
     <!-- 消息主题监听者(Topic) -->
     <bean id="topicMessageListener" class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener" />

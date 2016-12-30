@@ -3,7 +3,6 @@ package com.wangjunneil.schedule.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
@@ -32,7 +31,6 @@ import org.springframework.stereotype.Service;
 
 import javax.jms.Destination;
 import javax.management.JMException;
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -69,6 +67,14 @@ public class SysFacadeService {
     @Autowired
     @Qualifier("topicDestinationWaiMaiOrderStatus")
     private Destination topicDestinationWaiMaiOrderStatus;
+
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrderStatusAll")
+    private TopicMessageProducer topicMessageProducerOrderStatusAll;
+
+    @Autowired
+    @Qualifier("topicDestinationWaiMaiOrderStatusAll")
+    private Destination topicDestinationWaiMaiOrderStatusAll;
 
     public Cfg findJdCfg() {
         return sysInnerService.findCfg(Constants.PLATFORM_JD);
@@ -1060,6 +1066,13 @@ public class SysFacadeService {
         }
         if (boolSend & StaticObj.MqTransportTopicOrderStatus){
             topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
+        }
+    }
+
+    //topic message to mq server  [message:order statusAll]
+    public void topicMessageOrderStatusAll(String platform,String shopId,OrderWaiMai orderWaiMai){
+        if(StaticObj.mqTransportTopicOrder){
+            topicMessageProducerOrderStatusAll.sendMessage(topicDestinationWaiMaiOrderStatusAll,formatOrder2Pos(orderWaiMai),shopId);
         }
     }
 

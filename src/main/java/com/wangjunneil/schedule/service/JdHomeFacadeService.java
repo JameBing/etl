@@ -365,7 +365,7 @@ public class JdHomeFacadeService {
                     orders.forEach(o->{
                         OrderWaiMai orderWaiMai = new OrderWaiMai();
                         orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
-                        orderWaiMai.setShopId(shopId);
+                        orderWaiMai.setShopId(o.getProduceStationNoIsv());
                         orderWaiMai.setOrderId(sysFacadeService.getOrderNum(o.getProduceStationNoIsv()));
                         orderWaiMai.setPlatformOrderId(String.valueOf(o.getOrderId()));
                         orderWaiMai.setOrder(o);
@@ -1062,6 +1062,12 @@ public class JdHomeFacadeService {
                 }
                 if (!StringUtil.isEmpty(res) && (new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create().fromJson(res,Result.class).getCode() == 0)){
                     sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,null);
+                    /*if(!flag){
+                        sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,null);
+                    }else {
+                        OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_JDHOME,jsonObject.getString("billId"));
+                        sysFacadeService.topicMessageOrderStatusAll(Constants.PLATFORM_WAIMAI_JDHOME,orderWaiMai.getShopId(),orderWaiMai);
+                    }*/
                 }
             }
         }
