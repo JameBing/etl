@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.wangjunneil.schedule.activemq.StaticObj;
+import com.wangjunneil.schedule.activemq.Topic.EkpMessageProducer;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.Data;
@@ -75,6 +76,16 @@ public class SysFacadeService {
     @Autowired
     @Qualifier("topicDestinationWaiMaiOrderStatusAll")
     private Destination topicDestinationWaiMaiOrderStatusAll;
+
+    @Autowired
+    @Qualifier("ekpDestinationException")
+    private Destination ekpDestinationException;
+
+    @Autowired
+    @Qualifier("ekpMessageProducerMessage")
+    private EkpMessageProducer ekpMessageProducerMessage;
+
+
 
     public Cfg findJdCfg() {
         return sysInnerService.findCfg(Constants.PLATFORM_JD);
@@ -919,7 +930,9 @@ public class SysFacadeService {
 
     //日志插入
     public void updSynLog(Log log){
-          sysInnerService.updSynLog( log);
+        sysInnerService.updSynLog( log);
+        //发送消息到EKP
+        ekpMessageProducerMessage.sendMessage(ekpDestinationException,new Gson().toJson(log));
     }
 
     //格式化百度订单状态
