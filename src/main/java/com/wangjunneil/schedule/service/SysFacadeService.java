@@ -236,6 +236,12 @@ public class SysFacadeService {
              }});
     }
 
+    //修改外卖订单
+    public void updateWaiMaiOrder(String orderId,OrderWaiMai orderWaiMai){
+        sysInnerService.updateWaiMaiOrder(orderId,orderWaiMai.getOrder());
+        topicMessageProducerOrderStatusAll.sendMessage(topicDestinationWaiMaiOrderStatusAll,formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
+    }
+
     //格式化订单返回给Pos
     public JSONObject formatOrder2Pos(OrderWaiMai orderWaiMai){
         JSONObject jsonObject = new JSONObject();

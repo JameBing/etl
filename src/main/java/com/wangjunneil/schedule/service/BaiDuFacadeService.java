@@ -532,7 +532,6 @@ public class BaiDuFacadeService {
         Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
         Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
         Integer status = Integer.valueOf(data.getOrder().getStatus());
-        String orderId = data.getOrder().getOrderId();
        //？是否多个订单号存在
         int intR = 0;
         //推送整个订单
@@ -542,8 +541,11 @@ public class BaiDuFacadeService {
             String bodyStr = getGson().toJson(sysParams1.getBody());
             body = getGson().fromJson(bodyStr,Body.class);
             if (body.getErrno().equals("0")){
+                String orderId = data.getOrder().getOrderId();
                 Data dataOrder = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
-                intR = baiDuInnerService.updateSysOrder(dataOrder);
+                OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_BAIDU,orderId);
+                sysFacadeService.updateWaiMaiOrder(orderId,orderWaiMai);
+                intR =1;
             }else {
                 body.setErrno("1");
                 body.setError("error");

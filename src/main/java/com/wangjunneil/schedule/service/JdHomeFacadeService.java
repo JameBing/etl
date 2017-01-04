@@ -870,7 +870,7 @@ public class JdHomeFacadeService {
             return gson.toJson(result);
         }
         OrderWaiMai orderWaiMai = jdHomeInnerService.getOrder(billId);
-        if(orderWaiMai == null){
+        if(StringUtil.isEmpty(orderWaiMai)){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("开始配送推送消息接口订单号没有匹配到订单");
@@ -880,7 +880,8 @@ public class JdHomeFacadeService {
             if(!flag){
                 jdHomeInnerService.updateStatus(billId,status); //修改状态
             }else {
-                jdHomeInnerService.updateSysOrder(getOneOrder(billId,statusId,orderWaiMai.getShopId())); //修改订单
+                OrderInfoDTO orderInfo = getOneOrder(billId,statusId,orderWaiMai.getShopId());
+                sysFacadeService.updateWaiMaiOrder(String.valueOf(orderInfo.getOrderId()), orderWaiMai); //修改订单
             }
             result.setCode(0);
             result.setMsg("success");
@@ -928,7 +929,7 @@ public class JdHomeFacadeService {
         }
         Long orderId = Long.parseLong(billId);
         OrderWaiMai orderWaiMai = jdHomeInnerService.getOrder(billId);
-        if(orderWaiMai==null){
+        if(StringUtil.isEmpty(orderWaiMai)){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("订单妥投消息接口订单号没有匹配到订单");
@@ -938,7 +939,8 @@ public class JdHomeFacadeService {
             if(!flag){
                 jdHomeInnerService.updateStatus(billId,status); //修改状态
             }else {
-                jdHomeInnerService.updateSysOrder(getOneOrder(billId,statusId,orderWaiMai.getShopId())); //修改订单
+                OrderInfoDTO orderInfo = getOneOrder(billId,statusId,orderWaiMai.getShopId());
+                sysFacadeService.updateWaiMaiOrder(String.valueOf(orderInfo.getOrderId()), orderWaiMai); //修改订单
             }
             result.setCode(0);
             result.setMsg("success");
@@ -985,7 +987,7 @@ public class JdHomeFacadeService {
             return gson.toJson(result);
         }
         OrderWaiMai orderWaiMai = jdHomeInnerService.getOrder(billId);
-        if(orderWaiMai==null){
+        if(StringUtil.isEmpty(orderWaiMai)){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("用户取消消息接口订单号没有匹配到订单");
@@ -995,7 +997,8 @@ public class JdHomeFacadeService {
             if(!flag){
                 jdHomeInnerService.updateStatus(billId,status); //修改状态
             }else {
-                jdHomeInnerService.updateSysOrder(getOneOrder(billId,statusId,orderWaiMai.getShopId())); //修改订单
+                OrderInfoDTO orderInfo = getOneOrder(billId,statusId,orderWaiMai.getShopId());
+                sysFacadeService.updateWaiMaiOrder(String.valueOf(orderInfo.getOrderId()), orderWaiMai); //修改订单
             }
             result.setCode(0);
             result.setMsg("success");

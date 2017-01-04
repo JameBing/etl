@@ -588,7 +588,7 @@ public class MeiTuanFacadeService {
             if(!flag){
                 mtInnerService.updateStatus(String.valueOf(order.getOrderid()), order.getStatus());
             }else {
-                mtInnerService.updateOrderDetail(order);
+                sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
             }
             //sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId);
             result = "{\"data\" : \"ok\"}" ;

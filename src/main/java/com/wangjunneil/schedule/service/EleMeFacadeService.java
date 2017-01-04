@@ -448,10 +448,14 @@ public class EleMeFacadeService {
             String result = eleMeApiService.orderDetail(orderRequest);
             Result obj = getGson().fromJson(result, Result.class);
             Order order = getGson().fromJson(getGson().toJson(obj.getData()), Order.class);
+            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_ELEME,String.valueOf(order.getOrderid()));
+            if(StringUtil.isEmpty(orderWaiMai)){
+                return "{\"message\": \"不存在此订单\"}";
+            }
             if(!flag){
                 eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds, Integer.parseInt(newStatus));
             }else {
-                eleMeInnerService.updateSysOrder(order);
+                sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
             }
         }catch (ElemeException ex){
             log = sysFacadeService.functionRtn.apply(ex);
@@ -489,10 +493,14 @@ public class EleMeFacadeService {
             String result = eleMeApiService.orderDetail(orderRequest);
             Result obj = getGson().fromJson(result, Result.class);
             Order order = getGson().fromJson(getGson().toJson(obj.getData()), Order.class);
+            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_ELEME,String.valueOf(order.getOrderid()));
+            if(StringUtil.isEmpty(orderWaiMai)){
+                return "{\"message\": \"不存在此订单\"}";
+            }
             if(!flag){
                 eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds,Integer.parseInt(refundStatus));
             }else {
-                eleMeInnerService.updateSysOrder(order);
+                sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
             }
         }catch (ElemeException ex){
             log = sysFacadeService.functionRtn.apply(ex);

@@ -173,7 +173,7 @@ public class WMFacadeService {
                   map.putAll(stringMap);
                   String[] strArr = {"extras", "detail"};
                   map.put("ZY_ETL_JSON_KEYS", strArr);
-                  result = meiTuanFacadeService.getChangeOrderStatus(functionMap2Json.apply(map),true);
+                  result = meiTuanFacadeService.getChangeOrderStatus(functionMap2Json.apply(map),flag);
                   break;
               default:break;
           }
