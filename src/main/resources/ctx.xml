@@ -60,7 +60,7 @@
         <constructor-arg name="databaseName" value="${mongo.db.name}"/>
     </bean>-->
     <!--需通过权限验证配置-->
-    <mongo:mongo-client host="${mongo.db.host}" port="${mongo.db.port}" credentials="${mongo.db.user}:${mongo.db.pass}@${mongo.db.name}" id="mongo">
+    <mongo:mongo-client id="mongo" host="${mongo.db.host}" port="${mongo.db.port}" credentials="${mongo.db.user}:${mongo.db.pass}@${mongo.db.name}" >
         <mongo:client-options write-concern="SAFE"/>
     </mongo:mongo-client>
 

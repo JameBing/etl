@@ -10,6 +10,7 @@ import com.wangjunneil.schedule.entity.common.ParsFromPos;
 import com.wangjunneil.schedule.service.WMFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
+import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,7 +64,7 @@ public class WMController {
                 stringMap.putAll(request.getParameterMap());
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
-            case "/waimai/eleme/":  //饿了么
+            case "/waimai/eleme":  //饿了么
                 stringMap = request.getParameterMap();
                 platform = Constants.PLATFORM_WAIMAI_ELEME;
                 break;

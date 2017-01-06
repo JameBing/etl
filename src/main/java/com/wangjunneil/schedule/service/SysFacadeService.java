@@ -188,7 +188,8 @@ public class SysFacadeService {
             //order Insert/update
             sysInnerService.updSynWaiMaiOrder(orderWaiMai);
             //topic message to MQ Server
-            System.out.println(formatOrder2Pos(orderWaiMai));
+            log.info(formatOrder2Pos(orderWaiMai));
+            log.info("静态变量值："+StaticObj.mqTransportTopicOrder);
             if (StaticObj.mqTransportTopicOrder){
                 topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
             }
@@ -227,7 +228,7 @@ public class SysFacadeService {
         orderWaiMaiList.forEach(v->{
             try {
                 sysInnerService.updSynWaiMaiOrder(v);
-                System.out.println(formatOrder2Pos(v));
+                log.info(formatOrder2Pos(v));
                 if (StaticObj.mqTransportTopicOrder) {
                     topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
                 }

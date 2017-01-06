@@ -81,8 +81,9 @@ public class MeiTuanFacadeService {
         }
         try {
             json = mtApiService.openShop(code);
+            System.out.println(json);
             if (json.equals("ok") || json.equals("200")){
-                rtn.setCode(0);
+                rtn.setCode(Integer.valueOf(0));
                 rtn.setDesc("success");
                 rtn.setRemark("成功");
             }
@@ -221,7 +222,7 @@ public class MeiTuanFacadeService {
      */
     public String findShopStatus(String appPoiCode){
         Rtn rtn = new Rtn();
-            rtn.setDynamic(appPoiCode);
+        rtn.setDynamic(appPoiCode);
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         List<PoiParam> poiParam = new ArrayList<>();
@@ -249,6 +250,11 @@ public class MeiTuanFacadeService {
                     rtn.setDesc("success");
                     rtn.setRemark("门店休息");
                     return gson.toJson(rtn);
+                }else {
+                    rtn.setCode(-1);
+                    rtn.setDesc("error");
+                    rtn.setRemark("无此门店");
+                    return gson.toJson(rtn);
                 }
             }else {
                 rtn.setCode(-1);
@@ -267,6 +273,10 @@ public class MeiTuanFacadeService {
             rtn.setCode(e.getCode());
             rtn.setDesc("error");
             rtn.setRemark(e.getMsg());
+        }catch (ApiSysException e){
+            rtn.setCode(-999999);
+            rtn.setDesc("error");
+            rtn.setRemark("美团系统异常");
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);

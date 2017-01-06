@@ -146,7 +146,7 @@ public class WMFacadeService {
        String result = "";
         switch (platform){
             case Constants.PLATFORM_WAIMAI_BAIDU:
-                    result = baiDuFacadeService.orderPost(functionMap2SysParams.apply(stringMap));
+                result = baiDuFacadeService.orderPost(functionMap2SysParams.apply(stringMap));
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
                 result = jdHomeFacadeService.newOrder(stringMap.get("jd_param_json")[0], stringMap.get("sid")[0]);

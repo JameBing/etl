@@ -1,12 +1,17 @@
 package com.wangjunneil.schedule.service.meituan;
 
+import com.sankuai.meituan.waimai.opensdk.exception.ApiOpException;
+import com.sankuai.meituan.waimai.opensdk.exception.ApiSysException;
 import com.sankuai.meituan.waimai.opensdk.factory.APIFactory;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
 import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
 import com.sankuai.meituan.waimai.opensdk.vo.PoiParam;
 import com.sankuai.meituan.waimai.opensdk.vo.SystemParam;
+import com.wangjunneil.schedule.common.MeiTuanException;
+import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.apache.log4j.Logger;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -48,7 +53,7 @@ public class MeiTuanApiService {
 
 
     //查询门店详细信息
-    public List<PoiParam> poiMget(String appPoiCode) throws Exception {
+    public List<PoiParam> poiMget(String appPoiCode) throws ApiSysException,ApiOpException,MeiTuanException,ScheduleException{
         List<PoiParam> poiList = APIFactory.getPoiAPI().poiMget(sysPram, appPoiCode);
         return poiList;
     }
