@@ -14,7 +14,7 @@ import javax.jms.*;
  */
 //MQ Topic 消息生产者
                 @Component
-                public class TopicMessageProducer {
+                public class TopicMessageProducer{
 
                   private JmsTemplate topicJmsTemplate;
                     //Send TextMessage

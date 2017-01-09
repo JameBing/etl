@@ -95,8 +95,8 @@ cow_say() {
     echo "              ||--|| *"
     echo
     echo "       =[ Schedule center v1.0.0-dev-d5085f6f0d919224f8390bebe2b21d059da82daf]"
-    echo "+ -- --=[ See http://www.wangjunneil.com for more technical sharing.         ]"
-    echo "+ -- --=[                Created by Evan Wang on 2016-0804                   ]"
+    echo "+ -- --=[ See http://www.ziyanfoods.com for more technical sharing.         ]"
+    echo "+ -- --=[                Created by ziyan on 2016-0804                   ]"
     echo ""
 }
 

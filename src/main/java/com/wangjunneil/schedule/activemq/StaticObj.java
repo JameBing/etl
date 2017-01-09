@@ -8,6 +8,6 @@ package com.wangjunneil.schedule.activemq;
     //静态标识--用于记录
     public static  boolean mqTransportTopicOrder = true;
 
-    public static  boolean MqTransportTopicOrderStatus = true;
+    public static  boolean mqTransportTopicOrderStatus = true;
 
 }

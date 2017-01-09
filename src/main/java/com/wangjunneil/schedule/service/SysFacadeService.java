@@ -1056,7 +1056,7 @@ public class SysFacadeService {
                 boolSend = false;
                 break;
         }
-        if (boolSend & StaticObj.MqTransportTopicOrderStatus){
+        if (boolSend & StaticObj.mqTransportTopicOrderStatus){
             topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
         }
     }

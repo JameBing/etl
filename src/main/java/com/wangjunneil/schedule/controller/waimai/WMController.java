@@ -3,6 +3,7 @@ package com.wangjunneil.schedule.controller.waimai;
 
 import com.google.gson.JsonObject;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.common.ParsFormPos2;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
@@ -373,11 +374,19 @@ public class WMController {
     @Qualifier("topicDestinationWaiMaiOrder")
     private Destination topicDestinationWaiMaiOrder;
 
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrderAsync")
+    private TopicMessageProducerAsync topicDestinationWaiMaiOrderAsync;
+
     @RequestMapping(value = "/test1",method = RequestMethod.GET)
     public String test1(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
         try {
             response.setContentType("text/html; charset=utf-8");
-            topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,"杨大山,你辛苦了:"+ DateTimeUtil.dateFormat(new Date(), "yyyyMMddHHmmss"),"6666");
+        //  topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder,"杨大山,你辛苦了:"+ DateTimeUtil.dateFormat(new Date(), "yyyyMMddHHmmss"),"6666");
+           topicDestinationWaiMaiOrderAsync.init("杨大山,你辛苦了1:"+ DateTimeUtil.dateFormat(new Date(), "yyyyMMddHHmmss"),"6666" );
+          new Thread(topicDestinationWaiMaiOrderAsync).start();
+            topicDestinationWaiMaiOrderAsync.init("杨大山,你辛苦了2:"+ DateTimeUtil.dateFormat(new Date(), "yyyyMMddHHmmss"),"6665" );
+            new Thread(topicDestinationWaiMaiOrderAsync).start();
             out.println("测试MQ");
         }catch (Exception ex){
 

@@ -6,12 +6,12 @@ import com.wangjunneil.schedule.utility.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * Created by yangwanbin on 2016-12-14.
  */
 public class MQTransportListener implements org.apache.activemq.transport.TransportListener {
-
 
     @Autowired
     private SysFacadeService sysFacadeService;
@@ -20,10 +20,12 @@ public class MQTransportListener implements org.apache.activemq.transport.Transp
 
     @Override
     public void onCommand(Object command) {
+        setTransportFlag(true);
     }
 
     @Override
     public void onException(IOException error) {
+        //System.out.println("MQTransportListener====onException====="+ DateTimeUtil.dateFormat(new Date(), "yyyyMMddHHmmss"));
               logEx(error);
     }
 
@@ -42,12 +44,12 @@ public class MQTransportListener implements org.apache.activemq.transport.Transp
         switch (this.destination){
             case "topicDestinationWaiMaiOrder":   //推送外卖订单的 topic queue
                     if (StaticObj.mqTransportTopicOrder){
-                        //setTransportFlag(false);
+                        setTransportFlag(false);
                     }else  return;
                 break;
             case "topicDestinationWaiMaiOrderStatus":   //推送订单状态的topic queue
-                if (StaticObj.MqTransportTopicOrderStatus){
-                 //   setTransportFlag(false);
+                if (StaticObj.mqTransportTopicOrderStatus){
+                    setTransportFlag(false);
                 }else  return;
                 break;
             default:
@@ -78,8 +80,8 @@ public class MQTransportListener implements org.apache.activemq.transport.Transp
                 StaticObj.mqTransportTopicOrder = boolValue;
                 break;
             case "topicDestinationWaiMaiOrderStatus":   //推送订单状态的topic queue
-                if (StaticObj.MqTransportTopicOrderStatus != boolValue)
-                    StaticObj.MqTransportTopicOrderStatus = boolValue;
+                if (StaticObj.mqTransportTopicOrderStatus != boolValue)
+                    StaticObj.mqTransportTopicOrderStatus = boolValue;
                 break;
             default:
                 break;
