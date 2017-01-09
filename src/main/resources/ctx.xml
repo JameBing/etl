@@ -25,7 +25,6 @@
         <mvc:interceptor>
             <mvc:mapping path="/tmall/**" />
             <mvc:mapping path="/jd/**" />
-            <mvc:mapping path="/waimai/**" />
             <mvc:exclude-mapping path="/tmall/callback"/>
             <mvc:exclude-mapping path="/jd/callback"/>
             <bean  class="com.wangjunneil.schedule.interceptor.AccessController">
