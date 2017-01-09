@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.EkpMessageProducer;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.baidu.OrderShop;
@@ -53,29 +54,41 @@ public class SysFacadeService {
     @Autowired
     private SysFacadeService sysFacadeService;
 
-    @Autowired
-    @Qualifier("topicMessageProducerWaiMaiOrder")
-    private TopicMessageProducer topicMessageProducerWaiMaiOrder;
+//    @Autowired
+//    @Qualifier("topicMessageProducerWaiMaiOrder")
+//    private TopicMessageProducer topicMessageProducerWaiMaiOrder;
 
     @Autowired
-    @Qualifier("topicDestinationWaiMaiOrder")
-    private Destination topicDestinationWaiMaiOrder;
+    @Qualifier("topicMessageProducerWaiMaiOrderAsync")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderAsync;
+
+//    @Autowired
+//    @Qualifier("topicDestinationWaiMaiOrder")
+//    private Destination topicDestinationWaiMaiOrder;
+
+//    @Autowired
+//    @Qualifier("topicMessageProducerWaiMaiOrderStatus")
+//    private TopicMessageProducer topicMessageProducerOrderStatus;
+
+//    @Autowired
+//    @Qualifier("topicDestinationWaiMaiOrderStatus")
+//    private Destination topicDestinationWaiMaiOrderStatus;
 
     @Autowired
-    @Qualifier("topicMessageProducerWaiMaiOrderStatus")
-    private TopicMessageProducer topicMessageProducerOrderStatus;
+    @Qualifier("topicMessageProducerWaiMaiOrderStatusAsync")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAsync;
+
+//    @Autowired
+//    @Qualifier("topicMessageProducerWaiMaiOrderStatusAll")
+//    private TopicMessageProducer topicMessageProducerOrderStatusAll;
+//
+//    @Autowired
+//    @Qualifier("topicDestinationWaiMaiOrderStatusAll")
+//    private Destination topicDestinationWaiMaiOrderStatusAll;
 
     @Autowired
-    @Qualifier("topicDestinationWaiMaiOrderStatus")
-    private Destination topicDestinationWaiMaiOrderStatus;
-
-    @Autowired
-    @Qualifier("topicMessageProducerWaiMaiOrderStatusAll")
-    private TopicMessageProducer topicMessageProducerOrderStatusAll;
-
-    @Autowired
-    @Qualifier("topicDestinationWaiMaiOrderStatusAll")
-    private Destination topicDestinationWaiMaiOrderStatusAll;
+    @Qualifier("topicMessageProducerWaiMaiOrderStatusAllSync")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAllSync;
 
     @Autowired
     @Qualifier("ekpDestinationException")
@@ -191,7 +204,9 @@ public class SysFacadeService {
             log.info(formatOrder2Pos(orderWaiMai));
             log.info("静态变量值："+StaticObj.mqTransportTopicOrder);
             if (StaticObj.mqTransportTopicOrder){
-                topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
+                //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
+                topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
+                new Thread(topicMessageProducerWaiMaiOrderAsync).start();
             }
         }catch (ScheduleException ex){
             switch (orderWaiMai.getPlatform()){
@@ -230,7 +245,9 @@ public class SysFacadeService {
                 sysInnerService.updSynWaiMaiOrder(v);
                 log.info(formatOrder2Pos(v));
                 if (StaticObj.mqTransportTopicOrder) {
-                    topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
+                    //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
+                    topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(v),v.getShopId());
+                    new Thread(topicMessageProducerWaiMaiOrderAsync).start();
                 }
              }catch (ScheduleException ex){
              }catch (Exception ex){
@@ -240,14 +257,16 @@ public class SysFacadeService {
     //修改外卖订单
     public void updateWaiMaiOrder(String orderId,OrderWaiMai orderWaiMai){
         sysInnerService.updateWaiMaiOrder(orderId,orderWaiMai.getOrder());
-        topicMessageProducerOrderStatusAll.sendMessage(topicDestinationWaiMaiOrderStatusAll,formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
+        //topicMessageProducerOrderStatusAll.sendMessage(topicDestinationWaiMaiOrderStatusAll,formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
+        topicMessageProducerWaiMaiOrderStatusAllSync.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
+        new Thread(topicMessageProducerWaiMaiOrderStatusAllSync).start();
     }
 
     //格式化订单返回给Pos
     public JSONObject formatOrder2Pos(OrderWaiMai orderWaiMai){
         JSONObject jsonObject = new JSONObject();
         JSONObject rtn = new JSONObject();
-        jsonObject.put("platform",orderWaiMai.getPlatform());
+        jsonObject.put("platform", orderWaiMai.getPlatform());
         jsonObject.put("shopId",orderWaiMai.getShopId());
         jsonObject.put("orderId",orderWaiMai.getOrderId());
         jsonObject.put("platOrderId",orderWaiMai.getPlatformOrderId());
@@ -275,7 +294,7 @@ public class SysFacadeService {
             data = new Data();
         }
         JSONObject rtnJson = new JSONObject();
-        rtnJson.put("header",getBaiDuHeader(data,jsonObject));
+        rtnJson.put("header",getBaiDuHeader(data, jsonObject));
         rtnJson.put("user",getBaiDuUsers(data));
         rtnJson.put("productList",getBaiDuProducts(data));
         rtnJson.put("discountList",getBaiDuDiscount(data));
@@ -423,7 +442,7 @@ public class SysFacadeService {
             orderInfoDTO = new OrderInfoDTO();
         }
         JSONObject rtnJson = new JSONObject();
-        rtnJson.put("header",getJdHomeHeader(orderInfoDTO,jsonObject));
+        rtnJson.put("header",getJdHomeHeader(orderInfoDTO, jsonObject));
         rtnJson.put("user",getJdHomeUsers(orderInfoDTO));
         rtnJson.put("productList",getJdHomeProducts(orderInfoDTO));
         rtnJson.put("discountList",getJdHomeDiscount(orderInfoDTO));
@@ -1085,14 +1104,18 @@ public class SysFacadeService {
                 break;
         }
         if (boolSend & StaticObj.mqTransportTopicOrderStatus){
-            topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
+            //topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
+            topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
+            new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();
         }
     }
 
     //topic message to mq server  [message:order statusAll]
     public void topicMessageOrderStatusAll(String platform,String shopId,OrderWaiMai orderWaiMai){
         if(StaticObj.mqTransportTopicOrder){
-            topicMessageProducerOrderStatusAll.sendMessage(topicDestinationWaiMaiOrderStatusAll,formatOrder2Pos(orderWaiMai),shopId);
+            //topicMessageProducerOrderStatusAll.sendMessage(topicDestinationWaiMaiOrderStatusAll,formatOrder2Pos(orderWaiMai),shopId);
+            topicMessageProducerWaiMaiOrderStatusAllSync.init(formatOrder2Pos(orderWaiMai),shopId);
+            new Thread(topicMessageProducerWaiMaiOrderStatusAllSync).start();
         }
     }
 

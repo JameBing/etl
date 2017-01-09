@@ -10,4 +10,8 @@ package com.wangjunneil.schedule.activemq;
 
     public static  boolean mqTransportTopicOrderStatus = true;
 
+    public static  boolean mqTransportTopicOrderStatusAll = true;
+
+    public static boolean mqTransportTopicException = true;
+
 }

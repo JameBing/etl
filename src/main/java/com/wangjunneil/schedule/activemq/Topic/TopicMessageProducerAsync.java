@@ -1,7 +1,6 @@
 package com.wangjunneil.schedule.activemq.Topic;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
-import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesHandlerImpl;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;

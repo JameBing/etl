@@ -131,15 +131,25 @@
     <bean id="topicMessageProducerWaiMaiOrderAsync" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
         <property name="topicJmsTemplate" ref="topicJmsTemplate" ></property>
         <property name="destination"  ref="topicDestinationWaiMaiOrder"></property>
-        <property name="message" value="true" ></property>
+        <property name="message" value="false" ></property>
     </bean>
     <!--topic消息发布者  WaiMai Order Status-->
     <bean id="topicMessageProducerWaiMaiOrderStatus" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer">
         <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus"></property>
     </bean>
+    <bean id="topicMessageProducerWaiMaiOrderStatusAsync" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync" >
+        <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus"></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrderStatus" ></property>
+        <property name="message" value="true"></property>
+    </bean>
     <!--topic消息发布者  WaiMai Order StatusAll-->
     <bean id="topicMessageProducerWaiMaiOrderStatusAll" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer">
         <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatusAll"></property>
+    </bean>
+    <bean id="topicMessageProducerWaiMaiOrderStatusAllSync" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
+        <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatusAll" ></property>
+        <property name="destination" ref="topicDestinationWaiMaiOrderStatusAll" ></property>
+        <property name="message" value="false" ></property>
     </bean>
     <!--topic消息发布者  ekp message-->
     <bean id="ekpMessageProducerMessage" class="com.wangjunneil.schedule.activemq.Topic.EkpMessageProducer">

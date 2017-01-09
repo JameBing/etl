@@ -51,13 +51,6 @@ public class MeiTuanFacadeService {
     @Autowired
     private SysFacadeService sysFacadeService;
 
-    @Autowired
-    @Qualifier("topicMessageProducerWaiMaiOrderStatus")
-    private TopicMessageProducer topicMessageProducerOrderStatus;
-
-    @Autowired
-    @Qualifier("topicDestinationWaiMaiOrderStatus")
-    private Destination topicDestinationWaiMaiOrderStatus;
 
     //日志配置
     private static Logger log = Logger.getLogger(JdHomeFacadeService.class.getName());
