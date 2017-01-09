@@ -1,53 +1,81 @@
 package com.wangjunneil.schedule.entity.eleme;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by admin on 2016/11/28.
  */
 public class RestaurantRequest {
-    /****************共有属性********************/
+    @SerializedName("restaurant_id")
     private String restaurant_id;
-    /***********更新餐厅营业信息属性*************/
     //开关店铺
+    @SerializedName("is_open")
     private String is_open;
-    /************更新餐厅基本信息属性***********/
     //餐厅地址
+    @SerializedName("address_text")
     private String address_text;
     //经纬度用,隔开
+    @SerializedName("geo")
     private String geo;
     //配送费
-    private int agent_fee;
+    @SerializedName("agent_fee")
+    private String agent_fee;
     //关闭描述
+    @SerializedName("close_description")
     private String close_description;
     //配送额外说明
+    @SerializedName("deliver_description")
     private String deliver_description;
     //餐厅简介
+    @SerializedName("description")
     private String description;
     //餐厅名字
+    @SerializedName("name")
     private String name;
     //是否接受预定
-    private int is_bookable;
+    @SerializedName("is_bookable")
+    private String is_bookable;
     //餐厅营业时间，多个时间段用逗号隔开
+    @SerializedName("open_time")
     private String open_time;
     //餐厅联系号码
+    @SerializedName("phone")
     private String phone;
     //餐厅公告
+    @SerializedName("promotion_info")
     private String promotion_info;
     //餐厅logo
+    @SerializedName("logo_image_hash")
     private String logo_image_hash;
     //是否支持开发票
-    private int invoice;
+    @SerializedName("invoice")
+    private String invoice;
     //支持的最小发票金额
+    @SerializedName("invoice_min_amount")
     private String invoice_min_amount;
     //满xx元免配送费
+    @SerializedName("no_agent_fee_total")
     private String no_agent_fee_total;
     //餐厅是否有效
+    @SerializedName("is_valid")
     private String is_valid;
     //订单打包费
-    private String packing_fee="-1";
-    /************设置配送范围***********/
+    @SerializedName("packing_fee")
+    private String packing_fee;
+    @SerializedName("tp_id")
     private String tp_id;
-
+    @SerializedName("tp_restaurant_id")
     private String tp_restaurant_id;
+    @SerializedName("restaurant_ids")
+    private String restaurant_ids;
+
+    public String getRestaurant_ids() {
+        return restaurant_ids;
+    }
+
+    public void setRestaurant_ids(String restaurant_ids) {
+        this.restaurant_ids = restaurant_ids;
+    }
 
     public String getRestaurant_id() {
         return restaurant_id;
@@ -81,11 +109,11 @@ public class RestaurantRequest {
         this.geo = geo;
     }
 
-    public int getAgent_fee() {
+    public String getAgent_fee() {
         return agent_fee;
     }
 
-    public void setAgent_fee(int agent_fee) {
+    public void setAgent_fee(String agent_fee) {
         this.agent_fee = agent_fee;
     }
 
@@ -121,11 +149,11 @@ public class RestaurantRequest {
         this.name = name;
     }
 
-    public int getIs_bookable() {
+    public String getIs_bookable() {
         return is_bookable;
     }
 
-    public void setIs_bookable(int is_bookable) {
+    public void setIs_bookable(String is_bookable) {
         this.is_bookable = is_bookable;
     }
 
@@ -161,11 +189,11 @@ public class RestaurantRequest {
         this.logo_image_hash = logo_image_hash;
     }
 
-    public int getInvoice() {
+    public String getInvoice() {
         return invoice;
     }
 
-    public void setInvoice(int invoice) {
+    public void setInvoice(String invoice) {
         this.invoice = invoice;
     }
 

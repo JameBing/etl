@@ -38,6 +38,8 @@ public class ShopSerializer implements JsonSerializer<Shop>{
             object.add("package_box_price",context.serialize(shop.getPackageBoxPrice()));
             object.add("shop_code",context.serialize(shop.getShopCode()));
             object.add("business_form_id",context.serialize(shop.getBusinessFormId()));
+            object.add("sys_status",context.serialize(shop.getSysStatus()));
+            object.add("business_stauts",context.serialize(shop.getBusinessStauts()));
             return object;
         }
 

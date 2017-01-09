@@ -60,47 +60,18 @@ public class JdHomeApiService {
         SignParams signParams = getSignParams(shopId);//签名参数
         Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();//应用参数
-        String rtnStr = "";
         //应用参数是否有值
-        if(stockRequests !=null && stockRequests.size()>0){
-            int page = 1;
-            int pageSize = Constants.STOCK_REQUEST_COUNT;// 配置参数
-            int begin = 0;
-            int end = pageSize;
-            for (int i = 0; i <= stockRequests.size() / pageSize; i++) {
-                List<QueryStockRequest> list = StringUtil.setListPageDate(begin, end, stockRequests);
-                if (list != null) {
-                    jsonObject.put("listBaseStockCenterRequest",list);
-                    signParams.setJd_param_json(jsonObject.toJSONString());
-                    param.put("jd_param_json",jsonObject);
-                    try {
-                        sign = SignUtils.getSign(signParams,appSecret);
-                        param.put("sign",sign);
-                    }catch (Exception e){
-                        throw new JdHomeException("签名失败",e);
-                    }
-                    log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-                    rtnStr = rtnStr + HttpUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param))+"#";
-                    begin = pageSize * page;
-                    end = pageSize * (page + 1);
-                    page++;
-                }
-            }
-        }else{
-            try {
-                sign = SignUtils.getSign(signParams,appSecret);
-                param.put("sign",sign);
-            }catch (Exception e){
-                throw new JdHomeException("签名失败",e);
-            }
-            log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
-            rtnStr = HttpUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
+        jsonObject.put("listBaseStockCenterRequest",stockRequests);
+        signParams.setJd_param_json(jsonObject.toJSONString());
+        param.put("jd_param_json",jsonObject);
+        try {
+            sign = SignUtils.getSign(signParams,appSecret);
+            param.put("sign",sign);
+        }catch (Exception e){
+            throw new JdHomeException("签名失败",e);
         }
-
-        if(rtnStr.length()>0){
-            return rtnStr.substring(0,rtnStr.length()-1);
-        }
-        return rtnStr;
+        log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
+        return HttpUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
     }
 
 
@@ -211,7 +182,7 @@ public class JdHomeApiService {
         Map<String,Object> param = getSysMap(signParams); //系统参数
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("orderId",billId);
-        jsonObject.put("orderStatus",statusId);
+        //jsonObject.put("orderStatus",statusId);
         signParams.setJd_param_json(jsonObject.toJSONString());
         param.put("jd_param_json",jsonObject);
         try {

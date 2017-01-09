@@ -9,13 +9,13 @@ import java.util.List;
  */
 public class Distribution {
     @SerializedName("eleme_order_id")
-    private String elemeorderid;
+    private String elemeorderid;//订单id
     @SerializedName("records")
-    private List<Records> records;
+    private List<Records> records;//记录
     @SerializedName("eleme_order_ids_not_existed")
-    private List<Double> elemeorderidsnotexisted;
+    private List<Double> elemeorderidsnotexisted;//不存在订单
     @SerializedName("order_delivery_info_not_existed")
-    private List<Double> orderdeliveryinfonotexisted;
+    private List<Double> orderdeliveryinfonotexisted;//不存在交货信息
 
     public String getElemeorderid() {
         return elemeorderid;

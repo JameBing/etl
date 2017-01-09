@@ -40,6 +40,8 @@ public class WMFacadeService {
     public String appReceiveCallBack(Map<String,String[]> stringMap,String platform){
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         String result = "";
+        // true 推送完整order  false 推送status  默认false
+        Boolean flag =false;
         switch (platform){
             case Constants.PLATFORM_WAIMAI_BAIDU:
                 switch (stringMap.get("cmd")[0]){
@@ -88,10 +90,10 @@ public class WMFacadeService {
                         result =    eleMeFacadeService.getNewOrder(stringMap.get("eleme_order_ids")[0]);
                         break;
                     case "2": //订单状态变更
-                      result =    eleMeFacadeService.orderChange(stringMap.get("eleme_order_id")[0], stringMap.get("new_status")[0]);
+                      result =  eleMeFacadeService.orderChange(stringMap.get("eleme_order_id")[0], stringMap.get("new_status")[0],flag);
                         break;
                     case "3": //退单状态推送
-                     result =   eleMeFacadeService.chargeBack(stringMap.get("eleme_order_id")[0], stringMap.get("refund_status")[0]);
+                     result =   eleMeFacadeService.chargeBack(stringMap.get("eleme_order_id")[0], stringMap.get("refund_status")[0],flag);
                         break;
                     case "4": //订单配送状态推送
                         break;
@@ -144,7 +146,7 @@ public class WMFacadeService {
        String result = "";
         switch (platform){
             case Constants.PLATFORM_WAIMAI_BAIDU:
-                    result = baiDuFacadeService.orderPost(functionMap2SysParams.apply(stringMap));
+                result = baiDuFacadeService.orderPost(functionMap2SysParams.apply(stringMap));
                 break;
             case Constants.PLATFORM_WAIMAI_JDHOME:
                 result = jdHomeFacadeService.newOrder(stringMap.get("jd_param_json")[0], stringMap.get("sid")[0]);
@@ -157,19 +159,21 @@ public class WMFacadeService {
     //平台订单状态推送
     public String orderStatus(Map<String,String[]> stringMap,String platform){
           String result = "";
+          // true 推送完整order  false 推送状态status  默认false
+          Boolean flag = false;
           switch (platform){
               case Constants.PLATFORM_WAIMAI_BAIDU:
-                  result = baiDuFacadeService.orderStatus(functionMap2SysParams.apply(stringMap));
+                  result = baiDuFacadeService.orderStatus(functionMap2SysParams.apply(stringMap),flag);
                   break;
               case Constants.PLATFORM_WAIMAI_JDHOME:
-                    result = jdHomeFacadeService.changeStatus(stringMap.get("jd_param_json")[0]);
+                    result = jdHomeFacadeService.changeStatus(stringMap.get("jd_param_json")[0],true);
                   break;
               case Constants.PLATFORM_WAIMAI_MEITUAN:
                   Map<String, String[]> map = new HashMap<String, String[]>();
                   map.putAll(stringMap);
                   String[] strArr = {"extras", "detail"};
                   map.put("ZY_ETL_JSON_KEYS", strArr);
-                  result = meiTuanFacadeService.getChangeOrderStatus(functionMap2Json.apply(map));
+                  result = meiTuanFacadeService.getChangeOrderStatus(functionMap2Json.apply(map),flag);
                   break;
               default:break;
           }
@@ -220,9 +224,20 @@ public class WMFacadeService {
         result_baidu = baiDuFacadeService.shopClose(parsFromPos.getBaidu().getPlatformShopId(), parsFromPos.getBaidu().getShopId());
         result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(), 1);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"0");
-        result_meituan = meiTuanFacadeService.openShop(parsFromPos.getMeituan().getShopId());
+        result_meituan = meiTuanFacadeService.closeShop(parsFromPos.getMeituan().getShopId());
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
+
+    //查询门店状态
+    public String getStoreStatus(ParsFromPos parsFromPos){
+        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = null, result_jdhome = null, result_eleme = null, result_meituan = null;
+        result_baidu = baiDuFacadeService.shopStatus(parsFromPos.getBaidu().getShopId());
+        result_jdhome = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
+        result_eleme = eleMeFacadeService.getStatus(parsFromPos.getEleme().getShopId());
+        result_meituan = meiTuanFacadeService.findShopStatus(parsFromPos.getMeituan().getShopId());
+        return "{".concat(MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme)).concat("}");
+    }
+
 
     //===============菜品=================/
     //新增菜品分类

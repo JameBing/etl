@@ -5,6 +5,7 @@ import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.Body;
 import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
+import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -65,5 +66,12 @@ public class BaiDuInnerService {
         query.addCriteria(criteria);
         List<Body> bodies = mongoTemplate.find(query,Body.class);
         return  bodies;
+    }
+
+    //修改整个订单
+    public int updateSysOrder(Data data){
+        Query query = new Query(Criteria.where("platformOrderId").is(data.getOrder().getOrderId()).and("platform").is(Constants.PLATFORM_WAIMAI_BAIDU));
+        Update update = new Update().set("order",data);
+        return mongoTemplate.updateFirst(query, update, OrderWaiMai.class).getN();
     }
 }

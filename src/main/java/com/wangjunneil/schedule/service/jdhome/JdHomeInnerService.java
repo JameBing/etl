@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.service.jdhome;
 
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.baidu.Order;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -82,19 +84,27 @@ public class JdHomeInnerService {
                 .set("orderExtend",order.getOrderExtend())
                 .set("productList",order.getProductList())
                 .set("discountList",order.getDiscountList());
-            mongoTemplate.upsert(query,update,OrderInfoDTO.class);
+            mongoTemplate.updateMulti(query,update,OrderInfoDTO.class);
         }
     }
 
     //获取单个订单
     public OrderWaiMai getOrder(String  orderId){
         Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
-        OrderWaiMai order = mongoTemplate.findOne(query,OrderWaiMai.class);
+        OrderWaiMai order = mongoTemplate.findOne(query, OrderWaiMai.class);
         return order;
     }
 
+    //修改整个订单
+    public void updateSysOrder(OrderInfoDTO order){
+        String orderId = String.valueOf(order.getOrderId());
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+        Update update = new Update().set("order",order);
+        mongoTemplate.updateFirst(query, update, OrderWaiMai.class);
+    }
+
     //修改订单状态
-    public void updateStatus(String  orderId,int status)throws ScheduleException{
+    public void updateStatus(String orderId,int status)throws ScheduleException{
         Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
         Update update = new Update().set("order.orderStatus",status)
             .set("order.latestTime", new Date());
@@ -123,7 +133,7 @@ public class JdHomeInnerService {
             .set("appKey",jdHomeAccessToken.getAppKey())
             .set("appSecret",jdHomeAccessToken.getAppSecret())
             .set("callback",jdHomeAccessToken.getCallback())
-            .set("shopIds",jdHomeAccessToken.getShopIds());
+            .set("shopIds", jdHomeAccessToken.getShopIds());
         mongoTemplate.upsert(query, update, JdHomeAccessToken.class);
     }
 

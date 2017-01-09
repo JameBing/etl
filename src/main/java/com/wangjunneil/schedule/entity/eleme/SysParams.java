@@ -1,9 +1,14 @@
 package com.wangjunneil.schedule.entity.eleme;
 
 
+import com.google.gson.annotations.SerializedName;
+
 public class SysParams {
+    @SerializedName("consumer_key")
     private String consumer_key; //商家key
+    @SerializedName("timestamp")
     private long timestamp;   //请求时间戳
+    @SerializedName("sig")
     private String sig;     //签名
 
     public String getConsumer_key() {

@@ -8,14 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * @author liuxin
@@ -34,7 +30,7 @@ public class MeituanController {
     @RequestMapping(value = "/mtapi/openshop",method = RequestMethod.GET)
     public String openShop(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws ScheduleException{
         resp.setContentType("text/html;charset=utf-8");
-        String code = "7777";
+        String code = "2063064";
         String params = mtFacadeService.openShop(code);
         out.println(params);
         out.close();
@@ -45,7 +41,7 @@ public class MeituanController {
     @RequestMapping(value = "/mtapi/closeshop",method = RequestMethod.GET)
     public String closeShop(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws ScheduleException{
         resp.setContentType("text/html;charset=utf-8");
-        String code = "6666";
+        String code = "2063064";
         String params = mtFacadeService.closeShop(code);
         out.println(params);
         out.close();
@@ -80,10 +76,14 @@ public class MeituanController {
     @RequestMapping(value = "/mtapi/upFrame",method = RequestMethod.GET)
     public String upFrame(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws Exception
     {
-        String app_poi_code = "test_poi_01";
-        String foodCode = "test_poi_01";
-        String params = mtFacadeService.upFrame(app_poi_code, foodCode);
-        out.println(params);
+        resp.setContentType("text/html;charset=utf-8");
+        String app_poi_code = "7777";
+        String params="";
+        for(int i=0;i<2;i++){
+            String arr[]={"food_code01112","food_code0111"};
+            params =params+ mtFacadeService.upFrame(app_poi_code, arr[i])+",";
+        }
+        out.println(params.substring(0,params.length()-1));
         return null;
     }
 
@@ -91,20 +91,35 @@ public class MeituanController {
     @RequestMapping(value = "/mtapi/downFrame",method = RequestMethod.GET)
     public String downFrame(PrintWriter out,HttpServletRequest resq, HttpServletResponse resp) throws Exception
     {
-        String app_poi_code = "6666";
-        String foodCode = "test_poi_01";
-        String params = mtFacadeService.downFrame(app_poi_code,foodCode);
-        out.println(params);
+        resp.setContentType("text/html;charset=utf-8");
+        String app_poi_code = "7777";
+        String params="";
+        for (int i=0;i<2;i++){
+            String arr[]={"food_code01112","food_code0111"};
+            params = mtFacadeService.downFrame(app_poi_code,arr[i])+",";
+        }
+        out.println(params.substring(0,params.length()-1));
         return null;
     }
 
     //查询所有菜品信息,列表展示
-    @RequestMapping(value = "mtapi/foodList",method = RequestMethod.GET)
+    @RequestMapping(value = "/mtapi/foodList",method = RequestMethod.GET)
     public String foodList(PrintWriter out,HttpServletRequest resq,HttpServletResponse resp) throws Exception {
         resp.setContentType("text/html,charset=utf-8");
         String app_poi_code = "6666";
         String foodCode = "test_poi_01";
         FoodParam params = mtFacadeService.foodList(app_poi_code, foodCode);
+        out.println(params);
+        out.close();
+        return null;
+    }
+
+    //查询门店信息
+    @RequestMapping(value = "/mtapi/poiMyget",method = RequestMethod.GET)
+    public String poiMyget(PrintWriter out,HttpServletRequest resq,HttpServletResponse resp) throws Exception {
+        resp.setContentType("text/html;charset=utf-8");
+        String app_poi_code = "7777";
+        String params = mtFacadeService.findShopStatus(app_poi_code);
         out.println(params);
         out.close();
         return null;
@@ -135,7 +150,6 @@ public class MeituanController {
     }
 
     //获取订单信息添加数据库
-    @ResponseBody
     @RequestMapping(value = "/mtapi/newOrder",method = RequestMethod.GET)
     public JSONObject newOrder(HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");

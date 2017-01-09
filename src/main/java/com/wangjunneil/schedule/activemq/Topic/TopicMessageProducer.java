@@ -3,6 +3,7 @@ package com.wangjunneil.schedule.activemq.Topic;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.wangjunneil.schedule.utility.StringUtil;
+import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
@@ -16,11 +17,13 @@ import javax.jms.*;
                 @Component
                 public class TopicMessageProducer{
 
+                  private static Logger log = Logger.getLogger(TopicMessageProducer.class.getName());
+
                   private JmsTemplate topicJmsTemplate;
                     //Send TextMessage
                     public void sendMessage(final Destination destination,  String message,String selector){
-                        System.out.println("===================Start:生产者发送了一条TextMessage消息===================================");
-                        System.out.println(message);
+                        log.info("===================Start:生产者发送了一条TextMessage消息===================================");
+                        log.info(message);
                         topicJmsTemplate.send(destination, new MessageCreator() {
                             @Override
                             public Message createMessage(Session session) throws JMSException {
@@ -31,13 +34,13 @@ import javax.jms.*;
                                return textMessage;
                             }
                         });
-                       System.out.println("===================End===================================");
+                       log.info("===================End===================================");
     }
 
                   //Send Json Object
                      public void sendMessage(final  Destination destination,JSONObject jsonObject,String selector) {
-                         System.out.println("===================Start:生产者发送了一条TextMessage消息===================================");
-                         System.out.println(jsonObject);
+                         log.info("===================Start:生产者发送了一条TextMessage消息===================================");
+                         log.info(jsonObject);
                          topicJmsTemplate.send(destination, new MessageCreator() {
                              @Override
                              public Message createMessage(Session session) throws JMSException {
@@ -48,7 +51,7 @@ import javax.jms.*;
                                  return textMessage;
                              }
                          });
-                         System.out.println("===================End===================================");
+                         log.info("===================End===================================");
                      }
     public void setTopicJmsTemplate(JmsTemplate  topicJmsTemplate) {
         this.topicJmsTemplate = topicJmsTemplate;

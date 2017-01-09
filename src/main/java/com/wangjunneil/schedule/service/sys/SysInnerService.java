@@ -215,6 +215,13 @@ public class SysInnerService {
             mongoTemplate.upsert(query, update, OrderWaiMai.class);
     }
 
+    //修改外卖订单
+    public void updateWaiMaiOrder(String orderId,Object order){
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_JDHOME));
+        Update update = new Update().set("order", order);
+        mongoTemplate.updateFirst(query, update, OrderWaiMai.class).getN();
+    }
+
     //日志插入
     public void updSynLog(Log log){
         Query query = new Query(Criteria.where("logId").is(log.getLogId()));

@@ -9,29 +9,20 @@ import java.util.Map;
  * Created by admin on 2016/11/24.
  */
 public class Body {
-    /*****************食物详情start********************/
     @SerializedName("food")
-    private Foods food;
-    /*****************食物详情start********************/
-
-    /*****************订单详情start********************/
+    private Foods food;//食物
     @SerializedName("group")
-    private List<List<Group>> group;
+    private List<List<Group>> group;//食物列表
     @SerializedName("extra")
-    private List<Extra> extra;
+    private List<Extra> extra;//额外活动列表
     @SerializedName("abandoned_extra")
     private List<Object> abandonedextra;
-    /*****************订单详情end********************/
-
-    /*****************获取商户信息start********************/
     @SerializedName("restaurant")
-    private Restaurant restaurant;
-    /*****************获取商户信息end********************/
+    private Restaurant restaurant;//门店对象
     @SerializedName("food_ids")
-    private Map<String,List<FoodIds>> foodids;
-    /***************************************************/
+    private Map<String,List<FoodIds>> foodids;//食物id列表
+    @SerializedName("data")
     private List data;
-
 
     public Foods getFood() {
         return food;

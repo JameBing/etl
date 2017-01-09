@@ -2,6 +2,7 @@ package com.wangjunneil.schedule.controller.waimai;
 
 
 import com.google.gson.JsonObject;
+import com.wangjunneil.schedule.activemq.Topic.TopicMessageConsumer;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync;
 import com.wangjunneil.schedule.common.*;
@@ -10,6 +11,7 @@ import com.wangjunneil.schedule.entity.common.ParsFromPos;
 import com.wangjunneil.schedule.service.WMFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
+import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,7 +65,7 @@ public class WMController {
                 stringMap.putAll(request.getParameterMap());
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
-            case "/waimai/eleme/":  //饿了么
+            case "/waimai/eleme":  //饿了么
                 stringMap = request.getParameterMap();
                 platform = Constants.PLATFORM_WAIMAI_ELEME;
                 break;
@@ -128,6 +130,21 @@ public class WMController {
     public String shopClose(@RequestBody(required = false) ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.shopClose(parsFromPos));
+        return  null;
+    }
+
+    /**
+     * 查询门店状态
+     * @param out   响应输出流对象
+     * @param request 请求对象  {baidu:{shopId:""},jdhome:{shopId:""},meituan:{shopId:""},eleme:{shopId:""}}
+     * @param response  浏览器响应对象
+     * @return  {baidu: [{code:0,desc:"success",remark:"营业中",dynamic:""}],jdhome:[{code:1,desc:"success",remark:"休息中",dynamic:""}],...}
+     */
+    @RequestMapping(value = "/shop/getShopStatus", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String getStoreStatus(@RequestBody(required = false) ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+        response.setContentType("application/json;charset=uft-8");
+        out.println(wmFacadeService.getStoreStatus(parsFromPos));
         return  null;
     }
 
@@ -280,7 +297,7 @@ public class WMController {
      * @param request  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/status","/djsw/userCancelOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/status","/meituan/order/status","/djsw/userCancelOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
     public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         String platform = null;
         String requestUrl = request.getPathInfo().toLowerCase();
@@ -294,6 +311,9 @@ public class WMController {
                 break;
             case "/waimai/djsw": //京东到家
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
+                break;
+            case "/waimai/meituan/order/status": //美团
+                platform = Constants.PLATFORM_WAIMAI_MEITUAN;
                 break;
             default:break;
         }
@@ -327,6 +347,7 @@ public class WMController {
     public String orderConfirm(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         //response.setContentType("application/json;charset=uft-8");
         String reponseStr = wmFacadeService.orderConfirm(parsFromPos);
+
         out.println(reponseStr);
         return  null;
     }
@@ -393,6 +414,7 @@ public class WMController {
         }
         return null;
     }
+
     //endregion
 
     //备注：需要提供接口用于中台系统下发门店编码对照信息

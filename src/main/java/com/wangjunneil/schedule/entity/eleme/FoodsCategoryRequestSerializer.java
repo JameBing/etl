@@ -18,6 +18,7 @@ public class FoodsCategoryRequestSerializer implements JsonSerializer<FoodsCateg
         object.add("description",jsonSerializationContext.serialize(foodsCategoryRequest.getDescription()));
         object.add("name",jsonSerializationContext.serialize(foodsCategoryRequest.getName()));
         object.add("display_attribute",jsonSerializationContext.serialize(foodsCategoryRequest.getDisplay_attribute()));
+        object.add("weight",jsonSerializationContext.serialize(foodsCategoryRequest.getWeight()));
         return object;
     }
 }

@@ -1,6 +1,8 @@
 package com.wangjunneil.schedule.service.eleme;
 
+import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.eleme.Order;
 import org.apache.log4j.Logger;
@@ -92,6 +94,14 @@ public class EleMeInnerService {
         query.addCriteria(criteria);
         Update update = new Update().set("distribution.records.get("+i+").statuscode",status).set("distribution.records.get(\"+i+\").sub_status_code", zstatus);
         return mongoTemplate.updateMulti(query,update,Order.class).getN();
+    }
+
+    //修改整个订单
+    public int updateSysOrder(Order order){
+        String orderId = String.valueOf(order.getOrderid());
+        Query query = new Query(Criteria.where("platformOrderId").is(orderId).and("platform").is(Constants.PLATFORM_WAIMAI_ELEME));
+        Update update = new Update().set("order",order);
+        return mongoTemplate.updateFirst(query, update, OrderWaiMai.class).getN();
     }
 
     //多条件查询（完全匹配）
