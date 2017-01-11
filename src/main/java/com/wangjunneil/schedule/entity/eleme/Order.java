@@ -49,7 +49,7 @@ public class Order {
     private Body detail;
     //生效时间
     @SerializedName("active_at")
-    private Date activeat;
+    private String activeat;
     //是否需要发票
     @SerializedName("invoiced")
     private int invoiced;
@@ -67,7 +67,7 @@ public class Order {
     private Double restaurantpart;
     //送餐时间
     @SerializedName("deliver_time")
-    private Date delivertime;
+    private String delivertime;
     //订单ID
     @SerializedName("order_id")
     private Long orderid;
@@ -97,7 +97,7 @@ public class Order {
     private Double totalprice;
     //下单时间
     @SerializedName("created_at")
-    private Date createdat;
+    private String createdat;
     //服务率
     @SerializedName("service_rate")
     private Double servicerate;
@@ -216,11 +216,11 @@ public class Order {
         this.detail = detail;
     }
 
-    public Date getActiveat() {
+    public String getActiveat() {
         return activeat;
     }
 
-    public void setActiveat(Date activeat) {
+    public void setActiveat(String activeat) {
         this.activeat = activeat;
     }
 
@@ -264,11 +264,11 @@ public class Order {
         this.restaurantpart = restaurantpart;
     }
 
-    public Date getDelivertime() {
+    public String getDelivertime() {
         return delivertime;
     }
 
-    public void setDelivertime(Date delivertime) {
+    public void setDelivertime(String delivertime) {
         this.delivertime = delivertime;
     }
 
@@ -344,11 +344,11 @@ public class Order {
         this.totalprice = totalprice;
     }
 
-    public Date getCreatedat() {
+    public String getCreatedat() {
         return createdat;
     }
 
-    public void setCreatedat(Date createdat) {
+    public void setCreatedat(String createdat) {
         this.createdat = createdat;
     }
 

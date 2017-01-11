@@ -9,6 +9,7 @@ import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.shopCategory;
+import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.JdHomeFacadeService;
 import com.wangjunneil.schedule.service.SysFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
@@ -39,6 +40,9 @@ public class JdHomeController {
 
     @Autowired
     private JdHomeFacadeService jdHomeFacadeService;
+
+    @Autowired
+    private EleMeFacadeService eleMeFacadeService;
 
     @Autowired
     private SysFacadeService sysFacadeService;
@@ -180,8 +184,8 @@ public class JdHomeController {
        /* String json = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
         JSONObject jsonObject = JSON.parseObject(json);
         jdHomeFacadeService.pickFinishOrder(jsonObject);*/
-        String shopId = "72171";
-        String json = jdHomeFacadeService.getStoreStatus(shopId);
+//        String shopId = "72171";
+//        String json = jdHomeFacadeService.getStoreStatus(shopId);
        /* String aa = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
         String json = jdHomeFacadeService.newOrder(aa,"6666");*/
       /*  OrderWaiMai orderWaiMai = new OrderWaiMai();
@@ -195,7 +199,8 @@ public class JdHomeController {
         json.put("statusId","333");
         json.put("timestamp","3333");
         jdHomeFacadeService.newOrder(json.toJSONString(),"6666");*/
-        out.println(json);
+        String json = eleMeFacadeService.getNewOrder("101956025278947219");
+            out.println(json);
         out.close();
         return null;
     }

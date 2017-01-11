@@ -347,7 +347,6 @@ public class WMController {
     public String orderConfirm(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         //response.setContentType("application/json;charset=uft-8");
         String reponseStr = wmFacadeService.orderConfirm(parsFromPos);
-
         out.println(reponseStr);
         return  null;
     }
@@ -418,5 +417,6 @@ public class WMController {
     //endregion
 
     //备注：需要提供接口用于中台系统下发门店编码对照信息
+
 
 }

@@ -10,6 +10,7 @@ import com.wangjunneil.schedule.entity.eleme.*;
 import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,8 @@ import java.util.Map;
  */
 @Service
 public class EleMeFacadeService {
+
+    private static Logger logInfo = Logger.getLogger(EleMeFacadeService.class.getName());
     @Autowired
     private EleMeApiService eleMeApiService;
     @Autowired
@@ -238,7 +241,11 @@ public class EleMeFacadeService {
                 result = eleMeApiService.upOrderStatus(orderRequest);
                 Result obj = getGson().fromJson(result, Result.class);
                 if ("ok".equals(obj.getMessage())) {
-                    rtn.setCode(0);
+                    if(rtn.getCode()==1013){
+                        rtn.setCode(Constants.RETURN_ORDER_CODE);
+                    }else {
+                        rtn.setCode(0);
+                    }
                     rtn.setRemark(obj.getMessage().toString());
                 }else {
                     rtn.setCode(-1);
@@ -423,6 +430,7 @@ public class EleMeFacadeService {
                             log[0].setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
                         }
                         sysFacadeService.updSynLog(log[0]);
+                        rtnStr[0] = "{\"message\": \"error\"}";
                     }
                 }
             });
@@ -1112,4 +1120,6 @@ public class EleMeFacadeService {
         List<Order> orders = eleMeInnerService.findAll();
         return getGson().toJson(orders);
     }
+
+
 }

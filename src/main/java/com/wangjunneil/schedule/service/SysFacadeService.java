@@ -202,7 +202,6 @@ public class SysFacadeService {
             sysInnerService.updSynWaiMaiOrder(orderWaiMai);
             //topic message to MQ Server
             log.info(formatOrder2Pos(orderWaiMai));
-            log.info("静态变量值："+StaticObj.mqTransportTopicOrder);
             if (StaticObj.mqTransportTopicOrder){
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
                 topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
@@ -603,7 +602,7 @@ public class SysFacadeService {
         jsonObject.put("orderType","");
         jsonObject.put("orderStatus",tranMTOrderStatus(orderInfo.getStatus()));
         jsonObject.put("orderStatusTime",orderInfo.getUtime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getUtime()), "yyyy-MM-dd HH:mm:ss"));
-        jsonObject.put("orderStartTime","");
+        jsonObject.put("orderStartTime",orderInfo.getUtime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getUtime()), "yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime","");
         jsonObject.put("orderPurchaseTime", "");
         jsonObject.put("orderAgingType","");
@@ -740,13 +739,13 @@ public class SysFacadeService {
         jsonObject.put("orderType","");
         jsonObject.put("orderStatus",tranELOrderStatus(order.getStatuscode()));
         jsonObject.put("orderStatusTime","");
-        jsonObject.put("orderStartTime",StringUtil.isEmpty(order.getCreatedat())?"":DateTimeUtil.dateFormat(order.getCreatedat(),"yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderStartTime",StringUtil.isEmpty(order.getCreatedat())?"":DateTimeUtil.formatDateString(order.getCreatedat(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime","");
-        jsonObject.put("orderPurchaseTime", StringUtil.isEmpty(order.getActiveat())?"":DateTimeUtil.dateFormat(order.getActiveat(),"yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderPurchaseTime", StringUtil.isEmpty(order.getActiveat())?"":DateTimeUtil.formatDateString(order.getActiveat(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderAgingType","");
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",StringUtil.isEmpty(order.getDelivertime())?"":DateTimeUtil.dateFormat(order.getDelivertime(),"yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderPreDeliveryTime",StringUtil.isEmpty(order.getDelivertime())?"":DateTimeUtil.formatDateString(order.getDelivertime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("expectSendTime","");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");

@@ -1,6 +1,7 @@
 package com.wangjunneil.schedule.activemq.Topic;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import org.apache.log4j.Logger;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import javax.jms.*;
 @Component
 public class TopicMessageProducerAsync implements Runnable {
 
+    private static Logger log = Logger.getLogger(TopicMessageProducerAsync.class.getName());
     private JmsTemplate topicJmsTemplate;
     private  Destination destination ;
     private JSONObject jsonObject ;
@@ -23,8 +25,8 @@ public class TopicMessageProducerAsync implements Runnable {
     @Override
     public void run() {
         synchronized (this){
-            System.out.println("===================Start:生产者发送了一条TextMessage消息===================================");
-            System.out.println(message);
+            log.info("===================Start:生产者发送了一条TextMessage消息===================================");
+            log.info(message);
             topicJmsTemplate.send(destination, new MessageCreator() {
                 @Override
                 public Message createMessage(Session session) throws JMSException {
@@ -39,7 +41,7 @@ public class TopicMessageProducerAsync implements Runnable {
                     return textMessage;
                 }
             });
-            System.out.println("===================End===================================");
+            log.info("===================End===================================");
         }
 
     }

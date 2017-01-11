@@ -560,6 +560,9 @@ public class JdHomeFacadeService {
             log.info("=====商家确认/取消接口返回信息:"+json+"=====");
             //format返回结果
             getResult(json,rtn,orderId);
+            if(rtn.getCode()==-1){
+                rtn.setCode(Constants.RETURN_ORDER_CODE);
+            }
             //返回成功/失败 若成功修改mongodb订单状态
             JSONObject jsonObject = JSONObject.parseObject(json);
             //业务接口返回结果
@@ -1144,7 +1147,6 @@ public class JdHomeFacadeService {
         if(result.getCode()==0){
             JSONObject json = JSONObject.parseObject(result.getData());
             rtn.setCode(json.getInteger("retCode"));
-
             rtn.setDesc("success");
             rtn.setRemark(json.getString("retMsg"));
             rtn.setDynamic(dishId);

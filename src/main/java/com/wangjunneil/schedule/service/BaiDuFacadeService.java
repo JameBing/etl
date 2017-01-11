@@ -597,6 +597,10 @@ public class BaiDuFacadeService {
             order.setOrderId(params);
             result = baiDuApiService.orderConfirm(order);
             rtn = gson1.fromJson(result,Rtn.class);
+            //统一状态码给POS
+            if(rtn.getCode()==20216){
+                rtn.setCode(Constants.RETURN_ORDER_CODE);
+            }
         }catch (BaiDuException ex){
             rtn.setCode(-997);
             log = sysFacadeService.functionRtn.apply(ex);
@@ -643,6 +647,10 @@ public class BaiDuFacadeService {
             order.setReason(reason);
             result = baiDuApiService.orderCancel(order);
             rtn = gson1.fromJson(result,Rtn.class);
+            //统一状态码给POS
+            if(rtn.getCode()==20016){
+                rtn.setCode(Constants.RETURN_ORDER_CODE);
+            }
         }catch (BaiDuException ex){
             rtn.setCode(-997);
             log = sysFacadeService.functionRtn.apply(ex);

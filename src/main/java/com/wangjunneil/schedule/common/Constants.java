@@ -316,4 +316,6 @@ public final class Constants {
     public static final int POS_ORDER_REFUSED = 60;  // 已拒绝
 
     public static final int POS_ORDER_OTHER = 90;  // 其它
+
+    public static final Integer RETURN_ORDER_CODE=808;
 }
