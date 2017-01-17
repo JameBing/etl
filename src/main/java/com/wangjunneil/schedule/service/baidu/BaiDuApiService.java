@@ -7,6 +7,7 @@ import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.*;
 import com.wangjunneil.schedule.service.SysFacadeService;
 import com.wangjunneil.schedule.utility.StringUtil;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import com.wangjunneil.schedule.common.Enum;
 import com.wangjunneil.schedule.utility.HttpUtil;
@@ -21,7 +22,7 @@ import java.util.Iterator;
 
 @Service
 public class BaiDuApiService {
-
+    private static Logger log = Logger.getLogger(BaiDuApiService.class.getName());
     //打包参数(包含计算sign)
 
     public   String getRequestPars(String cmd,Object obj ) throws ScheduleException,BaiDuException{
@@ -91,6 +92,7 @@ public class BaiDuApiService {
 
     //消息型接口Response
     public String responseStr(SysParams sysParams){
+
         Gson gson = new GsonBuilder().registerTypeAdapter(SysParams.class, new SysParamsSerializer())
             .registerTypeAdapter(Body.class, new BodySerializer())
             .disableHtmlEscaping().create();
@@ -108,7 +110,9 @@ public class BaiDuApiService {
         jsonBody.addProperty("error","success");
        switch (sysParams.getCmd()){
            case Constants.BAIDU_CMD_RESP+"."+Constants.BAIDU_CMD_ORDER_CREATE:
-               String data = new JsonParser().parse(new JsonParser().parse(gson.toJson(sysParams.getBody())).getAsJsonObject().get("data").toString()).getAsJsonObject().get("source_order_id").toString();
+               //String data = new JsonParser().parse(new JsonParser().parse(gson.toJson(sysParams.getBody())).getAsJsonObject().get("data").toString()).getAsJsonObject().get("source_order_id").toString();
+               JSONObject jsonObject = JSONObject.parseObject(gson.toJson(sysParams.getBody()));
+               String data = JSONObject.parseObject(jsonObject.getString("data")).getString("source_order_id");
                jsonData.addProperty("source_order_id",data.replaceAll("\"",""));
                jsonBody.add("data", jsonData);
                break;

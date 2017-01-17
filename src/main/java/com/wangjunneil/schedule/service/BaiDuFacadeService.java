@@ -18,6 +18,7 @@ import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.service.baidu.BaiDuApiService;
 import com.wangjunneil.schedule.service.baidu.BaiDuInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,8 @@ import java.util.List;
  */
 @Service
 public class BaiDuFacadeService {
+
+    private static Logger log = Logger.getLogger(BaiDuFacadeService.class.getName());
 
     @Autowired
     private BaiDuApiService baiDuApiService;
@@ -425,28 +428,8 @@ public class BaiDuFacadeService {
             SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order),SysParams.class);
             String bodyStr = getGson().toJson(sysParams1.getBody());
             body = getGson().fromJson(bodyStr,Body.class);
-            if (body.getErrno().equals("0")){
-                Gson gsonDataOrder = new GsonBuilder().registerTypeAdapter(Data.class, new DataSerializer())
-                                                                                                    .registerTypeAdapter(OrderShop.class,new OrderShopSerializer())
-                                                                                                    .registerTypeAdapter(Order.class,new OrderSerializer())
-                                                                                                    .registerTypeAdapter(User.class,new UserSerializer())
-                                                                                                    .registerTypeAdapter(OrderProductsDish.class, new OrderProductsDishSerializer())
-                                                                                                    .registerTypeAdapter(OrderProductsDishAttr.class,new OrderProductsDishAttrSerializer())
-                                                                                                    .registerTypeAdapter(OrderProductsFeatures.class,new OrderProductsFeaturesSerializer())
-                                                                                                    .registerTypeAdapter(OrderProductsCombo.class,new OrderProductsComboSerializer())
-                                                                                                    .registerTypeAdapter(OrderProductsComboGroup.class,new OrderProductsComboGroupSerializer())
-                                                                                                    .registerTypeAdapter(OrderProductsComboGroupProduct.class,new OrderProductsComboGroupProductSerializer())
-                                                                                                    .registerTypeAdapter(Supplier.class,new SupplierSerializer())
-                                                                                                    .registerTypeAdapter(OrderDiscount.class,new OrderDiscountSerializer())
-                                                                                                    .registerTypeAdapter(OrderDiscountProducts.class, new OrderDiscountProductsSerializer())
-                    .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
-                        @Override
-                        public JsonElement serialize(Double aDouble, Type type, JsonSerializationContext jsonSerializationContext) {
-                            if (aDouble == aDouble.longValue())
-                                return new JsonPrimitive(aDouble.longValue());
-                            return new JsonPrimitive(aDouble);
-                        }
-                    }).disableHtmlEscaping().create();
+            if (body.getErrno().trim().equals("0")){
+
                Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
                 OrderWaiMai orderWaiMai = new OrderWaiMai();
                 orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
@@ -466,15 +449,12 @@ public class BaiDuFacadeService {
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("source_order_id",orderId);
                 body.setData(jsonObject);
-
-            }
-            else {
+            }else {
               body.setErrno("1");
               body.setError("error");
               body.setData("");
             }
-        }
-        catch (Exception ex){
+        }catch (Exception ex){
             body.setErrno("1");
             body.setError("error");
             body.setData("Exception");
@@ -598,7 +578,7 @@ public class BaiDuFacadeService {
             result = baiDuApiService.orderConfirm(order);
             rtn = gson1.fromJson(result,Rtn.class);
             //统一状态码给POS
-            if(rtn.getCode()==20216){
+            if(!StringUtil.isEmpty(rtn.getCode()) && rtn.getCode()==20216){
                 rtn.setCode(Constants.RETURN_ORDER_CODE);
             }
         }catch (BaiDuException ex){
@@ -648,7 +628,7 @@ public class BaiDuFacadeService {
             result = baiDuApiService.orderCancel(order);
             rtn = gson1.fromJson(result,Rtn.class);
             //统一状态码给POS
-            if(rtn.getCode()==20016){
+            if(!StringUtil.isEmpty(rtn.getCode()) && rtn.getCode()==20016){
                 rtn.setCode(Constants.RETURN_ORDER_CODE);
             }
         }catch (BaiDuException ex){

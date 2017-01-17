@@ -19,6 +19,10 @@ public class Group {
     private double price;
     @SerializedName("id")
     private String id;
+
+    //商家商品Id
+    @SerializedName("tp_food_id")
+    private String tp_food_id;
     //搭配食品
     @SerializedName("garnish")
     private List<Garnish> garnish;
@@ -94,5 +98,13 @@ public class Group {
 
     public void setSalemode(int salemode) {
         this.salemode = salemode;
+    }
+
+    public String getTp_food_id() {
+        return tp_food_id;
+    }
+
+    public void setTp_food_id(String tp_food_id) {
+        this.tp_food_id = tp_food_id;
     }
 }

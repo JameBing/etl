@@ -409,6 +409,68 @@ public class MeiTuanFacadeService {
         }
     }
 
+    /**
+     * 查询门店商品
+     * @param appPoiCode 门店编号
+     * @return
+     */
+    public String queryDishStatus(String appPoiCode){
+        Rtn rtn = new Rtn();
+        Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        String rtnStr = "";
+        if(StringUtil.isEmpty(appPoiCode)){
+            return gson.toJson(rtn);
+        }
+        try {
+            List<FoodParam> foodList = mtApiService.getFoodList(appPoiCode);
+            if(foodList ==null || foodList.size()==0){
+                rtn.setCode(-1);
+                rtn.setDesc("success");
+                rtn.setRemark("此门店无商品");
+                rtn.setDynamic(appPoiCode);
+                return  gson.toJson(rtn);
+            }
+            for(int i=0;i<foodList.size();i++){
+                FoodParam food = foodList.get(i);
+                rtn.setCode(food.getIs_sold_out());
+                rtn.setDynamic(food.getApp_food_code());
+                rtnStr =rtnStr+gson.toJson(rtn)+",";
+            }
+        }catch (MeiTuanException ex){
+            rtn.setCode(-997);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
+        }catch (ApiOpException e) {
+            rtn.setCode(e.getCode());
+            rtn.setDesc("error");
+            rtn.setRemark(e.getMsg());
+        }catch (Exception ex){
+            rtn.setCode(-998);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
+        }finally {
+            //有异常产生
+            if (log1 !=null){
+                log1.setLogId(appPoiCode.concat(log1.getLogId()));
+                log1.setTitle(MessageFormat.format("查询门店{0}商品失败！",appPoiCode));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"meituan_shop_id\":{1}", appPoiCode, "")).concat("}"));
+                sysFacadeService.updSynLog(log1);
+                rtn.setDynamic(appPoiCode);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log1.getLogId());
+                rtn.setRemark(MessageFormat.format("查询门店{0}商品失败！",appPoiCode));
+            }
+            if(!StringUtil.isEmpty(rtnStr)){
+                return  rtnStr.substring(0,rtnStr.length()-1);
+            }
+            return gson.toJson(rtn);
+        }
+    }
 
     //endregion
 

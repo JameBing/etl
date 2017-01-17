@@ -136,11 +136,12 @@ public class EleMeApiService {
      * 查询订单详情
      * @return
      */
-    public String orderDetail(OrderRequest obj)throws ScheduleException,ElemeException{
+    public String orderDetail(OrderRequest obj)throws ScheduleException,ElemeException,Exception{
         String pathURL = MessageFormat.format(Constants.URL_ELEME_ORDER_DETAIL, obj.getEleme_order_id().toString());
         obj.setEleme_order_id("");
         String url = getSystemUrl(pathURL, obj);
-        return HttpUtil.get2(url);
+        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+        return HttpUtil.get2(requstUrl);
     }
 
     /**
@@ -160,11 +161,12 @@ public class EleMeApiService {
      * no param
      * @return
      */
-    public String restaurantMenu(RestaurantRequest obj) throws ScheduleException,ElemeException {
+    public String restaurantMenu(RestaurantRequest obj) throws ScheduleException,ElemeException ,Exception{
         String pathURL = MessageFormat.format(Constants.URL_ELEME_RESTAURANT_MENU, obj.getRestaurant_id());
         obj.setRestaurant_id("");
         String url = getSystemUrl(pathURL, obj);
-        return HttpUtil.get2(url);
+        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+        return HttpUtil.get2(requstUrl);
     }
 
     /**

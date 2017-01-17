@@ -19,6 +19,7 @@ public class GroupSerializer  implements JsonSerializer<Group> {
         object.add("price",jsonSerializationContext.serialize(group.getPrice()));
         object.add("garnish",jsonSerializationContext.serialize(group.getGarnish()));
         object.add("id",jsonSerializationContext.serialize(group.getId()));
+        object.add("tp_food_id",jsonSerializationContext.serialize(group.getId()));
         object.add("quantity",jsonSerializationContext.serialize(group.getQuantity()));
         object.add("sale_mode",jsonSerializationContext.serialize(group.getSalemode()));
         object.add("specs",jsonSerializationContext.serialize(group.getSpecs()));

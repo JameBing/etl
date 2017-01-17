@@ -312,8 +312,8 @@ public class SysFacadeService {
         }
         jsonObject.put("platShopId", data.getShop().getBaiduShopId());
         jsonObject.put("platStationName",data.getShop().getName());
-        jsonObject.put("poiCode","");
-        jsonObject.put("poiName","");
+        jsonObject.put("poiCode",data.getShop().getShopId());
+        jsonObject.put("poiName",data.getShop().getName());
         jsonObject.put("poiAddress","");
         jsonObject.put("poiPhone","");
         jsonObject.put("orderIndex",data.getOrder().getOrderIndex());
@@ -399,7 +399,8 @@ public class SysFacadeService {
                 jsonObject.put("platOrderId",StringUtil.isEmpty(data.getOrder())?"":data.getOrder().getOrderId());
                 jsonObject.put("skuType",data.getProducts().get(i)[j].getType());
                 jsonObject.put("skuId",data.getProducts().get(i)[j].getBaiduProductId());
-                jsonObject.put("skuName",data.getProducts().get(i)[j].getProductName());
+                jsonObject.put("skuName",data.getProducts().get(i)[j].getProductName()+(data.getProducts().get(i)[j].getProductAttr().size()==0?""
+                    :"("+data.getProducts().get(i)[j].getProductAttr().get(0).getOption()+")"));
                 jsonObject.put("skuIdIsv",data.getProducts().get(i)[j].getOtherDishId());
                 jsonObject.put("price",StringUtil.isEmpty(data.getProducts().get(i)[j].getProductPrice())?0:Integer.parseInt(data.getProducts().get(i)[j].getProductPrice())*0.01);
                 jsonObject.put("quantity",data.getProducts().get(i)[j].getProductAmount());
@@ -454,8 +455,8 @@ public class SysFacadeService {
 
         jsonObject.put("platShopId",orderInfo.getProduceStationNo());
         jsonObject.put("platStationName",orderInfo.getProduceStationName());
-        jsonObject.put("poiCode",orderInfo.getOrgCode());
-        jsonObject.put("poiName","");
+        jsonObject.put("poiCode",orderInfo.getProduceStationNoIsv());
+        jsonObject.put("poiName",orderInfo.getProduceStationName());
         jsonObject.put("poiAddress","");
         jsonObject.put("poiPhone","");
         jsonObject.put("orderIndex","");
@@ -469,7 +470,7 @@ public class SysFacadeService {
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
         jsonObject.put("orderPreDeliveryTime",StringUtil.isEmpty(orderInfo.getOrderPreEndDeliveryTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderPreEndDeliveryTime(),"yyyy-MM-dd HH:mm:ss"));
-        jsonObject.put("expectSendTime","");
+        jsonObject.put("expectSendTime","1");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
         jsonObject.put("riderPickupNo","");
@@ -609,7 +610,7 @@ public class SysFacadeService {
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
         jsonObject.put("orderPreDeliveryTime",orderInfo.getDeliverytime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getDeliverytime()), "yyyy-MM-dd HH:mm:ss"));
-        jsonObject.put("expectSendTime","");
+        jsonObject.put("expectSendTime","1");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
         jsonObject.put("riderPickupNo","");
@@ -626,11 +627,11 @@ public class SysFacadeService {
         jsonObject.put("deliveryConfirmTime", "");
         jsonObject.put("orderFinishTime","");
         jsonObject.put("orderPayType",orderInfo.getPaytype());
-        jsonObject.put("orderTotalMoney",orderInfo.getTotal());
+        jsonObject.put("orderTotalMoney",orderInfo.getOriginalprice());
         jsonObject.put("orderDiscountMoney","");
         jsonObject.put("orderFreightMoney",orderInfo.getShippingfee());
         jsonObject.put("packagingMoney","");
-        jsonObject.put("orderBuyerPayableMoney","");
+        jsonObject.put("orderBuyerPayableMoney",orderInfo.getTotal());
         jsonObject.put("orderShopFee","");
         jsonObject.put("orderOriginPrice",orderInfo.getOriginalprice());
         jsonObject.put("serviceRate","");
@@ -677,7 +678,7 @@ public class SysFacadeService {
             jsonObject.put("platOrderId",orderInfo.getOrderid());
             jsonObject.put("skuType","");
             jsonObject.put("skuId",orderInfo.getDetail()[i].getSku_id());
-            jsonObject.put("skuName",orderInfo.getDetail()[i].getFood_name());
+            jsonObject.put("skuName",orderInfo.getDetail()[i].getFood_name()+ (StringUtil.isEmpty(orderInfo.getDetail()[i].getSpec())?"":"("+orderInfo.getDetail()[i].getSpec()+")"));
             jsonObject.put("skuIdIsv",orderInfo.getDetail()[i].getApp_food_code());
             jsonObject.put("price",orderInfo.getDetail()[i].getPrice());
             jsonObject.put("quantity",orderInfo.getDetail()[i].getQuantity());
@@ -731,22 +732,22 @@ public class SysFacadeService {
 
         jsonObject.put("platShopId",order.getRestaurantid());
         jsonObject.put("platStationName",order.getRestaurantname());
-        jsonObject.put("poiCode","");
-        jsonObject.put("poiName","");
+        jsonObject.put("poiCode",order.getRestaurantid());
+        jsonObject.put("poiName",order.getRestaurantname());
         jsonObject.put("poiAddress","");
         jsonObject.put("poiPhone","");
         jsonObject.put("orderIndex",order.getRestaurantnumber());
         jsonObject.put("orderType","");
         jsonObject.put("orderStatus",tranELOrderStatus(order.getStatuscode()));
         jsonObject.put("orderStatusTime","");
-        jsonObject.put("orderStartTime",StringUtil.isEmpty(order.getCreatedat())?"":DateTimeUtil.formatDateString(order.getCreatedat(),"yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderStartTime",order.getCreatedat());
         jsonObject.put("orderConfirmTime","");
-        jsonObject.put("orderPurchaseTime", StringUtil.isEmpty(order.getActiveat())?"":DateTimeUtil.formatDateString(order.getActiveat(),"yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderPurchaseTime", order.getActiveat());
         jsonObject.put("orderAgingType","");
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",StringUtil.isEmpty(order.getDelivertime())?"":DateTimeUtil.formatDateString(order.getDelivertime(),"yyyy-MM-dd HH:mm:ss"));
-        jsonObject.put("expectSendTime","");
+        jsonObject.put("orderPreDeliveryTime",order.getDelivertime());
+        jsonObject.put("expectSendTime", "1");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
         jsonObject.put("riderPickupNo","");
@@ -763,11 +764,11 @@ public class SysFacadeService {
         jsonObject.put("deliveryConfirmTime", "");
         jsonObject.put("orderFinishTime","");
         jsonObject.put("orderPayType",order.getIsonlinepaid());
-        jsonObject.put("orderTotalMoney",order.getTotalprice());
+        jsonObject.put("orderTotalMoney",order.getOriginalprice());
         jsonObject.put("orderDiscountMoney","");
         jsonObject.put("orderFreightMoney",order.getDeliverfee());
         jsonObject.put("packagingMoney",order.getPackagefee());
-        jsonObject.put("orderBuyerPayableMoney","");
+        jsonObject.put("orderBuyerPayableMoney",order.getTotalprice());
         jsonObject.put("orderShopFee","");
         jsonObject.put("orderOriginPrice",order.getOriginalprice());
         jsonObject.put("serviceRate",order.getServicerate());
@@ -823,12 +824,17 @@ public class SysFacadeService {
         }
         for(int i=0;i<order.getDetail().getGroup().size();i++){
             for(int j=0;j<order.getDetail().getGroup().get(i).size();j++){
+                String spec ="";
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("platOrderId",order.getOrderid());
                 jsonObject.put("skuType","");
                 jsonObject.put("skuId",order.getDetail().getGroup().get(i).get(j).getId());
-                jsonObject.put("skuName",order.getDetail().getGroup().get(i).get(j).getName());
-                jsonObject.put("skuIdIsv","");
+                int size = order.getDetail().getGroup().get(i).get(j).getSpecs().size();
+                for(int k=0;k<size;k++){
+                    spec=spec+order.getDetail().getGroup().get(i).get(j).getSpecs().get(k).toString()+",";
+                }
+                jsonObject.put("skuName",order.getDetail().getGroup().get(i).get(j).getName()+(StringUtil.isEmpty(spec)?"":"("+spec.substring(0,spec.length()-1)+")"));
+                jsonObject.put("skuIdIsv",order.getDetail().getGroup().get(i).get(j).getTp_food_id());
                 jsonObject.put("price",order.getDetail().getGroup().get(i).get(j).getPrice());
                 jsonObject.put("quantity",order.getDetail().getGroup().get(i).get(j).getQuantity());
                 jsonObject.put("isGift","");

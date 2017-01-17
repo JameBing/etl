@@ -172,6 +172,9 @@ public final class Constants {
     //京东到家商品编码批量修改门店商品上下架
     public static final String  URL_JDHOME_STORE_ON = "https://openo2o.jd.com/djapi/stock/updateVendibility";
 
+    //批量查询可用与锁定库存，门店上下架状态信息接口
+    public static final String  URL_QUERY_OPEN_USE_ABLE = "https://openo2o.jd.com/djapi/stock/queryOpenUseable";
+
     //京东到家新增商家店内分类信息
     public static final String  URL_ADD_SHOP_CATEGORY = "https://openo2o.jd.com/djapi/pms/addShopCategory";
 

@@ -47,7 +47,7 @@ public class WMController {
     public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
         String result = "",platform,requestUrl,sid = null;
         Map<String,String[]> stringMap = new HashMap<>();
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         requestUrl = request.getPathInfo().toLowerCase();
         if(requestUrl.indexOf("/jdhome/")> 0){
             sid = Pattern.compile("[^0-9]").matcher(requestUrl).replaceAll("");
@@ -95,7 +95,7 @@ public class WMController {
     @RequestMapping(value = "/shop/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
     public String shopCreate(@RequestBody JsonObject jsonStr,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         out.println(wmFacadeService.shopCreate(jsonStr));
         return  null;
     }
@@ -111,7 +111,7 @@ public class WMController {
     @RequestMapping(value = "/shop/open", method = RequestMethod.POST,consumes="application/json;charset=utf-8")
     @ResponseBody
     public String shopOpen(@RequestBody ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws ScheduleException {
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         out.println(wmFacadeService.shopOpen(parsFromPos));
         return  null;
     }
@@ -128,7 +128,7 @@ public class WMController {
     @RequestMapping(value = "/shop/close", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
     public String shopClose(@RequestBody(required = false) ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         out.println(wmFacadeService.shopClose(parsFromPos));
         return  null;
     }
@@ -143,7 +143,7 @@ public class WMController {
     @RequestMapping(value = "/shop/getShopStatus", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
     public String getStoreStatus(@RequestBody(required = false) ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         out.println(wmFacadeService.getStoreStatus(parsFromPos));
         return  null;
     }
@@ -158,7 +158,7 @@ public class WMController {
     @RequestMapping(value = "/shop/update",method = RequestMethod.POST)
     @ResponseBody
     public String shopUpdate( @RequestBody JsonObject jsonObject,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         //request.getParameter("minBuyFree");
         //request.getParameter("minOrderPrice");
         out.println(wmFacadeService.shopUpdate(jsonObject));
@@ -178,7 +178,7 @@ public class WMController {
     @RequestMapping(value = "/dish/category/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
     public String dishCategoryCreate(@RequestBody JsonObject jsonObj,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         out.println(wmFacadeService.dishCategoryCreate(jsonObj));
         return  null;
     }
@@ -194,7 +194,7 @@ public class WMController {
     @RequestMapping(value = "/dish/create",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
     public String dishCreate(@RequestBody JsonObject jsonObj,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         out.println(wmFacadeService.dishCreate(jsonObj));
         return null;
     }
@@ -210,7 +210,7 @@ public class WMController {
     @RequestMapping(value = {"/dish/get"},method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
     public String dishGet(@RequestBody ParsFromPos parsFromPos,PrintWriter out, HttpServletRequest request, HttpServletResponse response){
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         out.println(wmFacadeService.dishGet(parsFromPos));
         return null;
     }
@@ -225,7 +225,7 @@ public class WMController {
     @RequestMapping(value = "/dish/online", method = RequestMethod.POST,consumes="application/json;charset=utf-8" )
     @ResponseBody
     public String dishOnline(@RequestBody ParsFormPos2 parsFormPos2, PrintWriter out, HttpServletRequest request, HttpServletResponse response)  {
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         out.println(wmFacadeService.dishOnline(parsFormPos2));
         return  null;
     }
@@ -241,9 +241,25 @@ public class WMController {
     @RequestMapping(value = "/dish/offline", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
     @ResponseBody
     public String dishOffline(@RequestBody ParsFormPos2 parsFormPos2, PrintWriter out,HttpServletRequest request, HttpServletResponse response)  {
-        response.setContentType("application/json;charset=uft-8");
+        response.setContentType("application/json;charset=utf-8");
         out.println(wmFacadeService.dishOffline(parsFormPos2));
         return  null;
+    }
+
+    /**
+     * 批量查询门店商品状态
+     * @param parsFormPos2
+     * @param out 响应输出流对象
+     * @param request {baidu:[{shopId:"",dishId:""},{}...],jdhome:[{shopId:""}],eleme:[{shopId:""}],meituan:[{shopId:""}]}
+     * @param response 浏览器响应对象
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/dish/getStatus",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    public String getDishStatus(@RequestBody ParsFormPos2 parsFormPos2, PrintWriter out,HttpServletRequest request, HttpServletResponse response){
+        response.setContentType("application/json;charset=utf-8");
+        out.println(wmFacadeService.getDishStatus(parsFormPos2));
+        return null;
     }
 
 //endregion

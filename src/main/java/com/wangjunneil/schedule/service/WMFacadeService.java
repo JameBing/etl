@@ -311,6 +311,14 @@ public class WMFacadeService {
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
+    //查看菜品状态
+    public String getDishStatus(ParsFormPos2 parsFormPos2){
+        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
+        result_jdhome = jdHomeFacadeService.querySkuStatus(parsFormPos2.getJdhome());
+        result_meituan = meiTuanFacadeService.queryDishStatus(parsFormPos2.getMeituan()==null?"":parsFormPos2.getMeituan().get(0).getShopId());
+        return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
+    }
+
     //===============订单=================/
     //确认订单
     public String orderConfirm(ParsFromPos parsFromPos){

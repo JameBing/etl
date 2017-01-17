@@ -74,6 +74,24 @@ public class JdHomeApiService {
         return HttpUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
     }
 
+    //批量查询门店商品状态
+    public String queryDishStatus(List<BaseStockCenterRequest> requests,String shopId)throws JdHomeException,ScheduleException{
+        SignParams signParams = getSignParams(shopId);//签名参数
+        Map<String,Object> param = getSysMap(signParams); //系统参数
+        JSONObject jsonObject = new JSONObject();//应用参数
+        //应用参数是否有值
+        jsonObject.put("listBaseStockCenterRequest",requests);
+        signParams.setJd_param_json(jsonObject.toJSONString());
+        param.put("jd_param_json",jsonObject);
+        try {
+            sign = SignUtils.getSign(signParams,appSecret);
+            param.put("sign",sign);
+        }catch (Exception e){
+            throw new JdHomeException("签名失败",e);
+        }
+        log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
+        return HttpUtil.post(Constants.URL_QUERY_OPEN_USE_ABLE, StringUtil.getUrlParamsByMap(param));
+    }
 
     //查询商家商品信息
     public String querySkuInfos(String upcCode,String shopId)throws JdHomeException,ScheduleException{

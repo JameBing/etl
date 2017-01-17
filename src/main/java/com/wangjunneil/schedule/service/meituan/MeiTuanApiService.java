@@ -105,6 +105,11 @@ public class MeiTuanApiService {
         return APIFactory.getFoodAPI().foodInitData(sysPram,foodParam);
     }
 
+    //查询门店商品列表
+    public  List<FoodParam> getFoodList(String appPoiCode) throws Exception{
+        return APIFactory.getFoodAPI().foodList(sysPram, appPoiCode);
+    }
+
     //endregion
 
 

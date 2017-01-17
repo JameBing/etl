@@ -11,6 +11,7 @@ import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.shopCategory;
 import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.JdHomeFacadeService;
+import com.wangjunneil.schedule.service.MeiTuanFacadeService;
 import com.wangjunneil.schedule.service.SysFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpsUtil;
@@ -43,6 +44,9 @@ public class JdHomeController {
 
     @Autowired
     private EleMeFacadeService eleMeFacadeService;
+
+    @Autowired
+    private MeiTuanFacadeService meiTuanFacadeService;
 
     @Autowired
     private SysFacadeService sysFacadeService;
@@ -179,28 +183,32 @@ public class JdHomeController {
     @RequestMapping(value = "/testAddOrder",method = RequestMethod.GET)
     public String test(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception{
         resp.setContentType("text/html;charset=utf-8");
-      //  jdHomeFacadeService.callback("{\"token\":\"e22bb0bc-2b3e-4b35-9dfe-0234be439066\",\"expires_in\":\"31104000\",\"time\":\"1480406979337\",\"uid\":\"yangwanbin\",\"user_nick\":\"yangwanbin\"}","7244171");
-        //out.println(json);
-       /* String json = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
-        JSONObject jsonObject = JSON.parseObject(json);
-        jdHomeFacadeService.pickFinishOrder(jsonObject);*/
-//        String shopId = "72171";
-//        String json = jdHomeFacadeService.getStoreStatus(shopId);
-       /* String aa = "{\"billId\":\"624573044000041\",\"statusId\":\"3333\"}";
-        String json = jdHomeFacadeService.newOrder(aa,"6666");*/
-      /*  OrderWaiMai orderWaiMai = new OrderWaiMai();
-        orderWaiMai.setShopId("6666");
-        orderWaiMai.setPlatform("baidu");
-        Object object = null;
-        orderWaiMai.setOrder(object);
-        JSONObject json = sysFacadeService.formatOrder2Pos(orderWaiMai);*/
-      /*  JSONObject json = new JSONObject();
-        json.put("billId","222");
-        json.put("statusId","333");
-        json.put("timestamp","3333");
-        jdHomeFacadeService.newOrder(json.toJSONString(),"6666");*/
-        String json = eleMeFacadeService.getNewOrder("101956025278947219");
-            out.println(json);
+
+       /* List<ParsFromPosInner> dishList = new ArrayList<>();
+        ParsFromPosInner posInner = new ParsFromPosInner();
+        posInner.setDishId("50022");
+        posInner.setShopId("2063064");
+        dishList.add(posInner);
+        ParsFromPosInner posInner1 = new ParsFromPosInner();
+        posInner1.setDishId("1000");
+        posInner1.setShopId("2063064");
+        dishList.add(posInner1);
+        ParsFromPosInner posInner2 = new ParsFromPosInner();
+        posInner2.setDishId("50023");
+        posInner2.setShopId("2063064");
+        ParsFromPosInner posInner3 = new ParsFromPosInner();
+        posInner3.setDishId("50020");
+        posInner3.setShopId("2063064");
+        dishList.add(posInner2);
+        ParsFromPosInner posInner4 = new ParsFromPosInner();
+        posInner4.setDishId("2222");
+        posInner4.setShopId("2063064");
+        dishList.add(posInner3);
+        dishList.add(posInner4);*/
+
+
+        String json = eleMeFacadeService.restaurantMenu("2063064");
+        out.println(json);
         out.close();
         return null;
     }
