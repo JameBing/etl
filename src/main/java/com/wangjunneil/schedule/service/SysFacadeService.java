@@ -602,14 +602,14 @@ public class SysFacadeService {
         jsonObject.put("orderIndex",orderInfo.getDayseq());
         jsonObject.put("orderType","");
         jsonObject.put("orderStatus",tranMTOrderStatus(orderInfo.getStatus()));
-        jsonObject.put("orderStatusTime",orderInfo.getUtime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getUtime()), "yyyy-MM-dd HH:mm:ss"));
-        jsonObject.put("orderStartTime",orderInfo.getUtime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getUtime()), "yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderStatusTime",orderInfo.getUtime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getUtime()*1000), "yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderStartTime",orderInfo.getUtime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getUtime()*1000), "yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime","");
         jsonObject.put("orderPurchaseTime", "");
         jsonObject.put("orderAgingType","");
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",orderInfo.getDeliverytime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getDeliverytime()), "yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderPreDeliveryTime",orderInfo.getDeliverytime()==0?"":DateTimeUtil.dateFormat(new Date(orderInfo.getDeliverytime()*1000), "yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("expectSendTime","1");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");

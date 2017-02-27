@@ -433,9 +433,11 @@ public class MeiTuanFacadeService {
             }
             for(int i=0;i<foodList.size();i++){
                 FoodParam food = foodList.get(i);
-                rtn.setCode(food.getIs_sold_out());
-                rtn.setDynamic(food.getApp_food_code());
-                rtnStr =rtnStr+gson.toJson(rtn)+",";
+                if(food.getIs_sold_out()==0){
+                    rtn.setCode(food.getIs_sold_out());
+                    rtn.setDynamic(food.getApp_food_code());
+                    rtnStr =rtnStr+gson.toJson(rtn)+",";
+                }
             }
         }catch (MeiTuanException ex){
             rtn.setCode(-997);

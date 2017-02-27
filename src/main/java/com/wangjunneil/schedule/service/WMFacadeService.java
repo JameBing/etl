@@ -195,7 +195,7 @@ public class WMFacadeService {
 
     //新建门店
     public String shopCreate(JsonObject json){
-        String result = "{baidu:{0},jdhome:{1},meituan:{2},eleme:{3}}",
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]",
             result_baidu = null,
             result_jdhome = null,
             result_eleme = null,
@@ -206,7 +206,7 @@ public class WMFacadeService {
 
     //门店开业
     public String shopOpen(ParsFromPos parsFromPos){
-        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]",
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]",
             result_baidu = "",
             result_jdhome = "",
             result_eleme = "",
@@ -220,7 +220,7 @@ public class WMFacadeService {
 
     //门店歇业
     public String shopClose(ParsFromPos parsFromPos){
-        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = baiDuFacadeService.shopClose(parsFromPos.getBaidu().getPlatformShopId(), parsFromPos.getBaidu().getShopId());
         result_jdhome = jdHomeFacadeService.openOrCloseStore(parsFromPos.getJdhome().getShopId(), 1);
         result_eleme = eleMeFacadeService.setRestaurantStatus(parsFromPos.getEleme().getShopId(),"0");
@@ -230,7 +230,7 @@ public class WMFacadeService {
 
     //查询门店状态
     public String getStoreStatus(ParsFromPos parsFromPos){
-        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = null, result_jdhome = null, result_eleme = null, result_meituan = null;
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]", result_baidu = null, result_jdhome = null, result_eleme = null, result_meituan = null;
         result_baidu = baiDuFacadeService.shopStatus(parsFromPos.getBaidu().getShopId());
         result_jdhome = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
         result_eleme = eleMeFacadeService.getStatus(parsFromPos.getEleme().getShopId());
@@ -242,7 +242,7 @@ public class WMFacadeService {
     //===============菜品=================/
     //新增菜品分类
     public String dishCategoryCreate(JsonObject json){
-        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}",
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]",
             result_baidu = "",
             result_jdhome = "",
             result_eleme = "",
@@ -253,7 +253,7 @@ public class WMFacadeService {
 
     //新增菜品
     public String dishCreate(JsonObject json){
-        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}",
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]",
             result_baidu = "",
             result_jdhome = "",
             result_eleme = "",
@@ -264,7 +264,7 @@ public class WMFacadeService {
 
     //菜品查看
     public String dishGet(ParsFromPos parsFromPos){
-        String result = "baidu:{0},jdhome:{1},meituan:{2},eleme:{3}",
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]",
             result_baidu = "",
             result_jdhome = "",
             result_eleme = "",
@@ -286,7 +286,7 @@ public class WMFacadeService {
 
     //菜品上架
     public String dishOnline(ParsFormPos2 parsFormPos2){
-        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = parsFormPos2.getBaidu().stream().map(e->function1.apply(e)).reduce("",(x,y)->x.concat(StringUtil.isEmpty(x)?"":",").concat(y));
         result_meituan = parsFormPos2.getMeituan().stream().map(e->function3.apply(e)).reduce("", (x, y) -> x.concat(StringUtil.isEmpty(x) ? "" : ",").concat(y));
         result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(parsFormPos2.getJdhome(), 0); //0上架 1下架
@@ -303,7 +303,7 @@ public class WMFacadeService {
 
     //菜品下架
     public String dishOffline(ParsFormPos2 parsFormPos2){
-        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
         result_baidu = parsFormPos2.getBaidu().stream().map(e->function2.apply(e)).reduce("",(x,y)->x.concat(StringUtil.isEmpty(x)?"":",").concat(y));
         result_meituan = parsFormPos2.getMeituan().stream().map(e->function4.apply(e)).reduce("", (x, y) -> x.concat(StringUtil.isEmpty(x) ? "" : ",").concat(y));
         result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(parsFormPos2.getJdhome(), 1); //0上架 1下架
@@ -313,9 +313,10 @@ public class WMFacadeService {
 
     //查看菜品状态
     public String getDishStatus(ParsFormPos2 parsFormPos2){
-        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
-        result_jdhome = jdHomeFacadeService.querySkuStatus(parsFormPos2.getJdhome());
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]", result_baidu = "", result_jdhome = "", result_eleme = "", result_meituan = "";
+       // result_jdhome = jdHomeFacadeService.querySkuStatus(parsFormPos2.getJdhome());
         result_meituan = meiTuanFacadeService.queryDishStatus(parsFormPos2.getMeituan()==null?"":parsFormPos2.getMeituan().get(0).getShopId());
+        result_eleme = eleMeFacadeService.restaurantMenu(parsFormPos2.getEleme()==null?"":parsFormPos2.getEleme().get(0).getShopId());
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
@@ -332,7 +333,7 @@ public class WMFacadeService {
 
     //订单操作 isAgree 0是确认订单 1取消订单
     private  String orderOpt(ParsFromPos parsFromPos,int isAgree){
-        String result = "baidu:[{0}],jdhome:[{1}],meituan:[{2}],eleme:[{3}]",
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]",
             result_baidu = null,
             result_jdhome = null,
             result_eleme = null,

@@ -371,10 +371,11 @@ public class EleMeFacadeService {
                         continue;
                     }
                     for(int j=0;j<foodArray.size();j++){
+                        Rtn rtn1 = new Rtn();
                         JSONObject json = foodArray.getJSONObject(j);
-                        rtn.setCode(0);
-                        rtn.setDynamic(json.getString("tp_food_id"));
-                        rtnStr = rtnStr +gson.toJson(rtn)+",";
+                        rtn1.setCode(0);
+                        rtn1.setDynamic(json.getString("tp_food_id"));
+                        rtnStr = rtnStr +gson.toJson(rtn1)+",";
                     }
                 }
             }else {
@@ -402,7 +403,7 @@ public class EleMeFacadeService {
                 sysFacadeService.updSynLog(log);
             }
         }
-        if(StringUtil.isEmpty(rtnStr)){
+        if(!StringUtil.isEmpty(rtnStr)){
             return rtnStr.substring(0,rtnStr.length()-1);
         }
         return gson.toJson(rtn);
