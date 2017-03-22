@@ -209,9 +209,11 @@ public class SysInnerService {
         Update update = new Update()
             .set("platform", orderWaiMai.getPlatform())
             .set("shopId", orderWaiMai.getShopId())
-            .set("orderId",orderWaiMai.getOrderId())
+            .set("sellerShopId",orderWaiMai.getSellerShopId())
+            .set("orderId", orderWaiMai.getOrderId())
             .set("platformOrderId",orderWaiMai.getPlatformOrderId())
-            .set("order",orderWaiMai.getOrder());
+            .set("order",orderWaiMai.getOrder())
+            .set("createTime",orderWaiMai.getCreateTime());
             mongoTemplate.upsert(query, update, OrderWaiMai.class);
     }
 

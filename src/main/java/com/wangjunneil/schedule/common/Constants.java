@@ -321,4 +321,12 @@ public final class Constants {
     public static final int POS_ORDER_OTHER = 90;  // 其它
 
     public static final Integer RETURN_ORDER_CODE=808;
+
+
+    /*****************************************************团购****************************************************************/
+
+    public static final String TG_EID = "";  //商家登录ERP帐号ID
+
+    public static final String TG_ENAME= ""; //商家登录ERP帐号名称
+
 }

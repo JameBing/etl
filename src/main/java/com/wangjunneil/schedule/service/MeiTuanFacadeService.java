@@ -31,6 +31,7 @@ import javax.jms.Destination;
 import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -614,6 +615,8 @@ public class MeiTuanFacadeService {
             orderWaiMai.setPlatformOrderId(platformOrderId);
             orderWaiMai.setOrder(order);
             orderWaiMai.setShopId(shopId);
+            orderWaiMai.setSellerShopId(shopId);
+            orderWaiMai.setCreateTime(new Date());
             sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
             result = "{\"data\" : \"ok\"}" ;
         }
@@ -630,6 +633,8 @@ public class MeiTuanFacadeService {
      * @return
      */
     public String getChangeOrderStatus(JsonObject jsonObject,Boolean flag) {
+        Rtn rtn = new Rtn();
+        Log log1 = null;
         String result = "";
         Gson gson = new GsonBuilder().registerTypeAdapter(OrderInfo.class,new OrderInfoSerializer())
             .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderExtraParam.class, new OrderExtraParamSerializer())
@@ -640,6 +645,9 @@ public class MeiTuanFacadeService {
             OrderInfo order = gson.fromJson(json, OrderInfo.class);
             //商家门店ID
             String shopId = order.getApppoicode();
+            if(StringUtil.isEmpty(shopId)){
+                return  "{\"code\":800,\"msg\":\"未绑定商家门店ID\"}";
+            }
             //美团订单ID
             String platformOrderId = String.valueOf(order.getOrderid());
             OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_MEITUAN,platformOrderId);
@@ -653,17 +661,30 @@ public class MeiTuanFacadeService {
                 orderWaiMai.setOrderId(orderId);
             }
             if(!flag){
-                mtInnerService.updateStatus(String.valueOf(order.getOrderid()), order.getStatus());
+               OrderDetailParam param = getOrderDetail(order.getOrderid());
+                if(StringUtil.isEmpty(param)){
+                   return  "{\"code\":700,\"msg\":\"订单状态推送异常\"}";
+                }
+                mtInnerService.updateStatus(String.valueOf(order.getOrderid()),param.getStatus());
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN,Integer.valueOf(param.getStatus()),platformOrderId,null,null);
             }else {
                 sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId);
             }
-            //sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId);
             result = "{\"data\" : \"ok\"}" ;
         }
         catch (Exception ex){
+            rtn.setCode(-998);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
             result = "{\"code\":700,\"msg\":\"系统异常\"}";
         }
         finally {
+            if (log1 != null) {
+                log1.setLogId(log1.getLogId());
+                log1.setTitle("推送订单失败");
+                sysFacadeService.updSynLog(log1);
+            }
             return result;
         }
     }

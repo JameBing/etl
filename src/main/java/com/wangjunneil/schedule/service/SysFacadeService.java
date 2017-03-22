@@ -267,8 +267,10 @@ public class SysFacadeService {
         JSONObject rtn = new JSONObject();
         jsonObject.put("platform", orderWaiMai.getPlatform());
         jsonObject.put("shopId",orderWaiMai.getShopId());
+        //jsonObject.put("sellerShopId",orderWaiMai.getSellerShopId());
         jsonObject.put("orderId",orderWaiMai.getOrderId());
         jsonObject.put("platOrderId",orderWaiMai.getPlatformOrderId());
+        //jsonObject.put("createTime",orderWaiMai.getCreateTime());
         switch (orderWaiMai.getPlatform()){
             case Constants.PLATFORM_WAIMAI_BAIDU :
                 rtn =  formatBaiDuOrder((Data) orderWaiMai.getOrder(), jsonObject);
@@ -963,7 +965,7 @@ public class SysFacadeService {
     public void updSynLog(Log log){
         sysInnerService.updSynLog( log);
         //发送消息到EKP
-        ekpMessageProducerMessage.sendMessage(ekpDestinationException,new Gson().toJson(log));
+       // ekpMessageProducerMessage.sendMessage(ekpDestinationException,new Gson().toJson(log));
     }
 
     //格式化百度订单状态
@@ -1081,9 +1083,15 @@ public class SysFacadeService {
                 jsonMessage.put("eleme", jsonObjectEmpty);
                 break;
             case  Constants.PLATFORM_WAIMAI_MEITUAN:
+                orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_MEITUAN,platformOrderId);
+                if (orderWaiMai==null){
+                    boolSend = false;  //不发送message
+                }else   {
+                    shop = orderWaiMai.getShopId();
+                }
                 jsonMessage.put("baidu", jsonObjectEmpty);
                 jsonMessage.put("jdhome", jsonObjectEmpty);
-                jsonObject.put("orderId", orderId);
+                jsonObject.put("orderId", orderWaiMai == null ? "" : platformOrderId);
                 jsonObject.put("orderStatus", tranMTOrderStatus(status));
                 jsonObject.put("shopId", shop);
                 jsonMessage.put("meituan", jsonObject);

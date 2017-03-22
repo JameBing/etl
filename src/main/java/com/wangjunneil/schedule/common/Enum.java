@@ -80,12 +80,16 @@ public class Enum {
     {
         @EnumDescription(code = 1,desc = "用户已提交订单")
         R1,
-        @EnumDescription(code = 2,desc = "可推送到APP方平台也可推送到商家")
-        R5,
+        @EnumDescription(code = 2,desc = "待商家处理")
+        R2,
         @EnumDescription(code = 3,desc = "商家已收到")
-        R7,
+        R3,
         @EnumDescription(code = 4,desc = "商家已确认")
-        R8,
+        R4,
+        @EnumDescription(code = 6,desc = "正在配送")
+        R6,
+        @EnumDescription(code = 7,desc = "已送达")
+        R7,
         @EnumDescription(code = 8,desc = "已完成")
         R9,
         @EnumDescription(code = 9,desc = "已取消")

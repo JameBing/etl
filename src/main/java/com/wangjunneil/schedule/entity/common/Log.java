@@ -74,7 +74,7 @@ public class Log {
     }
 
     public void setMessage(String message){
-        this.message = message;
+        this.message = message==null?"":message;
     }
 
     public String getMessage(){
@@ -82,7 +82,7 @@ public class Log {
     }
 
     public void setRequest(String request){
-        this.request = request;
+        this.request = request==null?"":request;
     }
 
     public String getRequest(){

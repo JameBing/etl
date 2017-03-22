@@ -26,6 +26,9 @@ public class Order {
     //餐厅id
     @SerializedName("restaurant_id")
     private String restaurantid;
+    //商家餐厅id
+    @SerializedName("tp_restaurant_id")
+    private String tprestaurantid;
     //服务费
     @SerializedName("service_fee")
     private Double servicefee;
@@ -406,5 +409,13 @@ public class Order {
 
     public void setInnerid(String innerid) {
         this.innerid = innerid;
+    }
+
+    public String getTprestaurantid() {
+        return tprestaurantid;
+    }
+
+    public void setTprestaurantid(String tprestaurantid) {
+        this.tprestaurantid = tprestaurantid;
     }
 }

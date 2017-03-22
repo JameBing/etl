@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by admin on 2016/11/17.
@@ -445,7 +442,9 @@ public class EleMeFacadeService {
                     String orderId = sysFacadeService.getOrderNum(order.getRestaurantid());
                     orderWaiMai.setOrder(order);
                     orderWaiMai.setOrderId(orderId);
+                    orderWaiMai.setSellerShopId(order.getTprestaurantid());
                     orderWaiMai.setShopId(order.getRestaurantid());
+                    orderWaiMai.setCreateTime(new Date());
                     rtnStr[0] = "{\"message\": \"ok\"}";
                     sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
                 }catch (ElemeException ex){

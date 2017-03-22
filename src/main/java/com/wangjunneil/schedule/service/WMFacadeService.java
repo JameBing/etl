@@ -290,7 +290,7 @@ public class WMFacadeService {
         result_baidu = parsFormPos2.getBaidu().stream().map(e->function1.apply(e)).reduce("",(x,y)->x.concat(StringUtil.isEmpty(x)?"":",").concat(y));
         result_meituan = parsFormPos2.getMeituan().stream().map(e->function3.apply(e)).reduce("", (x, y) -> x.concat(StringUtil.isEmpty(x) ? "" : ",").concat(y));
         result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(parsFormPos2.getJdhome(), 0); //0上架 1下架
-        result_eleme =  eleMeFacadeService.upBatchFrame(parsFormPos2.getEleme(),"1");
+        result_eleme =  eleMeFacadeService.upBatchFrame(parsFormPos2.getEleme(),"1000");
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
