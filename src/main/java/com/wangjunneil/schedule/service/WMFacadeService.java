@@ -5,6 +5,7 @@ import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.entity.baidu.SysParamsSerializer;
 import com.wangjunneil.schedule.entity.common.*;
+import com.wangjunneil.schedule.entity.meituan.Delivery;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -180,6 +181,20 @@ public class WMFacadeService {
           return  result;
     }
 
+    //平台配送订单状态
+    public String orderDelivery(Delivery delivery,String platform){
+        String result = "";
+        // true 推送完整order  false 推送状态status  默认false
+        Boolean flag = false;
+        switch (platform){
+            case Constants.PLATFORM_WAIMAI_MEITUAN:
+                result = meiTuanFacadeService.getDeliveryOrderStatus(delivery,flag);
+                break;
+            default:break;
+        }
+        return  result;
+    }
+
 //=========================上行接口====================================//
 
     //===============门店=================/
@@ -334,18 +349,18 @@ public class WMFacadeService {
     //订单操作 isAgree 0是确认订单 1取消订单
     private  String orderOpt(ParsFromPos parsFromPos,int isAgree){
         String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]",
-            result_baidu = null,
-            result_jdhome = null,
-            result_eleme = null,
-            result_meituan = null;
+            result_baidu = "",
+            result_jdhome = "",
+            result_eleme = "",
+            result_meituan = "";
         if(parsFromPos.getBaidu()!=null  && !StringUtil.isEmpty(parsFromPos.getBaidu().getPlatformOrderId())){
             for(String id:parsFromPos.getBaidu().getPlatformOrderId().split(",")){
                 switch (isAgree){
                     case 0:
-                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderConfirm(id,parsFromPos.getBaidu().getShopId());
+                        result_baidu = (StringUtil.isEmpty(result_baidu)?"":result_baidu+",")+baiDuFacadeService.orderConfirm(id,parsFromPos.getBaidu().getShopId());
                         break;
                     case 1:
-                        result_baidu = (result_baidu == null?"":result_baidu+",")+baiDuFacadeService.orderCancel(id,parsFromPos.getBaidu ().getReason(),parsFromPos.getBaidu().getReasonCode(),parsFromPos.getBaidu().getShopId());
+                        result_baidu = (StringUtil.isEmpty(result_baidu)?"":result_baidu+",")+baiDuFacadeService.orderCancel(id,parsFromPos.getBaidu ().getReason(),parsFromPos.getBaidu().getReasonCode(),parsFromPos.getBaidu().getShopId());
                         break;
                     default:break;
                 }
@@ -353,17 +368,17 @@ public class WMFacadeService {
         }
         if(parsFromPos.getJdhome()!=null  && !StringUtil.isEmpty(parsFromPos.getJdhome().getPlatformOrderId())){
             for(String id:parsFromPos.getJdhome().getPlatformOrderId().split(",")){
-                  result_jdhome =(result_jdhome == null?"":result_jdhome+",")+jdHomeFacadeService.orderAcceptOperate(id, parsFromPos.getJdhome().getShopId(),isAgree==0?true:false);
+                  result_jdhome =(StringUtil.isEmpty(result_jdhome)?"":result_jdhome+",")+jdHomeFacadeService.orderAcceptOperate(id, parsFromPos.getJdhome().getShopId(),isAgree==0?true:false);
                 }
             }
         if(parsFromPos.getMeituan()!=null && !StringUtil.isEmpty(parsFromPos.getMeituan().getPlatformOrderId())){
             for(String id:parsFromPos.getMeituan().getPlatformOrderId().split(",")){
                 switch (isAgree){
                     case 0:
-                        result_meituan =(result_meituan == null?"":result_meituan+",")+meiTuanFacadeService.getConfirmOrder(Long.parseLong(id));
+                        result_meituan =(StringUtil.isEmpty(result_meituan)?"":result_meituan+",")+meiTuanFacadeService.getConfirmOrder(Long.parseLong(id));
                         break;
                     case 1:
-                        result_meituan =(result_meituan == null?"":result_meituan+",")+meiTuanFacadeService.getCancelOrder(Long.parseLong(id),parsFromPos.getMeituan().getReason(),parsFromPos.getMeituan().getReasonCode());
+                        result_meituan =(StringUtil.isEmpty(result_meituan)?"":result_meituan+",")+meiTuanFacadeService.getCancelOrder(Long.parseLong(id),parsFromPos.getMeituan().getReason(),parsFromPos.getMeituan().getReasonCode());
                         break;
                     default:break;
                 }
@@ -371,7 +386,7 @@ public class WMFacadeService {
         }
         if(parsFromPos.getEleme()!=null  && !StringUtil.isEmpty(parsFromPos.getEleme().getPlatformOrderId())){
             for(String id:parsFromPos.getEleme().getPlatformOrderId().split(",")){
-                result_eleme =(result_eleme == null?"":result_eleme+",")+eleMeFacadeService.upOrderStatus(id,isAgree==0?"2":"-1",parsFromPos.getEleme().getReason());
+                result_eleme =(StringUtil.isEmpty(result_eleme)?"":result_eleme+",")+eleMeFacadeService.upOrderStatus(id,isAgree==0?"2":"-1",parsFromPos.getEleme().getReason());
             }
         }
         return "{".concat( MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");

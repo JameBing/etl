@@ -127,7 +127,7 @@ public class MeiTuanApiService {
 
     //通过订单id获取订单明细信息
     public OrderDetailParam getOrderDetail(long  orderId) throws Exception {
-        return APIFactory.getOrderAPI().orderGetOrderDetail(sysPram,orderId,0L);
+        return APIFactory.getOrderAPI().orderGetOrderDetail(sysPram,orderId,1L);
     }
 
     //endregion

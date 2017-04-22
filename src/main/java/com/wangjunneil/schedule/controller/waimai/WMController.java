@@ -8,6 +8,7 @@ import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.common.ParsFormPos2;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
+import com.wangjunneil.schedule.entity.meituan.Delivery;
 import com.wangjunneil.schedule.service.WMFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -292,11 +293,13 @@ public class WMController {
                 break;
             case "/waimai/jdhome": //京东到家
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
+                response.setContentType("text/html; charset=utf-8");
                 String[] strArr = {sid};
                 stringMap.put("sid",strArr);
                 stringMap.putAll(request.getParameterMap());
                 break;
             default:
+                response.setContentType("text/html; charset=utf-8");
                 stringMap = request.getParameterMap();
                 break;
         }
@@ -326,14 +329,42 @@ public class WMController {
                 response.setContentType("text/html; charset=utf-8");
                 break;
             case "/waimai/djsw": //京东到家
+                response.setContentType("text/html; charset=utf-8");
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             case "/waimai/meituan/order/status": //美团
+                response.setContentType("text/html; charset=utf-8");
                 platform = Constants.PLATFORM_WAIMAI_MEITUAN;
                 break;
             default:break;
         }
          out.println( wmFacadeService.orderStatus(request.getParameterMap(),platform));
+        return  null;
+    }
+
+    /**
+     * 配送订单状态推送【消息型】 平台推送配送订单状态
+     *
+     * @param out   响应输出流对象
+     * @param request  浏览器请求对象
+     * @return
+     */
+    @RequestMapping(value = {"/meituan/order/delivery"},method = {RequestMethod.POST})
+    public String orderDelivery(PrintWriter out,HttpServletRequest request,HttpServletResponse response,@RequestBody Delivery delivery){
+        response.setContentType("text/html;charset=utf-8");
+        String platform = null;
+        String requestUrl = request.getPathInfo().toLowerCase();
+        if (requestUrl.indexOf("/djsw/") > 0) {
+            requestUrl = "/waimai/djsw";
+        }
+        switch (requestUrl){
+            case "/waimai/meituan/order/delivery": //美团
+                response.setContentType("text/html; charset=utf-8");
+                platform = Constants.PLATFORM_WAIMAI_MEITUAN;
+                break;
+            default:break;
+        }
+        out.println( wmFacadeService.orderDelivery(delivery,platform));
         return  null;
     }
 

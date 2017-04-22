@@ -84,20 +84,49 @@ public class TGFacadeService {
         }
     }
 
-
+    /**
+     * 验卷准备
+     * @param code
+     * @param ePoiId
+     * @return
+     */
     public String couponPrepare(String code ,String ePoiId){
         Rtn rtn = new Rtn();
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        if(StringUtil.isEmpty(code) || StringUtil.isEmpty(ePoiId)){
+        if(StringUtil.isEmpty(code) ){
             rtn.setCode(-1);
             rtn.setDesc("error");
-            rtn.setRemark("请输入验卷码或者门店编号");
+            rtn.setRemark("请输入验卷码");
+            return gson.toJson(rtn);
+        }
+        if(StringUtil.isEmpty(ePoiId)){
+            rtn.setCode(-1);
+            rtn.setDesc("error");
+            rtn.setRemark("请输入门店编号");
             return gson.toJson(rtn);
         }
         String json = "";
+        JSONObject rtnJson = new JSONObject();
         try {
             json = tgApiService.couponPrepare(code, ePoiId);
+            JSONObject jsonObject = JSONObject.parseObject(json);
+            JSONObject result = jsonObject.getJSONObject("data");
+            if(!StringUtil.isEmpty(result)){
+                rtnJson.put("code",result.getInteger("result"));
+                rtnJson.put("couponCode",result.getString("couponCode"));
+                rtnJson.put("startTime",result.getString("dealBeginTime"));
+                rtnJson.put("couponEndTime",result.getString("couponEndTime"));
+                rtnJson.put("dealPrice",result.getString("dealPrice"));//售卖价
+                rtnJson.put("dealValue",result.getString("dealValue"));//市场价
+                rtnJson.put("dealTitle",result.getString("dealTitle"));
+            }else{
+                JSONObject errorJson = jsonObject.getJSONObject("error");
+                rtn.setCode(errorJson.getInteger("code"));
+                rtn.setDesc("error");
+                rtn.setRemark(errorJson.getString("message"));
+                return gson.toJson(rtn);
+            }
         }catch (TuanGouException ex){
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
@@ -122,7 +151,10 @@ public class TGFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("验卷准备失败",ePoiId));
             }
-            return json;
+            if(!StringUtil.isEmpty(rtnJson) && rtnJson.size()>0){
+                return rtnJson.toJSONString();
+            }
+            return gson.toJson(rtn);
         }
     }
 
@@ -168,6 +200,19 @@ public class TGFacadeService {
         String resultJson = "";
         try {
             resultJson = tgApiService.couponConsume(request);
+            JSONObject jsonObject = JSONObject.parseObject(resultJson);
+            JSONObject json = jsonObject.getJSONObject("data");
+            if(!StringUtil.isEmpty(json) && json.getInteger("result")==0 ) {
+                rtn.setCode(json.getInteger("result"));
+                rtn.setDesc("success");
+                rtn.setRemark("验卷成功");
+            }else{
+                JSONObject errorJson = jsonObject.getJSONObject("error");
+                rtn.setCode(errorJson.getInteger("code"));
+                rtn.setDesc("error");
+                rtn.setRemark(errorJson.getString("message"));
+                return gson.toJson(rtn);
+            }
         }catch (TuanGouException ex){
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);
@@ -193,7 +238,7 @@ public class TGFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("执行验卷失败",request.getePoiId()));
             }
-            return resultJson;
+            return gson.toJson(rtn);
         }
     }
 

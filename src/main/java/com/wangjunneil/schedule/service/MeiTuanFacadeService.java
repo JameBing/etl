@@ -1,5 +1,6 @@
 package com.wangjunneil.schedule.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -8,6 +9,7 @@ import com.sankuai.meituan.waimai.opensdk.exception.ApiOpException;
 import com.sankuai.meituan.waimai.opensdk.exception.ApiSysException;
 import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
 import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
+import com.sankuai.meituan.waimai.opensdk.vo.OrderParam;
 import com.sankuai.meituan.waimai.opensdk.vo.PoiParam;
 import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
@@ -67,7 +69,6 @@ public class MeiTuanFacadeService {
     {
         String json  = "";
         Rtn rtn = new Rtn();
-        rtn.setDynamic(code);
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(code)){
@@ -76,6 +77,7 @@ public class MeiTuanFacadeService {
         try {
             json = mtApiService.openShop(code);
             System.out.println(json);
+            rtn.setDynamic(code);
             if (json.equals("ok") || json.equals("200")){
                 rtn.setCode(Integer.valueOf(0));
                 rtn.setDesc("success");
@@ -121,13 +123,13 @@ public class MeiTuanFacadeService {
     {
         String json = "";
         Rtn rtn = new Rtn();
-        rtn.setDynamic(code);
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(code)){
             return gson.toJson(rtn);
         }
         try {
+            rtn.setDynamic(code);
             json = mtApiService.closeShop(code);
             if (json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
@@ -216,7 +218,6 @@ public class MeiTuanFacadeService {
      */
     public String findShopStatus(String appPoiCode){
         Rtn rtn = new Rtn();
-        rtn.setDynamic(appPoiCode);
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         List<PoiParam> poiParam = new ArrayList<>();
@@ -225,6 +226,7 @@ public class MeiTuanFacadeService {
             return gson.toJson(rtn);
         }
         try {
+            rtn.setDynamic(appPoiCode);
             poiParam = mtApiService.poiMget(appPoiCode);
             if(poiParam!=null && poiParam.size()>0){
                 PoiParam poi = poiParam.get(0);
@@ -299,12 +301,12 @@ public class MeiTuanFacadeService {
     public String upFrame(String appPoiCode,String foodCode) {
         String json = "";
         Rtn rtn = new Rtn();
-        rtn.setDynamic(foodCode);
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class, new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(foodCode)){
             return gson.toJson(rtn);
         }
+        rtn.setDynamic(foodCode);
         try {
             json = mtApiService.upFrame(appPoiCode, foodCode);
             if(StringUtil.isEmpty(json)){
@@ -358,14 +360,13 @@ public class MeiTuanFacadeService {
     public String downFrame(String appPoiCode,String foodCode) {
         String json = "";
         Rtn rtn = new Rtn();
-        rtn.setDynamic(appPoiCode);
-        rtn.setDynamic(foodCode);
         Log log1 = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(foodCode)){
             return gson.toJson(rtn);
         }
         try {
+            rtn.setDynamic(foodCode);
             json = mtApiService.downFrame(appPoiCode, foodCode);
             if(StringUtil.isEmpty(json)){
                 rtn.setCode(0);
@@ -487,13 +488,33 @@ public class MeiTuanFacadeService {
     public String getConfirmOrder(long orderId) {
         String json = "";
         Rtn rtn = new Rtn();
-        rtn.setDynamic(String.valueOf(orderId));
         Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(orderId)){
             return new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
         }
         try {
+            //确认时判断是否接单
+            OrderDetailParam param = getOrderDetail(orderId);
+            if(param==null){
+                rtn.setCode(-1);
+                rtn.setRemark("订单不存在");
+                rtn.setDesc("error");
+                rtn.setDynamic(String.valueOf(orderId));
+                return gson.toJson(rtn);
+            }
+            if(param.getStatus()!=Constants.MT_STATUS_CODE_UNPROCESSED){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code",Constants.POS_ORDER_NOT_RECEIVED);
+                jsonObject.put("desc","error");
+                jsonObject.put("remark","订单已确实过，请更新状态");
+                jsonObject.put("orderId",orderId);
+                jsonObject.put("orderStatus",(new SysFacadeService()).tranMTOrderStatus(param.getStatus()));
+                return jsonObject.toJSONString();
+            }
+            rtn.setDynamic(String.valueOf(orderId));
             json = mtApiService.getConfirmOrder(orderId);
+
             if (json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
                 rtn.setDesc("success");
@@ -527,8 +548,8 @@ public class MeiTuanFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("商家确认{0}订单失败！",String.valueOf(orderId)));
             }
-            return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
         }
+        return  gson.toJson(rtn);
     }
 
 
@@ -539,12 +560,31 @@ public class MeiTuanFacadeService {
     public String getCancelOrder(long orderId,String reason,String reason_code) {
         String json = "";
         Rtn rtn = new Rtn();
-        rtn.setDynamic(String.valueOf(orderId));
         Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(orderId)){
-            return new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
+            return gson.toJson(rtn);
         }
         try {
+            //确认时判断是否接单
+            OrderDetailParam param = getOrderDetail(orderId);
+            if(param==null){
+                rtn.setCode(-1);
+                rtn.setRemark("订单不存在");
+                rtn.setDesc("error");
+                rtn.setDynamic(String.valueOf(orderId));
+                return gson.toJson(rtn);
+            }
+            if(param.getStatus()!=Constants.MT_STATUS_CODE_UNPROCESSED){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code",Constants.POS_ORDER_NOT_RECEIVED);
+                jsonObject.put("desc","error");
+                jsonObject.put("remark","订单已确实过，请更新状态");
+                jsonObject.put("orderId",orderId);
+                jsonObject.put("orderStatus",param.getStatus());
+                return jsonObject.toJSONString();
+            }
+            rtn.setDynamic(String.valueOf(orderId));
             json = mtApiService.getCancelOrder(orderId,reason,reason_code);
             if(json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
@@ -558,8 +598,7 @@ public class MeiTuanFacadeService {
             rtn.setCode(-999);
             log1 = sysFacadeService.functionRtn.apply(ex);
             log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
-        }catch (ApiOpException ex)
-        {
+        }catch (ApiOpException ex){
             rtn.setCode(ex.getCode());
             rtn.setDesc("error");
             rtn.setRemark(ex.getMsg());
@@ -580,8 +619,8 @@ public class MeiTuanFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("商家取消{0}订单失败！",String.valueOf(orderId)));
             }
-            return  new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create().toJson(rtn);
         }
+        return  gson.toJson(rtn);
     }
 
     /**
@@ -619,11 +658,13 @@ public class MeiTuanFacadeService {
             orderWaiMai.setCreateTime(new Date());
             sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
             result = "{\"data\" : \"ok\"}" ;
-        }
-        catch (Exception ex){
+        }catch (Exception ex){
            result = "{\"code\":700,\"msg\":\"系统异常\"}";
         }
         finally {
+            if(StringUtil.isEmpty(result)){
+                result = "{\"data\" : \"ok\"}";
+            }
             return result;
         }
     }
@@ -666,14 +707,53 @@ public class MeiTuanFacadeService {
                    return  "{\"code\":700,\"msg\":\"订单状态推送异常\"}";
                 }
                 mtInnerService.updateStatus(String.valueOf(order.getOrderid()),param.getStatus());
-                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN,Integer.valueOf(param.getStatus()),platformOrderId,null,null);
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN,Integer.valueOf(param.getStatus()),platformOrderId,null,shopId);
             }else {
                 sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
                 sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId);
             }
             result = "{\"data\" : \"ok\"}" ;
+        }catch (Exception ex){
+            rtn.setCode(-998);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
+            result = "{\"code\":700,\"msg\":\"系统异常\"}";
         }
-        catch (Exception ex){
+        finally {
+            if (log1 != null) {
+                log1.setLogId(log1.getLogId());
+                log1.setTitle("推送订单失败");
+                sysFacadeService.updSynLog(log1);
+            }
+            if(StringUtil.isEmpty(result)){
+                result = "{\"data\" : \"ok\"}";
+            }
+            return result;
+        }
+    }
+
+    /**
+     * 配送订单状态推送
+     * @param delivery
+     * @param flag
+     * @return
+     */
+    public String getDeliveryOrderStatus(Delivery delivery,Boolean flag){
+        Rtn rtn = new Rtn();
+        Log log1 = null;
+        String result = "";
+        if(delivery==null || StringUtil.isEmpty(delivery.getOrder_id())){
+            return  "{\"code\":801,\"msg\":\"配送订单状态推送失败\"}";
+        }
+        try{
+            OrderDetailParam param = getOrderDetail(delivery.getOrder_id());
+            if(StringUtil.isEmpty(param)){
+                return  "{\"code\":802,\"msg\":\"配送订单不存在\"}";
+            }
+            mtInnerService.updateStatus(String.valueOf(delivery.getOrder_id()),delivery.getLogistics_status());
+            sysFacadeService.topicMessageOrderDelivery(Constants.PLATFORM_WAIMAI_MEITUAN, delivery.getLogistics_status(), delivery.getOrder_id().toString(),
+                delivery.getDispatcher_mobile(), delivery.getDispatcher_name(), param.getApp_poi_code());
+        }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
             log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
@@ -696,13 +776,13 @@ public class MeiTuanFacadeService {
      */
     public OrderDetailParam getOrderDetail(long orderId) {
         Rtn rtn = new Rtn();
-        rtn.setDynamic(String.valueOf(orderId));
         Log log1 = null;
         OrderDetailParam orderDetailParam = null;
         if(StringUtil.isEmpty(orderId)){
-           return orderDetailParam;
+            return orderDetailParam;
         }
         try {
+            rtn.setDynamic(String.valueOf(orderId));
             orderDetailParam = mtApiService.getOrderDetail(orderId);
         } catch (MeiTuanException ex) {
             rtn.setCode(-997);

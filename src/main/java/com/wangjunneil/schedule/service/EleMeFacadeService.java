@@ -85,13 +85,13 @@ public class EleMeFacadeService {
     public String setRestaurantStatus(String merchantId,String status){
         String result = "";
         Rtn rtn = new Rtn();
-        rtn.setDynamic(merchantId);
         Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(merchantId)) {
-           return gson1.toJson(rtn);
+            return gson1.toJson(rtn);
         }else {
             try {
+                rtn.setDynamic(merchantId);
                 RestaurantRequest restaurantRequest = new RestaurantRequest();
                 restaurantRequest.setRestaurant_id(merchantId);
                 restaurantRequest.setIs_open(status);
@@ -655,15 +655,23 @@ public class EleMeFacadeService {
                     rtn.setDynamic(dishList.get(i).getDishId());
                     reponse += gson1.toJson(rtn);
                 }else {
+                    //过滤门店
                     Body body = getGson().fromJson(result, Body.class);
                     reponse += StringUtil.isEmpty(reponse)?"":",";
                     if (!StringUtil.isEmpty(body.getFoodids().get(dishList.get(i).getDishId()))) {
+                        FoodIds foods = new FoodIds();
                         for (int j = 0; j < body.getFoodids().get(dishList.get(i).getDishId()).size(); j++) {
-                            OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
-                            oldFoodsRequest.setStock(status);
-                            oldFoodsRequest.setFood_id(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getFoodid());
-                            reponse += uporDownFrame(dishList.get(i).getDishId(),getGson().toJson(oldFoodsRequest));
+                           if(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getRestaurantid().equals(dishList.get(i).getShopId())){
+                               foods.setFoodid(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getFoodid());
+                               foods.setRestaurantid(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getRestaurantid());
+                               foods.setRestaurantid(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getTprestaurantid());
+                               break;
+                           }
                         }
+                        OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
+                        oldFoodsRequest.setStock(status);
+                        oldFoodsRequest.setFood_id(foods.getFoodid());
+                        reponse += uporDownFrame(dishList.get(i).getDishId(),getGson().toJson(oldFoodsRequest));
                     }else {
                         rtn.setCode(-1);
                         rtn.setDesc("error");
@@ -784,7 +792,6 @@ public class EleMeFacadeService {
     public String getStatus(String merchantId) {
         String result = "";
         Rtn rtn = new Rtn();
-        rtn.setDynamic(merchantId);
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(merchantId)) {
             return gson1.toJson(rtn);
@@ -794,16 +801,19 @@ public class EleMeFacadeService {
                 rtn.setCode(-1);
                 rtn.setDesc("failure");
                 rtn.setRemark(MessageFormat.format("获取餐厅{0}信息失败或餐厅不存在", merchantId));
+                rtn.setDynamic(merchantId);
             }else {
                 Body body = getGson().fromJson(info, Body.class);
                 if (body.getRestaurant().getIsopen() == 1) {
                     rtn.setCode(0);
                     rtn.setDesc("success");
                     rtn.setRemark(MessageFormat.format("餐厅{0}营业中", merchantId));
+                    rtn.setDynamic(merchantId);
                 }else {
                     rtn.setCode(1);
                     rtn.setDesc("success");
                     rtn.setRemark(MessageFormat.format("餐厅{0}休息中", merchantId));
+                    rtn.setDynamic(merchantId);
                 }
             }
         }

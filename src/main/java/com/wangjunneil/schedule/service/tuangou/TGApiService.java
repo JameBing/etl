@@ -8,7 +8,6 @@ import com.wangjunneil.schedule.entity.tuangou.AccessToken;
 import com.wangjunneil.schedule.entity.tuangou.CouponRequest;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
-import org.apache.http.client.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

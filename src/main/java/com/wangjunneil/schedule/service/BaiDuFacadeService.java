@@ -469,14 +469,18 @@ public class BaiDuFacadeService {
     }
 
     //根据订单号拉取订单详情况
-    public SysParams orderGet(String params){
+    public Data orderGet(String params){
         Body body = new Body();
+        Data data = new Data();
         Rtn rtn = new Rtn();
         Log log = null;
-        SysParams sysParams = getGson().fromJson(params,SysParams.class);
         try {
-            Order order = getGson().fromJson(getGson().toJson(sysParams.getBody()).toString(),Order.class);
-            return getGson().fromJson(baiDuApiService.orderGet(order),SysParams.class);
+            Order order = new Order();
+            order.setOrderId(params);
+            String result = baiDuApiService.orderGet(order);
+            SysParams sysParams =getGson().fromJson(result,SysParams.class);
+            body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
+            data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
         }catch (BaiDuException ex){
             rtn.setCode(-997);
             log = sysFacadeService.functionRtn.apply(ex);
@@ -502,7 +506,7 @@ public class BaiDuFacadeService {
                 rtn.setRemark(MessageFormat.format("订单详情{0}获取失败！", params));
             }
         }
-        return sysParams;
+        return data;
     }
 
     //接收百度外卖推送过来的订单状态[order.status.push] flag 是否推送整个订单 true 推送  false不推送
@@ -566,13 +570,33 @@ public class BaiDuFacadeService {
     public String orderConfirm(String params,String shopId){
         Rtn rtn = new Rtn();
         Log log = null;
-        rtn.setDynamic(params);
         String result = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(params) || StringUtil.isEmpty(shopId)){
             return gson1.toJson(rtn);
         }
         try {
+            //是否是接单状态
+            Data data = orderGet(params);
+            if(data==null){
+                rtn.setCode(-1);
+                rtn.setRemark("订单不存在");
+                rtn.setDesc("error");
+                rtn.setDynamic(String.valueOf(params));
+                return gson.toJson(rtn);
+            }
+            Order searchOrder = getGson().fromJson(getGson().toJson(data.getOrder()),Order.class);
+
+            if(searchOrder.getStatus()==null || searchOrder.getStatus()!=Constants.BD_SUSPENDING){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code",Constants.POS_ORDER_NOT_RECEIVED);
+                jsonObject.put("desc","error");
+                jsonObject.put("remark","订单已确实过，请更新状态");
+                jsonObject.put("orderId",params);
+                jsonObject.put("orderStatus",searchOrder.getStatus()==null?0:new SysFacadeService().tranBdOrderStatus(searchOrder.getStatus()));
+                return jsonObject.toJSONString();
+            }
+            rtn.setDynamic(params);
             Order order = new Order();
             order.setOrderId(params);
             result = baiDuApiService.orderConfirm(order);
@@ -614,13 +638,32 @@ public class BaiDuFacadeService {
     public String orderCancel(String params,String reason,String reason_code,String shopId){
         Rtn rtn = new Rtn();
         Log log = null;
-        rtn.setDynamic(params);
         String result = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(params) || StringUtil.isEmpty(shopId)){
             return gson1.toJson(rtn);
         }
         try {
+            //是否是接单状态
+            Data data = orderGet(params);
+            if(data==null){
+                rtn.setCode(-1);
+                rtn.setRemark("订单不存在");
+                rtn.setDesc("error");
+                rtn.setDynamic(String.valueOf(params));
+                return gson.toJson(rtn);
+            }
+            Order searchOrder = getGson().fromJson(getGson().toJson(data.getOrder()),Order.class);
+            if(searchOrder.getStatus()==Constants.BD_SUSPENDING){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code",Constants.POS_ORDER_NOT_RECEIVED);
+                jsonObject.put("desc","error");
+                jsonObject.put("remark","订单已确实过，请更新状态");
+                jsonObject.put("orderId",params);
+                jsonObject.put("orderStatus",searchOrder.getStatus());
+                return jsonObject.toJSONString();
+            }
+            rtn.setDynamic(params);
             Order order = new Order();
             order.setOrderId(params);
             order.setType(reason_code);
