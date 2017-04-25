@@ -294,6 +294,62 @@ public class MeiTuanFacadeService {
         }
     }
 
+
+    /**
+     * 获取订单状态
+     * @params orderId
+     */
+    public String findOrderStatus(String orderId,String shopId){
+        Rtn rtn = new Rtn();
+        Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        List<PoiParam> poiParam = new ArrayList<>();
+        //判断请求参数非空
+        if(StringUtil.isEmpty(orderId)){
+            return gson.toJson(rtn);
+        }
+        try {
+            rtn.setDynamic(orderId);
+            OrderDetailParam param = getOrderDetail(Long.parseLong(orderId));
+            if(param==null){
+                rtn.setCode(-1);
+                rtn.setRemark("订单不存在");
+                rtn.setDesc("error");
+                rtn.setDynamic(String.valueOf(orderId));
+                return gson.toJson(rtn);
+            }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code",0);
+            jsonObject.put("desc","success");
+            jsonObject.put("platformOrderId",orderId);
+            jsonObject.put("orderStatus",(new SysFacadeService()).tranMTOrderStatus(param.getStatus()));
+            if(param.getStatus()==Constants.POS_ORDER_DISPATCH_GET){
+                jsonObject.put("dispatcherMobile",param.getLogistics_dispatcher_mobile());
+                jsonObject.put("dispatcherName",param.getLogistics_dispatcher_name());
+            }
+            return jsonObject.toJSONString();
+        }catch (Exception ex){
+            rtn.setCode(-998);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_MEITUAN);
+        }finally {
+            //有异常产生
+            if (log1 !=null){
+                log1.setLogId(orderId.concat(log1.getLogId()));
+                log1.setTitle(MessageFormat.format("订单{0}信息获取失败", orderId));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"meituan_shop_id\":{1}", orderId, "")).concat("}"));
+                sysFacadeService.updSynLog(log1);
+                rtn.setDynamic(orderId);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log1.getLogId());
+                rtn.setRemark(MessageFormat.format("订单{0}信息获取失败！",orderId));
+            }
+        }
+        return gson.toJson(rtn);
+    }
+
+
     /**
      * 商品上架
      * @parama
@@ -747,12 +803,15 @@ public class MeiTuanFacadeService {
         }
         try{
             OrderDetailParam param = getOrderDetail(delivery.getOrder_id());
+            System.out.println("配送订单详情："+param);
+            System.out.println("订单ID："+param.getOrder_id());
             if(StringUtil.isEmpty(param)){
                 return  "{\"code\":802,\"msg\":\"配送订单不存在\"}";
             }
             mtInnerService.updateStatus(String.valueOf(delivery.getOrder_id()),delivery.getLogistics_status());
             sysFacadeService.topicMessageOrderDelivery(Constants.PLATFORM_WAIMAI_MEITUAN, delivery.getLogistics_status(), delivery.getOrder_id().toString(),
                 delivery.getDispatcher_mobile(), delivery.getDispatcher_name(), param.getApp_poi_code());
+            return "{\"data\" : \"ok\"}";
         }catch (Exception ex){
             rtn.setCode(-998);
             log1 = sysFacadeService.functionRtn.apply(ex);
@@ -765,8 +824,11 @@ public class MeiTuanFacadeService {
                 log1.setTitle("推送订单失败");
                 sysFacadeService.updSynLog(log1);
             }
-            return result;
         }
+        if(StringUtil.isEmpty(result)){
+            return "{\"data\" : \"ok\"}";
+        }
+        return result;
     }
 
 

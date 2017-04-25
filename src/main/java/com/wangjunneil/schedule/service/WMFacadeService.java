@@ -182,12 +182,20 @@ public class WMFacadeService {
     }
 
     //平台配送订单状态
-    public String orderDelivery(Delivery delivery,String platform){
+    public String orderDelivery(Map<String,String[]> stringMap,String platform){
         String result = "";
         // true 推送完整order  false 推送状态status  默认false
         Boolean flag = false;
         switch (platform){
             case Constants.PLATFORM_WAIMAI_MEITUAN:
+                Delivery delivery = new Delivery();
+                delivery.setOrder_id(stringMap.get("order_id")!=null?Long.parseLong(stringMap.get("order_id")[0].toString()):null);
+                delivery.setLogistics_status(stringMap.get("logistics_status")!=null?Integer.parseInt(stringMap.get("logistics_status")[0].toString()):0);
+                delivery.setTime(stringMap.get("time")!=null?stringMap.get("time")[0]:"");
+                try {
+                    delivery.setDispatcher_name(stringMap.get("dispatcher_name") != null ? java.net.URLDecoder.decode(stringMap.get("dispatcher_name")[0], "utf-8") : "");
+                }catch (Exception e){e.printStackTrace();}
+                delivery.setDispatcher_mobile(stringMap.get("dispatcher_mobile") != null ? stringMap.get("dispatcher_mobile")[0] : "");
                 result = meiTuanFacadeService.getDeliveryOrderStatus(delivery,flag);
                 break;
             default:break;
@@ -250,6 +258,16 @@ public class WMFacadeService {
         result_jdhome = jdHomeFacadeService.getStoreStatus(parsFromPos.getJdhome().getShopId());
         result_eleme = eleMeFacadeService.getStatus(parsFromPos.getEleme().getShopId());
         result_meituan = meiTuanFacadeService.findShopStatus(parsFromPos.getMeituan().getShopId());
+        return "{".concat(MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme)).concat("}");
+    }
+
+    //查询订单状态
+    public String getOrderStatus(ParsFromPos parsFromPos){
+        String result = "\"baidu\":{0},\"jdhome\":{1},\"meituan\":{2},\"eleme\":{3}", result_baidu = null, result_jdhome = null, result_eleme = null, result_meituan = null;
+        result_baidu = baiDuFacadeService.OrderStatus(parsFromPos.getBaidu().getPlatformOrderId(),parsFromPos.getBaidu().getShopId());
+        result_jdhome = jdHomeFacadeService.getOrderStatus(parsFromPos.getJdhome().getPlatformOrderId(),parsFromPos.getJdhome().getShopId());
+        result_eleme = eleMeFacadeService.getOrderStatus(parsFromPos.getEleme().getPlatformOrderId(),parsFromPos.getEleme().getShopId());
+        result_meituan = meiTuanFacadeService.findOrderStatus(parsFromPos.getMeituan().getPlatformOrderId(),parsFromPos.getMeituan().getShopId());
         return "{".concat(MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme)).concat("}");
     }
 

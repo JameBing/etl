@@ -1021,6 +1021,10 @@ public class SysFacadeService {
                 return Constants.POS_ORDER_DISPATCH_GET;
             case Constants.MT_STATUS_CODE_DELIVERYED:
                 return Constants.POS_ORDER_DELIVERY;
+            case Constants.MT_STATUS_CODE_DISPACHER_FINISHED:
+                return Constants.POS_ORDER_COMPLETED;
+            case Constants.MT_STATUS_CODE_DISPACHER_CANCELED:
+                return Constants.POS_ORDER_CANCELED;
             default:
                 return Constants.POS_ORDER_OTHER;
         }
@@ -1163,8 +1167,11 @@ public class SysFacadeService {
         }
         if (boolSend & StaticObj.mqTransportTopicOrderStatus){
             //topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
+            log.info("推送配送订单start");
+            System.out.println("推送配送订单start");
             topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),orderWaiMai==null?shop:orderWaiMai.getSellerShopId());
             new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();
+            log.info("推送配送订单start");
         }
     }
 

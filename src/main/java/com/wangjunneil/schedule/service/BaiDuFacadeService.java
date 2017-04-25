@@ -660,7 +660,7 @@ public class BaiDuFacadeService {
                 jsonObject.put("desc","error");
                 jsonObject.put("remark","订单已确实过，请更新状态");
                 jsonObject.put("orderId",params);
-                jsonObject.put("orderStatus",searchOrder.getStatus());
+                jsonObject.put("orderStatus",new SysFacadeService().tranBdOrderStatus(searchOrder.getStatus()));
                 return jsonObject.toJSONString();
             }
             rtn.setDynamic(params);
@@ -791,6 +791,66 @@ public class BaiDuFacadeService {
                 rtn.setDesc("发生异常");
                 rtn.setLogId(log.getLogId());
                 rtn.setRemark(MessageFormat.format("查看{0}商户状态失败！", params));
+            }
+        }
+        result = gson1.toJson(rtn);
+        return result;
+    }
+
+    //查看订单状态
+    public String OrderStatus(String params,String shopId) {
+        Rtn rtn = new Rtn();
+        String result = null;
+        Body body = new Body();
+        Log log = null;
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class, new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(params)){
+            return gson1.toJson(rtn);
+        }
+        try {
+            Order order = new Order();
+            order.setOrderId(params);
+            String rtnOrder = baiDuApiService.orderGet(order);
+            SysParams sysParams =getGson().fromJson(rtnOrder,SysParams.class);
+            body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
+            if(body.getErrno().equals("20212")){
+                rtn.setCode(-1);
+                rtn.setRemark("订单不存在");
+                rtn.setDesc("error");
+                rtn.setDynamic(String.valueOf(params));
+                return gson.toJson(rtn);
+            }
+            Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
+            Order searchOrder = getGson().fromJson(getGson().toJson(data.getOrder()),Order.class);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code",0);
+            jsonObject.put("desc","success");
+            jsonObject.put("platformOrderId",params);
+            jsonObject.put("orderStatus",new SysFacadeService().tranBdOrderStatus(searchOrder.getStatus()));
+            return jsonObject.toJSONString();
+        } catch (BaiDuException ex) {
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
+        } catch (ScheduleException ex) {
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
+        } catch (Exception ex) {
+            rtn.setCode(-998);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
+        } finally {
+            //有异常产生
+            if (log != null) {
+                log.setLogId(params.concat(log.getLogId()));
+                log.setTitle(MessageFormat.format("查看{0}订单状态失败", params));
+                if (StringUtil.isEmpty(log.getRequest()))
+                    log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},", params)).concat("}"));
+                sysFacadeService.updSynLog(log);
+                rtn.setDynamic(params);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log.getLogId());
+                rtn.setRemark(MessageFormat.format("查看{0}订单状态失败！", params));
             }
         }
         result = gson1.toJson(rtn);

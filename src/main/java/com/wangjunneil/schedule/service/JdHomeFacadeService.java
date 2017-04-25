@@ -177,6 +177,57 @@ public class JdHomeFacadeService {
 
 
     /**
+     * 查看订单状态
+     * @param orderId
+     * @return
+     */
+    public String getOrderStatus(String orderId,String shopId){
+        Rtn rtn = new Rtn();
+        Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        //拼装返回格式
+        //判断参数是否有值
+        if(StringUtil.isEmpty(orderId)){
+            return gson.toJson(rtn);
+        }
+        try {
+            OrderInfoDTO orderInfoDTO = getOneOrder(orderId,"",shopId);
+            if(orderInfoDTO==null){
+                rtn.setCode(-1);
+                rtn.setRemark("订单不存在");
+                rtn.setDesc("error");
+                rtn.setDynamic(String.valueOf(orderId));
+                return gson.toJson(rtn);
+            }
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code",0);
+            jsonObject.put("desc","success");
+            jsonObject.put("platformOrderId",orderId);
+            jsonObject.put("orderStatus",new SysFacadeService().tranJHOrderStatus(orderInfoDTO.getOrderStatus()));
+        }catch (Exception ex){
+            log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            rtn.setCode(-998);
+        }finally {
+            //有异常产生
+            if (log1 !=null){
+                log1.setLogId(shopId.concat(log1.getLogId()));
+                log1.setTitle(MessageFormat.format("查询门店{0}状态失败", shopId));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0}", shopId)).concat("}"));
+                sysFacadeService.updSynLog(log1);
+                rtn.setDynamic(shopId);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log1.getLogId());
+                rtn.setRemark(MessageFormat.format("查询门店{0}状态失败",shopId));
+            }
+            return gson.toJson(rtn);
+        }
+    }
+
+
+    /**
      * 新增商品分类
      * @param shopCategory 商品类别Entity
      * @return String 接口响应信息
@@ -555,6 +606,24 @@ public class JdHomeFacadeService {
             return gson.toJson(rtn);
         }
         try {
+            OrderInfoDTO orderInfoDTO = getOneOrder(orderId,"",shopId);
+            if(orderInfoDTO==null){
+                rtn.setCode(-1);
+                rtn.setRemark("订单不存在");
+                rtn.setDesc("error");
+                rtn.setDynamic(String.valueOf(orderId));
+                return gson.toJson(rtn);
+            }
+            if(orderInfoDTO.getOrderStatus()==Constants.JH_ORDER_WAITING){
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("code",Constants.POS_ORDER_NOT_RECEIVED);
+                jsonObject.put("desc","error");
+                jsonObject.put("remark","订单已确实过，请更新状态");
+                jsonObject.put("orderId",orderId);
+                jsonObject.put("orderStatus",new SysFacadeService().tranJHOrderStatus(orderInfoDTO.getOrderStatus()));
+                return jsonObject.toJSONString();
+            }
+
             String operator = "admin";
             String json = jdHomeApiService.orderAcceptOperate(orderId,shopId,isAgree,operator);
             log.info("=====商家确认/取消接口返回信息:"+json+"=====");

@@ -163,6 +163,8 @@ public final class Constants {
 
     public static final int BD_CANCELED=10;  // 已取消
 
+
+
     /**
      * 京东到家接口URL
      */
@@ -307,21 +309,25 @@ public final class Constants {
 
     public static final int MT_STATUS_CODE_DELIVERYED=20;  // 骑手已取餐
 
+    public static final int MT_STATUS_CODE_DISPACHER_FINISHED=40;  // 骑手已送达
+
+    public static final int MT_STATUS_CODE_DISPACHER_CANCELED=100;  // 配送单已取消
+
 
 
     /*************************************************************************************************************************/
     //pos订单状态
-        public static final int POS_ORDER_SUSPENDING = 10;  // 待处理
+    public static final int POS_ORDER_SUSPENDING = 10;  // 待处理
 
-        public static final int POS_ORDER_CONFIRMED = 20;  // 已确认
+    public static final int POS_ORDER_CONFIRMED = 20;  // 已确认
 
-        public static final int POS_ORDER_DELIVERY = 30;  // 送货中
+    public static final int POS_ORDER_DELIVERY = 30;  // 送货中
 
-        public static final int POS_ORDER_COMPLETED = 40;  // 已完成
+    public static final int POS_ORDER_COMPLETED = 40;  // 已完成
 
-        public static final int POS_ORDER_CANCELED = 50;  //   已取消
+    public static final int POS_ORDER_CANCELED = 50;  //   已取消
 
-        public static final int POS_ORDER_REFUSED = 60;  // 已拒绝
+    public static final int POS_ORDER_REFUSED = 60;  // 已拒绝
 
     public static final int POS_ORDER_DISPATCH_GET = 80;  // 骑手已接单
 

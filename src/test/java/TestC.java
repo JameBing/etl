@@ -16,7 +16,7 @@ public class TestC {
     private static final SystemParam sysPram = new SystemParam("459", "5ca2cf48c1d6dc4253f9d491b2246091");
 
     public static void main(String[] args) {
-        Calendar cale = Calendar.getInstance();
+       /* Calendar cale = Calendar.getInstance();
         for(int i=0;i<12;i++){
             cale.set(Calendar.YEAR,2016);
             cale.set(Calendar.MONTH,i+1);
@@ -34,8 +34,13 @@ public class TestC {
         int second = cale.get(Calendar.SECOND);
         int dow = cale.get(Calendar.DAY_OF_WEEK);
         int dom = cale.get(Calendar.DAY_OF_MONTH);
-        int doy = cale.get(Calendar.DAY_OF_YEAR);
+        int doy = cale.get(Calendar.DAY_OF_YEAR);*/
+        String aa ="%E5%85%B3%E6%96%87%E5%86%9B";
+        try {
+            System.out.println(java.net.URLDecoder.decode(aa,"utf-8"));
+        }catch (Exception e){
 
+        }
 
         /*c.setTime(new Date());
         int totalDays = c.getActualMaximum(Calendar.DAY_OF_MONTH);

@@ -349,8 +349,8 @@ public class WMController {
      * @param request  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/meituan/order/delivery"},method = {RequestMethod.POST})
-    public String orderDelivery(PrintWriter out,HttpServletRequest request,HttpServletResponse response,@RequestBody Delivery delivery){
+    @RequestMapping(value = {"/meituan/order/delivery"},method = {RequestMethod.GET,RequestMethod.POST})
+    public String orderDelivery(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         response.setContentType("text/html;charset=utf-8");
         String platform = null;
         String requestUrl = request.getPathInfo().toLowerCase();
@@ -364,7 +364,23 @@ public class WMController {
                 break;
             default:break;
         }
-        out.println( wmFacadeService.orderDelivery(delivery,platform));
+        System.out.println("测试打印结果："+request.getParameterMap());
+        out.println( wmFacadeService.orderDelivery(request.getParameterMap(), platform));
+        return  null;
+    }
+
+    /**
+     * 查询订单状态
+     * @param out   响应输出流对象
+     * @param request 请求对象  {baidu:{"platformOrderId":"","shopId":""},jdhome:{"platformOrderId":"","shopId":""},meituan:{"platformOrderId":""},eleme:{"platformOrderId":""}}
+     * @param response  浏览器响应对象
+     * @return  {baidu:{code:0,desc:"success",platformOrderId:"",orderStatus:""},jdhome:{code:0,desc:"success",platformOrderId:"",orderStatus:""},...}
+     */
+    @RequestMapping(value = "/shop/getOrderStatus", method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String getOrderStatus(@RequestBody(required = false) ParsFromPos parsFromPos, PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
+        response.setContentType("application/json;charset=utf-8");
+        out.println(wmFacadeService.getOrderStatus(parsFromPos));
         return  null;
     }
 

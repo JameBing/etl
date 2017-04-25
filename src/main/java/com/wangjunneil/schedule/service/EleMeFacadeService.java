@@ -230,6 +230,31 @@ public class EleMeFacadeService {
             return gson1.toJson(rtn);
         }else {
             try {
+                //是否是接单状态
+                OrderRequest request = new OrderRequest();
+                request.setEleme_order_id(elemeOrderId);
+                request.setTp_id("1");
+                String resultStaus = eleMeApiService.orderDetail(request);
+                Result objStatus = getGson().fromJson(resultStaus, Result.class);
+                Order order = getGson().fromJson(getGson().toJson(objStatus.getData()), Order.class);
+                if(order==null){
+                    rtn.setCode(-1);
+                    rtn.setRemark("订单不存在");
+                    rtn.setDesc("error");
+                    rtn.setDynamic(String.valueOf(elemeOrderId));
+                    return gson.toJson(rtn);
+                }
+
+                if(order.getStatuscode()!=Constants.EL_STATUS_CODE_UNPROCESSED){
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("code",Constants.POS_ORDER_NOT_RECEIVED);
+                    jsonObject.put("desc","error");
+                    jsonObject.put("remark","订单已确实过，请更新状态");
+                    jsonObject.put("orderId",elemeOrderId);
+                    jsonObject.put("orderStatus",new SysFacadeService().tranELOrderStatus(order.getStatuscode()));
+                    return jsonObject.toJSONString();
+                }
+
                 OrderRequest orderRequest = new OrderRequest();
                 orderRequest.setEleme_order_id(elemeOrderId);
                 orderRequest.setStatus(status);
@@ -819,6 +844,68 @@ public class EleMeFacadeService {
         }
         return gson1.toJson(rtn);
     }
+
+
+    /**
+     * 获取订单状态
+     * @param orderId
+     * @return
+     */
+    public String getOrderStatus(String orderId,String shopId) {
+        String result = "";
+        Rtn rtn = new Rtn();
+        Log log = null;
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if (StringUtil.isEmpty(orderId)) {
+            return gson1.toJson(rtn);
+        }
+        try {
+            OrderRequest request = new OrderRequest();
+            request.setEleme_order_id(orderId);
+            request.setTp_id("1");
+            String resultStaus = eleMeApiService.orderDetail(request);
+            Result objStatus = getGson().fromJson(resultStaus, Result.class);
+            Order order = getGson().fromJson(getGson().toJson(objStatus.getData()), Order.class);
+            if(order==null){
+                rtn.setCode(-1);
+                rtn.setRemark("订单不存在");
+                rtn.setDesc("error");
+                rtn.setDynamic(String.valueOf(orderId));
+                return gson.toJson(rtn);
+            }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", 0);
+            jsonObject.put("desc", "success");
+            jsonObject.put("platformOrderId", orderId);
+            jsonObject.put("orderStatus", new SysFacadeService().tranELOrderStatus(order.getStatuscode()));
+            return jsonObject.toJSONString();
+        }catch (ElemeException ex){
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex) {
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }catch (Exception ex){
+            rtn.setCode(-998);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }finally {
+            if (log != null) {
+                log.setLogId(orderId.concat(log.getLogId()));
+                log.setTitle(MessageFormat.format("修改订单{0}状态失败", orderId));
+                if (StringUtil.isEmpty(log.getRequest())) {
+                    log.setRequest("{".concat(MessageFormat.format("\"eleme_order_id\":{0}", orderId)).concat("}"));
+                }
+                sysFacadeService.updSynLog(log);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log.getLogId());
+                rtn.setRemark(MessageFormat.format("修改订单{0}状态失败!",orderId));
+            }
+        }
+        return gson1.toJson(rtn);
+    }
+
 
     /**
      * 批量获取餐厅状态
