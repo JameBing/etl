@@ -183,4 +183,11 @@ public class JdHomeInnerService {
             .set("code", jdHomeAccessToken.getCode());
         mongoTemplate.upsert(query, update, JdHomeAccessToken.class);
     }
+
+    //门店接单更新标识
+    public void updateIsReceived(String orderId,int isRec){
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_JDHOME).where("platformOrderId").is(orderId));
+        Update update = new Update().set("isReceived",isRec);
+        mongoTemplate.upsert(query,update, OrderWaiMai.class);
+    }
 }

@@ -74,4 +74,11 @@ public class BaiDuInnerService {
         Update update = new Update().set("order",data);
         return mongoTemplate.updateFirst(query, update, OrderWaiMai.class).getN();
     }
+
+    //门店接单更新标识
+    public void updateIsReceived(String orderId,int isRec){
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_BAIDU).where("platformOrderId").is(orderId));
+        Update update = new Update().set("isReceived",isRec);
+        mongoTemplate.upsert(query,update, OrderWaiMai.class);
+    }
 }

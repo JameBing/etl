@@ -27,6 +27,8 @@ public class OrderWaiMai {
 
     private Date createTime;
 
+    private Integer isReceived; //门店是否接单  1.接单 2.拒单  默认值 0 门店未操作
+
     public   void setPlatform(String platform){
         this.platform = platform;
     }
@@ -81,5 +83,13 @@ public class OrderWaiMai {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getIsReceived() {
+        return isReceived==null?0:isReceived;
+    }
+
+    public void setIsReceived(Integer isReceived) {
+        this.isReceived = isReceived;
     }
 }

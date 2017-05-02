@@ -575,6 +575,8 @@ public class MeiTuanFacadeService {
                 rtn.setCode(0);
                 rtn.setDesc("success");
                 rtn.setRemark("成功");
+                //更新门店是否接单标识字段
+                mtInnerService.updateIsReceived(String.valueOf(orderId),1);
             }
         }catch (MeiTuanException ex){
             rtn.setCode(-997);
@@ -646,6 +648,8 @@ public class MeiTuanFacadeService {
                 rtn.setCode(0);
                 rtn.setDesc("success");
                 rtn.setRemark("成功");
+                //更新门店是否接单标识字段
+                mtInnerService.updateIsReceived(String.valueOf(orderId),2);
             }
         }catch (MeiTuanException ex){
             rtn.setCode(-997);
@@ -803,14 +807,14 @@ public class MeiTuanFacadeService {
         }
         try{
             OrderDetailParam param = getOrderDetail(delivery.getOrder_id());
-            System.out.println("配送订单详情："+param);
-            System.out.println("订单ID："+param.getOrder_id());
             if(StringUtil.isEmpty(param)){
                 return  "{\"code\":802,\"msg\":\"配送订单不存在\"}";
             }
             mtInnerService.updateStatus(String.valueOf(delivery.getOrder_id()),delivery.getLogistics_status());
-            sysFacadeService.topicMessageOrderDelivery(Constants.PLATFORM_WAIMAI_MEITUAN, delivery.getLogistics_status(), delivery.getOrder_id().toString(),
-                delivery.getDispatcher_mobile(), delivery.getDispatcher_name(), param.getApp_poi_code());
+            if(delivery.getLogistics_status()==Constants.MT_STATUS_CODE_RECEIVED){
+                sysFacadeService.topicMessageOrderDelivery(Constants.PLATFORM_WAIMAI_MEITUAN, delivery.getLogistics_status(), delivery.getOrder_id().toString(),
+                    delivery.getDispatcher_mobile(), delivery.getDispatcher_name(), param.getApp_poi_code());
+            }
             return "{\"data\" : \"ok\"}";
         }catch (Exception ex){
             rtn.setCode(-998);

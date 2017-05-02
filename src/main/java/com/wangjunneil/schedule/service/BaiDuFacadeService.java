@@ -602,9 +602,11 @@ public class BaiDuFacadeService {
             result = baiDuApiService.orderConfirm(order);
             rtn = gson1.fromJson(result,Rtn.class);
             //统一状态码给POS
-            if(!StringUtil.isEmpty(rtn.getCode()) && rtn.getCode()==20216){
+            if(!StringUtil.isEmpty(rtn.getCode()) && rtn.getCode()==20216) {
                 rtn.setCode(Constants.RETURN_ORDER_CODE);
             }
+            //更新门店是否接单标识字段
+            baiDuInnerService.updateIsReceived(params,1);
         }catch (BaiDuException ex){
             rtn.setCode(-997);
             log = sysFacadeService.functionRtn.apply(ex);
@@ -674,6 +676,8 @@ public class BaiDuFacadeService {
             if(!StringUtil.isEmpty(rtn.getCode()) && rtn.getCode()==20016){
                 rtn.setCode(Constants.RETURN_ORDER_CODE);
             }
+            //更新门店是否接单标识字段
+            baiDuInnerService.updateIsReceived(params,2);
         }catch (BaiDuException ex){
             rtn.setCode(-997);
             log = sysFacadeService.functionRtn.apply(ex);

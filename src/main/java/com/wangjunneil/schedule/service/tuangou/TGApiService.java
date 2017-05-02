@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author yangyongbing
@@ -102,7 +104,11 @@ public class TGApiService {
         request.setRequestSysParams(sysParams);
         request.setCouponCode(couponRequest.getCouponCode());
         request.setCount(couponRequest.getCount());
-        request.seteOrderId(Long.parseLong(couponRequest.geteOrderId()));
+        //获取数字
+        Pattern p = Pattern.compile("[^0-9]");
+        Matcher m = p.matcher(couponRequest.geteOrderId());
+        String orderId = m.replaceAll("");
+        request.seteOrderId(Long.parseLong(orderId));
         request.seteId(Long.parseLong(couponRequest.getePoiId()));
         request.seteName(accessToken.getEpoiName());
         String resultJson = "";

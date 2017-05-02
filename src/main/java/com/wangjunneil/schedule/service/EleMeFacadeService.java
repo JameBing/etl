@@ -275,6 +275,12 @@ public class EleMeFacadeService {
                     rtn.setRemark(MessageFormat.format("订单{0}不存在", elemeOrderId));
                 }
                 rtn.setDesc("success");
+                //更新门店是否接单标识字段
+                if("2".equals(status)){
+                    eleMeInnerService.updateIsReceived(elemeOrderId,1);
+                }else {
+                    eleMeInnerService.updateIsReceived(elemeOrderId,2);
+                }
             }catch (ElemeException ex){
                 rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);

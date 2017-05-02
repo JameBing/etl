@@ -35,9 +35,9 @@ public class TestC {
         int dow = cale.get(Calendar.DAY_OF_WEEK);
         int dom = cale.get(Calendar.DAY_OF_MONTH);
         int doy = cale.get(Calendar.DAY_OF_YEAR);*/
-        String aa ="%E5%85%B3%E6%96%87%E5%86%9B";
+        String aa ="http://etl.ziyanfoods.com:8080/mark/tuangou/callBack";
         try {
-            System.out.println(java.net.URLDecoder.decode(aa,"utf-8"));
+            System.out.println(java.net.URLEncoder.encode(aa,"utf-8"));
         }catch (Exception e){
 
         }

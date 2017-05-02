@@ -364,7 +364,6 @@ public class WMController {
                 break;
             default:break;
         }
-        System.out.println("测试打印结果："+request.getParameterMap());
         out.println( wmFacadeService.orderDelivery(request.getParameterMap(), platform));
         return  null;
     }

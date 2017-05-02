@@ -601,6 +601,7 @@ public class JdHomeFacadeService {
     public String orderAcceptOperate(String orderId,String shopId,Boolean isAgree){
         Rtn rtn = new Rtn();
         Log log1 = null;
+        int isRec =0;
         Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if(StringUtil.isEmpty(orderId) || StringUtil.isEmpty(shopId) || StringUtil.isEmpty(isAgree)){
             return gson.toJson(rtn);
@@ -639,13 +640,17 @@ public class JdHomeFacadeService {
             if("0".equals(jsonObject.getString("code")) && "0".equals(apiJson.getString("code"))){
                int status = 0;
                if(isAgree){
+                   isRec=1;
                    status =Constants.JH_ORDER_RECEIVED;
                }
                if(!isAgree){
+                   isRec=2;
                    status = Constants.JH_ORDER_USER_CANCELLED;
                }
                jdHomeInnerService.updateStatus(orderId,status);
             }
+            //更新门店是否接单标识字段
+            jdHomeInnerService.updateIsReceived(orderId,isRec);
         }catch (JdHomeException ex) {
             rtn.setCode(-997);
             log1 = sysFacadeService.functionRtn.apply(ex);

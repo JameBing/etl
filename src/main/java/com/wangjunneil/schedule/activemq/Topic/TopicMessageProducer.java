@@ -30,6 +30,7 @@ import javax.jms.*;
                               //TextMessage textMessage = session.createTextMessage(message+ ( StringUtil.isEmpty(selector)?"":(",receiver:'".concat(selector).concat("'"))));
                                 TextMessage textMessage = session.createTextMessage(message);
                                 textMessage.setStringProperty("Selector",selector);
+                                textMessage.setJMSExpiration(180000);
                             //   textMessage.setJMSReplyTo(destination);
                                return textMessage;
                             }
@@ -48,6 +49,7 @@ import javax.jms.*;
                                  TextMessage textMessage = session.createTextMessage(new Gson().toJson(jsonObject) );
                                  textMessage.setStringProperty("Selector",selector);
                                  textMessage.setJMSReplyTo(destination);
+                                 textMessage.setJMSExpiration(180000);
                                  return textMessage;
                              }
                          });
