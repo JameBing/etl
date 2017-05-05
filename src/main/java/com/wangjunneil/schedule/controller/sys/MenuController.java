@@ -80,6 +80,9 @@ public class MenuController {
             dashboardMenu.setMenuIcon("fa fa-dashboard");
             menus.add(0, dashboardMenu);
         }
+        //外卖订单菜单
+        Menu wmMenu = adWmOrderMenu();  //饿了么菜单
+        menus.add(wmMenu);
 
         // 配置中心菜单始终存在
         Menu configMenu = new Menu("配置管理", "#/configure", "fa fa-gears");
@@ -212,6 +215,23 @@ public class MenuController {
         emMenus.add(orderMenu);
         emMenu.setMenu(emMenus);
         return emMenu;
+    }
+
+    private Menu adWmOrderMenu() {
+        // 一级菜单
+        Menu wmMenu = new Menu();
+        wmMenu.setMenuName("外卖订单管理");
+        wmMenu.setMenuIcon("fa fa-calculator");
+
+        // child menu
+        Menu orderMenu = new Menu("今日订单", "#/nowDayOrder");
+        Menu controlMenu = new Menu("历史订单", "#/historyOrder");
+
+        List<Menu> wmMenus = new ArrayList<>();
+        wmMenus.add(controlMenu);
+        wmMenus.add(orderMenu);
+        wmMenu.setMenu(wmMenus);
+        return wmMenu;
     }
 
 

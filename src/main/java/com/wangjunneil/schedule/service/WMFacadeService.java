@@ -1,11 +1,15 @@
 package com.wangjunneil.schedule.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.SysParams;
 import com.wangjunneil.schedule.entity.baidu.SysParamsSerializer;
 import com.wangjunneil.schedule.entity.common.*;
 import com.wangjunneil.schedule.entity.meituan.Delivery;
+import com.wangjunneil.schedule.entity.sys.Page;
+import com.wangjunneil.schedule.entity.z8.Z8CrmOrder;
+import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +38,9 @@ public class WMFacadeService {
 
     @Autowired
     private SysFacadeService sysFacadeService;
+
+    @Autowired
+    private SysInnerService sysInnerService;
 
     //========================下行接口=================================/
 
@@ -414,6 +421,18 @@ public class WMFacadeService {
     public static<T> String map2Json(Map<String,T> map){
         Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
         return gson.toJson(map);
+    }
+
+    //查询当日订单
+    public String getNowDayOrder(Map<String, String> paramMap, Page<OrderWaiMai> page){
+        Page<OrderWaiMai> returnPage = sysInnerService.getNowDayOrder(paramMap, page);
+        return JSONObject.toJSONString(returnPage);
+    }
+
+    //查询当日订单
+    public String getHistoryOrder(Map<String, String> paramMap, Page<OrderWaiMaiHistory> page){
+        Page<OrderWaiMaiHistory> returnPage = sysInnerService.getHistoryOrder(paramMap, page);
+        return JSONObject.toJSONString(returnPage);
     }
 
 

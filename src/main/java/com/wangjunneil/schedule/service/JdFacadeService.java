@@ -55,7 +55,7 @@ public class JdFacadeService {
     @Autowired
     private JobService jobService;
 
-    @Autowired
+    //@Autowired
     private QueueMessageProducer messageProducer;
 
     // --------------------------------------------------------------------------------------------------- public method

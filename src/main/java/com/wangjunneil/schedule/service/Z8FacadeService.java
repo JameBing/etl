@@ -31,7 +31,7 @@ public class Z8FacadeService {
     @Autowired
     private Z8ApiService z8ApiService;
 
-    @Autowired
+    //@Autowired
     private QueueMessageProducer messageProducer;
 
     // --------------------------------------------------------------------------------------------------- public method

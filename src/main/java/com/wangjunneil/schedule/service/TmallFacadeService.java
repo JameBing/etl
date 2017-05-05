@@ -39,7 +39,7 @@ public class TmallFacadeService implements MessageListener {
     @Autowired
     private TmallApiService tmallApiService;
 
-    @Autowired
+    //@Autowired
     private QueueMessageProducer messageProducer;
 
     // --------------------------------------------------------------------------------------------------- public method

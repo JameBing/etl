@@ -7,22 +7,104 @@
 var adminLteApp = angular.module("adminLteApp", ['ngRoute']);
 //var adminLteApp = angular.module("adminLteApp", ['ngRoute','ngFileUpload']);
 /*var adminLteApp = angular.module("adminLteApp", ['ngRoute']).directive('fileModel', ['$parse', function ($parse) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs, ngModel) {
-            var model = $parse(attrs.fileModel);
-            var modelSetter = model.assign;
-            element.bind('change', function(event){
-                scope.$apply(function(){
-                    modelSetter(scope, element[0].files[0]);
-                });
-                //附件预览
-                scope.file = (event.srcElement || event.target).files[0];
-                scope.getFile();
-            });
+ return {
+ restrict: 'A',
+ link: function(scope, element, attrs, ngModel) {
+ var model = $parse(attrs.fileModel);
+ var modelSetter = model.assign;
+ element.bind('change', function(event){
+ scope.$apply(function(){
+ modelSetter(scope, element[0].files[0]);
+ });
+ //附件预览
+ scope.file = (event.srcElement || event.target).files[0];
+ scope.getFile();
+ });
+ }
+ };
+ }]);*/
+
+adminLteApp.filter("baiduOrderStatus",function(){
+    return function(val){
+        if (val == 1) {
+            return '待处理';
+        } else if (val == 5) {
+            return '已确定';
+        } else if (val == 8){
+            return '送货中'
+        }else if (val == 9){
+            return '已完成'
+        }else if (val == 10){
+            return '已取消'
+        }else {
+            return '其他'
         }
-    };
-}]);*/
+    }
+});
+
+adminLteApp.filter("jdhomeOrderStatus",function(){
+    return function(val){
+        if (val == 41000) {
+            return '待处理';
+        } else if (val == 32000) {
+            return '已确定';
+        } else if (val == 33040){
+            return '送货中'
+        }else if (val == 33060){
+            return '已完成'
+        }else if (val == 20020){
+            return '已取消'
+        }else {
+            return '其他'
+        }
+    }
+});
+
+adminLteApp.filter("meituanOrderStatus",function(){
+    return function(val){
+        if (val == 2) {
+            return '待处理';
+        } else if (val == 4) {
+            return '已确定';
+        } else if (val == 6){
+            return '送货中'
+        }else if (val == 8){
+            return '已完成'
+        }else if (val == 9){
+            return '已取消'
+        }else if (val == 0){
+            return '生成众包单'
+        }else if (val == 10){
+            return '骑手已接单'
+        }else if (val == 20){
+            return '骑手已取餐'
+        }else if (val == 40){
+            return '已完成'
+        }else {
+            return '其他'
+        }
+    }
+});
+
+adminLteApp.filter("elemeOrderStatus",function(){
+    return function(val){
+        if (val == 0) {
+            return '待处理';
+        } else if (val == 2) {
+            return '已确定';
+        } else if (val == 3){
+            return '送货中'
+        }else if (val == 9){
+            return '已完成'
+        }else if (val == -1){
+            return '已取消'
+        }else {
+            return '其他'
+        }
+    }
+});
+
+
 adminLteApp.config(function($routeProvider) {
     $routeProvider
         .when('/', {
@@ -68,6 +150,14 @@ adminLteApp.config(function($routeProvider) {
         .when('/elemeOrder', {
             templateUrl:'views/elemeOrder.html',
             controller:'ElemeOrderCtrl'
+        })
+        .when('/nowDayOrder', {
+            templateUrl:'views/wmNowDayOrder.html',
+            controller:'WMOrderCtrl'
+        })
+        .when('/historyOrder', {
+            templateUrl:'views/wmHistoryOrder.html',
+            controller:'WMOrderCtrl'
         })
         .when('/configure', {
             templateUrl: 'views/configure.html',
@@ -120,8 +210,8 @@ adminLteApp.controller('JdControlCtrl', function ($scope, $http) {
                 //console.log("startListening",data);
                 if(data.status == 0){
                     $('#foo').popover({
-                            trigger: 'manual'
-                        })
+                        trigger: 'manual'
+                    })
                         .on('focus', function() {
                             // 获得焦点时隐藏
                             $(this).popover('hide');
@@ -238,7 +328,7 @@ adminLteApp.controller('ElemeOrderCtrl', function ($scope, $http) {
         $scope.overlayStatus = true;
         $scope.select_status = false;//隐藏所有状态
         var params = {};
-        $http({url:"/mark/waimai/elemetext.php", method:"POST", params:params})
+        $http({url:"/mark/waimai/get.php", method:"POST", params:params})
             .success(function(data) {
                 debugger;
                 $scope.overlayStatus = false;
@@ -266,6 +356,337 @@ adminLteApp.controller('ElemeOrderCtrl', function ($scope, $http) {
     setTimeout($scope.queryElemeOrder,500);
 
 });
+
+
+//今日外卖订单查询
+adminLteApp.controller('WMOrderCtrl', function ($scope, $http) {
+
+    $scope.selected = {status:'所有状态',value:''};
+    $scope.orderStatus = [
+        {status:'所有状态',value:''},
+        {status:'待处理',value:'10'},
+        {status:'已确认',value:'20'},
+        {status:'送货中',value:'30'},
+        {status:'已完成',value:'40'},
+        {status:'已取消',value:'50'},
+        {status:'已拒绝',value:'60'},
+        {status:'骑手已接单',value:'80'},
+        {status:'其它',value:'90'}
+    ];
+
+    $scope.platformSelected = {status:'所有平台',value:''};
+    $scope.platformType = [
+        {status:'所有平台',value:''},
+        {status:'baidu',value:'baidu'},
+        {status:'jdhome',value:'jdhome'},
+        {status:'meituan',value:'meituan'},
+        {status:'eleme',value:'eleme'},
+    ];
+
+    $scope.receiveSelected = {status:'所有状态',value:''};
+    $scope.receiveType = [
+        {status:'所有状态',value:''},
+        {status:'已接单',value:'1'},
+        {status:'已拒单',value:'2'},
+        {status:'未处理',value:'0'}
+    ];
+
+    //当前页
+    $scope.currentPage = 1;
+    //每页显示条数
+    $scope.pageSize = 20;
+    //总数
+    $scope.totalSize = 0;
+    //总页数
+    $scope.totalPages = 0;
+
+    $scope.select_status = true;//显示所有状态
+    $scope.showStatus = function(){
+        $scope.select_status = false;//隐藏所有状态
+    };
+    $scope.overlayStatus = false;//查询进度条初始化
+    $scope.status = false;//提示条初始化
+
+    //分页查询
+    $scope.getListByPage = function() {
+        $scope.overlayStatus = true;
+        $scope.select_status = false;//隐藏所有状态
+
+        var sellerId = $scope.sellerId;
+        var shopId = $scope.shopId;
+        var orderId = $scope.orderId;
+        var platformOrderId = $scope.platformOrderId;
+        var orderStatus = $scope.selected.value;
+        var platform = $scope.platformSelected.value;
+        var receive = $scope.receiveSelected.value;
+
+        var params = { currentPage:$scope.currentPage,
+            pageSize:$scope.pageSize,
+            sellerId:sellerId,
+            shopId:shopId,
+            orderId:orderId,
+            platformOrderId:platformOrderId,
+            orderStatus:orderStatus,
+            platform:platform,
+            receive:receive};
+
+        $http({url:"/mark/order/getNowDayOrder.php", method:"POST", params:params})
+            .success(function(data) {
+                $scope.overlayStatus = false;
+                var result = data;
+                if(result.pageDataList.length == 0){
+                    $scope.status = true;
+                    $scope.msg = 'no order data!';
+                    $scope.currentPage = 1;
+                    $scope.totalSize = 0;
+                    $scope.totalPages = 1;
+                    $scope.orderList = null;
+                }else{
+                    $scope.status = false;
+                    $scope.currentPage = parseInt(result.currentPage);
+                    $scope.totalSize = result.totalNum;
+                    $scope.totalPages = result.totalPage;
+
+                    $scope.orderList = result.pageDataList;
+                }
+            })
+            .error(function(data) {
+                $scope.overlayStatus = false;
+                $scope.status = true;
+                $scope.msg = 'Request processing failed!';
+            });
+    }
+
+    //查询订单
+    $scope.queryWMOrder = function (){
+        $scope.currentPage = parseInt(1);//当前页
+        $scope.getListByPage();
+    };
+
+    //初始化加载
+    setTimeout($scope.queryWMOrder,500);
+
+    //首页
+    $scope.prevPage = function(){
+        if ($scope.currentPage == 1) {
+            return;
+        } else {
+            $scope.currentPage = parseInt(1);
+            $scope.getListByPage();
+        }
+    };
+    //上一页
+    $scope.pageUp = function(){
+        if ($scope.currentPage == 1) {
+            return;
+        } else {
+            $scope.currentPage = parseInt($scope.currentPage) - 1;
+            $scope.getListByPage();
+        }
+    };
+    //下一页
+    $scope.pageDown = function(){
+        if ($scope.currentPage == $scope.totalPages) {
+            return;
+        } else {
+            $scope.currentPage = parseInt($scope.currentPage) + 1;
+            $scope.getListByPage();
+        }
+    };
+    //尾页
+    $scope.nextPage = function(){
+        if ($scope.currentPage == $scope.totalPages) {
+            return;
+        } else {
+            $scope.currentPage = parseInt($scope.totalPages);
+            $scope.getListByPage();
+        }
+    };
+
+    $scope.pageSizeNum = $scope.pageSize;//每页显示数
+    $scope.pageLength = function(){
+        if($scope.pageSizeNum == undefined){
+            $scope.pageSize = 20;
+        } else{
+            $scope.pageSize = $scope.pageSizeNum;
+        }
+        $scope.currentPage = parseInt(1);//当前页
+        $scope.getListByPage();
+    }
+
+});
+
+
+//历史外卖订单查询
+adminLteApp.controller('WMHistoryOrderCtrl', function ($scope, $http) {
+
+    $scope.selected = {status:'所有状态',value:''};
+    $scope.orderStatus = [
+        {status:'所有状态',value:''},
+        {status:'待处理',value:'10'},
+        {status:'已确认',value:'20'},
+        {status:'送货中',value:'30'},
+        {status:'已完成',value:'40'},
+        {status:'已取消',value:'50'},
+        {status:'已拒绝',value:'60'},
+        {status:'骑手已接单',value:'80'},
+        {status:'其它',value:'90'}
+    ];
+
+    $scope.platformSelected = {status:'所有平台',value:''};
+    $scope.platformType = [
+        {status:'所有平台',value:''},
+        {status:'baidu',value:'baidu'},
+        {status:'jdhome',value:'jdhome'},
+        {status:'meituan',value:'meituan'},
+        {status:'eleme',value:'eleme'},
+    ];
+
+    $scope.receiveSelected = {status:'所有状态',value:''};
+    $scope.receiveType = [
+        {status:'所有状态',value:''},
+        {status:'已接单',value:'1'},
+        {status:'已拒单',value:'2'},
+        {status:'未处理',value:'0'}
+    ];
+
+    //当前页
+    $scope.currentPage = 1;
+    //每页显示条数
+    $scope.pageSize = 20;
+    //总数
+    $scope.totalSize = 0;
+    //总页数
+    $scope.totalPages = 0;
+
+    $scope.select_status = true;//显示所有状态
+    $scope.showStatus = function(){
+        $scope.select_status = false;//隐藏所有状态
+    };
+    $scope.overlayStatus = false;//查询进度条初始化
+    $scope.status = false;//提示条初始化
+
+    //分页查询
+    $scope.getListByPage = function() {
+        $scope.overlayStatus = true;
+        $scope.select_status = false;//隐藏所有状态
+
+        var sellerId = $scope.sellerId;
+        var shopId = $scope.shopId;
+        var orderId = $scope.orderId;
+        var platformOrderId = $scope.platformOrderId;
+        var orderStatus = $scope.selected.value;
+        var platform = $scope.platformSelected.value;
+        var receive = $scope.receiveSelected.value;
+
+        var timeRange = $("#reservationtime").val();
+        var startDate;
+        var endDate;
+        if (timeRange !=null && timeRange != "") {
+            var startStr = timeRange.substring(0,16);
+            var endStr = timeRange.substring(19,timeRange.length);
+            startDate = startStr+':00';
+            endDate = endStr+':59';
+        }
+
+        var params = { currentPage:$scope.currentPage,
+            pageSize:$scope.pageSize,
+            sellerId:sellerId,
+            shopId:shopId,
+            orderId:orderId,
+            platformOrderId:platformOrderId,
+            orderStatus:orderStatus,
+            platform:platform,
+            receive:receive,
+            startDate:startDate,
+            endDate:endDate};
+
+        $http({url:"/mark/order/getHistoryOrder.php", method:"POST", params:params})
+            .success(function(data) {
+                $scope.overlayStatus = false;
+                var result = data;
+                if(result.pageDataList.length == 0){
+                    $scope.status = true;
+                    $scope.msg = 'no order data!';
+                    $scope.currentPage = 1;
+                    $scope.totalSize = 0;
+                    $scope.totalPages = 1;
+                    $scope.orderList = null;
+                }else{
+                    $scope.status = false;
+                    $scope.currentPage = parseInt(result.currentPage);
+                    $scope.totalSize = result.totalNum;
+                    $scope.totalPages = result.totalPage;
+
+                    $scope.orderList = result.pageDataList;
+                }
+            })
+            .error(function(data) {
+                $scope.overlayStatus = false;
+                $scope.status = true;
+                $scope.msg = 'Request processing failed!';
+            });
+    }
+
+    //查询订单
+    $scope.queryWMOrder = function (){
+        $scope.currentPage = parseInt(1);//当前页
+        $scope.getListByPage();
+    };
+
+    //初始化加载
+    setTimeout($scope.queryWMOrder,500);
+
+    //首页
+    $scope.prevPage = function(){
+        if ($scope.currentPage == 1) {
+            return;
+        } else {
+            $scope.currentPage = parseInt(1);
+            $scope.getListByPage();
+        }
+    };
+    //上一页
+    $scope.pageUp = function(){
+        if ($scope.currentPage == 1) {
+            return;
+        } else {
+            $scope.currentPage = parseInt($scope.currentPage) - 1;
+            $scope.getListByPage();
+        }
+    };
+    //下一页
+    $scope.pageDown = function(){
+        if ($scope.currentPage == $scope.totalPages) {
+            return;
+        } else {
+            $scope.currentPage = parseInt($scope.currentPage) + 1;
+            $scope.getListByPage();
+        }
+    };
+    //尾页
+    $scope.nextPage = function(){
+        if ($scope.currentPage == $scope.totalPages) {
+            return;
+        } else {
+            $scope.currentPage = parseInt($scope.totalPages);
+            $scope.getListByPage();
+        }
+    };
+
+    $scope.pageSizeNum = $scope.pageSize;//每页显示数
+    $scope.pageLength = function(){
+        if($scope.pageSizeNum == undefined){
+            $scope.pageSize = 20;
+        } else{
+            $scope.pageSize = $scope.pageSizeNum;
+        }
+        $scope.currentPage = parseInt(1);//当前页
+        $scope.getListByPage();
+    }
+});
+
+
 /*********************************************************************/
 adminLteApp.controller('JdOrderCtrl', function ($scope, $http, $location) {
 
@@ -335,64 +756,64 @@ adminLteApp.controller('JdOrderCtrl', function ($scope, $http, $location) {
             endDate:endDate};
         //console.log(params);
         $http({url:"/mark/jd/getHistoryOrder.php", method:"POST", params:params})
-         .success(function(data) {
-            $scope.overlayStatus = false;
-            var result = data;
-            if(result.pageDataList.length == 0){
-                $scope.status = true;
-                $scope.msg = 'no order data!';
+            .success(function(data) {
+                $scope.overlayStatus = false;
+                var result = data;
+                if(result.pageDataList.length == 0){
+                    $scope.status = true;
+                    $scope.msg = 'no order data!';
 
-                $scope.currentPage = 1;
-                $scope.totalSize = 0;
-                $scope.totalPages = 1;
-                $scope.oderList = null;
-            }else{
-                $scope.status = false;
-                $scope.currentPage = parseInt(result.currentPage);
-                $scope.totalSize = result.totalNum;
-                $scope.totalPages = result.totalPage;
+                    $scope.currentPage = 1;
+                    $scope.totalSize = 0;
+                    $scope.totalPages = 1;
+                    $scope.oderList = null;
+                }else{
+                    $scope.status = false;
+                    $scope.currentPage = parseInt(result.currentPage);
+                    $scope.totalSize = result.totalNum;
+                    $scope.totalPages = result.totalPage;
 
-                $scope.oderList = result.pageDataList;
-                angular.forEach($scope.oderList,function(order_info,oindex,array){
-                    order_info.orderstate = order_info.order_state;
-                    /*if(order_info.order_state == ''){
-                        order_info.orderstate = '所有状态';
-                    }
-                    if(order_info.order_state == 'WAIT_SELLER_STOCK_OUT'){
-                        order_info.orderstate = '等待出库';
-                    }
-                    if(order_info.order_state == 'WAIT_GOODS_RECEIVE_CONFIRM'){
-                        order_info.orderstate = '等待确认收货';
-                    }
-                    if(order_info.order_state == 'FINISHED_L'){
-                        order_info.orderstate = '完成';
-                    }
-                    if(order_info.order_state == 'TRADE_CANCELED'){
-                        order_info.orderstate = '取消';
-                    }*/
-                    /*if(order_info.order_state == 'LOCKED'){
-                     order_info.orderstate = '已锁定';
-                     }
-                     if(order_info.order_state == 'PAUSE'){
-                     order_info.orderstate = '暂停';
-                     }*/
-                    var order_item = angular.fromJson(order_info.consignee_info);//收货信息
-                    order_info.fullname = order_item.fullname;
-                    order_info.mobile = order_item.mobile;
-                    order_info.province = order_item.province;
-                    order_info.city = order_item.city;
-                    order_info.county = order_item.county;
-                    order_info.full_address = order_item.fullAddress;
-                });
-            }
-         })
-        .error(function(data,header,config,status) {
-            if(header == "777"){
-                location.href="/console";
-                return;
-            }
-            location.href="/console/main.html#/error?message=Tmall authorize callback error";
-        });
+                    $scope.oderList = result.pageDataList;
+                    angular.forEach($scope.oderList,function(order_info,oindex,array){
+                        order_info.orderstate = order_info.order_state;
+                        /*if(order_info.order_state == ''){
+                         order_info.orderstate = '所有状态';
+                         }
+                         if(order_info.order_state == 'WAIT_SELLER_STOCK_OUT'){
+                         order_info.orderstate = '等待出库';
+                         }
+                         if(order_info.order_state == 'WAIT_GOODS_RECEIVE_CONFIRM'){
+                         order_info.orderstate = '等待确认收货';
+                         }
+                         if(order_info.order_state == 'FINISHED_L'){
+                         order_info.orderstate = '完成';
+                         }
+                         if(order_info.order_state == 'TRADE_CANCELED'){
+                         order_info.orderstate = '取消';
+                         }*/
+                        /*if(order_info.order_state == 'LOCKED'){
+                         order_info.orderstate = '已锁定';
+                         }
+                         if(order_info.order_state == 'PAUSE'){
+                         order_info.orderstate = '暂停';
+                         }*/
+                        var order_item = angular.fromJson(order_info.consignee_info);//收货信息
+                        order_info.fullname = order_item.fullname;
+                        order_info.mobile = order_item.mobile;
+                        order_info.province = order_item.province;
+                        order_info.city = order_item.city;
+                        order_info.county = order_item.county;
+                        order_info.full_address = order_item.fullAddress;
+                    });
+                }
+            })
+            .error(function(data,header,config,status) {
+                if(header == "777"){
+                    location.href="/console";
+                    return;
+                }
+                location.href="/console/main.html#/error?message=Tmall authorize callback error";
+            });
     }
 
     //查询订单
@@ -471,51 +892,51 @@ adminLteApp.controller('JdPartyCtrl', function ($scope, $http) {
     $scope.getListByPage = function() {
         $scope.overlayStatus = true;
         /*var dateRange = $("#reservation").val();
-        var startDate;
-        var endDate;
-        if (dateRange !=null && dateRange != "") {
-            var startStr = dateRange.substring(0,10);
-            var endStr = dateRange.substring(13,dateRange.length);
-            startDate = startStr+" 00:00:00";
-            endDate = endStr+" 23:59:59";
-        }
-        var grade=JSON.stringify($scope.grade);
-        //console.log(grade);
-        var minTradeCount=$scope.minTradeCount;
-        var maxTradeCount=$scope.maxTradeCount;
-        if(undefined != minTradeCount && undefined != maxTradeCount){
-            if(parseInt(minTradeCount)>parseInt(maxTradeCount)){
-                $scope.status = true;
-                $scope.msg = 'MinTradeCount not great MaxTradeCount!';
-                return;
-            }
-        }
-        if(undefined != minTradeCount && undefined == maxTradeCount){
-            $scope.status = true;
-            $scope.msg = 'MaxTradeCount not null!';
-            return;
-        }
-        if(undefined == minTradeCount && undefined != maxTradeCount){
-            $scope.status = true;
-            $scope.msg = 'MinTradeCount not null!';
-            return;
-        }
-        var minTradeAmount=$scope.minTradeAmount;
-        var avePrice=$scope.avePrice;
-        var params = { currentPage:$scope.currentPage,
-            pageSize:$scope.pageSize,
-            customerPin:$scope.customerPin,
-            grade:grade,
-            minTradeTime:startDate,
-            maxTradeTime:endDate,
-            minTradeCount:minTradeCount,
-            maxTradeCount:maxTradeCount,
-            minTradeAmount:minTradeAmount,
-            avePrice:avePrice
-            };*/
+         var startDate;
+         var endDate;
+         if (dateRange !=null && dateRange != "") {
+         var startStr = dateRange.substring(0,10);
+         var endStr = dateRange.substring(13,dateRange.length);
+         startDate = startStr+" 00:00:00";
+         endDate = endStr+" 23:59:59";
+         }
+         var grade=JSON.stringify($scope.grade);
+         //console.log(grade);
+         var minTradeCount=$scope.minTradeCount;
+         var maxTradeCount=$scope.maxTradeCount;
+         if(undefined != minTradeCount && undefined != maxTradeCount){
+         if(parseInt(minTradeCount)>parseInt(maxTradeCount)){
+         $scope.status = true;
+         $scope.msg = 'MinTradeCount not great MaxTradeCount!';
+         return;
+         }
+         }
+         if(undefined != minTradeCount && undefined == maxTradeCount){
+         $scope.status = true;
+         $scope.msg = 'MaxTradeCount not null!';
+         return;
+         }
+         if(undefined == minTradeCount && undefined != maxTradeCount){
+         $scope.status = true;
+         $scope.msg = 'MinTradeCount not null!';
+         return;
+         }
+         var minTradeAmount=$scope.minTradeAmount;
+         var avePrice=$scope.avePrice;
+         var params = { currentPage:$scope.currentPage,
+         pageSize:$scope.pageSize,
+         customerPin:$scope.customerPin,
+         grade:grade,
+         minTradeTime:startDate,
+         maxTradeTime:endDate,
+         minTradeCount:minTradeCount,
+         maxTradeCount:maxTradeCount,
+         minTradeAmount:minTradeAmount,
+         avePrice:avePrice
+         };*/
         var params = { currentPage:$scope.currentPage,
             pageSize:$scope.pageSize
-            };
+        };
         //console.log(params);
         $http({url:"/mark/jd/getCrmMember.php", method:"POST", params:params})
             .success(function(data) {
@@ -1150,47 +1571,47 @@ adminLteApp.controller('TmallRefundCtrl', function ($scope, $http, $routeParams)
 
     //同意退款
     /*$scope.refundAgree = function(refundId, refundPhase, refundVersion, amount) {
-        bootbox.confirm({
-            buttons : { confirm : { label : '确认'}, cancel : { label : '取消'}},
-            message : '你确定要退款吗？',
-            title : '退款提醒',
-            callback : function(result){
-                if (result){
-                     *//*Metronic.blockUI({
-                        target: '#storeTable_portlet_body',
-                        boxed: true,
-                        cenrerY: true,
-                        message: '退款中...'
-                    });*//*
-                    $scope.status = false;
-                    var  params = {
-                        refundId:refundId,
-                        refundPhase:refundPhase,
-                        refundVersion:refundVersion,
-                        amount:amount
-                    };
-                    console.log(params);
-//                    return;
-                    $http({url:"/mark/tmall/refundAgree.php", method:"POST", params:params})
-                        .success(function(data) {
-                           // Metronic.unblockUI('#storeTable_portlet_body');
-                            if (null != data.status) {//失败
-                                //Metronic.unblockUI('#storeTable_portlet_body');
-                                $scope.status = true;
-                                $scope.msg = data.message;
-                                return;
-                            }
-                            $scope.getListByPage();
-                        })
-                        .error(function(data) {
-                            //Metronic.unblockUI('#storeTable_portlet_body');
-                            $scope.status = true;
-                            $scope.msg = 'Request processing failed!';
-                        });
-                }
-            }
-        });
-    }*/
+     bootbox.confirm({
+     buttons : { confirm : { label : '确认'}, cancel : { label : '取消'}},
+     message : '你确定要退款吗？',
+     title : '退款提醒',
+     callback : function(result){
+     if (result){
+     *//*Metronic.blockUI({
+     target: '#storeTable_portlet_body',
+     boxed: true,
+     cenrerY: true,
+     message: '退款中...'
+     });*//*
+     $scope.status = false;
+     var  params = {
+     refundId:refundId,
+     refundPhase:refundPhase,
+     refundVersion:refundVersion,
+     amount:amount
+     };
+     console.log(params);
+     //                    return;
+     $http({url:"/mark/tmall/refundAgree.php", method:"POST", params:params})
+     .success(function(data) {
+     // Metronic.unblockUI('#storeTable_portlet_body');
+     if (null != data.status) {//失败
+     //Metronic.unblockUI('#storeTable_portlet_body');
+     $scope.status = true;
+     $scope.msg = data.message;
+     return;
+     }
+     $scope.getListByPage();
+     })
+     .error(function(data) {
+     //Metronic.unblockUI('#storeTable_portlet_body');
+     $scope.status = true;
+     $scope.msg = 'Request processing failed!';
+     });
+     }
+     }
+     });
+     }*/
     //同意退款窗口
     $scope.isVerification = false;
     $scope.refundAgreeDiv = function(refundId, refundPhase, refundVersion, amount){
@@ -1240,8 +1661,8 @@ adminLteApp.controller('TmallRefundCtrl', function ($scope, $http, $routeParams)
                     return;
                 }
                 if (data.rp_refunds_agree_response.message == "发送二次验证短信成功") {
-                   $scope.isVerification = true;
-                   return;
+                    $scope.isVerification = true;
+                    return;
                 }
                 $scope.isVerification = false;
                 $('#refundAgreeDiv').modal('hide');
@@ -1253,28 +1674,28 @@ adminLteApp.controller('TmallRefundCtrl', function ($scope, $http, $routeParams)
             });
     }
     /*//同意退款
-    $scope.refundAgree = function(refundId, refundPhase, refundVersion, amount) {
-        $scope.status = false;
-        var  params = {
-            refundId:refundId,
-            refundPhase:refundPhase,
-            refundVersion:refundVersion,
-            amount:amount
-        };
-        $http({url:"/mark/tmall/refundAgree.php", method:"POST", params:params})
-            .success(function(data) {
-                if (null != data.status) {//失败
-                    $scope.status = true;
-                    $scope.msg = data.message;
-                    return;
-                }
-                $scope.getListByPage();
-            })
-            .error(function(data) {
-                $scope.status = true;
-                $scope.msg = 'Request processing failed!';
-            });
-    }*/
+     $scope.refundAgree = function(refundId, refundPhase, refundVersion, amount) {
+     $scope.status = false;
+     var  params = {
+     refundId:refundId,
+     refundPhase:refundPhase,
+     refundVersion:refundVersion,
+     amount:amount
+     };
+     $http({url:"/mark/tmall/refundAgree.php", method:"POST", params:params})
+     .success(function(data) {
+     if (null != data.status) {//失败
+     $scope.status = true;
+     $scope.msg = data.message;
+     return;
+     }
+     $scope.getListByPage();
+     })
+     .error(function(data) {
+     $scope.status = true;
+     $scope.msg = 'Request processing failed!';
+     });
+     }*/
 
     //同意退货窗口
     $scope.returnGoodsAgreeDiv = function(refundId, refundPhase, refundVersion) {
@@ -1347,7 +1768,7 @@ adminLteApp.controller('TmallRefundCtrl', function ($scope, $http, $routeParams)
     //图片上传部分
     $scope.reader = new FileReader();   //创建一个FileReader接口
     $scope.form = {     //用于绑定提交内容，图片或其他数据
-        image:{},
+        image:{}
     };
     $scope.thumb = {};      //用于存放图片的base64
     $scope.imageData = new FormData();      //以下为后台提交图片数据
@@ -1364,10 +1785,10 @@ adminLteApp.controller('TmallRefundCtrl', function ($scope, $http, $routeParams)
          delete $scope.form.image[p];
          }*/
         /*if (type=='refund') {//区分退款，退货
-            $("#refundImg").attr("src","");
-        } else if (type='returnGoods') {
-            $("#returnGoodsImg").attr("src","");
-        }*/
+         $("#refundImg").attr("src","");
+         } else if (type='returnGoods') {
+         $("#returnGoodsImg").attr("src","");
+         }*/
         $scope.thumb = {};
         $scope.imageData = new FormData();
 
@@ -1376,7 +1797,7 @@ adminLteApp.controller('TmallRefundCtrl', function ($scope, $http, $routeParams)
         $scope.reader.onload = function(ev) {
             $scope.$apply(function(){
                 $scope.thumb[$scope.guid] = {
-                    imgSrc : ev.target.result,  //接收base64
+                    imgSrc : ev.target.result//接收base64
                 }
             });
         };
@@ -1398,13 +1819,13 @@ adminLteApp.controller('TmallRefundCtrl', function ($scope, $http, $routeParams)
         $scope.returnMessage = null;
         //查询拒绝原因列表
         /*//测试数据
-        var reason = '[{"reason_id":118,"reason_text":"已经影响商品完好"},{"reason_id":103,"reason_text":"买家使用到付或平邮"},{"reason_id":1040,"reason_text":"退货商品不全、空包"},{"reason_id":106,"reason_text":"与买家协商换货"},{"reason_id":1047,"reason_text":"退货商品与订单商品不一致"},{"reason_id":104,"reason_text":"未收到退货，快递还在途中"},{"reason_id":105,"reason_text":"买家退货单号错误或无走件记录"}]';
-        $scope.reasonList = JSON.parse(reason);
-        return;*/
+         var reason = '[{"reason_id":118,"reason_text":"已经影响商品完好"},{"reason_id":103,"reason_text":"买家使用到付或平邮"},{"reason_id":1040,"reason_text":"退货商品不全、空包"},{"reason_id":106,"reason_text":"与买家协商换货"},{"reason_id":1047,"reason_text":"退货商品与订单商品不一致"},{"reason_id":104,"reason_text":"未收到退货，快递还在途中"},{"reason_id":105,"reason_text":"买家退货单号错误或无走件记录"}]';
+         $scope.reasonList = JSON.parse(reason);
+         return;*/
         /*var params = {
-            refundId:"106206407540810",
-            refundPhase:"aftersale"
-        };*/
+         refundId:"106206407540810",
+         refundPhase:"aftersale"
+         };*/
         var params = {
             refundId:refundId,
             refundPhase:refundPhase
@@ -1479,9 +1900,9 @@ adminLteApp.controller('TmallRefundCtrl', function ($scope, $http, $routeParams)
         $scope.returnGoodsStatus = false;
         //查询拒绝原因列表
         /*//测试数据
-        var reason = '[{"reason_id":118,"reason_text":"已经影响商品完好"},{"reason_id":103,"reason_text":"买家使用到付或平邮"},{"reason_id":1040,"reason_text":"退货商品不全、空包"},{"reason_id":106,"reason_text":"与买家协商换货"},{"reason_id":1047,"reason_text":"退货商品与订单商品不一致"},{"reason_id":104,"reason_text":"未收到退货，快递还在途中"},{"reason_id":105,"reason_text":"买家退货单号错误或无走件记录"}]';
-        $scope.reasonList = JSON.parse(reason);
-        return;*/
+         var reason = '[{"reason_id":118,"reason_text":"已经影响商品完好"},{"reason_id":103,"reason_text":"买家使用到付或平邮"},{"reason_id":1040,"reason_text":"退货商品不全、空包"},{"reason_id":106,"reason_text":"与买家协商换货"},{"reason_id":1047,"reason_text":"退货商品与订单商品不一致"},{"reason_id":104,"reason_text":"未收到退货，快递还在途中"},{"reason_id":105,"reason_text":"买家退货单号错误或无走件记录"}]';
+         $scope.reasonList = JSON.parse(reason);
+         return;*/
         /*var params = {
          refundId:"106206407540810",
          refundPhase:"aftersale"

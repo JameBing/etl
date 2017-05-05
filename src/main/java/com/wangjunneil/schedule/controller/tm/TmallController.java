@@ -40,7 +40,7 @@ public class TmallController {
 
     private static Logger log = LoggerFactory.getLogger(Constants.PLATFORM_TM);
 
-    @Autowired
+    //@Autowired
     private TmallFacadeService tmallFacadeService;
 
     @Autowired

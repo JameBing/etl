@@ -37,7 +37,7 @@ public class JdController {
 
     private static Logger log = Logger.getLogger(JdController.class.getName());
 
-    @Autowired
+    //@Autowired
     private JdFacadeService jdFacadeService;
 
     @Autowired
@@ -49,7 +49,7 @@ public class JdController {
     @Autowired
     private SysFacadeService sysFacadeService;
 
-    @Autowired
+    //@Autowired
     private QueueMessageProducer producter;
 
     // --------------------------------------------------------------------------------------------------- public method

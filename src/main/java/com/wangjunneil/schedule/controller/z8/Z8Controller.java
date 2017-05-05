@@ -35,7 +35,7 @@ public class Z8Controller {
 
     private static Logger log = Logger.getLogger(Z8Controller.class.getName());
 
-    @Autowired
+    //@Autowired
     private Z8FacadeService z8FacadeService;
 
     @Autowired
@@ -44,7 +44,7 @@ public class Z8Controller {
     @Autowired
     private SchedulerFactoryBean schedulerFactoryBean;
 
-    @Autowired
+    //@Autowired
     private QueueMessageProducer producter;
 
     @Autowired

@@ -6,23 +6,31 @@ import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.common.FlowNum;
 import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
+import com.wangjunneil.schedule.entity.common.OrderWaiMaiHistory;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jp.JPAccessToken;
 import com.wangjunneil.schedule.entity.sys.Cfg;
+import com.wangjunneil.schedule.entity.sys.Page;
 import com.wangjunneil.schedule.entity.sys.Status;
 import com.wangjunneil.schedule.entity.tm.TmallAccessToken;
 import com.wangjunneil.schedule.entity.z8.Z8AccessToken;
+import com.wangjunneil.schedule.entity.z8.Z8CrmOrder;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
+import com.wangjunneil.schedule.utility.OrderUtil;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.eclipse.jetty.util.security.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -238,5 +246,143 @@ public class SysInnerService {
                                                                    .set("stackInfo",log.getStackInfo())
                                                                    .set("dateTime",log.getDateTime());
          mongoTemplate.upsert(query,update,Log.class);
+    }
+
+    //查询当日订单
+    public Page<OrderWaiMai> getNowDayOrder(Map<String,String> paramMap, Page<OrderWaiMai> page) {
+        Criteria criatira = new Criteria();
+        criatira.where("1").is("1");
+
+        String sellerId = paramMap.get("sellerId");
+        if (sellerId != null && !"".equals(sellerId)) {
+            criatira.and("sellerShopId").is(sellerId);
+        }
+
+        String shopId = paramMap.get("shopId");
+        if (shopId != null && !"".equals(shopId)) {
+            criatira.and("shopId").is(shopId);
+        }
+
+        String platformOrderId = paramMap.get("platformOrderId");
+        if (platformOrderId != null && !"".equals(platformOrderId)) {
+            criatira.and("platformOrderId").is(platformOrderId);
+        }
+
+        String orderId = paramMap.get("orderId");
+        if (orderId != null && !"".equals(orderId) && !"all".equals(orderId)) {
+            criatira.and("orderId").is(orderId);
+        }
+        String orderStatus = paramMap.get("orderStatus");
+        if (orderStatus != null && !"".equals(orderStatus)) {
+            int baidu = OrderUtil.tranBdOrderStatus(Integer.parseInt(orderStatus));
+            int jdhome = OrderUtil.tranJHOrderStatus(Integer.parseInt(orderStatus));
+            int meituan = OrderUtil.tranMTOrderStatus(Integer.parseInt(orderStatus));
+            int eleme = OrderUtil.tranELOrderStatus(Integer.parseInt(orderStatus));
+            criatira.orOperator(Criteria.where("order.order.type").is(String.valueOf(baidu)),
+                Criteria.where("order.orderStatus").is(jdhome),
+                Criteria.where("order.status").is(meituan),
+                Criteria.where("order.statuscode").is(eleme));
+        }
+
+        String platform = paramMap.get("platform");
+        if (platform != null && !"".equals(platform)) {
+            criatira.and("platform").is(platform);
+        }
+
+        String receive = paramMap.get("receive");
+        if (receive != null && !"".equals(receive)) {
+            if("0".equals(receive)){
+                criatira.orOperator(Criteria.where("isReceived").is(null),Criteria.where("isReceived").is(Integer.parseInt(receive)));
+            }else {
+                criatira.and("isReceived").is(Integer.parseInt(receive));
+            }
+        }
+        //默认日期今天
+        Calendar calendar = Calendar.getInstance(); calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date todayStart = calendar.getTime();
+        calendar.add(Calendar.DATE, 1);
+        Date endStart = calendar.getTime();
+        criatira.and("createTime").gte(todayStart).lte(endStart);
+
+        // 查询条件定义
+        Query query = new Query(criatira).limit(page.getPageSize()).skip((page.getCurrentPage() - 1) * page.getPageSize()).with(new Sort(Sort.Direction.DESC, "createTime"));
+        // 计算总记录数
+        long count = mongoTemplate.count(query, OrderWaiMai.class);
+        page.setTotalNum(count);
+
+        List<OrderWaiMai> orders = mongoTemplate.find(query, OrderWaiMai.class);
+        page.setPageDataList(orders);
+        return page;
+    }
+
+    //查询历史订单
+    public Page<OrderWaiMaiHistory> getHistoryOrder(Map<String,String> paramMap, Page<OrderWaiMaiHistory> page) {
+        Criteria criatira = new Criteria();
+        criatira.where("1").is("1");
+
+        String sellerId = paramMap.get("sellerId");
+        if (sellerId != null && !"".equals(sellerId)) {
+            criatira.and("sellerShopId").is(sellerId);
+        }
+
+        String shopId = paramMap.get("shopId");
+        if (shopId != null && !"".equals(shopId)) {
+            criatira.and("shopId").is(shopId);
+        }
+
+        String platformOrderId = paramMap.get("platformOrderId");
+        if (platformOrderId != null && !"".equals(platformOrderId)) {
+            criatira.and("platformOrderId").is(platformOrderId);
+        }
+
+        String orderId = paramMap.get("orderId");
+        if (orderId != null && !"".equals(orderId) && !"all".equals(orderId)) {
+            criatira.and("orderId").is(orderId);
+        }
+        String orderStatus = paramMap.get("orderStatus");
+        if (orderStatus != null && !"".equals(orderStatus)) {
+            int baidu = OrderUtil.tranBdOrderStatus(Integer.parseInt(orderStatus));
+            int jdhome = OrderUtil.tranJHOrderStatus(Integer.parseInt(orderStatus));
+            int meituan = OrderUtil.tranMTOrderStatus(Integer.parseInt(orderStatus));
+            int eleme = OrderUtil.tranELOrderStatus(Integer.parseInt(orderStatus));
+            criatira.orOperator(Criteria.where("order.order.type").is(String.valueOf(baidu)),
+                Criteria.where("order.orderStatus").is(jdhome),
+                Criteria.where("order.status").is(meituan),
+                Criteria.where("order.statuscode").is(eleme));
+        }
+
+        String platform = paramMap.get("platform");
+        if (platform != null && !"".equals(platform)) {
+            criatira.and("platform").is(platform);
+        }
+
+        String receive = paramMap.get("receive");
+        if (receive != null && !"".equals(receive)) {
+            if("0".equals(receive)){
+                criatira.orOperator(Criteria.where("isReceived").is(null),Criteria.where("isReceived").is(Integer.parseInt(receive)));
+            }else {
+                criatira.and("isReceived").is(Integer.parseInt(receive));
+            }
+        }
+
+        String startDate = paramMap.get("startDate");
+        String endDate = paramMap.get("endDate");
+        if(startDate != null && !"".equals(startDate) && endDate != null && !"".equals(endDate)){
+            criatira.and("createTime")
+                .gte(DateTimeUtil.formatDateString(startDate, "yyyy-MM-dd HH:mm:ss"))
+                .lte(DateTimeUtil.formatDateString(endDate, "yyyy-MM-dd HH:mm:ss"));
+        }
+
+        // 查询条件定义
+        Query query = new Query(criatira).limit(page.getPageSize()).skip((page.getCurrentPage() - 1) * page.getPageSize()).with(new Sort(Sort.Direction.DESC, "createTime"));
+        // 计算总记录数
+        long count = mongoTemplate.count(query, OrderWaiMaiHistory.class);
+        page.setTotalNum(count);
+
+        List<OrderWaiMaiHistory> orders = mongoTemplate.find(query, OrderWaiMaiHistory.class);
+        page.setPageDataList(orders);
+        return page;
     }
 }

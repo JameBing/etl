@@ -22,7 +22,7 @@ public class ScheduleMain {
 
     private static Logger log = Logger.getLogger(ScheduleMain.class.getName());
 
-    private static final Properties props = new Properties();
+    public static final Properties props = new Properties();
 
     public ScheduleMain() {
         try {
