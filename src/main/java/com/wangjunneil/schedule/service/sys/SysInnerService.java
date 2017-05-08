@@ -385,4 +385,43 @@ public class SysInnerService {
         page.setPageDataList(orders);
         return page;
     }
+
+    //查询异常日志
+    public Page<Log> getLogsInfo(Map<String,String> paramMap, Page<Log> page) {
+        Criteria criatira = new Criteria();
+        criatira.where("1").is("1");
+
+        String logId = paramMap.get("logId");
+        if (logId != null && !"".equals(logId)) {
+            criatira.and("logId").is(logId);
+        }
+
+        String catchExName = paramMap.get("catchExName");
+        if (catchExName != null && !"".equals(catchExName)) {
+            criatira.and("catchExName").is(catchExName);
+        }
+
+        String platform = paramMap.get("platform");
+        if (platform != null && !"".equals(platform)) {
+            criatira.and("platform").is(platform);
+        }
+
+        String startDate = paramMap.get("startDate");
+        String endDate = paramMap.get("endDate");
+        if(startDate != null && !"".equals(startDate) && endDate != null && !"".equals(endDate)){
+            criatira.and("dateTime")
+                .gte(DateTimeUtil.formatDateString(startDate, "yyyy-MM-dd HH:mm:ss"))
+                .lte(DateTimeUtil.formatDateString(endDate, "yyyy-MM-dd HH:mm:ss"));
+        }
+
+        // 查询条件定义
+        Query query = new Query(criatira).limit(page.getPageSize()).skip((page.getCurrentPage() - 1) * page.getPageSize()).with(new Sort(Sort.Direction.DESC, "dateTime"));
+        // 计算总记录数
+        long count = mongoTemplate.count(query, Log.class);
+        page.setTotalNum(count);
+
+        List<Log> orders = mongoTemplate.find(query, Log.class);
+        page.setPageDataList(orders);
+        return page;
+    }
 }

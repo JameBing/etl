@@ -435,5 +435,11 @@ public class WMFacadeService {
         return JSONObject.toJSONString(returnPage);
     }
 
+    //查询异常日志
+    public String getLogsInfo(Map<String, String> paramMap, Page<Log> page){
+        Page<Log> returnPage = sysInnerService.getLogsInfo(paramMap, page);
+        return JSONObject.toJSONString(returnPage);
+    }
+
 
 }

@@ -159,6 +159,10 @@ adminLteApp.config(function($routeProvider) {
             templateUrl:'views/wmHistoryOrder.html',
             controller:'WMOrderCtrl'
         })
+        .when('/logInfo', {
+            templateUrl:'views/logInfoList.html',
+            controller:'LogInfoCtrl'
+        })
         .when('/configure', {
             templateUrl: 'views/configure.html',
             controller: 'ConfigureCtrl'
@@ -686,6 +690,154 @@ adminLteApp.controller('WMHistoryOrderCtrl', function ($scope, $http) {
     }
 });
 
+//异常日志查询
+adminLteApp.controller('LogInfoCtrl', function ($scope, $http) {
+    $scope.platformSelected = {status:'所有平台',value:''};
+    $scope.platformType = [
+        {status:'所有平台',value:''},
+        {status:'baidu',value:'baidu'},
+        {status:'jdhome',value:'jdhome'},
+        {status:'meituan',value:'meituan'},
+        {status:'eleme',value:'eleme'},
+    ];
+
+    $scope.exceptionSelected = {status:'所有类型',value:''};
+    $scope.exceptionType = [
+        {status:'所有类型',value:''},
+        {status:'BaiDuException',value:'BaiDuException'},
+        {status:'JdHomeException',value:'JdHomeException'},
+        {status:'MeiTuanException',value:'MeiTuanException'},
+        {status:'ElemeException',value:'ElemeException'},
+        {status:'ScheduleException',value:'ScheduleException'},
+        {status:'Exception',value:'Exception'}
+    ];
+
+    //当前页
+    $scope.currentPage = 1;
+    //每页显示条数
+    $scope.pageSize = 20;
+    //总数
+    $scope.totalSize = 0;
+    //总页数
+    $scope.totalPages = 0;
+
+    $scope.select_status = true;//显示所有状态
+    $scope.showStatus = function(){
+        $scope.select_status = false;//隐藏所有状态
+    };
+    $scope.overlayStatus = false;//查询进度条初始化
+    $scope.status = false;//提示条初始化
+
+    //分页查询
+    $scope.getListByPage = function() {
+        $scope.overlayStatus = true;
+        $scope.select_status = false;//隐藏所有状态
+
+        var logId = $scope.logId;
+        var platform = $scope.platformSelected.value;
+        var exceptionType = $scope.exceptionSelected.value;
+        var timeRange = $("#reservationtime").val();
+        var startDate;
+        var endDate;
+        if (timeRange !=null && timeRange != "") {
+            var startStr = timeRange.substring(0,16);
+            var endStr = timeRange.substring(19,timeRange.length);
+            startDate = startStr+':00';
+            endDate = endStr+':59';
+        }
+
+        var params = { currentPage:$scope.currentPage,
+            pageSize:$scope.pageSize,
+            logId:logId,
+            platform:platform,
+            exceptionType:exceptionType,
+            startDate:startDate,
+            endDate:endDate};
+
+        $http({url:"/mark/order/getLogInfo.php", method:"POST", params:params})
+            .success(function(data) {
+                $scope.overlayStatus = false;
+                var result = data;
+                if(result.pageDataList.length == 0){
+                    $scope.status = true;
+                    $scope.msg = 'no order data!';
+                    $scope.currentPage = 1;
+                    $scope.totalSize = 0;
+                    $scope.totalPages = 1;
+                    $scope.logList = null;
+                }else{
+                    $scope.status = false;
+                    $scope.currentPage = parseInt(result.currentPage);
+                    $scope.totalSize = result.totalNum;
+                    $scope.totalPages = result.totalPage;
+
+                    $scope.logList = result.pageDataList;
+                }
+            })
+            .error(function(data) {
+                $scope.overlayStatus = false;
+                $scope.status = true;
+                $scope.msg = 'Request processing failed!';
+            });
+    }
+
+    //查询订单
+    $scope.queryLogInfo = function (){
+        $scope.currentPage = parseInt(1);//当前页
+        $scope.getListByPage();
+    };
+
+    //初始化加载
+    setTimeout($scope.queryLogInfo,500);
+
+    //首页
+    $scope.prevPage = function(){
+        if ($scope.currentPage == 1) {
+            return;
+        } else {
+            $scope.currentPage = parseInt(1);
+            $scope.getListByPage();
+        }
+    };
+    //上一页
+    $scope.pageUp = function(){
+        if ($scope.currentPage == 1) {
+            return;
+        } else {
+            $scope.currentPage = parseInt($scope.currentPage) - 1;
+            $scope.getListByPage();
+        }
+    };
+    //下一页
+    $scope.pageDown = function(){
+        if ($scope.currentPage == $scope.totalPages) {
+            return;
+        } else {
+            $scope.currentPage = parseInt($scope.currentPage) + 1;
+            $scope.getListByPage();
+        }
+    };
+    //尾页
+    $scope.nextPage = function(){
+        if ($scope.currentPage == $scope.totalPages) {
+            return;
+        } else {
+            $scope.currentPage = parseInt($scope.totalPages);
+            $scope.getListByPage();
+        }
+    };
+
+    $scope.pageSizeNum = $scope.pageSize;//每页显示数
+    $scope.pageLength = function(){
+        if($scope.pageSizeNum == undefined){
+            $scope.pageSize = 20;
+        } else{
+            $scope.pageSize = $scope.pageSizeNum;
+        }
+        $scope.currentPage = parseInt(1);//当前页
+        $scope.getListByPage();
+    }
+});
 
 /*********************************************************************/
 adminLteApp.controller('JdOrderCtrl', function ($scope, $http, $location) {

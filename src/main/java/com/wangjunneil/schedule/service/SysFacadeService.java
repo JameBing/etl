@@ -964,8 +964,8 @@ public class SysFacadeService {
     //日志插入
     public void updSynLog(Log log){
         sysInnerService.updSynLog( log);
-        //发送消息到EKP
-        ekpMessageProducerMessage.sendMessage(ekpDestinationException,new Gson().toJson(log));
+      /*  //发送消息到EKP
+        ekpMessageProducerMessage.sendMessage(ekpDestinationException,new Gson().toJson(log));*/
     }
 
     //格式化百度订单状态
@@ -1127,7 +1127,8 @@ public class SysFacadeService {
         }
         if (boolSend & StaticObj.mqTransportTopicOrderStatus){
             //topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
-            topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),orderWaiMai==null?shop:orderWaiMai.getSellerShopId());
+            log.info("=====状态过滤器value:"+shop);
+            topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
             new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();
         }
     }
@@ -1168,10 +1169,9 @@ public class SysFacadeService {
         if (boolSend & StaticObj.mqTransportTopicOrderStatus){
             //topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
             log.info("推送配送订单start");
-            System.out.println("推送配送订单start");
-            topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),orderWaiMai==null?shop:orderWaiMai.getSellerShopId());
+            log.info("=====配送状态过滤器value:"+shop);
+            topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
             new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();
-            log.info("推送配送订单start");
         }
     }
 

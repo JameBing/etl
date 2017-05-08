@@ -530,6 +530,11 @@ public class EleMeFacadeService {
             }else {
                 sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
             }
+            List<String> listIds = new ArrayList<String>();
+            Collections.addAll(listIds, elemeOrderIds.split(","));
+            listIds.forEach((id)->{
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,Integer.valueOf(newStatus),id,null,orderWaiMai.getSellerShopId());
+            });
         }catch (ElemeException ex){
             log = sysFacadeService.functionRtn.apply(ex);
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
@@ -550,11 +555,6 @@ public class EleMeFacadeService {
                 return "{\"message\": \"error\"}";
             }
         }
-        List<String> listIds = new ArrayList<String>();
-        Collections.addAll(listIds, elemeOrderIds.split(","));
-        listIds.forEach((id)->{
-            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,Integer.valueOf(newStatus),id,null,null);
-        });
         return  "{\"message\": \"ok\"}";
     }
 
@@ -578,6 +578,11 @@ public class EleMeFacadeService {
             }else {
                 sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
             }
+            List<String> listIds = new ArrayList<String>();
+            Collections.addAll(listIds, elemeOrderIds.split(","));
+            listIds.forEach((id)->{
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,Integer.valueOf(refundStatus),id,null,orderWaiMai.getSellerShopId());
+            });
         }catch (ElemeException ex){
             log = sysFacadeService.functionRtn.apply(ex);
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
@@ -598,11 +603,7 @@ public class EleMeFacadeService {
                 return "{\"message\": \"error\"}";
             }
         }
-        List<String> listIds = new ArrayList<String>();
-        Collections.addAll(listIds, elemeOrderIds.split(","));
-        listIds.forEach((id)->{
-            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,Integer.valueOf(refundStatus),id,null,null);
-        });
+
         return  "{\"message\": \"ok\"}";
     }
 

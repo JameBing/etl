@@ -84,6 +84,10 @@ public class MenuController {
         Menu wmMenu = adWmOrderMenu();  //饿了么菜单
         menus.add(wmMenu);
 
+        //日志管理
+        Menu logMenu = adLogMenu();
+        menus.add(logMenu);
+
         // 配置中心菜单始终存在
         Menu configMenu = new Menu("配置管理", "#/configure", "fa fa-gears");
         menus.add(configMenu);
@@ -232,6 +236,21 @@ public class MenuController {
         wmMenus.add(orderMenu);
         wmMenu.setMenu(wmMenus);
         return wmMenu;
+    }
+
+    private Menu adLogMenu() {
+        // 一级菜单
+        Menu logMenu = new Menu();
+        logMenu.setMenuName("日志管理");
+        logMenu.setMenuIcon("fa fa-thumbs-o-up");
+
+        // child menu
+        Menu orderMenu = new Menu("异常日志", "#/logInfo");
+
+        List<Menu> logMenus = new ArrayList<>();
+        logMenus.add(orderMenu);
+        logMenu.setMenu(logMenus);
+        return logMenu;
     }
 
 

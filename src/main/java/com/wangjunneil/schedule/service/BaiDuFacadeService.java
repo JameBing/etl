@@ -537,16 +537,17 @@ public class BaiDuFacadeService {
             }
         }else {
             intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.getEnumDesc(Enum.OrderTypeBaiDu.R5, status).get("code").getAsString()));
+            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_BAIDU,data.getOrder().getOrderId());
+            List<String> listIds = new ArrayList<String>();
+            Collections.addAll(listIds,data.getOrder().getOrderId().split(","));
+            listIds.forEach((id)->{
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_BAIDU,status,id,null,orderWaiMai.getSellerShopId());
+            });
         }
         if (intR > 0){
             result.setErrno("0");
             result.setError("success");
             result.setData("");
-            List<String> listIds = new ArrayList<String>();
-            Collections.addAll(listIds,data.getOrder().getOrderId().split(","));
-            listIds.forEach((id)->{
-               sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_BAIDU,status,id,null,null);
-            });
             sysParams.setBody(result);
         }else{
             result.setErrno("1");

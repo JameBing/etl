@@ -1,5 +1,6 @@
 package com.wangjunneil.schedule.controller.waimai;
 
+import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.OrderWaiMaiHistory;
 import com.wangjunneil.schedule.entity.sys.Page;
@@ -61,7 +62,6 @@ public class OrderController {
             Matcher m = p.matcher(returnJson);
             returnJson = m.replaceAll("");
         }
-        System.out.println(returnJson);
         out.println(returnJson);
         out.close();
         return null;
@@ -103,9 +103,46 @@ public class OrderController {
             Matcher m = p.matcher(returnJson);
             returnJson = m.replaceAll("");
         }
-        System.out.println(returnJson);
         out.println(returnJson);
         out.close();
         return null;
     }
+
+
+    /**
+     * 异常日志查询
+     * @param out
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/getLogInfo.php")
+    public String getLogsInfo(PrintWriter out, HttpServletRequest request){
+        Map<String, String > paramMap = new HashMap<>();
+        paramMap.put("logId", request.getParameter("logId"));
+        paramMap.put("platform", request.getParameter("platform"));
+        paramMap.put("exceptionType", request.getParameter("exceptionType"));
+        paramMap.put("startDate",request.getParameter("startDate"));
+        paramMap.put("endDate",request.getParameter("endDate"));
+
+        Page<Log> page = new Page<>();
+        String currentPage = request.getParameter("currentPage");
+        if (currentPage == null || "".equals(currentPage))
+            currentPage = "1";
+        String pageSize = request.getParameter("pageSize");
+        if (pageSize != null && !"".equals(pageSize))
+            page.setPageSize(Integer.parseInt(pageSize));
+        page.setCurrentPage(Integer.parseInt(currentPage));
+
+        String returnJson =wmFacadeService.getLogsInfo(paramMap, page);
+        //去除json 空格、回车、换行符、制表符  否则转json失败
+        if(!StringUtil.isEmpty(returnJson)){
+            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+            Matcher m = p.matcher(returnJson);
+            returnJson = m.replaceAll("");
+        }
+        out.println(returnJson);
+        out.close();
+        return null;
+    }
+
 }

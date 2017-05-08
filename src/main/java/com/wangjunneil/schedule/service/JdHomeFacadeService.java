@@ -1228,11 +1228,11 @@ public class JdHomeFacadeService {
                     res = gson.toJson(result);
                 }
                 if (!StringUtil.isEmpty(res) && (new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create().fromJson(res,Result.class).getCode() == 0)){
+                    OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_JDHOME,jsonObject.getString("billId"));
                     if(!flag){
-                        sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,null);
+                        sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,orderWaiMai.getSellerShopId());
                     }else {
-                        OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_JDHOME,jsonObject.getString("billId"));
-                        sysFacadeService.topicMessageOrderStatusAll(Constants.PLATFORM_WAIMAI_JDHOME,orderWaiMai.getShopId(),orderWaiMai);
+                        sysFacadeService.topicMessageOrderStatusAll(Constants.PLATFORM_WAIMAI_JDHOME,orderWaiMai.getSellerShopId(),orderWaiMai);
                     }
                 }
             }
