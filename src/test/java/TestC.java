@@ -5,19 +5,26 @@ import com.sankuai.meituan.waimai.opensdk.vo.SystemParam;
 import com.wangjunneil.schedule.entity.meituan.OrderInfo;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by Administrator on 2016-11-25.
  */
-public class TestC {
+public class TestC{
 
     private static final SystemParam sysPram = new SystemParam("459", "5ca2cf48c1d6dc4253f9d491b2246091");
 
     public static void main(String[] args) {
-       /* Calendar cale = Calendar.getInstance();
-        for(int i=0;i<12;i++){
+      /*  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ;
+        Calendar cale = Calendar.getInstance();*/
+
+        Integer aa = 1495436099;
+        Long bb  = Long.parseLong(aa.toString());
+        System.out.println("时间ooooooo:"+DateTimeUtil.dateFormat(new Date(bb*1000), "yyyy-MM-dd HH:mm:ss"));
+       /* for(int i=0;i<12;i++){
             cale.set(Calendar.YEAR,2016);
             cale.set(Calendar.MONTH,i+1);
            // cale.set(Calendar.DAY_OF_MONTH, 1);
@@ -35,17 +42,17 @@ public class TestC {
         int dow = cale.get(Calendar.DAY_OF_WEEK);
         int dom = cale.get(Calendar.DAY_OF_MONTH);
         int doy = cale.get(Calendar.DAY_OF_YEAR);*/
-        String aa ="http://etl.ziyanfoods.com:8080/mark/tuangou/callBack";
+        /*String aa ="http://etl.ziyanfoods.com:8080/mark/tuangou/callBack";
         try {
             System.out.println(java.net.URLEncoder.encode(aa,"utf-8"));
         }catch (Exception e){
 
-        }
+        }*/
 
         /*c.setTime(new Date());
         int totalDays = c.getActualMaximum(Calendar.DAY_OF_MONTH);
         for(int i=1;i<=totalDays;i++){
-            c.set(Calendar.DAY_OF_MONTH, i);
+            c.set(Calendar.Day, i);
             System.out.println(c.getTime());
         }*/
 

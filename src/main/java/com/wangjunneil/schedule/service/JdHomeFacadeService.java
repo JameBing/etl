@@ -802,6 +802,9 @@ public class JdHomeFacadeService {
         if(dishList == null || dishList.size()==0){
             return gson.toJson(rtn);
         }
+        if(StringUtil.isEmpty(dishList.get(0).getShopId())){
+            return gson.toJson(rtn);
+        }
         //查询到家门店Id
         String stationNO = getStoreInfoPageBean(dishList.get(0).getShopId());
         if(StringUtil.isEmpty(stationNO)){

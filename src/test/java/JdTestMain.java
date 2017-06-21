@@ -25,9 +25,10 @@ public class JdTestMain {
 
     public static void main(String[] args) throws Exception {
 //        queryDetailInfo();
-        List<OrderSearchInfo> list = new ArrayList<OrderSearchInfo>();
-        queryList(list,1,0);
-        System.out.println(list.size());
+        /*List<OrderSearchInfo> list = new ArrayList<OrderSearchInfo>();
+        queryList(list,1,0);*/
+        String aa = "沪DB5229上海至南通过路费用";
+        System.out.println(aa.length());
 
     }
 

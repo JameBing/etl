@@ -120,6 +120,7 @@
                         <th>平台类型</th>
                         <th>商家门店Id</th>
                         <th>平台门店Id</th>
+                        <th>门店名称</th>
                         <th>订单状态</th>
                         <th>门店是否接单</th>
                         <!--<th>物料名称</th>-->
@@ -137,6 +138,12 @@
                         <td>{{order_info.platform}}</td>
                         <td>{{order_info.sellerShopId}}</td>
                         <td>{{order_info.shopId}}</td>
+                        <td>
+                            <span ng-if="order_info.platform == 'baidu'">{{order_info.order.shop.name }}</span>
+                            <span ng-if="order_info.platform == 'jdhome'">{{order_info.order.deliveryStationName}}</span>
+                            <span ng-if="order_info.platform == 'meituan'">{{order_info.order.wmpoiname}}</span>
+                            <span ng-if="order_info.platform == 'eleme'">{{order_info.order.restaurantname}}</span>
+                        </td>
                         <td>
                             <span ng-if="order_info.platform == 'baidu'">{{order_info.order.order.type | baiduOrderStatus }}</span>{{order_info.order.order.type}}
                             <span ng-if="order_info.platform == 'jdhome'">{{order_info.order.orderStatus | jdhomeOrderStatus}}</span>{{order_info.order.orderStatus}}

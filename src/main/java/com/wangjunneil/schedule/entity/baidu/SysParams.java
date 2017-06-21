@@ -11,7 +11,7 @@ public class SysParams {
     private String timestamp;   //请求时间戳
     private String version = "3"; //api版本号,当前为2
     private String ticket;   //请求唯一标识
-    private  String source;     //合作方帐号
+    private  String source;  //合作方帐号
     private  String sign;    //签名
     private String encrypt;  //是否加密,如AES,可为空
     private  Object body;    //请求参数
@@ -50,12 +50,14 @@ public class SysParams {
         return  this.ticket;
     }
 
-    public void setSource(){
-       this.source = Constants.BAIDU_SOURCE;
+    public void setSource(String source){
+       this.source = source;
     }
 
     public String getSource(){
-        if(StringUtil.isEmpty(this.source)){this.source = Constants.BAIDU_SOURCE;}
+        if(StringUtil.isEmpty(this.source)){
+            this.source = Constants.BAIDU_SOURCE;
+        }
         return  this.source;
     }
 
@@ -89,7 +91,7 @@ public class SysParams {
     }
 
     public String getSecret(){
-        return StringUtil.isEmpty(this.secret)?"":this.secret;
+        return StringUtil.isEmpty(this.secret)?Constants.BAIDU_SECRET:this.secret;
     }
 
 }

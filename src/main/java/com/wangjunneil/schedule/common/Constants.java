@@ -129,8 +129,14 @@ public final class Constants {
 
     //百度外卖=================================================================================//
     public static final  String BAIDU_URL = "http://api.waimai.baidu.com";
-    public static final  String BAIDU_SOURCE = "65062";
-    public static final String  BAIDU_SECRET = "9aa9bef2dd361398";
+
+    public static final  String BAIDU_SOURCE = "30618";
+    public static final String  BAIDU_SECRET = "5a2c7855f7441fa2";
+    public static final  String BAIDU_SOURCE_SH = "30618";
+    public static final String  BAIDU_SECRET_SH = "5a2c7855f7441fa2";
+    public static final  String BAIDU_SOURCE_SZ = "30916";
+    public static final String  BAIDU_SECRET_SZ = "46c4d76525131b37";
+
 
     public static final  String BOUNDARY = "--ZYETL1234567890--";
     public static final String CONTENTTYPE_MULTIPART = "multipart/form-data";
@@ -155,9 +161,9 @@ public final class Constants {
 
     public static final int BD_CONFIRMED=5;  // 已确认
 
-    public static final int BD_PICKUP=7;     //正在取餐
+    public static final int BD_PICKUP=7;     //骑士已接单
 
-    public static final int BD_DELIVERY=8;  // 送货中
+    public static final int BD_DELIVERY=8;  // 骑士已取餐 配送中
 
     public static final int BD_COMPLETED=9;  // 已完成
 

@@ -1,5 +1,7 @@
 package com.wangjunneil.schedule.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,6 +31,7 @@ import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -419,13 +422,84 @@ public class BaiDuFacadeService {
         return result;
     }
 
+    //批量查看门店商品上下架状态 shopId 商家门店Id
+    public String getDishStatus(String shopId){
+        String result = "";
+        Rtn rtn = new Rtn();
+        Log log = null;
+        String rtnStr = "";
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(shopId)){
+            return gson1.toJson(rtn);
+        }
+        try {
+            Dish dish = new Dish();
+            dish.setShopId(shopId);
+            result = baiDuApiService.getDishStatus(dish);
+            if(result.equals("20253")){
+                rtn.setCode(-1);
+                rtn.setDesc("success");
+                rtn.setRemark("无此门店");
+                rtn.setDynamic(shopId);
+                return  gson1.toJson(rtn);
+            }
+            if(StringUtil.isEmpty(result)){
+                rtn.setCode(-1);
+                rtn.setDesc("success");
+                rtn.setRemark("此门店无商品");
+                rtn.setDynamic(shopId);
+                return  gson1.toJson(rtn);
+            }
+            JSONObject  jsonObject = JSON.parseObject(result);
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            for(int i=0;i<jsonArray.size();i++){
+                JSONObject json = jsonArray.getJSONObject(i);
+                if(json.getInteger("is_online")==1){
+                    rtn.setCode(0);
+                    rtn.setDynamic(json.getString("dish_id"));
+                    rtnStr =rtnStr+gson1.toJson(rtn)+",";
+                }
+            }
+
+        }catch (BaiDuException ex){
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }
+        catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
+        }
+        catch (Exception ex){
+            log =  sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
+            rtn.setCode(-998);
+        }finally {
+            if (log !=null){
+                log.setLogId(shopId.concat(log.getLogId()));
+                log.setTitle(MessageFormat.format("查看门店{0}商品上下架状态失败！",shopId));
+                if (StringUtil.isEmpty(log.getRequest()))
+                    log.setRequest("{".concat(MessageFormat.format("\"shopId\":{0}", shopId)).concat("}"));
+                sysFacadeService.updSynLog(log);
+                rtn.setDynamic("");
+                rtn.setDesc("发生异常");
+                rtn.setRemark(MessageFormat.format("查看商品{0}上下架状态失败！", shopId));
+            }
+            if(!StringUtil.isEmpty(rtnStr)){
+                return  rtnStr.substring(0,rtnStr.length()-1);
+            }
+            return gson1.toJson(rtn);
+        }
+    }
+
     //接收百度外卖推送过来的订单
     public String orderPost(SysParams sysParams){
-        Body body = new Body();
         String result = "";
+        Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
+        Data data1 = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
         try{
             Order order = getGson().fromJson(sysParams.getBody().toString(),Order.class);
-            SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order),SysParams.class);
+            SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order,data1.getShop().getShopId()),SysParams.class);
             String bodyStr = getGson().toJson(sysParams1.getBody());
             body = getGson().fromJson(bodyStr,Body.class);
             if (body.getErrno().trim().equals("0")){
@@ -433,8 +507,9 @@ public class BaiDuFacadeService {
                Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
                 OrderWaiMai orderWaiMai = new OrderWaiMai();
                 orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_BAIDU);
-                //商家门店ID
-                String shopId = data.getShop().getShopId();
+                //平台门店ID
+                String shopId = data.getShop().getBaiduShopId();
+                String sellerId = data.getShop().getShopId();
                 //百度订单ID
                 String platformOrderId = data.getOrder().getOrderId();
                 orderWaiMai.setPlatformOrderId(platformOrderId);
@@ -443,6 +518,8 @@ public class BaiDuFacadeService {
                 orderWaiMai.setOrderId(orderId);
                 orderWaiMai.setOrder(data);
                 orderWaiMai.setShopId(shopId);
+                orderWaiMai.setSellerShopId(sellerId);
+                orderWaiMai.setCreateTime(new Date());
                 sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
                 body.setErrno("0");
                 body.setError("success");
@@ -469,7 +546,7 @@ public class BaiDuFacadeService {
     }
 
     //根据订单号拉取订单详情况
-    public Data orderGet(String params){
+    public Data orderGet(String params,String shopId){
         Body body = new Body();
         Data data = new Data();
         Rtn rtn = new Rtn();
@@ -477,7 +554,7 @@ public class BaiDuFacadeService {
         try {
             Order order = new Order();
             order.setOrderId(params);
-            String result = baiDuApiService.orderGet(order);
+            String result = baiDuApiService.orderGet(order,shopId);
             SysParams sysParams =getGson().fromJson(result,SysParams.class);
             body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
             data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
@@ -521,7 +598,7 @@ public class BaiDuFacadeService {
         //推送整个订单
         if(flag){
             Order order = getGson().fromJson(sysParams.getBody().toString(),Order.class);
-            SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order),SysParams.class);
+            SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order,data.getShop().getShopId()),SysParams.class);
             String bodyStr = getGson().toJson(sysParams1.getBody());
             body = getGson().fromJson(bodyStr,Body.class);
             if (body.getErrno().equals("0")){
@@ -578,7 +655,7 @@ public class BaiDuFacadeService {
         }
         try {
             //是否是接单状态
-            Data data = orderGet(params);
+            Data data = orderGet(params,shopId);
             if(data==null){
                 rtn.setCode(-1);
                 rtn.setRemark("订单不存在");
@@ -600,7 +677,7 @@ public class BaiDuFacadeService {
             rtn.setDynamic(params);
             Order order = new Order();
             order.setOrderId(params);
-            result = baiDuApiService.orderConfirm(order);
+            result = baiDuApiService.orderConfirm(order,shopId);
             rtn = gson1.fromJson(result,Rtn.class);
             //统一状态码给POS
             if(!StringUtil.isEmpty(rtn.getCode()) && rtn.getCode()==20216) {
@@ -648,7 +725,7 @@ public class BaiDuFacadeService {
         }
         try {
             //是否是接单状态
-            Data data = orderGet(params);
+            Data data = orderGet(params,shopId);
             if(data==null){
                 rtn.setCode(-1);
                 rtn.setRemark("订单不存在");
@@ -671,7 +748,7 @@ public class BaiDuFacadeService {
             order.setOrderId(params);
             order.setType(reason_code);
             order.setReason(reason);
-            result = baiDuApiService.orderCancel(order);
+            result = baiDuApiService.orderCancel(order,shopId);
             rtn = gson1.fromJson(result,Rtn.class);
             //统一状态码给POS
             if(!StringUtil.isEmpty(rtn.getCode()) && rtn.getCode()==20016){
@@ -815,7 +892,7 @@ public class BaiDuFacadeService {
         try {
             Order order = new Order();
             order.setOrderId(params);
-            String rtnOrder = baiDuApiService.orderGet(order);
+            String rtnOrder = baiDuApiService.orderGet(order,shopId);
             SysParams sysParams =getGson().fromJson(rtnOrder,SysParams.class);
             body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
             if(body.getErrno().equals("20212")){

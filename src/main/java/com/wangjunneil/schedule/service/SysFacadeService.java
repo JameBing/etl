@@ -322,7 +322,7 @@ public class SysFacadeService {
         jsonObject.put("orderType","");
         jsonObject.put("orderStatus",tranBdOrderStatus(data.getOrder().getStatus()));
         jsonObject.put("orderStatusTime","");
-        jsonObject.put("orderStartTime",data.getOrder().getCreateTime()==0?"":DateTimeUtil.dateFormat(new Date(data.getOrder().getCreateTime()),"yyyy-MM-dd HH:mm:ss"));
+        jsonObject.put("orderStartTime",data.getOrder().getCreateTime()==0?"":DateTimeUtil.dateFormat(new Date(Long.parseLong(data.getOrder().getCreateTime().toString())*1000), "yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime",data.getOrder().getConfirmTime());
         jsonObject.put("orderPurchaseTime", "");
         jsonObject.put("orderAgingType","");
@@ -499,6 +499,7 @@ public class SysFacadeService {
         jsonObject.put("serviceRate","");
         jsonObject.put("serviceFee","");
         jsonObject.put("hongbao","");
+
         jsonObject.put("orderBuyerRemark","");
         jsonObject.put("orderInvoiceOpenMark",orderInfo.getOrderInvoiceOpenMark());
         jsonObject.put("orderInvoiceType",StringUtil.isEmpty(orderInfo.getOrderExtend())?"":orderInfo.getOrderExtend().getOrderInvoiceType());
@@ -765,7 +766,7 @@ public class SysFacadeService {
         jsonObject.put("deliveryPackageWeight","");
         jsonObject.put("deliveryConfirmTime", "");
         jsonObject.put("orderFinishTime","");
-        jsonObject.put("orderPayType",order.getIsonlinepaid());
+        jsonObject.put("orderPayType",order.getIsonlinepaid()==1?2:1);
         jsonObject.put("orderTotalMoney",order.getOriginalprice());
         jsonObject.put("orderDiscountMoney","");
         jsonObject.put("orderFreightMoney",order.getDeliverfee());
@@ -975,6 +976,8 @@ public class SysFacadeService {
                 return Constants.POS_ORDER_SUSPENDING;
             case Constants.BD_CONFIRMED:
                return Constants.POS_ORDER_CONFIRMED;
+            case Constants.BD_PICKUP:
+                return Constants.POS_ORDER_DISPATCH_GET;
             case Constants.BD_DELIVERY:
                 return Constants.POS_ORDER_DELIVERY;
             case Constants.BD_COMPLETED:

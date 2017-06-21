@@ -46,9 +46,11 @@ public class WMController {
 
     @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842","/jdhome/72171","/jdhome/74723"})
     public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
+        System.out.println("========请求头类型：========"+request.getContentType());
+        System.out.println("========编码格式：========"+request.getCharacterEncoding());
         String result = "",platform,requestUrl,sid = null;
         Map<String,String[]> stringMap = new HashMap<>();
-        response.setContentType("application/json;charset=utf-8");
+            response.setContentType("application/json;charset=utf-8");
         requestUrl = request.getPathInfo().toLowerCase();
         if(requestUrl.indexOf("/jdhome/")> 0){
             sid = Pattern.compile("[^0-9]").matcher(requestUrl).replaceAll("");
