@@ -49,6 +49,9 @@ public class BaiDuApiService {
                 String shopId = sellerId.substring(0,5);
                 getSourceAndSecret(shopId,sysParams);
             }
+            if(sellerId.length()==5) {
+                getSourceAndSecretBySource(sellerId,sysParams);
+            }
             params = MessageFormat.format(params, JSONObject.parse(bodyStr), sysParams.getCmd(), sysParams.getTimestamp(), sysParams.getVersion(), sysParams.getTicket()
                 , String.valueOf(sysParams.getSource()), sysParams.getEncrypt(), sysParams.getSecret());
             params = StringUtil.retParamAsc(params);
@@ -102,12 +105,13 @@ public class BaiDuApiService {
             .registerTypeAdapter(Body.class, new BodySerializer())
             .disableHtmlEscaping().create();
         String ticket = sysParams.getTicket();
+        String timeStamp = sysParams.getTimestamp();
         String params = "body={0}&cmd={1}&timestamp={2}&version={3}&ticket={4}&source={5}&encrypt={6}&secret={7}";
-        params =  MessageFormat.format(params, gson.toJson(sysParams.getBody()), sysParams.getCmd(), sysParams.getTimestamp(), sysParams.getVersion(), ticket
+        String bodyStr = gson.toJson(sysParams.getBody());
+        params = MessageFormat.format(params, bodyStr, sysParams.getCmd(), timeStamp, sysParams.getVersion(), ticket
             , String.valueOf(sysParams.getSource()), sysParams.getEncrypt(), sysParams.getSecret());
         params = StringUtil.retParamAsc(params);
         params = StringUtil.chinaToUnicode(params);
-
         JsonObject json = new JsonObject();
         JsonObject jsonBody = new JsonObject();
         JsonObject jsonData = new JsonObject();
@@ -130,7 +134,7 @@ public class BaiDuApiService {
         json.addProperty("cmd", sysParams.getCmd());
         json.addProperty("source",sysParams.getSource());
         json.addProperty("ticket",ticket);
-        json.addProperty("timestamp",sysParams.getTimestamp());
+        json.addProperty("timestamp",timeStamp);
         json.addProperty("version",3);
         json.addProperty("sign",StringUtil.getMD5(params));
         return json.toString();
@@ -622,6 +626,18 @@ public class BaiDuApiService {
             sysParams.setSecret(Constants.BAIDU_SECRET_SH);
         }
         if("80024".equals(shopId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_SZ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_SZ);
+        }
+    }
+
+    //获取合作方ID和密钥
+    private  void getSourceAndSecretBySource(String sourceId ,SysParams sysParams){
+        if("30618".equals(sourceId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_SH);
+            sysParams.setSecret(Constants.BAIDU_SECRET_SH);
+        }
+        if("30916".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_SZ);
             sysParams.setSecret(Constants.BAIDU_SECRET_SZ);
         }

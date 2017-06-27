@@ -1,18 +1,20 @@
 package com.wangjunneil.schedule.controller.waimai;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.wangjunneil.schedule.activemq.Topic.TopicMessageConsumer;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync;
-import com.wangjunneil.schedule.common.*;
+import com.wangjunneil.schedule.common.Constants;
+import com.wangjunneil.schedule.common.ScheduleException;
+import com.wangjunneil.schedule.entity.baidu.Order;
 import com.wangjunneil.schedule.entity.common.ParsFormPos2;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
-import com.wangjunneil.schedule.entity.meituan.Delivery;
 import com.wangjunneil.schedule.service.WMFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
-import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,11 +24,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
 import javax.jms.Destination;
+import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,12 +49,11 @@ public class WMController {
     private WMFacadeService wmFacadeService;
 
     @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842","/jdhome/72171","/jdhome/74723"})
-    public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
-        System.out.println("========请求头类型：========"+request.getContentType());
-        System.out.println("========编码格式：========"+request.getCharacterEncoding());
+    public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response)throws  Exception{
+
         String result = "",platform,requestUrl,sid = null;
         Map<String,String[]> stringMap = new HashMap<>();
-            response.setContentType("application/json;charset=utf-8");
+        response.setContentType("application/json;charset=utf-8");
         requestUrl = request.getPathInfo().toLowerCase();
         if(requestUrl.indexOf("/jdhome/")> 0){
             sid = Pattern.compile("[^0-9]").matcher(requestUrl).replaceAll("");
@@ -59,8 +62,40 @@ public class WMController {
         switch (requestUrl){
             case "/waimai/baidu":  //百度
                 platform = Constants.PLATFORM_WAIMAI_BAIDU;
-                stringMap = request.getParameterMap();
+                stringMap = request.getParameterMap(); //Content-Type: application/x-www-form-urlencoded
                 // stringMap = request.getParameterMap();//?Content-Type: multipart/form-data 无法取值
+                //Map<String,String> mapBaiDu = new HashMap<>();
+                /*BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream(), "utf-8"));
+                StringBuffer sb = new StringBuffer("");
+                String temp;
+                while ((temp = br.readLine()) != null){
+                    sb.append(temp);
+                }
+                br.close();
+                String params = sb.toString();
+                System.out.println("请求参数："+params);
+                JSONObject mapBaiDu = JSONObject.parseObject(params);
+                String cmd = mapBaiDu.getString("cmd");
+                String cmdA[] = new String[]{cmd};
+                stringMap.put("cmd",cmdA);
+                String sign = mapBaiDu.getString("sign");
+                String signA[] = new String[]{sign};
+                stringMap.put("sign",signA);
+                String source = mapBaiDu.getString("source");
+                String sourceA[] = new String[]{source};
+                stringMap.put("source",sourceA);
+                String ticket = mapBaiDu.getString("ticket");
+                String ticketA[] = new String[]{ticket};
+                stringMap.put("ticket",ticketA);
+                String timestamp = String.valueOf(mapBaiDu.get("timestamp"));
+                String timestampA[] = new String[]{timestamp};
+                stringMap.put("timestamp",timestampA);
+                String version = mapBaiDu.getString("version");
+                String versionA[] = new String[]{version};
+                stringMap.put("version",versionA);
+                String body = mapBaiDu.getJSONObject("body").toJSONString();
+                String bodyA[] = new String[]{body};
+                stringMap.put("body",bodyA);*/
                 break;
             case "/waimai/jdhome": //京东到家
                 String[] strArr = {sid};

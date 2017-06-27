@@ -130,8 +130,8 @@ public final class Constants {
     //百度外卖=================================================================================//
     public static final  String BAIDU_URL = "http://api.waimai.baidu.com";
 
-    public static final  String BAIDU_SOURCE = "30618";
-    public static final String  BAIDU_SECRET = "5a2c7855f7441fa2";
+    public static final  String BAIDU_SOURCE = "65062";
+    public static final String  BAIDU_SECRET = "9aa9bef2dd361398";
     public static final  String BAIDU_SOURCE_SH = "30618";
     public static final String  BAIDU_SECRET_SH = "5a2c7855f7441fa2";
     public static final  String BAIDU_SOURCE_SZ = "30916";

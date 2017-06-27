@@ -11,7 +11,7 @@ public class SysParams {
     private String timestamp;   //请求时间戳
     private String version = "3"; //api版本号,当前为2
     private String ticket;   //请求唯一标识
-    private  String source;  //合作方帐号
+    private  String source;   //合作方帐号
     private  String sign;    //签名
     private String encrypt;  //是否加密,如AES,可为空
     private  Object body;    //请求参数

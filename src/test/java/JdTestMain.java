@@ -12,6 +12,7 @@ import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.jd.JdCrmOrder;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +25,9 @@ public class JdTestMain {
     private static final String sessionKey = "cf5c6772-d49a-4fa6-870f-eca8f7ba5c3a";
 
     public static void main(String[] args) throws Exception {
-//        queryDetailInfo();
-        /*List<OrderSearchInfo> list = new ArrayList<OrderSearchInfo>();
-        queryList(list,1,0);*/
-        String aa = "沪DB5229上海至南通过路费用";
-        System.out.println(aa.length());
+        NumberFormat numberFormat = NumberFormat.getNumberInstance();
+
+        System.out.println(numberFormat.format(123456789));
 
     }
 

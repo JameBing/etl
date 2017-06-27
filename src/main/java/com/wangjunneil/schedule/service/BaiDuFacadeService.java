@@ -495,11 +495,11 @@ public class BaiDuFacadeService {
     //接收百度外卖推送过来的订单
     public String orderPost(SysParams sysParams){
         String result = "";
-        Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
-        Data data1 = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
+        Body body = new Body();
+        JSONObject jsonObject1 = JSONObject.parseObject(sysParams.getBody().toString());
         try{
-            Order order = getGson().fromJson(sysParams.getBody().toString(),Order.class);
-            SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order,data1.getShop().getShopId()),SysParams.class);
+            Order order = new Order();order.setOrderId(jsonObject1.getString("order_id"));
+            SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order,sysParams.getSource()),SysParams.class);
             String bodyStr = getGson().toJson(sysParams1.getBody());
             body = getGson().fromJson(bodyStr,Body.class);
             if (body.getErrno().trim().equals("0")){
