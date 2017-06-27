@@ -108,10 +108,12 @@ public class BaiDuApiService {
         String timeStamp = sysParams.getTimestamp();
         String params = "body={0}&cmd={1}&timestamp={2}&version={3}&ticket={4}&source={5}&encrypt={6}&secret={7}";
         String bodyStr = gson.toJson(sysParams.getBody());
+        getSourceAndSecretBySource(sysParams.getSource(),sysParams);
         params = MessageFormat.format(params, bodyStr, sysParams.getCmd(), timeStamp, sysParams.getVersion(), ticket
             , String.valueOf(sysParams.getSource()), sysParams.getEncrypt(), sysParams.getSecret());
         params = StringUtil.retParamAsc(params);
         params = StringUtil.chinaToUnicode(params);
+        System.out.println("签名参数："+params);
         JsonObject json = new JsonObject();
         JsonObject jsonBody = new JsonObject();
         JsonObject jsonData = new JsonObject();

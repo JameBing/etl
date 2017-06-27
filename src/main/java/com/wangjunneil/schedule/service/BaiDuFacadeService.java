@@ -180,6 +180,9 @@ public class BaiDuFacadeService {
         Rtn rtn = new Rtn();
         Log log = null;
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(shopId)){
+            return gson1.toJson(rtn);
+        }
         try {
             Shop shop = new Shop();
             shop.setShopId(shopId);
@@ -517,7 +520,7 @@ public class BaiDuFacadeService {
                 String orderId = sysFacadeService.getOrderNum(shopId);
                 orderWaiMai.setOrderId(orderId);
                 orderWaiMai.setOrder(data);
-                orderWaiMai.setShopId(shopId);
+                orderWaiMai.setShopId(sellerId);
                 orderWaiMai.setSellerShopId(sellerId);
                 orderWaiMai.setCreateTime(new Date());
                 sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
