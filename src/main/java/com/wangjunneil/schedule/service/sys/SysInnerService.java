@@ -2,7 +2,6 @@ package com.wangjunneil.schedule.service.sys;
 
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
-import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.common.FlowNum;
 import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
@@ -14,11 +13,8 @@ import com.wangjunneil.schedule.entity.sys.Page;
 import com.wangjunneil.schedule.entity.sys.Status;
 import com.wangjunneil.schedule.entity.tm.TmallAccessToken;
 import com.wangjunneil.schedule.entity.z8.Z8AccessToken;
-import com.wangjunneil.schedule.entity.z8.Z8CrmOrder;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.OrderUtil;
-import com.wangjunneil.schedule.utility.StringUtil;
-import org.eclipse.jetty.util.security.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -80,7 +76,7 @@ public class SysInnerService {
         mongoTemplate.insert(accessToken);
     }
 
-    public void addPlatform(Cfg cfg,String editType)throws ScheduleException{
+    public void addPlatform(Cfg cfg, String editType)throws ScheduleException {
         String platform = cfg.getPlatform();
         if("edit".equals(editType)){
             mongoTemplate.remove(new Query(Criteria.where("platform").is(platform)),Cfg.class);
@@ -142,7 +138,7 @@ public class SysInnerService {
     }
 
 
-    public void delPlatform(Cfg cfg) throws ScheduleException{
+    public void delPlatform(Cfg cfg) throws ScheduleException {
         String platform = cfg.getPlatform();
         if(Constants.PLATFORM_JD.equals(platform)){
             mongoTemplate.remove(new Query(Criteria.where("platform").is(platform)),Cfg.class);
@@ -197,7 +193,7 @@ public class SysInnerService {
             curNo = intRresult + 1;
         }
         //新增
-        Update update = new Update().set("date",DateTimeUtil.nowDateString("yyyyMMdd"))
+        Update update = new Update().set("date", DateTimeUtil.nowDateString("yyyyMMdd"))
             .set("module",module)
             .set("flowNum",curNo);
         mongoTemplate.upsert(query,update,FlowNum.class);
@@ -205,14 +201,14 @@ public class SysInnerService {
     }
 
     //订单查询
-    public  OrderWaiMai findOrderWaiMai(String platform,String platformOrderId){
+    public OrderWaiMai findOrderWaiMai(String platform, String platformOrderId){
         Query query = new Query(Criteria.where("platform").is(platform).where("platformOrderId").is(platformOrderId));
         OrderWaiMai orderWaiMai = mongoTemplate.findOne(query,OrderWaiMai.class);
         return  orderWaiMai;
     }
 
     //订单插入
-    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws ScheduleException{
+    public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws ScheduleException {
         Query  query = new Query(Criteria.where("platform").is(orderWaiMai.getPlatformOrderId()).where("platformOrderId").is(orderWaiMai.getPlatformOrderId()));
         Update update = new Update()
             .set("platform", orderWaiMai.getPlatform())

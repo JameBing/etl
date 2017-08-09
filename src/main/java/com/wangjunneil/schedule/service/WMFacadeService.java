@@ -1,5 +1,6 @@
 package com.wangjunneil.schedule.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.*;
@@ -45,7 +46,7 @@ public class WMFacadeService {
     //========================下行接口=================================/
 
     //回调地址入口处理方法
-    public String appReceiveCallBack(Map<String,String[]> stringMap,String platform){
+    public String appReceiveCallBack(Map<String,String[]> stringMap,String platform,JSONObject jsonObject){
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         String result = "";
         // true 推送完整order  false 推送status  默认false
@@ -93,19 +94,21 @@ public class WMFacadeService {
                 }
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME:
-                switch (stringMap.get("push_action")[0]){
-                    case "1": //新订单
-                        result =    eleMeFacadeService.getNewOrder(stringMap.get("eleme_order_ids")[0]);
-                        break;
-                    case "2": //订单状态变更
-                      result =  eleMeFacadeService.orderChange(stringMap.get("eleme_order_id")[0], stringMap.get("new_status")[0],flag);
-                        break;
-                    case "3": //退单状态推送
-                     result =   eleMeFacadeService.chargeBack(stringMap.get("eleme_order_id")[0], stringMap.get("refund_status")[0],flag);
-                        break;
-                    case "4": //订单配送状态推送
-                        break;
-                    default: break;
+                JSONObject json = JSONObject.parseObject(jsonObject.get("message").toString());
+                    //新订单
+                if(json.getString("status")!=null){
+                    result =  eleMeFacadeService.getNewOrder(json);
+                }
+                else if(json.getString("state")!=null){
+                    //订单状态变更
+                    result =  eleMeFacadeService.orderChange(json,flag);
+                }
+                else if(json.getString("refundStatus")!=null){
+                    //退单状态推送
+                    result =  eleMeFacadeService.chargeBack(json,flag);
+                }
+                else if(json.getString("phone")!=null){
+                    result = eleMeFacadeService.distributionStatus(json);
                 }
                 break;
             default:break;
@@ -302,6 +305,17 @@ public class WMFacadeService {
         return  "{".concat(MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme)).concat("}");
     }
 
+    //修改菜品
+    public String dishUpdate(ParsFromPosInner parsFromPosInner){
+        String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]",
+            result_baidu = "",
+            result_jdhome = "",
+            result_eleme = "",
+            result_meituan = "";
+        result_baidu = eleMeFacadeService.dishUpdate(parsFromPosInner);
+        return  "{".concat(MessageFormat.format(result,result_baidu,result_jdhome,result_meituan,result_eleme)).concat("}");
+    }
+
     //菜品查看
     public String dishGet(ParsFromPos parsFromPos){
         String result = "\"baidu\":[{0}],\"jdhome\":[{1}],\"meituan\":[{2}],\"eleme\":[{3}]",
@@ -347,7 +361,7 @@ public class WMFacadeService {
         result_baidu = parsFormPos2.getBaidu().stream().map(e->function2.apply(e)).reduce("",(x,y)->x.concat(StringUtil.isEmpty(x)?"":",").concat(y));
         result_meituan = parsFormPos2.getMeituan().stream().map(e->function4.apply(e)).reduce("", (x, y) -> x.concat(StringUtil.isEmpty(x) ? "" : ",").concat(y));
         result_jdhome = jdHomeFacadeService.updateAllStockOnAndOff(parsFormPos2.getJdhome(), 1); //0上架 1下架
-        result_eleme = eleMeFacadeService.upBatchFrame(parsFormPos2.getEleme(),"0");
+        result_eleme = eleMeFacadeService.downBatchFrame(parsFormPos2.getEleme(),"0");
         return "{".concat(MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
     }
 
@@ -412,10 +426,21 @@ public class WMFacadeService {
         }
         if(parsFromPos.getEleme()!=null  && !StringUtil.isEmpty(parsFromPos.getEleme().getPlatformOrderId())){
             for(String id:parsFromPos.getEleme().getPlatformOrderId().split(",")){
-                result_eleme =(StringUtil.isEmpty(result_eleme)?"":result_eleme+",")+eleMeFacadeService.upOrderStatus(id,isAgree==0?"2":"-1",parsFromPos.getEleme().getReason());
+                result_eleme =(StringUtil.isEmpty(result_eleme)?"":result_eleme+",")+eleMeFacadeService.upOrderStatus(id,isAgree==0?"2":"-1",parsFromPos.getEleme().getShopId(),parsFromPos.getEleme().getReason());
             }
         }
         return "{".concat( MessageFormat.format(result, result_baidu, result_jdhome, result_meituan, result_eleme)).concat("}");
+    }
+
+    //获取平台token信息
+    public String getAuthToken(Map<String,String[]> stringMap,String platform){
+        String result = "";
+        switch (platform){
+            case Constants.PLATFORM_WAIMAI_ELEME:
+              result = eleMeFacadeService.getCodeAndAuthToken(stringMap);
+            default:break;
+        }
+        return result;
     }
 
     //===============Other=================/

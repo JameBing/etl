@@ -1,6 +1,5 @@
 package com.wangjunneil.schedule.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.Constants;
@@ -11,6 +10,14 @@ import com.wangjunneil.schedule.entity.eleme.*;
 import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
+import eleme.openapi.sdk.api.entity.order.OOrder;
+import eleme.openapi.sdk.api.entity.product.OCategory;
+import eleme.openapi.sdk.api.entity.product.OItem;
+import eleme.openapi.sdk.api.entity.product.OItemIdWithSpecIds;
+import eleme.openapi.sdk.api.entity.product.OSpec;
+import eleme.openapi.sdk.api.entity.shop.OShop;
+import eleme.openapi.sdk.api.enumeration.order.OOrderStatus;
+import eleme.openapi.sdk.oauth.response.Token;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,46 +96,47 @@ public class EleMeFacadeService {
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(merchantId)) {
             return gson1.toJson(rtn);
-        }else {
-            try {
-                rtn.setDynamic(merchantId);
-                RestaurantRequest restaurantRequest = new RestaurantRequest();
-                restaurantRequest.setRestaurant_id(merchantId);
-                restaurantRequest.setIs_open(status);
-                result = eleMeApiService.setRestaurantStatus(restaurantRequest);
-                Result obj = getGson().fromJson(result, Result.class);
-                if("ok".equals(obj.getMessage())) {
-                    rtn.setCode(0);
-                    rtn.setRemark(obj.getMessage().toString());
-                }else {
-                    rtn.setCode(-1);
-                    rtn.setRemark(MessageFormat.format("门店{0}不存在", merchantId));
-                }
+        }
+        try {
+            rtn.setDynamic(merchantId);
+            RestaurantRequest restaurantRequest = new RestaurantRequest();
+            restaurantRequest.setRestaurant_id(merchantId);
+            restaurantRequest.setIs_open(status);
+            OShop shop = eleMeApiService.setRestaurantStatus(restaurantRequest);
+            if (shop!=null) {
+                rtn.setCode(0);
                 rtn.setDesc("success");
-            }catch (ElemeException ex){
-                rtn.setCode(-997);
-                log = sysFacadeService.functionRtn.apply(ex);
+                rtn.setRemark("操作成功");
+                rtn.setDynamic(merchantId);
+            }else {
+                rtn.setCode(-1);
+                rtn.setDesc("error");
+                rtn.setRemark("餐厅不存在");
+                rtn.setDynamic(merchantId);
             }
-            catch (ScheduleException ex) {
-                rtn.setCode(-999);
-                log = sysFacadeService.functionRtn.apply(ex);
-                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-            }
-            catch (Exception ex){
-                rtn.setCode(-998);
-                log = sysFacadeService.functionRtn.apply(ex);
-                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-            }finally {
-                if (log!=null){
-                    log.setLogId(merchantId.concat(log.getLogId()));
-                    log.setTitle(MessageFormat.format("门店{0}{1}失败", merchantId,status=="1"?"开业":"歇业"));
-                    if (StringUtil.isEmpty(log.getRequest()))
-                        log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"eleme_shop_id\":{1}", merchantId, "")).concat("}"));
-                    sysFacadeService.updSynLog(log);
-                    rtn.setDesc("发生异常");
-                    rtn.setLogId(log.getLogId());
-                    rtn.setRemark(MessageFormat.format("门店{0}{1}失败！",merchantId,status=="1"?"开业":"歇业"));
-                }
+        }catch (ElemeException ex){
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }
+        catch (ScheduleException ex) {
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }
+        catch (Exception ex){
+            rtn.setCode(-998);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }finally {
+            if (log!=null){
+                log.setLogId(merchantId.concat(log.getLogId()));
+                log.setTitle(MessageFormat.format("门店{0}{1}失败", merchantId,status=="1"?"开业":"歇业"));
+                if (StringUtil.isEmpty(log.getRequest()))
+                    log.setRequest("{".concat(MessageFormat.format("\"shop_id\":{0},\"eleme_shop_id\":{1}", merchantId, "")).concat("}"));
+                sysFacadeService.updSynLog(log);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log.getLogId());
+                rtn.setRemark(MessageFormat.format("门店{0}{1}失败！",merchantId,status=="1"?"开业":"歇业"));
             }
         }
         return  gson1.toJson(rtn);
@@ -220,7 +228,7 @@ public class EleMeFacadeService {
      * @param reason 取消订单原因,不是取消订单请填写""或者null
      * @return
      */
-    public String upOrderStatus(String elemeOrderId, String status, String reason){
+    public String upOrderStatus(String elemeOrderId, String status, String shopId,String reason){
         String result = null;
         Rtn rtn = new Rtn();
         rtn.setDynamic(elemeOrderId);
@@ -234,9 +242,7 @@ public class EleMeFacadeService {
                 OrderRequest request = new OrderRequest();
                 request.setEleme_order_id(elemeOrderId);
                 request.setTp_id("1");
-                String resultStaus = eleMeApiService.orderDetail(request);
-                Result objStatus = getGson().fromJson(resultStaus, Result.class);
-                Order order = getGson().fromJson(getGson().toJson(objStatus.getData()), Order.class);
+                OOrder order = eleMeApiService.orderDetail(elemeOrderId,shopId);
                 if(order==null){
                     rtn.setCode(-1);
                     rtn.setRemark("订单不存在");
@@ -244,37 +250,27 @@ public class EleMeFacadeService {
                     rtn.setDynamic(String.valueOf(elemeOrderId));
                     return gson.toJson(rtn);
                 }
-
-                if(order.getStatuscode()!=Constants.EL_STATUS_CODE_UNPROCESSED){
+                if(order.getStatus().toString().equals(OOrderStatus.unprocessed)){
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("code",Constants.POS_ORDER_NOT_RECEIVED);
                     jsonObject.put("desc","error");
                     jsonObject.put("remark","订单已确实过，请更新状态");
                     jsonObject.put("orderId",elemeOrderId);
-                    jsonObject.put("orderStatus",new SysFacadeService().tranELOrderStatus(order.getStatuscode()));
+                    jsonObject.put("orderStatus",new SysFacadeService().tranELOrderStatus(order.getStatus()));
                     return jsonObject.toJSONString();
                 }
-
-                OrderRequest orderRequest = new OrderRequest();
-                orderRequest.setEleme_order_id(elemeOrderId);
-                orderRequest.setStatus(status);
-                if(!StringUtil.isEmpty(reason)) {
-                    orderRequest.setReason(reason);
+                //确认订单
+                if("2".equals(status)){
+                    eleMeApiService.configOrderStatus(elemeOrderId,shopId);
                 }
-                result = eleMeApiService.upOrderStatus(orderRequest);
-                Result obj = getGson().fromJson(result, Result.class);
-                if ("ok".equals(obj.getMessage())) {
-                    if(!StringUtil.isEmpty(rtn.getCode()) && rtn.getCode() == 1013){
-                        rtn.setCode(Constants.RETURN_ORDER_CODE);
-                    }else {
-                        rtn.setCode(0);
-                    }
-                    rtn.setRemark(obj.getMessage().toString());
-                }else {
-                    rtn.setCode(-1);
-                    rtn.setRemark(MessageFormat.format("订单{0}不存在", elemeOrderId));
+                //取消订单
+                if("-1".equals(status)){
+                    eleMeApiService.cancelOrderStatus(elemeOrderId,shopId);
                 }
+                rtn.setCode(0);
                 rtn.setDesc("success");
+                rtn.setRemark("操作成功");
+                rtn.setDynamic(elemeOrderId);
                 //更新门店是否接单标识字段
                 if("2".equals(status)){
                     eleMeInnerService.updateIsReceived(elemeOrderId,1);
@@ -365,8 +361,7 @@ public class EleMeFacadeService {
     }
 
     /**
-     *  查询餐厅菜单
-     * 此接口不推荐使用
+     *  获取门店商品状态
      * @param merchantId 商户ID
      * @return
      */
@@ -381,43 +376,32 @@ public class EleMeFacadeService {
         try {
             RestaurantRequest restaurantRequest = new RestaurantRequest();
             restaurantRequest.setRestaurant_id(merchantId);
-            restaurantRequest.setTp_id("1");
-            String result = eleMeApiService.restaurantMenu(restaurantRequest);
-            Result obj = getGson().fromJson(result, Result.class);
-            if ("ok".equals(obj.getMessage().toString())) {
-                JSONObject jsonObject = JSONObject.parseObject(result).getJSONObject("data");
-                JSONArray jsonArray = jsonObject.getJSONArray("restaurant_menu");
-                if(jsonArray==null || jsonArray.size()==0){
-                    rtn.setCode(-1);
-                    rtn.setDesc("success");
-                    rtn.setRemark("此门店无商品");
-                    rtn.setDynamic(merchantId);
-                }
-                for(int i=0;i<jsonArray.size();i++){
-                    JSONArray foodArray = jsonArray.getJSONObject(i).getJSONArray("foods");
-                    if(foodArray==null || foodArray.size()==0){
-                        continue;
-                    }
-                    for(int j=0;j<foodArray.size();j++){
-                        Rtn rtn1 = new Rtn();
-                        JSONObject json = foodArray.getJSONObject(j);
-                        rtn1.setCode(0);
-                        rtn1.setDynamic(json.getString("tp_food_id"));
-                        rtnStr = rtnStr +gson.toJson(rtn1)+",";
-                    }
-                }
-            }else {
+            //获取门店所有商品分类
+            List<OCategory> categoryList = getCategoryId(merchantId);
+            if(categoryList==null || categoryList.size()==0){
                 rtn.setCode(-1);
-                rtn.setDesc("error");
-                rtn.setRemark("查询门店菜品失败");
+                rtn.setDesc("success");
+                rtn.setRemark("此门店无商品");
                 rtn.setDynamic(merchantId);
             }
-        }catch (ElemeException ex){
-            log = sysFacadeService.functionRtn.apply(ex);
-        }
-        catch (ScheduleException ex) {
-            log = sysFacadeService.functionRtn.apply(ex);
-            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            for(int i=0;i<categoryList.size();i++){
+                //获取分类下商品
+                Map<Long,OItem> items = getCategProducts(categoryList.get(i).getId(),merchantId);
+                Set<Long> keys = items.keySet();
+                for(Long key :keys){
+                    OItem item = items.get(key);
+                    List<OSpec> specsList = item.getSpecs();
+                    if(specsList==null || specsList.size()==0){
+                        continue;
+                    }
+                    rtn.setCode(0);
+                    rtn.setDesc("success");
+                    rtn.setStatus(specsList.get(0).getOnShelf()==1?0:1);
+                    rtn.setName(item.getName());
+                    rtn.setDynamic(String.valueOf(item.getId()));
+                    rtnStr = rtnStr +gson.toJson(rtn)+",";
+                }
+            }
         }catch (Exception ex){
             log = sysFacadeService.functionRtn.apply(ex);
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
@@ -439,105 +423,70 @@ public class EleMeFacadeService {
 
     /**
      * 新订单接收
-     * @param elemeOrderIds eleme平台订单id
+     * @param  jsonObject
      * @return
      */
-    public String getNewOrder(String elemeOrderIds){
-        List<String> listIds = new ArrayList<String>();
-        Log[] log = {null};
-        String [] rtnStr = {null};
-        if (StringUtil.isEmpty(elemeOrderIds)) {
-            log[0].setLogId(elemeOrderIds.concat(log[0].getLogId()));
-            log[0].setTitle(MessageFormat.format("订单{0}为空", elemeOrderIds));
-        }else {
-            Collections.addAll(listIds, elemeOrderIds.split(","));
-            listIds.forEach((id)->{
-                try {
-                    OrderRequest orderRequest = new OrderRequest();
-                    orderRequest.setEleme_order_id(id);
-                    orderRequest.setTp_id("1");
-                    String result = eleMeApiService.orderDetail(orderRequest);
-                    Result obj = getGson().fromJson(result, Result.class);
-                    Order order = getGson().fromJson(getGson().toJson(obj.getData()), Order.class);
-                    orderRequest.setEleme_order_ids(id);
-                    String result1 = eleMeApiService.getDeliveryInfo(orderRequest);
-                    Body obj1 = getGson().fromJson(result1, Body.class);
-                    Distribution distribution = null;
-                    for (int i = 0;i < obj1.getData().size(); i++) {
-                        distribution = getGson().fromJson(getGson().toJson(obj1.getData().get(i)), Distribution.class);
-                    }
-                    order.setDistribution(distribution);
-                    OrderWaiMai orderWaiMai = new OrderWaiMai();
-                    orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-                    orderWaiMai.setPlatformOrderId(order.getOrderid().toString());
-                    String orderId = sysFacadeService.getOrderNum(order.getRestaurantid());
-                    orderWaiMai.setOrder(order);
-                    orderWaiMai.setOrderId(orderId);
-                    orderWaiMai.setSellerShopId(order.getTprestaurantid());
-                    orderWaiMai.setShopId(order.getRestaurantid());
-                    orderWaiMai.setCreateTime(new Date());
-                    rtnStr[0] = "{\"message\": \"ok\"}";
-                    sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
-                }catch (ElemeException ex){
-                    log[0] = sysFacadeService.functionRtn.apply(ex);
-                }
-                catch (ScheduleException ex) {
-                    log[0] = sysFacadeService.functionRtn.apply(ex);
-                    log[0].setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-                }catch (Exception ex){
-                    log[0] = sysFacadeService.functionRtn.apply(ex);
-                    log[0].setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-                }finally {
-                    if (log[0] != null) {
-                        log[0].setLogId(elemeOrderIds.concat(log[0].getLogId()));
-                        log[0].setTitle(MessageFormat.format("接收新订单{0}or获取新订单{1}配送信息失败", elemeOrderIds,elemeOrderIds));
-                        if (StringUtil.isEmpty(log[0].getRequest())) {
-                            log[0].setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
-                        }
-                        sysFacadeService.updSynLog(log[0]);
-                        rtnStr[0] = "{\"message\": \"error\"}";
-                    }
-                }
-            });
+    public String getNewOrder(JSONObject jsonObject){
+        String rtnStr = "";
+        Log log = null;
+        if(StringUtil.isEmpty(jsonObject)){
+            return  "{\"message\": \"error\"}";
         }
-        return rtnStr[0];
+        try {
+            String orderId = jsonObject.getString("orderId");
+            OrderWaiMai orderWaiMai = new OrderWaiMai();
+            orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            orderWaiMai.setPlatformOrderId(jsonObject.getString("orderId"));
+            String wmOrderId = sysFacadeService.getOrderNum(String.valueOf(jsonObject.getString("shopId")));
+            orderWaiMai.setOrder(jsonObject);
+            orderWaiMai.setOrderId(wmOrderId);
+            orderWaiMai.setPlatformOrderId(orderId);
+            orderWaiMai.setSellerShopId(jsonObject.getString("shopId"));
+            orderWaiMai.setShopId(jsonObject.getString("shopId"));
+            orderWaiMai.setCreateTime(new Date());
+            rtnStr = "{\"message\": \"ok\"}";
+            sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
+        }catch (ElemeException ex){
+            log = sysFacadeService.functionRtn.apply(ex);
+        }catch (Exception ex){
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }finally {
+            if (log != null) {
+                log.setLogId(log.getLogId());
+                log.setTitle("接收新订单或者获取新订单配送信息失败");
+                if (StringUtil.isEmpty(log.getRequest())) {
+                    log.setRequest("{".concat(MessageFormat.format("\"order\":{0}", jsonObject.toJSONString())).concat("}"));
+                }
+                sysFacadeService.updSynLog(log);
+                rtnStr = "{\"message\": \"error\"}";
+            }
+        }
+        return rtnStr;
     }
 
 
     /**
      * 消息订单修改状态
-     * @param elemeOrderIds
-     * @param newStatus
+     * @param jsonObject
      * @return
      */
-    public String orderChange(String elemeOrderIds,String newStatus,Boolean flag){
+    public String orderChange(JSONObject jsonObject,Boolean flag){
         //温馨提醒：单个参数传输都使用String类型，因为Request对象的getparamter方法返回的均是String类型，外层做类型转换的话，如果发生异常则无法捕获，异常处理均在这一层处理，所以放在这里做类型转换更合适
         Log log =null;
         try {
-            //查询新订单
-            OrderRequest orderRequest = new OrderRequest();
-            orderRequest.setEleme_order_id(elemeOrderIds);
-            orderRequest.setStatus(newStatus);
-            String result = eleMeApiService.orderDetail(orderRequest);
-            Result obj = getGson().fromJson(result, Result.class);
-            Order order = getGson().fromJson(getGson().toJson(obj.getData()), Order.class);
-            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_ELEME,String.valueOf(order.getOrderid()));
+            String orderId = jsonObject.getString("orderId");
+            String newStatus = jsonObject.getString("state");
+            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_ELEME,orderId);
             if(StringUtil.isEmpty(orderWaiMai)){
                 return "{\"message\": \"不存在此订单\"}";
             }
             if(!flag){
-                eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds, Integer.parseInt(newStatus));
+                eleMeInnerService.updSyncElemeOrderStastus(orderId, newStatus);
             }else {
-                sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
+                sysFacadeService.updateWaiMaiOrder(orderId, orderWaiMai);
             }
-            List<String> listIds = new ArrayList<String>();
-            Collections.addAll(listIds, elemeOrderIds.split(","));
-            listIds.forEach((id)->{
-                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,Integer.valueOf(newStatus),id,null,orderWaiMai.getSellerShopId());
-            });
-        }catch (ElemeException ex){
-            log = sysFacadeService.functionRtn.apply(ex);
-            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,null,orderId,null,orderWaiMai.getSellerShopId(),OOrderStatus.valueOf(newStatus));
         }catch (ScheduleException e){
             log = sysFacadeService.functionRtn.apply(e);
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
@@ -546,10 +495,10 @@ public class EleMeFacadeService {
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
         }finally {
             if(log!=null){
-                log .setLogId(elemeOrderIds.concat(log.getLogId()));
-                log.setTitle(MessageFormat.format("饿了么订单:{0}修改失败", elemeOrderIds));
+                log .setLogId(log.getLogId());
+                log.setTitle("饿了么订单修改失败");
                 if (StringUtil.isEmpty(log.getRequest())) {
-                    log.setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
+                    log.setRequest("{".concat(MessageFormat.format("\"order\":{0}", jsonObject)).concat("}"));
                 }
                 sysFacadeService.updSynLog(log);
                 return "{\"message\": \"error\"}";
@@ -559,33 +508,21 @@ public class EleMeFacadeService {
     }
 
     //退单状态接收  refund_status:退单订单状态
-    public String chargeBack(String elemeOrderIds,String refundStatus,Boolean flag) {
+    public String chargeBack(JSONObject jsonObject,Boolean flag) {
         Log log = null;
         try {
-            //查询新订单
-            OrderRequest orderRequest = new OrderRequest();
-            orderRequest.setEleme_order_id(elemeOrderIds);
-            orderRequest.setStatus(refundStatus);
-            String result = eleMeApiService.orderDetail(orderRequest);
-            Result obj = getGson().fromJson(result, Result.class);
-            Order order = getGson().fromJson(getGson().toJson(obj.getData()), Order.class);
-            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_ELEME,String.valueOf(order.getOrderid()));
+            String orderId = jsonObject.getString("orderId");
+            String refundStatus = jsonObject.getString("refundStatus");
+            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_ELEME,orderId);
             if(StringUtil.isEmpty(orderWaiMai)){
                 return "{\"message\": \"不存在此订单\"}";
             }
             if(!flag){
-                eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds,Integer.parseInt(refundStatus));
+                eleMeInnerService.updSyncElemeOrderStastus(orderId,refundStatus);
             }else {
-                sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
+                sysFacadeService.updateWaiMaiOrder(orderId, orderWaiMai);
             }
-            List<String> listIds = new ArrayList<String>();
-            Collections.addAll(listIds, elemeOrderIds.split(","));
-            listIds.forEach((id)->{
-                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,Integer.valueOf(refundStatus),id,null,orderWaiMai.getSellerShopId());
-            });
-        }catch (ElemeException ex){
-            log = sysFacadeService.functionRtn.apply(ex);
-            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,null,orderId,null,orderWaiMai.getSellerShopId(),OOrderStatus.valueOf(refundStatus));
         }catch (ScheduleException e){
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             log = sysFacadeService.functionRtn.apply(e);
@@ -594,10 +531,10 @@ public class EleMeFacadeService {
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
         }finally {
             if(log!=null){
-                log .setLogId(elemeOrderIds.concat(log.getLogId()));
-                log.setTitle(MessageFormat.format("饿了么订单:{0}退单失败", elemeOrderIds));
+                log .setLogId(log.getLogId());
+                log.setTitle("饿了么订单退单失败");
                 if (StringUtil.isEmpty(log.getRequest())) {
-                    log.setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
+                    log.setRequest("{".concat(MessageFormat.format("\"order\":{0}", jsonObject)).concat("}"));
                 }
                 sysFacadeService.updSynLog(log);
                 return "{\"message\": \"error\"}";
@@ -608,17 +545,23 @@ public class EleMeFacadeService {
     }
 
     //订单配送状态接收
-    public String distributionStatus(String elemeOrderIds,String statusCode,int sub_status_code){
+    public String distributionStatus(JSONObject jsonObject){
         Log log =null;
         try {
-            eleMeInnerService.updSyncElemeOrderStastus(elemeOrderIds,Integer.parseInt(statusCode));
+            if(StringUtil.isEmpty(jsonObject)){
+                return "{\"message\": \"error\"}";
+            }
+            eleMeInnerService.updSyncElemeOrderStastus(jsonObject.getString("orderId"),jsonObject.getString("state"));
+            Integer status = sysFacadeService.tranELDeliveryStatus(jsonObject.getString("state"));
+            sysFacadeService.topicMessageOrderDelivery(Constants.PLATFORM_WAIMAI_ELEME,status, jsonObject.getString("orderId"),
+                jsonObject.getString("phone"), jsonObject.getString("name"), jsonObject.getString("shopId"));
         }catch (ScheduleException e){
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             log = sysFacadeService.functionRtn.apply(e);
-            log .setLogId(elemeOrderIds.concat(log.getLogId()));
-            log.setTitle(MessageFormat.format("饿了么订单:{0}获取配送失败", elemeOrderIds));
+            log .setLogId(log.getLogId());
+            log.setTitle("饿了么订单:获取配送失败");
             if (StringUtil.isEmpty(log.getRequest())) {
-                log.setRequest("{".concat(MessageFormat.format("\"eleme_order_ids\":{0}", elemeOrderIds)).concat("}"));
+                log.setRequest("{".concat(MessageFormat.format("\"deliveryOrder\":{0}", jsonObject.toJSONString())).concat("}"));
             }
             sysFacadeService.updSynLog(log);
             return "{\"message\": \"error\"}";
@@ -627,21 +570,16 @@ public class EleMeFacadeService {
     }
 
     /**
-     * 通过第三方ID获取平台食物ID
-     * @param parms 多个第三方ID可用逗号隔开 例如：1425223342,1425223343
+     * 通过门店ID获取商品分类ID
+     * @param parms
      * @return
      */
-    public String getFoodId(String parms) {
+    public List<OCategory> getCategoryId(String parms) {
         Log log = null;
         if (!StringUtil.isEmpty(parms)) {
             try {
-                OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
-                oldFoodsRequest.setTp_food_ids(parms);
-                String result = eleMeApiService.getFoodId(oldFoodsRequest);
-                Result obj = getGson().fromJson(result, Result.class);
-                if ("ok".equals(obj.getMessage().toString())) {
-                    return getGson().toJson(obj.getData());
-                }
+                List<OCategory> cateList = eleMeApiService.getCategoryId(parms);
+                return cateList;
             }catch (ElemeException ex){
                 log = sysFacadeService.functionRtn.apply(ex);
             }
@@ -654,7 +592,7 @@ public class EleMeFacadeService {
             }finally {
                 if (log != null) {
                     log.setLogId(parms.concat(log.getLogId()));
-                    log.setTitle(MessageFormat.format("食物{0}获取平台食物ID失败", parms));
+                    log.setTitle(MessageFormat.format("获取门店{0}食物分类ID失败", parms));
                     if (StringUtil.isEmpty(log.getRequest())) {
                         log.setRequest("{".concat(MessageFormat.format("\"parms\":{0}", parms)).concat("}"));
                     }
@@ -662,117 +600,275 @@ public class EleMeFacadeService {
                 }
             }
         }
-        return "failure";
+        return  null;
     }
 
     /**
-     * 商品上下架
-     * @param dishList
-     * @param status 小于0->下架||大于0->上架
+     * 通过商品分类ID获取商品
+     * @param parms
      * @return
      */
-    public String upBatchFrame(List<ParsFromPosInner> dishList,String status) {
-        Rtn rtn = new Rtn();
-        String reponse = "";
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        if (dishList == null || dishList.size() == 0 || StringUtil.isEmpty(dishList.get(0).getShopId())) {
-            return gson1.toJson(rtn);
-        }else {
-            for (int i = 0; i < dishList.size(); i++) {
-                String result = getFoodId(dishList.get(i).getDishId());
-                if ("failure".equals(result)) {
-                    rtn.setCode(-1);
-                    rtn.setDesc("error");
-                    rtn.setRemark("无此商品");
-                    rtn.setDynamic(dishList.get(i).getDishId());
-                    reponse += gson1.toJson(rtn);
-                }else {
-                    //过滤门店
-                    Body body = getGson().fromJson(result, Body.class);
-                    reponse += StringUtil.isEmpty(reponse)?"":",";
-                    if (!StringUtil.isEmpty(body.getFoodids().get(dishList.get(i).getDishId()))) {
-                        FoodIds foods = new FoodIds();
-                        for (int j = 0; j < body.getFoodids().get(dishList.get(i).getDishId()).size(); j++) {
-                           if(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getRestaurantid().equals(dishList.get(i).getShopId())){
-                               foods.setFoodid(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getFoodid());
-                               foods.setRestaurantid(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getRestaurantid());
-                               foods.setRestaurantid(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getTprestaurantid());
-                               break;
-                           }
-                        }
-                        OldFoodsRequest oldFoodsRequest = new OldFoodsRequest();
-                        oldFoodsRequest.setStock(status);
-                        oldFoodsRequest.setFood_id(foods.getFoodid());
-                        reponse += uporDownFrame(dishList.get(i).getDishId(),getGson().toJson(oldFoodsRequest));
-                    }else {
-                        rtn.setCode(-1);
-                        rtn.setDesc("error");
-                        rtn.setRemark("无此商品");
-                        rtn.setDynamic(dishList.get(i).getDishId());
-                        reponse += gson1.toJson(rtn);
-                    }
-                }
-            }
-        }
-        return reponse;
-    }
-
-    /**
-     * 更新食物
-     * @param json json字符串(保证key与实体属性对应)
-     * @return
-     */
-    public String uporDownFrame(String foodid, String json){
-        String result = null;
+    public Map<Long, OItem> getCategProducts(Long parms,String shopId) {
         Log log = null;
-        Rtn rtn = new Rtn();
-        rtn.setDynamic(foodid);
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        if (StringUtil.isEmpty(json)) {
-            rtn.setCode(-1);
-            rtn.setDesc("食物数据为空");
-            rtn.setRemark("食物数据为空");
-        }else {
+        if (!StringUtil.isEmpty(parms)) {
             try {
-                OldFoodsRequest oldFoodsRequest = getGson().fromJson(json, OldFoodsRequest.class);
-                result = eleMeApiService.upFoods(oldFoodsRequest);
-                Result obj = getGson().fromJson(result, Result.class);
-                if ("ok".equals(obj.getMessage().toString())) {
-                    rtn.setCode(0);
-                    rtn.setRemark(obj.getMessage().toString());
-                }else {
-                    rtn.setCode(-1);
-                    rtn.setRemark(MessageFormat.format("更新食物{0}失败", foodid));
-                }
-                rtn.setDesc("success");
+                Map<Long, OItem> prds = eleMeApiService.getCategProducts(parms,shopId);
+                return prds;
             }catch (ElemeException ex){
-                rtn.setCode(-997);
                 log = sysFacadeService.functionRtn.apply(ex);
             }
             catch (ScheduleException ex) {
-                rtn.setCode(-999);
                 log = sysFacadeService.functionRtn.apply(ex);
                 log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-            }
-            catch (Exception ex){
-                rtn.setCode(-998);
+            }catch (Exception ex){
                 log = sysFacadeService.functionRtn.apply(ex);
                 log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             }finally {
                 if (log != null) {
                     log.setLogId(log.getLogId());
-                    log.setTitle(MessageFormat.format("更新食物{0}失败", foodid));
+                    log.setTitle(MessageFormat.format("获取分类{0}食物详情ID失败", parms));
                     if (StringUtil.isEmpty(log.getRequest())) {
-                        log.setRequest("{".concat(MessageFormat.format("\"json\":{0}", json)).concat("}"));
+                        log.setRequest("{".concat(MessageFormat.format("\"parms\":{0}", parms)).concat("}"));
                     }
                     sysFacadeService.updSynLog(log);
-                    rtn.setDesc("发生异常");
-                    rtn.setLogId(log.getLogId());
-                    rtn.setRemark(MessageFormat.format("更新食物{0}失败", foodid));
                 }
             }
         }
-        return  gson1.toJson(rtn);
+        return  null;
+    }
+
+    /**
+     * 通过第三方商品Id获取商品
+     * @param shopId  dishId
+     * @return
+     */
+    public OItem getProductByExtendCode(Long shopId,String dishId) {
+        Log log = null;
+        if (!StringUtil.isEmpty(shopId) && !StringUtil.isEmpty(dishId)) {
+            try {
+                OItem item = eleMeApiService.getProductByExtendCode(shopId,dishId);
+                return item;
+            }catch (ElemeException ex){
+                log = sysFacadeService.functionRtn.apply(ex);
+            }
+            catch (ScheduleException ex) {
+                log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            }catch (Exception ex){
+                log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            }finally {
+                if (log != null) {
+                    log.setLogId(log.getLogId());
+                    log.setTitle(MessageFormat.format("获取门店{0}食物详情失败", shopId));
+                    if (StringUtil.isEmpty(log.getRequest())) {
+                        log.setRequest("{".concat(MessageFormat.format("\"shopId\":{0}", shopId)).concat("}"));
+                    }
+                    sysFacadeService.updSynLog(log);
+                }
+            }
+        }
+        return  null;
+    }
+
+    /**
+     * 通过第三方商品Id获取商品
+     * @param   dishId
+     * @return
+     */
+    public OItem getProductById(String dishId,String shopId) {
+        Log log = null;
+        if (!StringUtil.isEmpty(dishId)) {
+            try {
+                OItem item = eleMeApiService.getProductById(dishId,shopId);
+                return item;
+            }catch (ElemeException ex){
+                log = sysFacadeService.functionRtn.apply(ex);
+            }
+            catch (ScheduleException ex) {
+                log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            }catch (Exception ex){
+                log = sysFacadeService.functionRtn.apply(ex);
+                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            }finally {
+                if (log != null) {
+                    log.setLogId(log.getLogId());
+                    log.setTitle(MessageFormat.format("获取门店{0}食物详情失败", dishId));
+                    if (StringUtil.isEmpty(log.getRequest())) {
+                        log.setRequest("{".concat(MessageFormat.format("\"dishId\":{0}", dishId)).concat("}"));
+                    }
+                    sysFacadeService.updSynLog(log);
+                }
+            }
+        }
+        return  null;
+    }
+
+    /**
+     * 商品上架
+     * @param dishList
+     * @param status
+     * @return
+     */
+    public String upBatchFrame(List<ParsFromPosInner> dishList,String status) {
+        Log log = null;
+        Rtn rtn = new Rtn();
+        String reponse = "";
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if (dishList == null || dishList.size() == 0 || StringUtil.isEmpty(dishList.get(0).getShopId())) {
+            return gson1.toJson(rtn);
+        }
+        //判断批量请求参数是否有空字段
+        for(int i=0;i<dishList.size();i++){
+            if(StringUtil.isEmpty(dishList.get(i).getShopId()) || StringUtil.isEmpty(dishList.get(i).getDishId())){
+                rtn.setCode(-1);
+                rtn.setDesc("error");
+                rtn.setRemark("门店Id或者商品Id为空");
+                rtn.setDynamic(dishList.get(i).getShopId()+dishList.get(i).getDishId());
+                return  gson.toJson(rtn);
+            }
+        }
+        //上架请求参数
+        List<OItemIdWithSpecIds> specIds = new ArrayList<OItemIdWithSpecIds>();
+        for(int j=0; j<dishList.size();j++){
+            OItem item = getProductById(dishList.get(j).getDishId(),dishList.get(j).getShopId());
+            Long proId = item.getId();
+            List<OSpec> specsList = item.getSpecs();
+            OItemIdWithSpecIds oItemIdWithSpecIds = new OItemIdWithSpecIds();
+            oItemIdWithSpecIds.setItemId(proId);
+            List<Long> itemSpecIds = new ArrayList<Long>();
+            for(int k=0;k<specsList.size();k++){
+                itemSpecIds.add(specsList.get(k).getSpecId());
+            }
+            oItemIdWithSpecIds.setItemSpecIds(itemSpecIds);
+            specIds.add(oItemIdWithSpecIds);
+        }
+        //请求上架接口
+        try {
+            eleMeApiService.upBatchFrame(specIds,dishList.get(0).getShopId());
+            for(int m=0;m<dishList.size();m++){
+                rtn.setCode(0);
+                rtn.setDesc("success");
+                rtn.setRemark("成功");
+                rtn.setDynamic(dishList.get(m).getDishId());
+                reponse+=gson1.toJson(rtn)+",";
+            }
+        }catch (ElemeException ex){
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }
+        catch (ScheduleException ex) {
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }
+        catch (Exception ex){
+            rtn.setCode(-998);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }finally {
+            if (log != null) {
+                log.setLogId(log.getLogId());
+                log.setTitle("批量上架失败");
+                if (StringUtil.isEmpty(log.getRequest())) {
+                    log.setRequest(specIds.toString());
+                }
+                sysFacadeService.updSynLog(log);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log.getLogId());
+                rtn.setRemark("批量上架食物{0}失败");
+            }
+            if(!StringUtil.isEmpty(reponse)){
+                return  reponse.substring(0,reponse.length()-1);
+            }
+            return gson.toJson(rtn);
+        }
+    }
+
+    /**
+     * 下架商品
+     * @param
+     * @return
+     */
+    public String downBatchFrame(List<ParsFromPosInner> dishList,String status){
+        Log log = null;
+        Rtn rtn = new Rtn();
+        String reponse = "";
+        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if (dishList == null || dishList.size() == 0 || StringUtil.isEmpty(dishList.get(0).getShopId())) {
+            return gson1.toJson(rtn);
+        }
+        //判断批量请求参数是否有空字段
+        for(int i=0;i<dishList.size();i++){
+            if(StringUtil.isEmpty(dishList.get(i).getShopId()) || StringUtil.isEmpty(dishList.get(i).getDishId())){
+                rtn.setCode(-1);
+                rtn.setDesc("error");
+                rtn.setRemark("门店Id或者商品Id为空");
+                rtn.setDynamic(dishList.get(i).getShopId()+dishList.get(i).getDishId());
+                return  gson.toJson(rtn);
+            }
+        }
+        //下架请求参数
+        List<OItemIdWithSpecIds> specIds = new ArrayList<OItemIdWithSpecIds>();
+        for(int j=0; j<dishList.size();j++){
+            OItem item = getProductById(dishList.get(j).getDishId(),dishList.get(j).getShopId());
+            Long proId = item.getId();
+            List<OSpec> specsList = item.getSpecs();
+            OItemIdWithSpecIds oItemIdWithSpecIds = new OItemIdWithSpecIds();
+            oItemIdWithSpecIds.setItemId(proId);
+            List<Long> itemSpecIds = new ArrayList<Long>();
+            for(int k=0;k<specsList.size();k++){
+                itemSpecIds.add(specsList.get(k).getSpecId());
+            }
+            oItemIdWithSpecIds.setItemSpecIds(itemSpecIds);
+            specIds.add(oItemIdWithSpecIds);
+        }
+        //请求下架接口
+        try {
+            eleMeApiService.downBatchFrame(specIds,dishList.get(0).getShopId());
+            for(int m=0;m<dishList.size();m++){
+                rtn.setCode(0);
+                rtn.setDesc("success");
+                rtn.setRemark("成功");
+                rtn.setDynamic(dishList.get(m).getDishId());
+                reponse+=gson1.toJson(rtn)+",";
+            }
+        }catch (ElemeException ex){
+            rtn.setCode(-997);
+            log = sysFacadeService.functionRtn.apply(ex);
+        }
+        catch (ScheduleException ex) {
+            rtn.setCode(-999);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }
+        catch (Exception ex){
+            rtn.setCode(-998);
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }finally {
+            if (log != null) {
+                log.setLogId(log.getLogId());
+                log.setTitle("批量上架失败");
+                if (StringUtil.isEmpty(log.getRequest())) {
+                    log.setRequest(specIds.toString());
+                }
+                sysFacadeService.updSynLog(log);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log.getLogId());
+                rtn.setRemark("批量上架食物{0}失败");
+            }
+            if(!StringUtil.isEmpty(reponse)){
+                return  reponse.substring(0,reponse.length()-1);
+            }
+            return gson.toJson(rtn);
+        }
+    }
+
+    //修改商品信息
+    public String dishUpdate(ParsFromPosInner parsFromPosInner){
+        return null;
     }
 
     /**
@@ -780,40 +876,34 @@ public class EleMeFacadeService {
      * @param merchantId
      * @return
      */
-    public String getRestaurantInfo(String merchantId) {
-        String result = null;
+    public OShop getRestaurantInfo(String merchantId) {
         Log log = null;
-        if (!StringUtil.isEmpty(merchantId)) {
-            try {
-                RestaurantRequest restaurantRequest= new RestaurantRequest();
-                restaurantRequest.setRestaurant_id(merchantId);
-                result = eleMeApiService.getRestaurantInfo(restaurantRequest);
-                Result obj = getGson().fromJson(result, Result.class);
-                if ("ok".equals(obj.getMessage().toString())) {
-                    return getGson().toJson(obj.getData());
+        try {
+            RestaurantRequest restaurantRequest= new RestaurantRequest();
+            restaurantRequest.setRestaurant_id(merchantId);
+            OShop shop = eleMeApiService.getRestaurantInfo(restaurantRequest);
+            return shop;
+        }catch (ElemeException ex){
+            log = sysFacadeService.functionRtn.apply(ex);
+        }
+        catch (ScheduleException ex) {
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }
+        catch (Exception ex){
+            log = sysFacadeService.functionRtn.apply(ex);
+            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+        }finally {
+            if (log != null) {
+                log.setLogId(log.getLogId());
+                log.setTitle(MessageFormat.format("获取餐厅{0}信息失败", merchantId));
+                if (StringUtil.isEmpty(log.getRequest())) {
+                    log.setRequest("{".concat(MessageFormat.format("\"restaurant_id\":{0}", merchantId)).concat("}"));
                 }
-            }catch (ElemeException ex){
-                log = sysFacadeService.functionRtn.apply(ex);
-            }
-            catch (ScheduleException ex) {
-                log = sysFacadeService.functionRtn.apply(ex);
-                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-            }
-            catch (Exception ex){
-                log = sysFacadeService.functionRtn.apply(ex);
-                log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-            }finally {
-                if (log != null) {
-                    log.setLogId(log.getLogId());
-                    log.setTitle(MessageFormat.format("获取餐厅{0}信息失败", merchantId));
-                    if (StringUtil.isEmpty(log.getRequest())) {
-                        log.setRequest("{".concat(MessageFormat.format("\"restaurant_id\":{0}", merchantId)).concat("}"));
-                    }
-                    sysFacadeService.updSynLog(log);
-                }
+                sysFacadeService.updSynLog(log);
             }
         }
-        return "failure";
+        return null;
     }
 
     /**
@@ -827,26 +917,25 @@ public class EleMeFacadeService {
         Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
         if (StringUtil.isEmpty(merchantId)) {
             return gson1.toJson(rtn);
+        }
+
+        OShop shop = getRestaurantInfo(merchantId);
+        if (shop==null) {
+            rtn.setCode(-1);
+            rtn.setDesc("success");
+            rtn.setRemark(MessageFormat.format("餐厅不存在", merchantId));
+            rtn.setDynamic(merchantId);
         }else {
-            String info = getRestaurantInfo(merchantId);
-            if ("failure".equals(info)) {
-                rtn.setCode(-1);
-                rtn.setDesc("failure");
-                rtn.setRemark(MessageFormat.format("获取餐厅{0}信息失败或餐厅不存在", merchantId));
+            if (shop.getIsOpen() == 1) {
+                rtn.setCode(0);
+                rtn.setDesc("success");
+                rtn.setRemark(MessageFormat.format("餐厅{0}营业中", merchantId));
                 rtn.setDynamic(merchantId);
             }else {
-                Body body = getGson().fromJson(info, Body.class);
-                if (body.getRestaurant().getIsopen() == 1) {
-                    rtn.setCode(0);
-                    rtn.setDesc("success");
-                    rtn.setRemark(MessageFormat.format("餐厅{0}营业中", merchantId));
-                    rtn.setDynamic(merchantId);
-                }else {
-                    rtn.setCode(1);
-                    rtn.setDesc("success");
-                    rtn.setRemark(MessageFormat.format("餐厅{0}休息中", merchantId));
-                    rtn.setDynamic(merchantId);
-                }
+                rtn.setCode(1);
+                rtn.setDesc("success");
+                rtn.setRemark(MessageFormat.format("餐厅{0}休息中", merchantId));
+                rtn.setDynamic(merchantId);
             }
         }
         return gson1.toJson(rtn);
@@ -869,22 +958,19 @@ public class EleMeFacadeService {
         try {
             OrderRequest request = new OrderRequest();
             request.setEleme_order_id(orderId);
-            request.setTp_id("1");
-            String resultStaus = eleMeApiService.orderDetail(request);
-            Result objStatus = getGson().fromJson(resultStaus, Result.class);
-            Order order = getGson().fromJson(getGson().toJson(objStatus.getData()), Order.class);
+            OOrder order = eleMeApiService.orderDetail(orderId,shopId);
             if(order==null){
                 rtn.setCode(-1);
                 rtn.setRemark("订单不存在");
                 rtn.setDesc("error");
-                rtn.setDynamic(String.valueOf(orderId));
+                rtn.setDynamic(orderId);
                 return gson.toJson(rtn);
             }
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("code", 0);
             jsonObject.put("desc", "success");
             jsonObject.put("platformOrderId", orderId);
-            jsonObject.put("orderStatus", new SysFacadeService().tranELOrderStatus(order.getStatuscode()));
+            jsonObject.put("orderStatus", new SysFacadeService().tranELOrderStatus(order.getStatus()));
             return jsonObject.toJSONString();
         }catch (ElemeException ex){
             rtn.setCode(-997);
@@ -1118,84 +1204,6 @@ public class EleMeFacadeService {
         return gson1.toJson(rtn);
     }
 
-    /**
-     * 通过商户ID获取餐厅ID
-     * @param tpRestaurantId
-     * @return
-     */
-    public String getRestaurantId(String tpRestaurantId) {
-        Log log = null;
-        try {
-            RestaurantRequest restaurantRequest = new RestaurantRequest();
-            restaurantRequest.setTp_restaurant_id(tpRestaurantId);
-            String result = eleMeApiService.getRestaurantId(restaurantRequest);
-            Result obj = getGson().fromJson(result, Result.class);
-            if ("ok".equals(obj.getMessage().toString())) {
-                return getGson().toJson(obj.getData());
-            }
-        }catch (ScheduleException ex) {
-            log = sysFacadeService.functionRtn.apply(ex);
-            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-        } catch (ElemeException ex) {
-            log = sysFacadeService.functionRtn.apply(ex);
-        }catch (Exception ex) {
-            log = sysFacadeService.functionRtn.apply(ex);
-            log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
-        }finally {
-            if (log != null) {
-                log.setLogId(tpRestaurantId.concat(log.getLogId()));
-                log.setTitle(MessageFormat.format("获取餐厅{}失败", tpRestaurantId));
-                if (StringUtil.isEmpty(log.getRequest())) {
-                    log.setRequest("{".concat(MessageFormat.format("\"tpRestaurantId\":{0}", tpRestaurantId)).concat("}"));
-                }
-                sysFacadeService.updSynLog(log);
-            }
-        }
-        return "failure";
-    }
-
-    /**
-     * 批量删除食物
-     * @param dishList
-     * @return
-     */
-    public String deleteAllFoods(List<ParsFromPosInner> dishList) {
-        Rtn rtn = new Rtn();
-        String reponse = "";
-        Gson gson1 = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
-        if (dishList == null || dishList.size() < 1) {
-            rtn.setCode(-1);
-            rtn.setDesc("食物ID列表为空");
-            rtn.setRemark("食物ID列表为空");
-            return gson1.toJson(rtn);
-        }else {
-            for (int i = 0; i < dishList.size(); i++) {
-                String result = getFoodId(dishList.get(i).getDishId());
-                if ("failure".equals(result)) {
-                    rtn.setCode(-1);
-                    rtn.setDesc(MessageFormat.format("获取食物{0}出错!",dishList.get(i).getDishId()));
-                    rtn.setRemark(MessageFormat.format("获取食物{0}出错!",dishList.get(i).getDishId()));
-                    rtn.setDynamic(dishList.get(i).getDishId());
-                    reponse += gson1.toJson(rtn);
-                }else {
-                    Body body = getGson().fromJson(result, Body.class);
-                    reponse += StringUtil.isEmpty(reponse)?"":",";
-                    if (!StringUtil.isEmpty(body.getFoodids().get(dishList.get(i).getDishId()))) {
-                        for (int j = 0; j < body.getFoodids().get(dishList.get(i).getDishId()).size(); j++) {
-                            reponse += deleteFoods(body.getFoodids().get(dishList.get(i).getDishId()).get(j).getFoodid());
-                        }
-                    }else {
-                        rtn.setCode(-1);
-                        rtn.setDesc(MessageFormat.format("食物{0}不存在!",dishList.get(i).getDishId()));
-                        rtn.setRemark(MessageFormat.format("食物{0}不存在!",dishList.get(i).getDishId()));
-                        rtn.setDynamic(dishList.get(i).getDishId());
-                        reponse += gson1.toJson(rtn);
-                    }
-                }
-            }
-        }
-        return reponse;
-    }
 
     /**
      * 删除食物
@@ -1257,6 +1265,42 @@ public class EleMeFacadeService {
     }
 
     /**
+     * 获取code & token
+     * @param stringMap
+     * @return
+     */
+    public String getCodeAndAuthToken(Map<String,String[]> stringMap){
+        Log log1 = null;
+        // token入库
+        AuthToken token = new AuthToken();
+        token.setCode(stringMap.get("code")[0]);
+        token.setState(stringMap.get("state")[0]);
+        Token tt = eleMeApiService.getAuthToken(token.getCode(),token.getState());
+        token.setToken(tt.getAccessToken());
+        token.setToken_type(tt.getTokenType());
+        token.setExpires_in(tt.getExpires());
+        token.setRefresh_token(tt.getRefreshToken());
+        try {
+            //获取门店授权列表
+            Map<String,Object> map = eleMeApiService.getAuthShops(tt);
+            //添加或者修改token
+            eleMeInnerService.addOrUpdateToken(token,map);
+        }catch (ScheduleException e){
+            log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
+            log1.setLogId(log1.getLogId());
+            log1.setTitle(MessageFormat.format("接受饿了么传入的code:", token.getCode()));
+            if (StringUtil.isEmpty(log1.getRequest()))
+                log1.setRequest("{".concat(MessageFormat.format("\"Code\":{0}", token.getCode())).concat("}"));
+            log1.setRequest("{".concat(MessageFormat.format("\"Code\":{0}", token.getCode())).concat("}"));
+            sysFacadeService.updSynLog(log1);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
      * 获取历史订单
      * @return
      */
@@ -1264,6 +1308,5 @@ public class EleMeFacadeService {
         List<Order> orders = eleMeInnerService.findAll();
         return getGson().toJson(orders);
     }
-
 
 }

@@ -88,15 +88,15 @@ adminLteApp.filter("meituanOrderStatus",function(){
 
 adminLteApp.filter("elemeOrderStatus",function(){
     return function(val){
-        if (val == 0) {
+        if (val== 'unprocessed') {
             return '待处理';
-        } else if (val == 2) {
+        } else if (val == 'valid') {
             return '已确定';
-        } else if (val == 3){
+        } else if (val == 'tobeFetched'){
             return '送货中'
-        }else if (val == 9){
+        }else if (val == 'settled'){
             return '已完成'
-        }else if (val == -1){
+        }else if (val == 'refunding'){
             return '已取消'
         }else {
             return '其他'

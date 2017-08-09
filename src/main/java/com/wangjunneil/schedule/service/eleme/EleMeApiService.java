@@ -7,6 +7,23 @@ import com.wangjunneil.schedule.entity.sys.Cfg;
 import com.wangjunneil.schedule.service.SysFacadeService;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
+import eleme.openapi.sdk.api.entity.order.OOrder;
+import eleme.openapi.sdk.api.entity.product.OCategory;
+import eleme.openapi.sdk.api.entity.product.OItem;
+import eleme.openapi.sdk.api.entity.product.OItemIdWithSpecIds;
+import eleme.openapi.sdk.api.entity.shop.OShop;
+import eleme.openapi.sdk.api.entity.user.OAuthorizedShop;
+import eleme.openapi.sdk.api.entity.user.OUser;
+import eleme.openapi.sdk.api.enumeration.order.OInvalidateType;
+import eleme.openapi.sdk.api.enumeration.shop.OShopProperty;
+import eleme.openapi.sdk.api.exception.ServiceException;
+import eleme.openapi.sdk.api.service.OrderService;
+import eleme.openapi.sdk.api.service.ProductService;
+import eleme.openapi.sdk.api.service.ShopService;
+import eleme.openapi.sdk.api.service.UserService;
+import eleme.openapi.sdk.config.Config;
+import eleme.openapi.sdk.oauth.OAuthClient;
+import eleme.openapi.sdk.oauth.response.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,15 +31,18 @@ import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by admin on 2016/11/17.
  */
 @Service
 public class EleMeApiService {
+
     @Autowired
     private SysFacadeService sysFacadeService;
+    @Autowired
+    private EleMeInnerService eleMeInnerService;
 
     /**
      * 对url进行签名
@@ -51,8 +71,8 @@ public class EleMeApiService {
     /**
      * 获取所属餐厅ID
      */
-        public String getAffiliationShop() throws ScheduleException,ElemeException {
-            String url = getSystemUrl(Constants.URL_ELEME_RESTAURANT_ID, null);
+    public String getAffiliationShop() throws ScheduleException,ElemeException {
+        String url = getSystemUrl(Constants.URL_ELEME_RESTAURANT_ID, null);
         return HttpUtil.get2(url);
     }
 
@@ -61,11 +81,17 @@ public class EleMeApiService {
      * @param obj 属性is_open ：1营业/0不营业
      * @return
      */
-    public String setRestaurantStatus(RestaurantRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
-           String pathURL = MessageFormat.format(Constants.URL_ELEME_RESTAURANT_ON, obj.getRestaurant_id().toString());
-           obj.setRestaurant_id("");
-           String url = getSystemUrl(pathURL, obj);
-           return HttpUtil.put(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+    public OShop setRestaurantStatus(RestaurantRequest obj) throws ScheduleException,ElemeException,ServiceException{
+        judgeTokenExpire(); //判断token是否失效
+        ShopService shopService = new ShopService(getSysConfig(), getSysToken(obj.getRestaurant_id()));
+        Map<OShopProperty,Object> properties = new HashMap<OShopProperty,Object>();
+        if("1".equals(obj.getIs_open())){
+            properties.put(OShopProperty.isOpen,1);
+        }else {
+            properties.put(OShopProperty.isOpen,0);
+        }
+        OShop oShop = shopService.updateShop(Long.parseLong(obj.getRestaurant_id()), properties);
+        return oShop;
     }
 
     /**
@@ -106,10 +132,7 @@ public class EleMeApiService {
      * @return
      */
     public String upFoods(OldFoodsRequest obj)throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException{
-        String pathURL = MessageFormat.format(Constants.URL_ELEME_UPORDOWNFRAME_FOODS, obj.getFood_id().toString());
-        obj.setFood_id("");
-        String url = getSystemUrl(pathURL, obj);
-        return HttpUtil.put(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+        return null;
     }
 
     /**
@@ -124,8 +147,8 @@ public class EleMeApiService {
 
     /**
      * 查询食物列表
-    * @return
-    */
+     * @return
+     */
     public String getFoodsList(String categoryId)throws ScheduleException,ElemeException{
         String pathURL = MessageFormat.format(Constants.URL_ELEME_GETFOODSID, categoryId);
         String url = getSystemUrl(pathURL, null);
@@ -136,24 +159,33 @@ public class EleMeApiService {
      * 查询订单详情
      * @return
      */
-    public String orderDetail(OrderRequest obj)throws ScheduleException,ElemeException,Exception{
-        String pathURL = MessageFormat.format(Constants.URL_ELEME_ORDER_DETAIL, obj.getEleme_order_id().toString());
-        obj.setEleme_order_id("");
-        String url = getSystemUrl(pathURL, obj);
-        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
-        return HttpUtil.get2(requstUrl);
+    public OOrder orderDetail(String orderId,String shopId)throws ScheduleException,ElemeException,Exception{
+        judgeTokenExpire(); //判断token是否失效
+        OrderService orderService = new OrderService(getSysConfig(), getSysToken(shopId));
+        OOrder oOrder = orderService.getOrder(orderId);
+        return oOrder;
     }
 
     /**
-     * 订单状态变更  (确认取消订单)
-     * @param obj
+     * 订单确认订单  (确认订单)
+     * @param orderId
      * @return
      */
-    public String upOrderStatus(OrderRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
-        String pathURL = MessageFormat.format(Constants.URL_ELEME_ORDER_STATUS, obj.getEleme_order_id().toString());
-        obj.setEleme_order_id("");
-        String url = getSystemUrl(pathURL, obj);
-        return HttpUtil.put(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+    public void configOrderStatus(String orderId,String shopId) throws ScheduleException,ElemeException,ServiceException{
+        judgeTokenExpire(); //判断token是否失效
+        OrderService orderService = new OrderService(getSysConfig(), getSysToken(shopId));
+        orderService.confirmOrderLite(orderId);
+    }
+
+    /**
+     * 订单取消订单
+     * @param orderId
+     * @return
+     */
+    public void cancelOrderStatus(String orderId,String shopId) throws ScheduleException,ElemeException,ServiceException {
+        judgeTokenExpire(); //判断token是否失效
+        OrderService orderService = new OrderService(getSysConfig(), getSysToken(shopId));
+        orderService.cancelOrderLite(orderId, OInvalidateType.fakeOrder, "无法取得联系");
     }
 
     /**
@@ -170,24 +202,69 @@ public class EleMeApiService {
     }
 
     /**
-     * 通过第三方id获取平台食物id
-     * @param obj
+     * 通过门店id获取商品分类Id
+     * @param sellerId
      * @return
      */
-    public String getFoodId(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
-        String url = getSystemUrl(Constants.URL_ELEME_TP_FOOD_ID, obj);
-        String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
-        return HttpUtil.get2(requstUrl);
+    public List<OCategory> getCategoryId(String sellerId) throws ScheduleException,ElemeException,ServiceException{
+        judgeTokenExpire(); //判断token是否失效
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(sellerId));
+        return  productService.getShopCategories(Long.parseLong(sellerId));
     }
 
     /**
-     *批量上下架
-     * @param obj 属性stock ：大于0上架/0下架
+     * 通过商品分类id获取商品
+     * @param categoryId
      * @return
      */
-    public String upBatchFrame(OldFoodsRequest obj) throws ScheduleException,ElemeException,IOException, IllegalAccessException, IntrospectionException, InvocationTargetException {
-        String url = getSystemUrl(Constants.URL_ELEME_UPORDOWNFRAME_FOODS_LIST, obj);
-        return HttpUtil.put(url, StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
+    public Map<Long, OItem> getCategProducts(Long categoryId,String shopId) throws ScheduleException,ElemeException,ServiceException{
+        judgeTokenExpire(); //判断token是否失效
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopId));
+        return productService.getItemsByCategoryId(categoryId);
+    }
+    /**
+     * 通过商家商品id获取商品信息
+     * @param shopId  dishId
+     * @return
+     */
+    public OItem getProductByExtendCode(Long shopId,String dishId) throws ScheduleException,ElemeException,ServiceException{
+        judgeTokenExpire(); //判断token是否失效
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopId.toString()));
+        return productService.getItemByShopIdAndExtendCode(shopId, dishId);
+    }
+
+    /**
+     * 通过商品id获取商品信息
+     * @param dishId
+     * @return
+     */
+    public OItem getProductById(String dishId,String shopId) throws ScheduleException,ElemeException,ServiceException{
+        judgeTokenExpire(); //判断token是否失效
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopId));
+        return productService.getItem(Long.parseLong(dishId));
+    }
+
+
+    /**
+     *批量上架
+     * @param specIds
+     * @return
+     */
+    public void upBatchFrame(List<OItemIdWithSpecIds> specIds,String shopId) throws ScheduleException,ElemeException,ServiceException{
+        judgeTokenExpire(); //判断token是否失效
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopId));
+        productService.batchOnShelf(specIds);
+    }
+
+    /**
+     *批量下架
+     * @param specIds
+     * @return
+     */
+    public void downBatchFrame(List<OItemIdWithSpecIds> specIds ,String shopId) throws ScheduleException,ElemeException,ServiceException{
+        judgeTokenExpire(); //判断token是否失效
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopId));
+        productService.batchOffShelf(specIds);
     }
 
     /**
@@ -281,10 +358,11 @@ public class EleMeApiService {
      * 获取餐厅信息
      * @return
      */
-    public String getRestaurantInfo(RestaurantRequest obj) throws ElemeException, ScheduleException {
-        String pathURL = MessageFormat.format(Constants.URL_ELEME_RESTAURANT_INFO, obj.getRestaurant_id().toString());
-        String url = getSystemUrl(pathURL, null);
-        return HttpUtil.get2(url);
+    public OShop getRestaurantInfo(RestaurantRequest obj) throws ElemeException, ScheduleException,ServiceException {
+        judgeTokenExpire(); //判断token是否失效
+        ShopService shopService = new ShopService(getSysConfig(),getSysToken(obj.getRestaurant_id()));
+        OShop shop = shopService.getShop(Long.parseLong(obj.getRestaurant_id()));
+        return shop;
     }
 
     /**
@@ -296,5 +374,83 @@ public class EleMeApiService {
         String url = getSystemUrl(Constants.URL_ELEME_RESTAURANT_STATUS, obj);
         String requstUrl = MessageFormat.format(url + "&{0}", StringUtil.getUrlParamsByMap(StringUtil.getMap(obj)));
         return HttpUtil.get2(requstUrl);
+    }
+
+    //系统参数config
+    private Config getSysConfig(){
+        return new Config(false,Constants.ELEME_APP_KEY,Constants.ELEME_APP_SECRET);
+    }
+
+    //系统参数token
+    private Token getSysToken(String shopId)throws ElemeException, ScheduleException{
+        Token token = new Token();
+        AuthToken authToken = eleMeInnerService.getAccessToken(shopId);
+        token.setAccessToken(authToken.getToken());
+        token.setExpires(authToken.getExpires_in());
+        token.setRefreshToken(authToken.getRefresh_token());
+        token.setTokenType(authToken.getToken_type());
+        return token;
+    }
+
+    /**
+     * 获取token信息
+     * @param authCode
+     * @param state
+     * @return
+     */
+    public Token getAuthToken (String authCode,String state){
+        //配置类
+        Config config = new Config(false,Constants.ELEME_APP_KEY,Constants.ELEME_APP_SECRET);
+        //授权类
+        OAuthClient client = new OAuthClient(config);
+        //获取授权URl
+        String authUrl = client.getAuthUrl(Constants.ELEME_CALLBACK_URL,"all",state);
+        //获取token
+        Token token = client.getTokenByCode(authCode,Constants.ELEME_CALLBACK_URL);
+        return token;
+    }
+
+    /**
+     * 获取授权门店列表
+     * @param token
+     */
+    public Map<String,Object> getAuthShops (Token token) throws ServiceException{
+        UserService userService = new UserService(getSysConfig(), token);
+        OUser oUser = userService.getUser();
+        String userId = String.valueOf(oUser.getUserId());
+        List<OAuthorizedShop>  shopList = oUser.getAuthorizedShops();
+        Map<String,Object> rtnMap = new HashMap<>();
+        rtnMap.put("userId",userId);
+        rtnMap.put("shops",shopList);
+        return rtnMap;
+    }
+    /**
+     * 如果token过期refresh token
+     */
+    public void refreshToken()throws ScheduleException{
+        //实例化一个配置类
+        Config config = new Config(false,Constants.ELEME_APP_KEY,Constants.ELEME_APP_SECRET);
+        //使用config对象，实例化一个授权类
+        OAuthClient client = new OAuthClient(config);
+        AuthToken auth = eleMeInnerService.getToken();
+        if(auth!=null){
+            //根据refreshToken,刷新token
+            Token token = client.getTokenByRefreshToken(auth.getRefresh_token());
+            auth.setToken(token.getAccessToken());
+            auth.setToken_type(token.getTokenType());
+            auth.setExpires_in(token.getExpires());
+            auth.setRefresh_token(token.getRefreshToken());
+            eleMeInnerService.addOrUpdateToken(auth,null);
+        }
+    }
+
+    //判断token是否失效
+    private void judgeTokenExpire() throws ScheduleException{
+        AuthToken authToken = eleMeInnerService.getToken();
+        Date nowDate =  new Date();
+        //token失效 刷选token
+        if(nowDate.getTime()>authToken.getExpire_Date().getTime()){
+            refreshToken();
+        }
     }
 }

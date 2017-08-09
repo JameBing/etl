@@ -49,6 +49,11 @@ public final class DateTimeUtil {
         return date;
     }
 
+    public static Date getExpireDate2(long time, long expireIn) {
+        Date date = new Date(time + expireIn * 1000);
+        return date;
+    }
+
     public static Date getExpireDate(long time) {
         Date date = new Date();
         date.setTime(time * 1000);

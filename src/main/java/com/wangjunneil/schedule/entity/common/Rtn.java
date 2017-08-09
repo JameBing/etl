@@ -22,7 +22,11 @@ public class Rtn {
     //动态标识
     private String dynamic;
 
+    //商品上下架状态
+    private Integer status;
 
+    //商品名称
+    private String name;
     public void setLogId(String logId){
         this.logId = logId;
     }
@@ -62,5 +66,21 @@ public class Rtn {
 
     public String getDynamic(){
         return this.dynamic;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

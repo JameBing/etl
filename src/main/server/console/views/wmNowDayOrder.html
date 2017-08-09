@@ -128,13 +128,13 @@
                             <span ng-if="order_info.platform == 'baidu'">{{order_info.order.shop.name }}</span>
                             <span ng-if="order_info.platform == 'jdhome'">{{order_info.order.deliveryStationName}}</span>
                             <span ng-if="order_info.platform == 'meituan'">{{order_info.order.wmpoiname}}</span>
-                            <span ng-if="order_info.platform == 'eleme'">{{order_info.order.restaurantname}}</span>
+                            <span ng-if="order_info.platform == 'eleme'">{{order_info.order.shopName}}</span>
                         </td>
                         <td>
-                            <span ng-if="order_info.platform == 'baidu'">{{order_info.order.order.type | baiduOrderStatus }}</span>{{order_info.order.order.type}}
+                            <span ng-if="order_info.platform == 'baidu'">{{order_info.order.order.status | baiduOrderStatus}}</span>{{order_info.order.order.status}}
                             <span ng-if="order_info.platform == 'jdhome'">{{order_info.order.orderStatus | jdhomeOrderStatus}}</span>{{order_info.order.orderStatus}}
                             <span ng-if="order_info.platform == 'meituan'">{{order_info.order.status | meituanOrderStatus}}</span>{{order_info.order.status}}
-                            <span ng-if="order_info.platform == 'eleme'">{{order_info.order.statuscode | elemeOrderStatus}}</span>{{order_info.order.statuscode}}
+                            <span ng-if="order_info.platform == 'eleme'">{{order_info.order.status | elemeOrderStatus}}</span>
                         </td>
                         <td><span ng-if="order_info.isReceived == 1">已接单</span>
                             <span ng-if="order_info.isReceived == 2">已拒单</span>
@@ -150,13 +150,13 @@
                             <span ng-if="order_info.platform == 'baidu'">{{order_info.order.user.phone}}</span>
                             <span ng-if="order_info.platform == 'jdhome'">{{order_info.order.buyerMobile}}</span>
                             <span ng-if="order_info.platform == 'meituan'">{{order_info.order.recipientphone}}</span>
-                            <span ng-if="order_info.platform == 'eleme'">{{order_info.order.phonelist[0]}}</span>
+                            <span ng-if="order_info.platform == 'eleme'">{{order_info.order.phoneList[0]}}</span>
                         </td>
                         <td>
                             <span ng-if="order_info.platform == 'baidu'">{{order_info.order.user.province + order_info.order.user.district + order_info.order.user.address}}</span>
                             <span ng-if="order_info.platform == 'jdhome'">{{order_info.order.buyerFullAddress}}</span>
                             <span ng-if="order_info.platform == 'meituan'">{{order_info.order.recipientaddress}}</span>
-                            <span ng-if="order_info.platform == 'eleme'">{{order_info.order.deliverypoiaddress}}</span>
+                            <span ng-if="order_info.platform == 'eleme'">{{order_info.order.address}}</span>
                         </td>
                         <td>{{order_info.createTime |date:'yyyy-MM-dd HH:mm:ss'}}</td>
                         <!--<td>描述</td>-->

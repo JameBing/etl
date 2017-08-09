@@ -384,7 +384,7 @@ public class BaiDuFacadeService {
         try {
             Dish dish = new Dish();
             dish.setShopId(shopId);
-            dish.setDishId(dishId);
+            dish.setBaiduDishId(dishId);
             switch (cmd){
                 case "dish.online":
                     result = baiDuApiService.dishOnline(dish);
@@ -438,6 +438,7 @@ public class BaiDuFacadeService {
         try {
             Dish dish = new Dish();
             dish.setShopId(shopId);
+            dish.setPageSize(50);
             result = baiDuApiService.getDishStatus(dish);
             if(result.equals("20253")){
                 rtn.setCode(-1);
@@ -457,11 +458,12 @@ public class BaiDuFacadeService {
             JSONArray jsonArray = jsonObject.getJSONArray("data");
             for(int i=0;i<jsonArray.size();i++){
                 JSONObject json = jsonArray.getJSONObject(i);
-                if(json.getInteger("is_online")==1){
-                    rtn.setCode(0);
-                    rtn.setDynamic(json.getString("dish_id"));
-                    rtnStr =rtnStr+gson1.toJson(rtn)+",";
-                }
+                rtn.setCode(0);
+                rtn.setStatus(json.getInteger("is_online")==1?0:1);
+                rtn.setDesc("success");
+                rtn.setName(json.getString("name"));
+                rtn.setDynamic(json.getString("baidu_dish_id"));
+                rtnStr =rtnStr+gson1.toJson(rtn)+",";
             }
 
         }catch (BaiDuException ex){
@@ -593,18 +595,19 @@ public class BaiDuFacadeService {
     public String orderStatus(SysParams sysParams,Boolean flag){
         Body result = new Body();
         try{
-        Body body = getGson().fromJson(getGson().toJson(sysParams.getBody()),Body.class);
-        Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
-        Integer status = Integer.valueOf(data.getOrder().getStatus());
+        Body body = new Body();
+        JSONObject jsonObject1 = JSONObject.parseObject(sysParams.getBody().toString());
        //？是否多个订单号存在
         int intR = 0;
         //推送整个订单
         if(flag){
-            Order order = getGson().fromJson(sysParams.getBody().toString(),Order.class);
-            SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order,data.getShop().getShopId()),SysParams.class);
+            Order order = new Order();
+            order.setOrderId(jsonObject1.getString("order_id"));
+            SysParams sysParams1 =getGson().fromJson(baiDuApiService.orderGet(order,sysParams.getSource()),SysParams.class);
             String bodyStr = getGson().toJson(sysParams1.getBody());
             body = getGson().fromJson(bodyStr,Body.class);
             if (body.getErrno().equals("0")){
+                Data data = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
                 String orderId = data.getOrder().getOrderId();
                 Data dataOrder = getGson().fromJson(getGson().toJson(body.getData()),Data.class);
                 OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_BAIDU,orderId);
@@ -616,13 +619,11 @@ public class BaiDuFacadeService {
                 body.setData("");
             }
         }else {
-            intR = baiDuInnerService.updSyncBaiDuOrderStastus(data.getOrder().getOrderId(), Integer.valueOf(Enum.getEnumDesc(Enum.OrderTypeBaiDu.R5, status).get("code").getAsString()));
-            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_BAIDU,data.getOrder().getOrderId());
-            List<String> listIds = new ArrayList<String>();
-            Collections.addAll(listIds,data.getOrder().getOrderId().split(","));
-            listIds.forEach((id)->{
-                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_BAIDU,status,id,null,orderWaiMai.getSellerShopId());
-            });
+            String orderId = jsonObject1.getString("order_id");
+            int status = jsonObject1.getInteger("status");
+            intR = baiDuInnerService.updSyncBaiDuOrderStastus(orderId,status);
+            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_BAIDU,orderId);
+            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_BAIDU,status,orderId,null,orderWaiMai.getSellerShopId(),null);
         }
         if (intR > 0){
             result.setErrno("0");
@@ -641,9 +642,11 @@ public class BaiDuFacadeService {
             result.setData("Exception");
             //日志记录,异常分析
         }
+        sysParams.setCmd(Constants.BAIDU_CMD_RESP.concat(".").concat(Constants.BAIDU_CMD_ORDER_STATUS_PUSH));
         sysParams.setBody(result);
         sysParams.setTicket("");
         sysParams.setTimestamp("");
+        sysParams.setSign("");
         return baiDuApiService.responseStr(sysParams);
     }
 
@@ -668,7 +671,7 @@ public class BaiDuFacadeService {
             }
             Order searchOrder = getGson().fromJson(getGson().toJson(data.getOrder()),Order.class);
 
-            if(searchOrder.getStatus()==null || searchOrder.getStatus()!=Constants.BD_SUSPENDING){
+            if(searchOrder.getStatus()!=Constants.BD_SUSPENDING){
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("code",Constants.POS_ORDER_NOT_RECEIVED);
                 jsonObject.put("desc","error");

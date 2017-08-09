@@ -38,6 +38,9 @@ public class Dish {
    //菜品价格，单位：分
    private String price;
 
+   //当前页大小
+   private Integer pageSize;
+
    //菜品图片，小于3M，尺寸大于等于640*640px
    private String pic;
 
@@ -228,4 +231,12 @@ public class Dish {
    public String getBaiduDishId(){
        return this.baiduDishId;
    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
 }

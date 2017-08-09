@@ -33,6 +33,7 @@ public class DishSerializer implements JsonSerializer<Dish> {
         object.add("left_num",context.serialize(dish.getLeftNum()));
         object.add("status",context.serialize(dish.getStatus()));
         object.add("baidu_dish_id",context.serialize(dish.getBaiduDishId()));
+        object.add("page_size",context.serialize(dish.getPageSize()));
         return object;
     }
 }

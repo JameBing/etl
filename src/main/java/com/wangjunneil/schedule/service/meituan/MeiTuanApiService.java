@@ -96,6 +96,7 @@ public class MeiTuanApiService {
             return null;
         }
         FoodParam foodParam = new FoodParam();
+
         foodParam.setApp_poi_code(appPoiCode);
         foodParam.setApp_food_code(foodCode);
         foodParam.setPrice(food.getPrice());

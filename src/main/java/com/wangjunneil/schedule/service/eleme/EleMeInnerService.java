@@ -4,7 +4,13 @@ import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
+import com.wangjunneil.schedule.entity.eleme.AuthToken;
 import com.wangjunneil.schedule.entity.eleme.Order;
+import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
+import com.wangjunneil.schedule.utility.DateTimeUtil;
+import com.wangjunneil.schedule.utility.StringUtil;
+import eleme.openapi.sdk.api.entity.user.OAuthorizedShop;
+import eleme.openapi.sdk.api.service.ShopService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,10 +19,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by admin on 2016/11/21.
@@ -69,7 +72,7 @@ public class EleMeInnerService {
     }
 
     //批量更新订单状态(根据订单号)
-    public void updSyncElemeOrderStastus(String ids,int status) throws ScheduleException{
+    public void updSyncElemeOrderStastus(String ids,String status) throws ScheduleException{
         Query query = new Query();
         Criteria criteria = new Criteria();
         List<String> listIds = new ArrayList<String>();
@@ -131,6 +134,45 @@ public class EleMeInnerService {
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_ELEME).where("platformOrderId").is(orderId));
         Update update = new Update().set("isReceived",isRec);
         mongoTemplate.upsert(query,update, OrderWaiMai.class);
+    }
+
+    //获取回调Code
+    public AuthToken getToken()throws ScheduleException{
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_ELEME).and("token").ne(null));
+        AuthToken authToken = mongoTemplate.findOne(query, AuthToken.class);
+        return authToken;
+    }
+
+    //添加/修改回调token
+    public void addOrUpdateToken(AuthToken token,Map<String,Object>map)throws ScheduleException{
+        // 计算token到期时间
+        Date date = new Date();
+        Long expire_in = token.getExpires_in();
+        Date expireDate = DateTimeUtil.getExpireDate2(date.getTime(), expire_in);
+        token.setExpire_Date(expireDate);
+        String userId="";
+        List<OAuthorizedShop> shops =  new ArrayList<>();
+        if(!StringUtil.isEmpty(map)){
+            userId = String.valueOf(map.get("userId"));
+            shops =  (List<OAuthorizedShop>) map.get("shops");
+        }
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_ELEME).and("uid").is(userId));
+        Update update = new Update()
+            .set("token", token.getToken())
+            .set("expires_in", token.getExpires_in())
+            .set("uid",userId)
+            .set("shopIds",shops)
+            .set("token_type", token.getToken_type())
+            .set("expire_Date", token.getExpire_Date())
+            .set("refresh_token",token.getRefresh_token());
+        mongoTemplate.upsert(query, update, AuthToken.class);
+    }
+
+    //根据门店Id获取token值
+    public AuthToken getAccessToken(String shopId){
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_ELEME).and("shopIds").elemMatch(Criteria.where("_id").is(Integer.parseInt(shopId))));
+        AuthToken authToken = mongoTemplate.findOne(query, AuthToken.class);
+        return authToken;
     }
 
 }

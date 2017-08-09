@@ -12,6 +12,7 @@ import com.wangjunneil.schedule.common.ScheduleException;
 import com.wangjunneil.schedule.entity.baidu.Order;
 import com.wangjunneil.schedule.entity.common.ParsFormPos2;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
+import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.service.WMFacadeService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -48,10 +49,12 @@ public class WMController {
     @Autowired
     private WMFacadeService wmFacadeService;
 
-    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842","/jdhome/72171","/jdhome/74723"})
+    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842"})
     public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response)throws  Exception{
 
         String result = "",platform,requestUrl,sid = null;
+        StringBuffer sb = new StringBuffer();
+        JSONObject jsonObject = null;
         Map<String,String[]> stringMap = new HashMap<>();
         response.setContentType("application/json;charset=utf-8");
         requestUrl = request.getPathInfo().toLowerCase();
@@ -59,43 +62,19 @@ public class WMController {
             sid = Pattern.compile("[^0-9]").matcher(requestUrl).replaceAll("");
             requestUrl = "/waimai/jdhome";
         }
+
+        if(requestUrl.indexOf("/eleme")>0) {
+            BufferedReader reader = request.getReader();
+            String lines = "";
+            while((lines=reader.readLine()) != null){
+                lines = new String(lines.getBytes(), "utf-8");
+                sb.append(lines);
+            }
+        }
         switch (requestUrl){
             case "/waimai/baidu":  //百度
                 platform = Constants.PLATFORM_WAIMAI_BAIDU;
                 stringMap = request.getParameterMap(); //Content-Type: application/x-www-form-urlencoded
-                // stringMap = request.getParameterMap();//?Content-Type: multipart/form-data 无法取值
-                //Map<String,String> mapBaiDu = new HashMap<>();
-                /*BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream(), "utf-8"));
-                StringBuffer sb = new StringBuffer("");
-                String temp;
-                while ((temp = br.readLine()) != null){
-                    sb.append(temp);
-                }
-                br.close();
-                String params = sb.toString();
-                System.out.println("请求参数："+params);
-                JSONObject mapBaiDu = JSONObject.parseObject(params);
-                String cmd = mapBaiDu.getString("cmd");
-                String cmdA[] = new String[]{cmd};
-                stringMap.put("cmd",cmdA);
-                String sign = mapBaiDu.getString("sign");
-                String signA[] = new String[]{sign};
-                stringMap.put("sign",signA);
-                String source = mapBaiDu.getString("source");
-                String sourceA[] = new String[]{source};
-                stringMap.put("source",sourceA);
-                String ticket = mapBaiDu.getString("ticket");
-                String ticketA[] = new String[]{ticket};
-                stringMap.put("ticket",ticketA);
-                String timestamp = String.valueOf(mapBaiDu.get("timestamp"));
-                String timestampA[] = new String[]{timestamp};
-                stringMap.put("timestamp",timestampA);
-                String version = mapBaiDu.getString("version");
-                String versionA[] = new String[]{version};
-                stringMap.put("version",versionA);
-                String body = mapBaiDu.getJSONObject("body").toJSONString();
-                String bodyA[] = new String[]{body};
-                stringMap.put("body",bodyA);*/
                 break;
             case "/waimai/jdhome": //京东到家
                 String[] strArr = {sid};
@@ -104,6 +83,9 @@ public class WMController {
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             case "/waimai/eleme":  //饿了么
+                if(!StringUtil.isEmpty(sb)){
+                    jsonObject = JSONObject.parseObject(sb.toString());
+                }
                 stringMap = request.getParameterMap();
                 platform = Constants.PLATFORM_WAIMAI_ELEME;
                 break;
@@ -116,7 +98,8 @@ public class WMController {
                 platform = null;
                 break;
         }
-        out.println(wmFacadeService.appReceiveCallBack(stringMap,platform));
+        out.println(wmFacadeService.appReceiveCallBack(stringMap,platform,jsonObject));
+        //out.print("{\"message\":\"ok\"}");
         //System.out.print(wmFacadeService.appReceiveCallBack(stringMap,platform));
         return  null;
     }
@@ -234,6 +217,22 @@ public class WMController {
     public String dishCreate(@RequestBody JsonObject jsonObj,PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         response.setContentType("application/json;charset=utf-8");
         out.println(wmFacadeService.dishCreate(jsonObj));
+        return null;
+    }
+
+    /**
+     * 修改菜品
+     * @param parsFromPosInner 菜品信息
+     * @param out 响应输出流队形
+     * @param request 请求对象
+     * @param
+     * @return  {"baidu":{code:0,desc:"success",dynamic:"",logId:"",remark:""},"jdhome":{}...}
+     */
+    @RequestMapping(value = "/dish/update",method = RequestMethod.POST,consumes = "application/json;charset=utf-8")
+    @ResponseBody
+    public String dishUpdate(@RequestBody ParsFromPosInner parsFromPosInner, PrintWriter out, HttpServletRequest request, HttpServletResponse response){
+        response.setContentType("application/json;charset=utf-8");
+        out.println(wmFacadeService.dishUpdate(parsFromPosInner));
         return null;
     }
 
@@ -450,7 +449,6 @@ public class WMController {
         return  null;
     }
 
-
     /**
      * 取消订单
      *
@@ -464,6 +462,34 @@ public class WMController {
     public String orderCancel(@RequestBody ParsFromPos parsFromPos,PrintWriter out,HttpServletRequest request, HttpServletResponse response) throws SchedulerException {
         //response.setContentType("application/json;charset=uft-8");
         out.println(wmFacadeService.orderCancel(parsFromPos));
+        return  null;
+    }
+
+
+    /**
+     * 获取平台code authToken
+     * @param out
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = {"/eleme/callBack"})
+    public String getCodeAndAuthToken(PrintWriter out,HttpServletRequest request, HttpServletResponse response){
+        String result = "",platform,requestUrl;
+        Map<String,String[]> stringMap = new HashMap<>();
+        response.setContentType("application/json;charset=utf-8");
+        requestUrl = request.getPathInfo().toLowerCase();
+        switch (requestUrl){
+            case "/waimai/eleme/callback":  //饿了么
+                stringMap = request.getParameterMap();
+                platform = Constants.PLATFORM_WAIMAI_ELEME;
+                break;
+            default:
+                stringMap = request.getParameterMap();
+                platform = null;
+                break;
+        }
+        out.println(wmFacadeService.getAuthToken(stringMap,platform));
         return  null;
     }
 

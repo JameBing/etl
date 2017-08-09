@@ -26,6 +26,8 @@ import com.wangjunneil.schedule.service.jp.JpApiService;
 import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
+import eleme.openapi.sdk.api.entity.order.OOrder;
+import eleme.openapi.sdk.api.enumeration.order.OOrderStatus;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -282,7 +284,7 @@ public class SysFacadeService {
                 rtn =  formatMeiTuanOrder((OrderInfo)orderWaiMai.getOrder(),jsonObject);
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME :
-                rtn =  formatEleme((Order)orderWaiMai.getOrder(),jsonObject);
+                rtn =  formatEleme((OOrder) orderWaiMai.getOrder(),jsonObject);
                 break;
             default:break;
         }
@@ -403,7 +405,7 @@ public class SysFacadeService {
                 jsonObject.put("skuId",data.getProducts().get(i)[j].getBaiduProductId());
                 jsonObject.put("skuName",data.getProducts().get(i)[j].getProductName()+(data.getProducts().get(i)[j].getProductAttr().size()==0?""
                     :"("+data.getProducts().get(i)[j].getProductAttr().get(0).getOption()+")"));
-                jsonObject.put("skuIdIsv",data.getProducts().get(i)[j].getOtherDishId());
+                jsonObject.put("skuIdIsv",data.getProducts().get(i)[j].getBaiduProductId());
                 jsonObject.put("price",StringUtil.isEmpty(data.getProducts().get(i)[j].getProductPrice())?0:Integer.parseInt(data.getProducts().get(i)[j].getProductPrice())*0.01);
                 jsonObject.put("quantity",data.getProducts().get(i)[j].getProductAmount());
                 jsonObject.put("isGift","");
@@ -681,8 +683,9 @@ public class SysFacadeService {
             jsonObject.put("platOrderId",orderInfo.getOrderid());
             jsonObject.put("skuType","");
             jsonObject.put("skuId",orderInfo.getDetail()[i].getSku_id());
-            jsonObject.put("skuName",orderInfo.getDetail()[i].getFood_name()+ (StringUtil.isEmpty(orderInfo.getDetail()[i].getSpec())?"":"("+orderInfo.getDetail()[i].getSpec()+")"));
-            jsonObject.put("skuIdIsv",orderInfo.getDetail()[i].getApp_food_code());
+            jsonObject.put("skuName",orderInfo.getDetail()[i].getFood_name()+ (StringUtil.isEmpty(orderInfo.getDetail()[i].getSpec())?"":"("+orderInfo.getDetail()[i].getSpec()+")")+
+                (StringUtil.isEmpty(orderInfo.getDetail()[i].getFood_property())?"":"("+orderInfo.getDetail()[i].getFood_property()+")"));
+            jsonObject.put("skuIdIsv",orderInfo.getDetail()[i].getSku_id());
             jsonObject.put("price",orderInfo.getDetail()[i].getPrice());
             jsonObject.put("quantity",orderInfo.getDetail()[i].getQuantity());
             jsonObject.put("isGift","");
@@ -717,9 +720,9 @@ public class SysFacadeService {
 
 
     //格式化饿了么订单
-    private  JSONObject formatEleme(Order order ,JSONObject jsonObject){
+    private  JSONObject formatEleme(OOrder order ,JSONObject jsonObject){
         if(StringUtil.isEmpty(order)){
-            order = new Order();
+            order = new OOrder();
         }
         JSONObject rtnJson = new JSONObject();
         rtnJson.put("header",getElemeHeader(order, jsonObject));
@@ -730,26 +733,26 @@ public class SysFacadeService {
     }
 
     //获取饿了么订单头部信息
-    private JSONArray getElemeHeader(Order order,JSONObject jsonObject){
+    private JSONArray getElemeHeader(OOrder order, JSONObject jsonObject){
         JSONArray jsonArray = new JSONArray();
 
-        jsonObject.put("platShopId",order.getRestaurantid());
-        jsonObject.put("platStationName",order.getRestaurantname());
-        jsonObject.put("poiCode",order.getRestaurantid());
-        jsonObject.put("poiName",order.getRestaurantname());
+        jsonObject.put("platShopId",order.getShopId());
+        jsonObject.put("platStationName",order.getShopName());
+        jsonObject.put("poiCode",order.getShopId());
+        jsonObject.put("poiName",order.getShopName());
         jsonObject.put("poiAddress","");
         jsonObject.put("poiPhone","");
-        jsonObject.put("orderIndex",order.getRestaurantnumber());
+        jsonObject.put("orderIndex",order.getDaySn());
         jsonObject.put("orderType","");
-        jsonObject.put("orderStatus",tranELOrderStatus(order.getStatuscode()));
+        jsonObject.put("orderStatus",tranELOrderStatus(order.getStatus()));
         jsonObject.put("orderStatusTime","");
-        jsonObject.put("orderStartTime",order.getCreatedat());
+        jsonObject.put("orderStartTime",order.getCreatedAt());
         jsonObject.put("orderConfirmTime","");
-        jsonObject.put("orderPurchaseTime", order.getActiveat());
+        jsonObject.put("orderPurchaseTime", order.getActiveAt());
         jsonObject.put("orderAgingType","");
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",order.getDelivertime());
+        jsonObject.put("orderPreDeliveryTime",order.getDeliverTime());
         jsonObject.put("expectSendTime", "1");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
@@ -758,24 +761,24 @@ public class SysFacadeService {
         jsonObject.put("orderCancelTime","");
         jsonObject.put("orderCancelRemark","");
         jsonObject.put("isThirdShipping","");
-        jsonObject.put("deliveryStationNo",order.getRestaurantid());
-        jsonObject.put("deliveryStationName",order.getRestaurantname());
+        jsonObject.put("deliveryStationNo",order.getOpenId());
+        jsonObject.put("deliveryStationName",order.getShopName());
         jsonObject.put("deliveryCarrierNo","");
         jsonObject.put("deliveryCarrierName","");
         jsonObject.put("deliveryBillNo","");
         jsonObject.put("deliveryPackageWeight","");
         jsonObject.put("deliveryConfirmTime", "");
         jsonObject.put("orderFinishTime","");
-        jsonObject.put("orderPayType",order.getIsonlinepaid()==1?2:1);
-        jsonObject.put("orderTotalMoney",order.getOriginalprice());
+        jsonObject.put("orderPayType",order.getOnlinePaid()==true?2:1);
+        jsonObject.put("orderTotalMoney",order.getTotalPrice());
         jsonObject.put("orderDiscountMoney","");
-        jsonObject.put("orderFreightMoney",order.getDeliverfee());
-        jsonObject.put("packagingMoney",order.getPackagefee());
-        jsonObject.put("orderBuyerPayableMoney",order.getTotalprice());
+        jsonObject.put("orderFreightMoney",order.getDeliverFee());
+        jsonObject.put("packagingMoney",order.getPackageFee());
+        jsonObject.put("orderBuyerPayableMoney",order.getTotalPrice());
         jsonObject.put("orderShopFee","");
-        jsonObject.put("orderOriginPrice",order.getOriginalprice());
-        jsonObject.put("serviceRate",order.getServicerate());
-        jsonObject.put("serviceFee",order.getServicefee());
+        jsonObject.put("orderOriginPrice",order.getOriginalPrice());
+        jsonObject.put("serviceRate",order.getServiceRate());
+        jsonObject.put("serviceFee",order.getServiceFee());
         jsonObject.put("hongbao",order.getHongbao());
         jsonObject.put("orderBuyerRemark",order.getDescription());
         jsonObject.put("orderInvoiceOpenMark","");
@@ -787,17 +790,17 @@ public class SysFacadeService {
     }
 
     //获取饿了么订单用户信息
-    private JSONArray getElemeUsers(Order order ){
+    private JSONArray getElemeUsers(OOrder order ){
         JSONArray jsonArray = new JSONArray();
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("platOrderId",order.getOrderid());
+        jsonObject.put("platOrderId",order.getId());
         jsonObject.put("buyerFullName",order.getConsignee());
-        jsonObject.put("buyerFullAddress",order.getDeliverypoiaddress());
-        if(order.getPhonelist()!=null && order.getPhonelist().size()>0){
+        jsonObject.put("buyerFullAddress",order.getAddress());
+        if(order.getPhoneList()!=null && order.getPhoneList().size()>0){
             String str ="";
-            for (int i=0;i<order.getPhonelist().size();i++){
-               str = str+order.getPhonelist().get(i).toString()+",";
+            for (int i=0;i<order.getPhoneList().size();i++){
+               str = str+order.getPhoneList().get(i).toString()+",";
             }
             jsonObject.put("buyerTelephone",str.substring(0,str.length()-1));
             jsonObject.put("buyerMobile",str.substring(0,str.length()-1));
@@ -809,37 +812,37 @@ public class SysFacadeService {
         jsonObject.put("city","");
         jsonObject.put("district","");
         jsonObject.put("gender","");
-        jsonObject.put("buyerLng",order.getDeliverygeo());
-        jsonObject.put("buyerLat",order.getDeliverygeo());
+        jsonObject.put("buyerLng",order.getDeliveryGeo());
+        jsonObject.put("buyerLat",order.getDeliveryGeo());
         jsonArray.add(jsonObject);
         return jsonArray;
     }
 
     //获取饿了么订单商品信息
-    private JSONArray getElmeProducts(Order order){
+    private JSONArray getElmeProducts(OOrder order){
         JSONArray jsonArray = new JSONArray();
 
-        if(StringUtil.isEmpty(order.getDetail())){
+        if(StringUtil.isEmpty(order.getGroups())){
             return jsonArray;
         }
-        if(order.getDetail().getGroup()==null ||order.getDetail().getGroup().size()==0){
+        if(order.getGroups()==null ||order.getGroups().size()==0){
             return jsonArray;
         }
-        for(int i=0;i<order.getDetail().getGroup().size();i++){
-            for(int j=0;j<order.getDetail().getGroup().get(i).size();j++){
+        for(int i=0;i<order.getGroups().size();i++){
+            for(int j=0;j<order.getGroups().get(i).getItems().size();j++){
                 String spec ="";
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("platOrderId",order.getOrderid());
+                jsonObject.put("platOrderId",order.getId());
                 jsonObject.put("skuType","");
-                jsonObject.put("skuId",order.getDetail().getGroup().get(i).get(j).getId());
-                int size = order.getDetail().getGroup().get(i).get(j).getSpecs().size();
+                jsonObject.put("skuId",order.getGroups().get(i).getItems().get(j).getId());
+                int size = order.getGroups().get(i).getItems().get(j).getNewSpecs().size();
                 for(int k=0;k<size;k++){
-                    spec=spec+order.getDetail().getGroup().get(i).get(j).getSpecs().get(k).toString()+",";
+                    spec=spec+order.getGroups().get(i).getItems().get(j).getNewSpecs().get(k).toString()+",";
                 }
-                jsonObject.put("skuName",order.getDetail().getGroup().get(i).get(j).getName()+(StringUtil.isEmpty(spec)?"":"("+spec.substring(0,spec.length()-1)+")"));
-                jsonObject.put("skuIdIsv",order.getDetail().getGroup().get(i).get(j).getTp_food_id());
-                jsonObject.put("price",order.getDetail().getGroup().get(i).get(j).getPrice());
-                jsonObject.put("quantity",order.getDetail().getGroup().get(i).get(j).getQuantity());
+                jsonObject.put("skuName",order.getGroups().get(i).getItems().get(j).getName()+(StringUtil.isEmpty(spec)?"":"("+spec+")"));
+                jsonObject.put("skuIdIsv",order.getGroups().get(i).getItems().get(i).getSkuId());
+                jsonObject.put("price",order.getGroups().get(i).getItems().get(j).getPrice());
+                jsonObject.put("quantity",order.getGroups().get(i).getItems().get(j).getQuantity());
                 jsonObject.put("isGift","");
                 jsonObject.put("upcCode","");
                 jsonObject.put("boxNum","");
@@ -853,21 +856,21 @@ public class SysFacadeService {
     }
 
     //获取饿了么订单折扣信息
-    private JSONArray getElemeDiscount(Order order){
+    private JSONArray getElemeDiscount(OOrder order){
         JSONArray jsonArray = new JSONArray();
 
-        if(StringUtil.isEmpty(order.getDetail())){
+        if(StringUtil.isEmpty(order.getOrderActivities())){
             return jsonArray;
         }
-        if(order.getDetail().getExtra()==null && order.getDetail().getExtra().size()==0){
+        if(order.getOrderActivities()==null && order.getOrderActivities().size()==0){
             return jsonArray;
         }
-        for(int i=0;i<order.getDetail().getExtra().size();i++){
+        for(int i=0;i<order.getOrderActivities().size();i++){
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("platOrderId", order.getOrderid());
+            jsonObject.put("platOrderId", order.getId());
             jsonObject.put("discountType", "");
-            jsonObject.put("discountCode",order.getDetail().getExtra().get(i).getName());
-            jsonObject.put("discountPrice", order.getDetail().getExtra().get(i).getPrice());
+            jsonObject.put("discountCode",order.getOrderActivities().get(i).getId());
+            jsonObject.put("discountPrice", order.getOrderActivities().get(i).getAmount());
             jsonObject.put("skuId", "");
             jsonArray.add(jsonObject);
         }
@@ -1035,15 +1038,33 @@ public class SysFacadeService {
 
 
     //格式化饿了么订单状态
-    public int tranELOrderStatus(int status){
+    public int tranELOrderStatus(OOrderStatus status){
         switch (status){
-            case Constants.EL_STATUS_CODE_UNPROCESSED:
+            case unprocessed:
                 return Constants.POS_ORDER_SUSPENDING;
-            case Constants.EL_STATUS_CODE_PROCESSED_AND_VALID:
+            case valid:
                 return Constants.POS_ORDER_CONFIRMED;
-            case Constants.EL_STATUS_CODE_SUCCESS:
+            case settled:
                 return Constants.POS_ORDER_COMPLETED;
-            case Constants.EL_STATUS_CODE_INVALID:
+            case refunding:
+                return Constants.POS_ORDER_CANCELED;
+            default:
+                return Constants.POS_ORDER_OTHER;
+        }
+    }
+
+    //格式化饿了么配送状态
+    public int tranELDeliveryStatus(String status){
+        switch (status){
+            case "tobeAssignedCourier":
+                return Constants.POS_ORDER_CONFIRMED;
+            case "tobeFetched":
+                return Constants.POS_ORDER_DISPATCH_GET;
+            case "delivering":
+                return Constants.POS_ORDER_DELIVERY;
+            case "completed":
+                return Constants.POS_ORDER_COMPLETED;
+            case "cancelled":
                 return Constants.POS_ORDER_CANCELED;
             default:
                 return Constants.POS_ORDER_OTHER;
@@ -1051,7 +1072,7 @@ public class SysFacadeService {
     }
 
     //topic message to mq server  [message:order status]
-    public  void topicMessageOrderStatus(String platform,Integer status,String platformOrderId,String orderId,String shopId){
+    public  void topicMessageOrderStatus(String platform,Integer status,String platformOrderId,String orderId,String shopId,OOrderStatus elemeSatus){
         OrderWaiMai orderWaiMai = null;
         String tmp = "\"orderId\":\"{0}\"，\"orderStatus\":\"{1}\",\"shopId\":\"{2}\"",shop = shopId;
         boolean boolSend = true;
@@ -1120,7 +1141,7 @@ public class SysFacadeService {
                 jsonMessage.put("jdhome", jsonObjectEmpty);
                 jsonMessage.put("meituan", jsonObjectEmpty);
                 jsonObject.put("orderId", orderWaiMai == null ? "" : platformOrderId);
-                jsonObject.put("orderStatus", orderWaiMai == null ? "" : String.valueOf(tranELOrderStatus(status)));
+                jsonObject.put("orderStatus", orderWaiMai == null ? "" : String.valueOf(tranELOrderStatus(elemeSatus)));
                 jsonObject.put("shopId", shop);
                 jsonMessage.put("eleme", jsonObject);
                 break;
@@ -1164,6 +1185,23 @@ public class SysFacadeService {
                 jsonObject.put("dispatcherName",dispatcherName);
                 jsonMessage.put("meituan", jsonObject);
                 jsonMessage.put("eleme", jsonObjectEmpty);
+                break;
+            case  Constants.PLATFORM_WAIMAI_ELEME:
+                orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_ELEME,platformOrderId);
+                if (orderWaiMai==null){
+                    boolSend = false;  //不发送message
+                }else   {
+                    shop = orderWaiMai.getShopId();
+                }
+                jsonMessage.put("baidu", jsonObjectEmpty);
+                jsonMessage.put("jdhome", jsonObjectEmpty);
+                jsonObject.put("orderId", orderWaiMai == null ? "" : platformOrderId);
+                jsonObject.put("orderStatus", status);
+                jsonObject.put("shopId", shop);
+                jsonObject.put("dispatcherMobile",dispatcherMobile);
+                jsonObject.put("dispatcherName",dispatcherName);
+                jsonMessage.put("meituan", jsonObjectEmpty);
+                jsonMessage.put("eleme", jsonObject);
                 break;
             default:
                 boolSend = false;

@@ -19,6 +19,8 @@ public class RtnSerializer implements JsonSerializer<Rtn>{
         object.add("code",context.serialize(result.getCode()));
         object.add("desc",context.serialize(result.getDesc()));
         object.add("remark",context.serialize(result.getRemark()));
+        object.add("status",context.serialize(result.getStatus()));
+        object.add("name",context.serialize(result.getName()));
         object.add("dynamic",context.serialize(result.getDynamic()));
         return object;
     }

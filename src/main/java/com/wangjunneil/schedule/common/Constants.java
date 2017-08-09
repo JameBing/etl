@@ -136,6 +136,8 @@ public final class Constants {
     public static final String  BAIDU_SECRET_SH = "5a2c7855f7441fa2";
     public static final  String BAIDU_SOURCE_SZ = "30916";
     public static final String  BAIDU_SECRET_SZ = "46c4d76525131b37";
+    public static final  String BAIDU_SOURCE_TJ = "31485";
+    public static final String  BAIDU_SECRET_TJ = "c46f122d7658454b";
 
 
     public static final  String BOUNDARY = "--ZYETL1234567890--";
@@ -222,15 +224,14 @@ public final class Constants {
     public static final int JH_ORDER_CONFIRMED=33060;  // 已妥投
 
 
-    /*************************************************************************************************************************/
-    /**
-     * 饿了吗接口url
-     */
+    /*******************************************************饿了么******************************************************************/
+
     //饿了么URL
     public static final String URL_ELEME_URL = "http://v2.openapi.ele.me/";
-    /*
-        eleme餐厅URL
-     */
+    public static final String ELEME_APP_KEY = "ckCDJZjkHa";
+    public static final String ELEME_APP_SECRET ="0821f33c4981b678cc46f04fa192c6c8d3e73de1";
+    public static final String ELEME_CALLBACK_URL = "https://ngtl.ziyanfoods.com:8443/mark/waimai/eleme/callBack";
+
     //饿了么餐厅URL
     public static final String URL_ELEME_RESTAURANT_URL = URL_ELEME_URL + "restaurant/";
     //饿了么商家开关店

@@ -112,6 +112,7 @@ public class Order {
     private String payStatus;
 
     //订单状态
+    @SerializedName("status")
     private Integer status;
 
     //订单状态

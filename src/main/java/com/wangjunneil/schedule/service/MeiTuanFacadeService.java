@@ -491,11 +491,12 @@ public class MeiTuanFacadeService {
             }
             for(int i=0;i<foodList.size();i++){
                 FoodParam food = foodList.get(i);
-                if(food.getIs_sold_out()==0){
-                    rtn.setCode(food.getIs_sold_out());
-                    rtn.setDynamic(food.getApp_food_code());
-                    rtnStr =rtnStr+gson.toJson(rtn)+",";
-                }
+                rtn.setCode(0);
+                rtn.setDesc("success");
+                rtn.setStatus(food.getIs_sold_out());
+                rtn.setName(food.getName());
+                rtn.setDynamic(food.getApp_food_code());
+                rtnStr =rtnStr+gson.toJson(rtn)+",";
             }
         }catch (MeiTuanException ex){
             rtn.setCode(-997);
@@ -570,7 +571,6 @@ public class MeiTuanFacadeService {
             }
             rtn.setDynamic(String.valueOf(orderId));
             json = mtApiService.getConfirmOrder(orderId);
-
             if (json.equals("ok") || json.equals("200")){
                 rtn.setCode(0);
                 rtn.setDesc("success");
@@ -693,16 +693,16 @@ public class MeiTuanFacadeService {
             .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderExtraParam.class, new OrderExtraParamSerializer())
             .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderFoodDetailParam.class, new OrderFoodDetailParamSerializer()) .disableHtmlEscaping().create();
         try {
-                String json =gson.toJson(jsonObject);
-                json = java.net.URLDecoder.decode(json,"utf-8");
-                OrderInfo order = gson.fromJson(json, OrderInfo.class);
+            String json =gson.toJson(jsonObject);
+            json = java.net.URLDecoder.decode(json,"utf-8");
+            OrderInfo order = gson.fromJson(json, OrderInfo.class);
             //商家门店ID
             String shopId = order.getApppoicode();
             //美团订单ID
             String platformOrderId = String.valueOf(order.getOrderid());
             OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_MEITUAN,platformOrderId);
             //如果订单已经存在则商家订单ID不重新获取
-            if (orderWaiMai !=null&&orderWaiMai.getPlatform().equals(Constants.PLATFORM_WAIMAI_MEITUAN)&&orderWaiMai.getPlatformOrderId().equals(platformOrderId)){
+            if (orderWaiMai !=null&&orderWaiMai.getPlatform().equals(Constants.PLATFORM_WAIMAI_MEITUAN)&& orderWaiMai.getPlatformOrderId().equals(platformOrderId)){
                 orderWaiMai.setOrderId(orderWaiMai.getOrderId());
             }else {
                 orderWaiMai = new OrderWaiMai();
@@ -767,10 +767,10 @@ public class MeiTuanFacadeService {
                    return  "{\"code\":700,\"msg\":\"订单状态推送异常\"}";
                 }
                 mtInnerService.updateStatus(String.valueOf(order.getOrderid()),param.getStatus());
-                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN,Integer.valueOf(param.getStatus()),platformOrderId,null,shopId);
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN,Integer.valueOf(param.getStatus()),platformOrderId,null,shopId,null);
             }else {
                 sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
-                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId);
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId,null);
             }
             result = "{\"data\" : \"ok\"}" ;
         }catch (Exception ex){
