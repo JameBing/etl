@@ -6,7 +6,9 @@ import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.eleme.AuthToken;
 import com.wangjunneil.schedule.entity.eleme.Order;
+import com.wangjunneil.schedule.entity.eleme.ShopEle;
 import com.wangjunneil.schedule.entity.jdhome.JdHomeAccessToken;
+import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import eleme.openapi.sdk.api.entity.user.OAuthorizedShop;
@@ -73,16 +75,9 @@ public class EleMeInnerService {
 
     //批量更新订单状态(根据订单号)
     public void updSyncElemeOrderStastus(String ids,String status) throws ScheduleException{
-        Query query = new Query();
-        Criteria criteria = new Criteria();
-        List<String> listIds = new ArrayList<String>();
-        Collections.addAll(listIds, ids.split(","));
-        listIds.forEach((id)->{
-            criteria.orOperator(Criteria.where("platformOrderId").is(id),Criteria.where("platform").is("eleme"));
-        });
-        query.addCriteria(criteria);
-        Update update = new Update().set("order.statuscode",status);
-        mongoTemplate.updateFirst(query, update, OrderWaiMai.class);
+        Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_ELEME).where("platformOrderId").is(ids));
+        Update update = new Update().set("order.status",status);
+        mongoTemplate.upsert(query,update, OrderWaiMai.class);
     }
 
     //批量更新配送状态(根据订单号)
@@ -173,6 +168,24 @@ public class EleMeInnerService {
         Query query = new Query(Criteria.where("platform").is(Constants.PLATFORM_WAIMAI_ELEME).and("shopIds").elemMatch(Criteria.where("_id").is(Integer.parseInt(shopId))));
         AuthToken authToken = mongoTemplate.findOne(query, AuthToken.class);
         return authToken;
+    }
+
+    //根据门店Id获取token值
+    public ShopEle getShop(String shopId){
+        Query query = new Query(Criteria.where("platForm").is(Constants.PLATFORM_WAIMAI_ELEME).and("shopId").is(shopId));
+        ShopEle shopEle = mongoTemplate.findOne(query, ShopEle.class);
+        return shopEle;
+    }
+
+    //根据门店Id获取token值
+    public ShopEle getSellerId(String shopId){
+        Query query = new Query(Criteria.where("platForm").is(Constants.PLATFORM_WAIMAI_ELEME).and("sellerId").is(shopId));
+        ShopEle shopEle = mongoTemplate.findOne(query, ShopEle.class);
+        return shopEle;
+    }
+
+    public void addSyncShops(List<ShopEle> shopEles) {
+        mongoTemplate.insertAll(shopEles);
     }
 
 }

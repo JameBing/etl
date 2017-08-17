@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.eleme.*;
 import com.wangjunneil.schedule.entity.sys.Cfg;
+import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.SysFacadeService;
 import com.wangjunneil.schedule.utility.HttpUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -24,6 +25,7 @@ import eleme.openapi.sdk.api.service.UserService;
 import eleme.openapi.sdk.config.Config;
 import eleme.openapi.sdk.oauth.OAuthClient;
 import eleme.openapi.sdk.oauth.response.Token;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +45,8 @@ public class EleMeApiService {
     private SysFacadeService sysFacadeService;
     @Autowired
     private EleMeInnerService eleMeInnerService;
+
+    private static Logger logInfo = Logger.getLogger(EleMeApiService.class.getName());
 
     /**
      * 对url进行签名
@@ -83,14 +87,15 @@ public class EleMeApiService {
      */
     public OShop setRestaurantStatus(RestaurantRequest obj) throws ScheduleException,ElemeException,ServiceException{
         judgeTokenExpire(); //判断token是否失效
-        ShopService shopService = new ShopService(getSysConfig(), getSysToken(obj.getRestaurant_id()));
+        ShopEle shopEle = eleMeInnerService.getSellerId(obj.getRestaurant_id());
+        ShopService shopService = new ShopService(getSysConfig(), getSysToken(shopEle==null?obj.getRestaurant_id():shopEle.getShopId()));
         Map<OShopProperty,Object> properties = new HashMap<OShopProperty,Object>();
         if("1".equals(obj.getIs_open())){
             properties.put(OShopProperty.isOpen,1);
         }else {
             properties.put(OShopProperty.isOpen,0);
         }
-        OShop oShop = shopService.updateShop(Long.parseLong(obj.getRestaurant_id()), properties);
+        OShop oShop = shopService.updateShop(Long.parseLong(shopEle==null?obj.getRestaurant_id():shopEle.getShopId()), properties);
         return oShop;
     }
 
@@ -161,7 +166,8 @@ public class EleMeApiService {
      */
     public OOrder orderDetail(String orderId,String shopId)throws ScheduleException,ElemeException,Exception{
         judgeTokenExpire(); //判断token是否失效
-        OrderService orderService = new OrderService(getSysConfig(), getSysToken(shopId));
+        ShopEle shopEle = eleMeInnerService.getSellerId(shopId);
+        OrderService orderService = new OrderService(getSysConfig(), getSysToken(shopEle==null?shopId:shopEle.getShopId()));
         OOrder oOrder = orderService.getOrder(orderId);
         return oOrder;
     }
@@ -173,7 +179,8 @@ public class EleMeApiService {
      */
     public void configOrderStatus(String orderId,String shopId) throws ScheduleException,ElemeException,ServiceException{
         judgeTokenExpire(); //判断token是否失效
-        OrderService orderService = new OrderService(getSysConfig(), getSysToken(shopId));
+        ShopEle shopEle = eleMeInnerService.getSellerId(shopId);
+        OrderService orderService = new OrderService(getSysConfig(), getSysToken(shopEle==null?shopId:shopEle.getShopId()));
         orderService.confirmOrderLite(orderId);
     }
 
@@ -184,7 +191,8 @@ public class EleMeApiService {
      */
     public void cancelOrderStatus(String orderId,String shopId) throws ScheduleException,ElemeException,ServiceException {
         judgeTokenExpire(); //判断token是否失效
-        OrderService orderService = new OrderService(getSysConfig(), getSysToken(shopId));
+        ShopEle shopEle = eleMeInnerService.getSellerId(shopId);
+        OrderService orderService = new OrderService(getSysConfig(), getSysToken(shopEle==null?shopId:shopEle.getShopId()));
         orderService.cancelOrderLite(orderId, OInvalidateType.fakeOrder, "无法取得联系");
     }
 
@@ -208,8 +216,9 @@ public class EleMeApiService {
      */
     public List<OCategory> getCategoryId(String sellerId) throws ScheduleException,ElemeException,ServiceException{
         judgeTokenExpire(); //判断token是否失效
-        ProductService productService = new ProductService(getSysConfig(), getSysToken(sellerId));
-        return  productService.getShopCategories(Long.parseLong(sellerId));
+        ShopEle shopEle = eleMeInnerService.getSellerId(sellerId);
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopEle==null?sellerId:shopEle.getShopId()));
+        return  productService.getShopCategories(Long.parseLong(shopEle==null?sellerId:shopEle.getShopId()));
     }
 
     /**
@@ -219,7 +228,8 @@ public class EleMeApiService {
      */
     public Map<Long, OItem> getCategProducts(Long categoryId,String shopId) throws ScheduleException,ElemeException,ServiceException{
         judgeTokenExpire(); //判断token是否失效
-        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopId));
+        ShopEle shopEle = eleMeInnerService.getSellerId(shopId);
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopEle ==null?shopId:shopEle.getShopId()));
         return productService.getItemsByCategoryId(categoryId);
     }
     /**
@@ -229,8 +239,9 @@ public class EleMeApiService {
      */
     public OItem getProductByExtendCode(Long shopId,String dishId) throws ScheduleException,ElemeException,ServiceException{
         judgeTokenExpire(); //判断token是否失效
-        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopId.toString()));
-        return productService.getItemByShopIdAndExtendCode(shopId, dishId);
+        ShopEle shopEle = eleMeInnerService.getSellerId(shopId.toString());
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopEle ==null?shopId.toString():shopEle.getShopId()));
+        return productService.getItemByShopIdAndExtendCode(shopEle ==null?shopId:Long.parseLong(shopEle.getShopId()), dishId);
     }
 
     /**
@@ -240,7 +251,8 @@ public class EleMeApiService {
      */
     public OItem getProductById(String dishId,String shopId) throws ScheduleException,ElemeException,ServiceException{
         judgeTokenExpire(); //判断token是否失效
-        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopId));
+        ShopEle shopEle = eleMeInnerService.getSellerId(shopId);
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopEle ==null?shopId.toString():shopEle.getShopId()));
         return productService.getItem(Long.parseLong(dishId));
     }
 
@@ -252,7 +264,8 @@ public class EleMeApiService {
      */
     public void upBatchFrame(List<OItemIdWithSpecIds> specIds,String shopId) throws ScheduleException,ElemeException,ServiceException{
         judgeTokenExpire(); //判断token是否失效
-        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopId));
+        ShopEle shopEle = eleMeInnerService.getSellerId(shopId);
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopEle ==null?shopId.toString():shopEle.getShopId()));
         productService.batchOnShelf(specIds);
     }
 
@@ -263,7 +276,8 @@ public class EleMeApiService {
      */
     public void downBatchFrame(List<OItemIdWithSpecIds> specIds ,String shopId) throws ScheduleException,ElemeException,ServiceException{
         judgeTokenExpire(); //判断token是否失效
-        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopId));
+        ShopEle shopEle = eleMeInnerService.getSellerId(shopId);
+        ProductService productService = new ProductService(getSysConfig(), getSysToken(shopEle ==null?shopId:shopEle.getShopId()));
         productService.batchOffShelf(specIds);
     }
 
@@ -360,8 +374,9 @@ public class EleMeApiService {
      */
     public OShop getRestaurantInfo(RestaurantRequest obj) throws ElemeException, ScheduleException,ServiceException {
         judgeTokenExpire(); //判断token是否失效
-        ShopService shopService = new ShopService(getSysConfig(),getSysToken(obj.getRestaurant_id()));
-        OShop shop = shopService.getShop(Long.parseLong(obj.getRestaurant_id()));
+        ShopEle shopEle = eleMeInnerService.getSellerId(obj.getRestaurant_id());
+        ShopService shopService = new ShopService(getSysConfig(),getSysToken(shopEle==null?obj.getRestaurant_id():shopEle.getShopId()));
+        OShop shop = shopService.getShop(Long.parseLong(shopEle==null?obj.getRestaurant_id():shopEle.getShopId()));
         return shop;
     }
 

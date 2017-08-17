@@ -26,7 +26,9 @@ public class TopicMessageProducerAsync implements Runnable {
     public void run() {
         synchronized (this){
             log.info("===================Start:生产者发送了一条TextMessage消息===================================");
+            System.out.print("===================Start:生产者发送了一条TextMessage消息===================================");
             log.info(message);
+            System.out.print(message);
             topicJmsTemplate.send(destination, new MessageCreator() {
                 @Override
                 public Message createMessage(Session session) throws JMSException {

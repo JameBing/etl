@@ -635,6 +635,14 @@ public class BaiDuApiService {
             sysParams.setSource(Constants.BAIDU_SOURCE_TJ);
             sysParams.setSecret(Constants.BAIDU_SECRET_TJ);
         }
+        if("80034".equals(shopId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_ZZ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_ZZ);
+        }
+        if("80020".equals(shopId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_HF);
+            sysParams.setSecret(Constants.BAIDU_SOURCE_HF);
+        }
     }
 
     //获取合作方ID和密钥
@@ -650,6 +658,14 @@ public class BaiDuApiService {
         if("31485".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_TJ);
             sysParams.setSecret(Constants.BAIDU_SECRET_TJ);
+        }
+        if("31522".equals(sourceId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_ZZ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_ZZ);
+        }
+        if("31661".equals(sourceId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_HF);
+            sysParams.setSecret(Constants.BAIDU_SECRET_HF);
         }
     }
 }

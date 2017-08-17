@@ -1,5 +1,6 @@
 package com.wangjunneil.schedule.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.*;
 import com.wangjunneil.schedule.common.Constants;
@@ -9,13 +10,16 @@ import com.wangjunneil.schedule.entity.common.*;
 import com.wangjunneil.schedule.entity.eleme.*;
 import com.wangjunneil.schedule.service.eleme.EleMeApiService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
+import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
-import eleme.openapi.sdk.api.entity.order.OOrder;
+import eleme.openapi.sdk.api.entity.order.*;
 import eleme.openapi.sdk.api.entity.product.OCategory;
 import eleme.openapi.sdk.api.entity.product.OItem;
 import eleme.openapi.sdk.api.entity.product.OItemIdWithSpecIds;
 import eleme.openapi.sdk.api.entity.product.OSpec;
 import eleme.openapi.sdk.api.entity.shop.OShop;
+import eleme.openapi.sdk.api.enumeration.order.OOrderDetailGroupType;
+import eleme.openapi.sdk.api.enumeration.order.OOrderRefundStatus;
 import eleme.openapi.sdk.api.enumeration.order.OOrderStatus;
 import eleme.openapi.sdk.oauth.response.Token;
 import org.apache.log4j.Logger;
@@ -433,16 +437,21 @@ public class EleMeFacadeService {
             return  "{\"message\": \"error\"}";
         }
         try {
+            //转换对象
+            OrderEle order = new OrderEle();
+            formatEle(order,jsonObject);
             String orderId = jsonObject.getString("orderId");
             OrderWaiMai orderWaiMai = new OrderWaiMai();
             orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             orderWaiMai.setPlatformOrderId(jsonObject.getString("orderId"));
             String wmOrderId = sysFacadeService.getOrderNum(String.valueOf(jsonObject.getString("shopId")));
-            orderWaiMai.setOrder(jsonObject);
+            orderWaiMai.setOrder(order);
             orderWaiMai.setOrderId(wmOrderId);
             orderWaiMai.setPlatformOrderId(orderId);
-            orderWaiMai.setSellerShopId(jsonObject.getString("shopId"));
-            orderWaiMai.setShopId(jsonObject.getString("shopId"));
+            //获取中台门店Id
+            ShopEle shopEle = eleMeInnerService.getShop(jsonObject.getString("shopId"));
+            orderWaiMai.setSellerShopId(shopEle==null?jsonObject.getString("shopId"):shopEle.getSellerId());
+            orderWaiMai.setShopId(shopEle==null?jsonObject.getString("shopId"):shopEle.getSellerId());
             orderWaiMai.setCreateTime(new Date());
             rtnStr = "{\"message\": \"ok\"}";
             sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
@@ -486,7 +495,7 @@ public class EleMeFacadeService {
             }else {
                 sysFacadeService.updateWaiMaiOrder(orderId, orderWaiMai);
             }
-            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,null,orderId,null,orderWaiMai.getSellerShopId(),OOrderStatus.valueOf(newStatus));
+            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,null,orderId,null,orderWaiMai.getSellerShopId(), OOrderStatus.valueOf(newStatus));
         }catch (ScheduleException e){
             log = sysFacadeService.functionRtn.apply(e);
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
@@ -522,7 +531,7 @@ public class EleMeFacadeService {
             }else {
                 sysFacadeService.updateWaiMaiOrder(orderId, orderWaiMai);
             }
-            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,null,orderId,null,orderWaiMai.getSellerShopId(),OOrderStatus.valueOf(refundStatus));
+            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_ELEME,null,orderId,null,orderWaiMai.getSellerShopId(), OOrderStatus.valueOf(refundStatus));
         }catch (ScheduleException e){
             log.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             log = sysFacadeService.functionRtn.apply(e);
@@ -918,7 +927,6 @@ public class EleMeFacadeService {
         if (StringUtil.isEmpty(merchantId)) {
             return gson1.toJson(rtn);
         }
-
         OShop shop = getRestaurantInfo(merchantId);
         if (shop==null) {
             rtn.setCode(-1);
@@ -1309,4 +1317,142 @@ public class EleMeFacadeService {
         return getGson().toJson(orders);
     }
 
+    public void formatEle(OrderEle order,JSONObject jsonObject){
+
+        order.setActiveAt(DateTimeUtil.formatDateString(jsonObject.getString("activeAt"),"yyyy-MM-dd\'T\'HH:mm:ss"));
+        order.setActivityTotal(jsonObject.getInteger("activityTotal"));
+        order.setAddress(jsonObject.getString("address"));
+        order.setBook(jsonObject.getBoolean("book"));
+        order.setConsignee(jsonObject.getString("consignee"));
+        order.setCreatedAt(DateTimeUtil.formatDateString(jsonObject.getString("createdAt"),"yyyy-MM-dd\'T\'HH:mm:ss"));
+        order.setDaySn(jsonObject.getByte("daySn"));
+        order.setDeliverFee(jsonObject.getDouble("deliverFee"));
+        order.setDeliveryGeo(jsonObject.getString("deliveryGeo"));
+        order.setDeliveryPoiAddress(jsonObject.getString("deliveryPoiAddress"));
+        order.setDescription(jsonObject.getString("description"));
+        order.setDowngraded(jsonObject.getBoolean("downgraded"));
+        order.setElemePart(jsonObject.getDouble("elemePart"));
+        List<OGoodsGroup> groups = getGoodsGroup(order,jsonObject);
+        order.setGroups(groups);
+        order.setHongbao(jsonObject.getDouble("hongbao"));
+        order.setId(jsonObject.getString("id"));
+        order.setIncome(jsonObject.getDouble("income"));
+        order.setInvoiced(jsonObject.getBoolean("invoiced"));
+        order.setOnlinePaid(jsonObject.getBoolean("onlinePaid"));
+        order.setOpenId(jsonObject.getString("openId"));
+        //优惠卷
+        List<OActivity> orderActivities = getActivity(order,jsonObject);
+        order.setOrderActivities(orderActivities);
+        order.setOriginalPrice(jsonObject.getDouble("originalPrice"));
+        order.setPackageFee(jsonObject.getDouble("packageFee"));
+        List<String> phoneList = getPhoneList(order,jsonObject);
+        order.setPhoneList(phoneList);
+        order.setRefundStatus(OOrderRefundStatus.valueOf(jsonObject.getString("refundStatus")));
+        order.setServiceFee(jsonObject.getDouble("serviceFee"));
+        order.setServiceRate(jsonObject.getDouble("serviceRate"));
+        order.setShopId(jsonObject.getLong("shopId"));
+        order.setShopName(jsonObject.getString("shopName"));
+        order.setShopPart(jsonObject.getDouble("shopPart"));
+        order.setStatus(jsonObject.getString("status"));
+        order.setTaxpayerId(jsonObject.getString("taxpayerId"));
+        order.setTotalPrice(jsonObject.getDouble("totalPrice"));
+        order.setUserId(jsonObject.getInteger("userId"));
+    }
+
+    //获取商品信息
+    private List<OGoodsGroup> getGoodsGroup(OrderEle order,JSONObject jsonObject){
+        JSONArray jsonArray = jsonObject.getJSONArray("groups");
+        if(jsonArray==null || jsonArray.size()==0){
+            return  new ArrayList<>();
+        }
+        //商品数组
+        List<OGoodsGroup> groups = new ArrayList<>();
+        for(int i=0 ;i<jsonArray.size();i++){
+            OGoodsGroup goodsGroup = new OGoodsGroup();
+            JSONObject json = jsonArray.getJSONObject(i);
+            goodsGroup.setName(json.getString("name"));
+            goodsGroup.setType(OOrderDetailGroupType.valueOf(json.getString("type")));
+            JSONArray itemArray = json.getJSONArray("items");
+            if(itemArray==null || itemArray.size()==0){
+                goodsGroup.setItems(new ArrayList<>());
+                continue;
+            }
+            //商品详情
+            List<OGoodsItem> items = new ArrayList<>();
+            for(int j=0;j<itemArray.size();j++){
+                OGoodsItem item = new OGoodsItem();
+                JSONObject jsonItem = itemArray.getJSONObject(j);
+                //属性
+                List<OGroupItemAttribute> attributes = new ArrayList<>();
+                if(jsonItem.getJSONArray("additions")==null || jsonItem.getJSONArray("additions").size()==0){
+                    item.setAttributes(attributes);
+                }else {
+                    for(int k =0;k<jsonItem.getJSONArray("additions").size();k++){
+                        OGroupItemAttribute attribute = new OGroupItemAttribute();
+                        attribute.setName(jsonItem.getJSONArray("additions").getJSONObject(k).getString("name"));
+                        attribute.setValue(jsonItem.getJSONArray("additions").getJSONObject(k).getString("value"));
+                    }
+                    item.setAttributes(attributes);
+                }
+                //规格
+                List<OGroupItemSpec> newSpecs = new ArrayList<>();
+                if(jsonItem.getJSONArray("newSpecs")==null || jsonItem.getJSONArray("newSpecs").size()==0){
+                    item.setNewSpecs(newSpecs);
+                }else {
+                    for(int m =0;m<jsonItem.getJSONArray("newSpecs").size();m++){
+                        OGroupItemSpec newSpec = new OGroupItemSpec();
+                        newSpec.setName(jsonItem.getJSONArray("newSpecs").getJSONObject(m).getString("name"));
+                        newSpec.setValue(jsonItem.getJSONArray("newSpecs").getJSONObject(m).getString("value"));
+                    }
+                    item.setNewSpecs(newSpecs);
+                }
+                item.setBarCode(jsonItem.getString("barCode"));
+                item.setCategoryId(jsonItem.getLong("categoryId"));
+                item.setExtendCode(jsonItem.getString("extendCode"));
+                item.setId(jsonItem.getLong("id"));
+                item.setName(jsonItem.getString("name"));
+                item.setPrice(jsonItem.getDouble("price"));
+                item.setQuantity(jsonItem.getInteger("quantity"));
+                item.setSkuId(jsonItem.getLong("skuId"));
+                item.setTotal(jsonItem.getDouble("total"));
+                item.setWeight(jsonItem.getDouble("userPrice"));
+                items.add(item);
+            }
+            goodsGroup.setItems(items);
+            groups.add(goodsGroup);
+        }
+        return groups;
+    }
+
+    //优惠卷
+    private List<OActivity> getActivity(OrderEle order ,JSONObject jsonObject){
+        JSONArray jsonArray = jsonObject.getJSONArray("orderActivities");
+        if(jsonArray==null || jsonArray.size()==0){
+           return new ArrayList<>();
+        }
+        List<OActivity> oActivities = new ArrayList<>();
+        for(int i=0;i<jsonArray.size();i++){
+            OActivity activity = new OActivity();
+            JSONObject json = jsonArray.getJSONObject(i);
+            activity.setId(json.getLong("id"));
+            activity.setName(json.getString("name"));
+            activity.setCategoryId(json.getInteger("categoryId"));
+            activity.setAmount(json.getDouble("categoryId"));
+            oActivities.add(activity);
+        }
+        return oActivities;
+    }
+
+
+    private List<String> getPhoneList(OrderEle order,JSONObject jsonObject){
+        if(StringUtil.isEmpty(jsonObject.get("phoneList"))){
+           return new ArrayList<>();
+        }
+        List<String> list = (List<String>)jsonObject.get("phoneList");
+        List<String> strings = new ArrayList<>();
+        for(int i=0;i<list.size();i++){
+            strings.add(list.get(i));
+        }
+        return strings;
+    }
 }

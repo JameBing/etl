@@ -138,6 +138,10 @@ public final class Constants {
     public static final String  BAIDU_SECRET_SZ = "46c4d76525131b37";
     public static final  String BAIDU_SOURCE_TJ = "31485";
     public static final String  BAIDU_SECRET_TJ = "c46f122d7658454b";
+    public static final  String BAIDU_SOURCE_ZZ = "31522";
+    public static final String  BAIDU_SECRET_ZZ = "973be3b2cd7454b7";
+    public static final  String BAIDU_SOURCE_HF = "31661";
+    public static final String  BAIDU_SECRET_HF = "19c3801eb25af21a";
 
 
     public static final  String BOUNDARY = "--ZYETL1234567890--";

@@ -595,8 +595,7 @@ public class BaiDuFacadeService {
     public String orderStatus(SysParams sysParams,Boolean flag){
         Body result = new Body();
         try{
-        Body body = new Body();
-        JSONObject jsonObject1 = JSONObject.parseObject(sysParams.getBody().toString());
+        Body body = new Body();JSONObject jsonObject1 = JSONObject.parseObject(sysParams.getBody().toString());
        //？是否多个订单号存在
         int intR = 0;
         //推送整个订单
@@ -623,12 +622,11 @@ public class BaiDuFacadeService {
             int status = jsonObject1.getInteger("status");
             intR = baiDuInnerService.updSyncBaiDuOrderStastus(orderId,status);
             OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_BAIDU,orderId);
-            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_BAIDU,status,orderId,null,orderWaiMai.getSellerShopId(),null);
+            sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_BAIDU,status,jsonObject1.getString("order_id"),null,orderWaiMai.getSellerShopId(),null);
         }
         if (intR > 0){
             result.setErrno("0");
             result.setError("success");
-            result.setData("");
             sysParams.setBody(result);
         }else{
             result.setErrno("1");

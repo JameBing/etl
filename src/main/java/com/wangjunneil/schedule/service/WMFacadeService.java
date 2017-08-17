@@ -99,7 +99,7 @@ public class WMFacadeService {
                 if(json.getString("status")!=null){
                     result =  eleMeFacadeService.getNewOrder(json);
                 }
-                else if(json.getString("state")!=null){
+                else if(json.getString("state")!=null && json.getInteger("updateTime")!=null){
                     //订单状态变更
                     result =  eleMeFacadeService.orderChange(json,flag);
                 }
@@ -107,7 +107,7 @@ public class WMFacadeService {
                     //退单状态推送
                     result =  eleMeFacadeService.chargeBack(json,flag);
                 }
-                else if(json.getString("phone")!=null){
+                else if(json.getString("state")!=null && json.getString("phone")!=null){
                     result = eleMeFacadeService.distributionStatus(json);
                 }
                 break;

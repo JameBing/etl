@@ -5,14 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.EkpMessageProducer;
-import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync;
 import com.wangjunneil.schedule.common.*;
 import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.baidu.OrderShop;
 import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
-import com.wangjunneil.schedule.entity.eleme.Order;
+import com.wangjunneil.schedule.entity.eleme.OrderEle;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderExtend;
 import com.wangjunneil.schedule.entity.jdhome.OrderInfoDTO;
@@ -26,7 +25,6 @@ import com.wangjunneil.schedule.service.jp.JpApiService;
 import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
-import eleme.openapi.sdk.api.entity.order.OOrder;
 import eleme.openapi.sdk.api.enumeration.order.OOrderStatus;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -204,6 +202,7 @@ public class SysFacadeService {
             sysInnerService.updSynWaiMaiOrder(orderWaiMai);
             //topic message to MQ Server
             log.info(formatOrder2Pos(orderWaiMai));
+            System.out.print(formatOrder2Pos(orderWaiMai));
             if (StaticObj.mqTransportTopicOrder){
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
                 topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
@@ -284,7 +283,7 @@ public class SysFacadeService {
                 rtn =  formatMeiTuanOrder((OrderInfo)orderWaiMai.getOrder(),jsonObject);
                 break;
             case Constants.PLATFORM_WAIMAI_ELEME :
-                rtn =  formatEleme((OOrder) orderWaiMai.getOrder(),jsonObject);
+                rtn =  formatEleme((OrderEle) orderWaiMai.getOrder(),jsonObject);
                 break;
             default:break;
         }
@@ -720,9 +719,9 @@ public class SysFacadeService {
 
 
     //格式化饿了么订单
-    private  JSONObject formatEleme(OOrder order ,JSONObject jsonObject){
+    private  JSONObject formatEleme(OrderEle order ,JSONObject jsonObject){
         if(StringUtil.isEmpty(order)){
-            order = new OOrder();
+            order = new OrderEle();
         }
         JSONObject rtnJson = new JSONObject();
         rtnJson.put("header",getElemeHeader(order, jsonObject));
@@ -733,7 +732,7 @@ public class SysFacadeService {
     }
 
     //获取饿了么订单头部信息
-    private JSONArray getElemeHeader(OOrder order, JSONObject jsonObject){
+    private JSONArray getElemeHeader(OrderEle order, JSONObject jsonObject){
         JSONArray jsonArray = new JSONArray();
 
         jsonObject.put("platShopId",order.getShopId());
@@ -744,15 +743,15 @@ public class SysFacadeService {
         jsonObject.put("poiPhone","");
         jsonObject.put("orderIndex",order.getDaySn());
         jsonObject.put("orderType","");
-        jsonObject.put("orderStatus",tranELOrderStatus(order.getStatus()));
+        jsonObject.put("orderStatus",tranELOrderStatus1(order.getStatus()));
         jsonObject.put("orderStatusTime","");
-        jsonObject.put("orderStartTime",order.getCreatedAt());
+        jsonObject.put("orderStartTime",order.getCreatedAt()==null?"":DateTimeUtil.dateFormat(order.getCreatedAt(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderConfirmTime","");
-        jsonObject.put("orderPurchaseTime", order.getActiveAt());
+        jsonObject.put("orderPurchaseTime", order.getActiveAt()==null?"":DateTimeUtil.dateFormat(order.getActiveAt(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderAgingType","");
         jsonObject.put("deliveryImmediately","");
         jsonObject.put("expectTimeMode","");
-        jsonObject.put("orderPreDeliveryTime",order.getDeliverTime());
+        jsonObject.put("orderPreDeliveryTime",order.getDeliverTime()==null?"":DateTimeUtil.dateFormat(order.getDeliverTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("expectSendTime", "1");
         jsonObject.put("riderArrivalTime","");
         jsonObject.put("riderPickupTime","");
@@ -790,7 +789,7 @@ public class SysFacadeService {
     }
 
     //获取饿了么订单用户信息
-    private JSONArray getElemeUsers(OOrder order ){
+    private JSONArray getElemeUsers(OrderEle order ){
         JSONArray jsonArray = new JSONArray();
 
         JSONObject jsonObject = new JSONObject();
@@ -819,7 +818,7 @@ public class SysFacadeService {
     }
 
     //获取饿了么订单商品信息
-    private JSONArray getElmeProducts(OOrder order){
+    private JSONArray getElmeProducts(OrderEle order){
         JSONArray jsonArray = new JSONArray();
 
         if(StringUtil.isEmpty(order.getGroups())){
@@ -856,7 +855,7 @@ public class SysFacadeService {
     }
 
     //获取饿了么订单折扣信息
-    private JSONArray getElemeDiscount(OOrder order){
+    private JSONArray getElemeDiscount(OrderEle order){
         JSONArray jsonArray = new JSONArray();
 
         if(StringUtil.isEmpty(order.getOrderActivities())){
@@ -1053,6 +1052,22 @@ public class SysFacadeService {
         }
     }
 
+    //格式化饿了么订单状态
+    public int tranELOrderStatus1(String status){
+        switch (status){
+            case "unprocessed":
+                return Constants.POS_ORDER_SUSPENDING;
+            case "valid":
+                return Constants.POS_ORDER_CONFIRMED;
+            case "settled":
+                return Constants.POS_ORDER_COMPLETED;
+            case "refunding":
+                return Constants.POS_ORDER_CANCELED;
+            default:
+                return Constants.POS_ORDER_OTHER;
+        }
+    }
+
     //格式化饿了么配送状态
     public int tranELDeliveryStatus(String status){
         switch (status){
@@ -1090,7 +1105,7 @@ public class SysFacadeService {
                 }else   {
                     shop = orderWaiMai.getShopId();
                 }
-                jsonObject.put("orderId", orderWaiMai == null ? "" : orderWaiMai.getOrderId());
+                jsonObject.put("orderId", orderWaiMai == null ? "" : platformOrderId);
                 jsonObject.put("orderStatus", orderWaiMai == null ? "" : String.valueOf(tranBdOrderStatus(status)));
                 jsonObject.put("shopId", shop);
                 jsonMessage.put("baidu", jsonObject);
@@ -1141,7 +1156,7 @@ public class SysFacadeService {
                 jsonMessage.put("jdhome", jsonObjectEmpty);
                 jsonMessage.put("meituan", jsonObjectEmpty);
                 jsonObject.put("orderId", orderWaiMai == null ? "" : platformOrderId);
-                jsonObject.put("orderStatus", orderWaiMai == null ? "" : String.valueOf(tranELOrderStatus(elemeSatus)));
+                jsonObject.put("orderStatus", orderWaiMai == null ? "" : tranELOrderStatus(elemeSatus));
                 jsonObject.put("shopId", shop);
                 jsonMessage.put("eleme", jsonObject);
                 break;

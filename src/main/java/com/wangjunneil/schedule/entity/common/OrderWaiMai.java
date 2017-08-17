@@ -1,8 +1,6 @@
 package com.wangjunneil.schedule.entity.common;
 
-import com.taobao.api.request.OcEserviceAppointSaveRequest;
 import com.wangjunneil.schedule.utility.StringUtil;
-import org.apache.activemq.ActiveMQInputStream;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;

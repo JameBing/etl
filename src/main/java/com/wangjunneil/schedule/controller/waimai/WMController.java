@@ -89,6 +89,7 @@ public class WMController {
                 stringMap = request.getParameterMap();
                 platform = Constants.PLATFORM_WAIMAI_ELEME;
                 break;
+
             case "/waimai/meituan": //美团
                 stringMap = request.getParameterMap();
                 platform = Constants.PLATFORM_WAIMAI_MEITUAN;

@@ -6,6 +6,7 @@ import com.wangjunneil.schedule.entity.common.FlowNum;
 import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.OrderWaiMaiHistory;
+import com.wangjunneil.schedule.entity.eleme.ShopEle;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jp.JPAccessToken;
 import com.wangjunneil.schedule.entity.sys.Cfg;
@@ -202,7 +203,7 @@ public class SysInnerService {
 
     //订单查询
     public OrderWaiMai findOrderWaiMai(String platform, String platformOrderId){
-        Query query = new Query(Criteria.where("platform").is(platform).where("platformOrderId").is(platformOrderId));
+        Query query = new Query(Criteria.where("platform").is(platform).and("platformOrderId").is(platformOrderId));
         OrderWaiMai orderWaiMai = mongoTemplate.findOne(query,OrderWaiMai.class);
         return  orderWaiMai;
     }

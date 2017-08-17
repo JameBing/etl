@@ -2,10 +2,12 @@ package com.wangjunneil.schedule.controller.jdhome;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
+import com.wangjunneil.schedule.entity.eleme.ShopEle;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
 import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.shopCategory;
@@ -13,6 +15,7 @@ import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.JdHomeFacadeService;
 import com.wangjunneil.schedule.service.MeiTuanFacadeService;
 import com.wangjunneil.schedule.service.SysFacadeService;
+import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.HttpsUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -44,6 +47,9 @@ public class JdHomeController {
 
     @Autowired
     private EleMeFacadeService eleMeFacadeService;
+
+    @Autowired
+    private EleMeInnerService eleMeInnerService;
 
     @Autowired
     private MeiTuanFacadeService meiTuanFacadeService;
@@ -244,5 +250,37 @@ public class JdHomeController {
 
         String result = HttpsUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
         System.out.println(result);
+    }
+
+    @RequestMapping(value = "/addShop",method = RequestMethod.GET)
+    public String addShop(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception {
+        resp.setContentType("text/html;charset=utf-8");
+        String aa = "[\n" +
+            "{\"shopId\":\"2119568\",\"shopName\":\"紫燕百味鸡（舒城店）\",\"sellerId\":\"80020002\",\"platForm\":\"eleme\",\"city\":\"合肥\"},\n" +
+            "{\"shopId\":\"2119575\",\"shopName\":\"紫燕百味鸡（宁国店）\",\"sellerId\":\"80020009\",\"platForm\":\"eleme\",\"city\":\"合肥\"},\n" +
+            "{\"shopId\":\"2119578\",\"shopName\":\"紫燕百味鸡（洪岗店）\",\"sellerId\":\"80020012\",\"platForm\":\"eleme\",\"city\":\"合肥\"},\n" +
+            "{\"shopId\":\"2119579\",\"shopName\":\"紫燕百味鸡（岳西店）\",\"sellerId\":\"80020013\",\"platForm\":\"eleme\",\"city\":\"合肥\"},\n" +
+            "{\"shopId\":\"2119582\",\"shopName\":\"紫燕百味鸡（阜阳店）\",\"sellerId\":\"80020016\",\"platForm\":\"eleme\",\"city\":\"合肥\"},\n" +
+            "{\"shopId\":\"2119590\",\"shopName\":\"紫燕百味鸡（联家店）\",\"sellerId\":\"80020026\",\"platForm\":\"eleme\",\"city\":\"合肥\"},\n" +
+            "{\"shopId\":\"2119591\",\"shopName\":\"紫燕百味鸡（望江店）\",\"sellerId\":\"80020027\",\"platForm\":\"eleme\",\"city\":\"合肥\"},\n" +
+            "{\"shopId\":\"2119616\",\"shopName\":\"紫燕百味鸡（石台店）\",\"sellerId\":\"80020053\",\"platForm\":\"eleme\",\"city\":\"合肥\"},\n" +
+            "{\"shopId\":\"2122270\",\"shopName\":\"紫燕百味鸡（习友店）\",\"sellerId\":\"80020081\",\"platForm\":\"eleme\",\"city\":\"合肥\"},\n" +
+            "]";
+
+        JSONArray jsonArray = JSONArray.parseArray(aa);
+        List<ShopEle> shopEles = new ArrayList<>();
+        for(int i=0;i<jsonArray.size();i++){
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            ShopEle shopEle  = new ShopEle();
+            shopEle.setPlatForm(jsonObject.getString("platForm"));
+            shopEle.setCity(jsonObject.getString("city"));
+            shopEle.setShopId(jsonObject.getString("shopId"));
+            shopEle.setSellerId(jsonObject.getString("sellerId"));
+            shopEle.setShopName(jsonObject.getString("shopName"));
+            shopEles.add(shopEle);
+        }
+        eleMeInnerService.addSyncShops(shopEles);
+        out.print("success");
+        return null;
     }
 }
