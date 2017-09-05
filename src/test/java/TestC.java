@@ -21,7 +21,7 @@ public class TestC{
         ;
         Calendar cale = Calendar.getInstance();*/
 
-        Integer aa = 1495436099;
+        Integer aa = 1502504992;
         Long bb  = Long.parseLong(aa.toString());
         System.out.println("时间ooooooo:"+DateTimeUtil.dateFormat(new Date(bb*1000), "yyyy-MM-dd HH:mm:ss"));
        /* for(int i=0;i<12;i++){

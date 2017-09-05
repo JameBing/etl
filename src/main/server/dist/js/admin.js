@@ -80,6 +80,8 @@ adminLteApp.filter("meituanOrderStatus",function(){
             return '骑手已取餐'
         }else if (val == 40){
             return '已完成'
+        }else if (val == 100){
+            return '配送已取消'
         }else {
             return '其他'
         }
@@ -92,7 +94,11 @@ adminLteApp.filter("elemeOrderStatus",function(){
             return '待处理';
         } else if (val == 'valid') {
             return '已确定';
-        } else if (val == 'tobeFetched'){
+        } else if (val == 'invalid') {
+            return '已拒单';
+        }else if (val == 'tobeFetched') {
+            return '骑手已接单';
+        }else if (val == 'delivering'){
             return '送货中'
         }else if (val == 'settled'){
             return '已完成'

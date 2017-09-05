@@ -641,7 +641,15 @@ public class BaiDuApiService {
         }
         if("80020".equals(shopId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_HF);
-            sysParams.setSecret(Constants.BAIDU_SOURCE_HF);
+            sysParams.setSecret(Constants.BAIDU_SECRET_HF);
+        }
+        if("80052".equals(shopId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_NC);
+            sysParams.setSecret(Constants.BAIDU_SECRET_NC);
+        }
+        if("80016".equals(shopId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_CQ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_CQ);
         }
     }
 
@@ -666,6 +674,14 @@ public class BaiDuApiService {
         if("31661".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_HF);
             sysParams.setSecret(Constants.BAIDU_SECRET_HF);
+        }
+        if("31772".equals(sourceId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_NC);
+            sysParams.setSecret(Constants.BAIDU_SECRET_NC);
+        }
+        if("31891".equals(sourceId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_CQ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_CQ);
         }
     }
 }

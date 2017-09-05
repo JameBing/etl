@@ -29,6 +29,7 @@ import eleme.openapi.sdk.api.enumeration.order.OOrderStatus;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.jms.Destination;
@@ -58,25 +59,44 @@ public class SysFacadeService {
 //    @Qualifier("topicMessageProducerWaiMaiOrder")
 //    private TopicMessageProducer topicMessageProducerWaiMaiOrder;
 
+    /**生产者*/
     @Autowired
     @Qualifier("topicMessageProducerWaiMaiOrderAsync")
     private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderAsync;
 
-//    @Autowired
-//    @Qualifier("topicDestinationWaiMaiOrder")
-//    private Destination topicDestinationWaiMaiOrder;
+    @Autowired
+    @Qualifier("topicJmsTemplate")
+    private JmsTemplate topicJmsTemplate;
+    @Autowired
+    @Qualifier("topicJmsTemplate1")
+    private JmsTemplate topicJmsTemplate1;
+    @Autowired
+    @Qualifier("topicJmsTemplate2")
+    private JmsTemplate topicJmsTemplate2;
+    @Autowired
+    @Qualifier("topicJmsTemplate3")
+    private JmsTemplate topicJmsTemplate3;
+    @Autowired
+    @Qualifier("topicJmsTemplate4")
+    private JmsTemplate topicJmsTemplate4;
+    @Autowired
+    @Qualifier("topicJmsTemplate5")
+    private JmsTemplate topicJmsTemplate5;
+    @Autowired
+    @Qualifier("topicJmsTemplate6")
+    private JmsTemplate topicJmsTemplate6;
 
-//    @Autowired
-//    @Qualifier("topicMessageProducerWaiMaiOrderStatus")
-//    private TopicMessageProducer topicMessageProducerOrderStatus;
 
-//    @Autowired
-//    @Qualifier("topicDestinationWaiMaiOrderStatus")
-//    private Destination topicDestinationWaiMaiOrderStatus;
 
     @Autowired
     @Qualifier("topicMessageProducerWaiMaiOrderStatusAsync")
     private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAsync;
+
+
+
+    @Autowired
+    @Qualifier("topicDestinationWaiMaiOrderStatus")
+    private Destination topicDestinationWaiMaiOrderStatus;
 
 //    @Autowired
 //    @Qualifier("topicMessageProducerWaiMaiOrderStatusAll")
@@ -205,6 +225,8 @@ public class SysFacadeService {
             System.out.print(formatOrder2Pos(orderWaiMai));
             if (StaticObj.mqTransportTopicOrder){
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
+                //选择MQ地址
+                setMqOrderAddress(orderWaiMai.getSellerShopId());
                 topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
                 new Thread(topicMessageProducerWaiMaiOrderAsync).start();
             }
@@ -246,6 +268,7 @@ public class SysFacadeService {
                 log.info(formatOrder2Pos(v));
                 if (StaticObj.mqTransportTopicOrder) {
                     //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
+                    setMqOrderAddress(v.getSellerShopId());
                     topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(v),v.getSellerShopId());
                     new Thread(topicMessageProducerWaiMaiOrderAsync).start();
                 }
@@ -1167,6 +1190,8 @@ public class SysFacadeService {
         if (boolSend & StaticObj.mqTransportTopicOrderStatus){
             //topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
             log.info("=====状态过滤器value:"+shop);
+            //选择推送订单状态的MQ
+            setMqOrderStatusAddress(shop);
             topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
             new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();
         }
@@ -1226,6 +1251,8 @@ public class SysFacadeService {
             //topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
             log.info("推送配送订单start");
             log.info("=====配送状态过滤器value:"+shop);
+            //选择推送订单状态的MQ
+            setMqOrderStatusAddress(shop);
             topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
             new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();
         }
@@ -1238,6 +1265,66 @@ public class SysFacadeService {
             topicMessageProducerWaiMaiOrderStatusAllSync.init(formatOrder2Pos(orderWaiMai),shopId);
             new Thread(topicMessageProducerWaiMaiOrderStatusAllSync).start();
         }
+    }
+
+
+    //选择推送订单的MQ地址
+    private void setMqOrderAddress(String sellerId){
+        if(StringUtil.isEmpty(sellerId)){
+            return;
+        }
+        String shopId = sellerId.substring(0,5);
+        if("80010".equals(shopId)){  //上海 MQ1
+            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate1);
+        }
+        else if("80020".equals(shopId) || "80049".equals(shopId)|| "80042".equals(shopId)){ //合肥 蚌埠 马芜  MQ2
+            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate2);
+        }
+        /*else if("80012".equals(shopId) || "80052".equals(shopId)){ //南京  南昌 MQ3
+            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate3);
+        }
+        else if("80044".equals(shopId) || "80022".equals(shopId) || "80051".equals(shopId)){ //山东 南通 MQ4
+            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate4);
+        }
+        else if("80024".equals(shopId) || "80036".equals(shopId)){ //苏杭 京津  MQ5
+            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate5);
+        }
+        else if("80018".equals(shopId) || "80034".equals(shopId) || "80046".equals(shopId)){ //武汉  郑州  徐州 MQ6
+            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate6);
+        }*/
+        else {
+            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate);
+        }
+    }
+
+    //选择推送订单的MQ地址
+    private void setMqOrderStatusAddress(String sellerId){
+        if(StringUtil.isEmpty(sellerId)){
+            return;
+        }
+        String shopId = sellerId.substring(0,5);
+        if("80010".equals(shopId)){ //上海
+            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate1);
+        }
+       else if("80020".equals(shopId) || "80049".equals(shopId)|| "80042".equals(shopId)){ //合肥 蚌埠 马芜  MQ2
+            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate2);
+        }
+       /* else if("80012".equals(shopId) || "80052".equals(shopId)){ //南京  南昌 MQ3
+            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate3);
+        }
+        else if("80044".equals(shopId) || "80022".equals(shopId) || "80051".equals(shopId)){ //山东 南通 MQ4
+            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate4);
+        }
+        else if("80024".equals(shopId) || "80036".equals(shopId)){ //苏杭 京津  MQ5
+            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate5);
+        }
+        else if("80018".equals(shopId) || "80034".equals(shopId) || "80046".equals(shopId)){ //武汉  郑州  徐州 MQ6
+            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate6);
+        }*/
+        else {
+            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate);
+        }
+
     }
 
 }

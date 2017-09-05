@@ -252,12 +252,12 @@ public class SysInnerService {
 
         String sellerId = paramMap.get("sellerId");
         if (sellerId != null && !"".equals(sellerId)) {
-            criatira.and("sellerShopId").is(sellerId);
+            criatira.and("sellerShopId").regex(".*?"+sellerId+".*");
         }
 
         String shopId = paramMap.get("shopId");
         if (shopId != null && !"".equals(shopId)) {
-            criatira.and("shopId").is(shopId);
+            criatira.and("shopId").regex(".*?"+shopId+".*");
         }
 
         String platformOrderId = paramMap.get("platformOrderId");
@@ -321,12 +321,12 @@ public class SysInnerService {
 
         String sellerId = paramMap.get("sellerId");
         if (sellerId != null && !"".equals(sellerId)) {
-            criatira.and("sellerShopId").is(sellerId);
+            criatira.and("sellerShopId").regex(".*?"+sellerId+".*");
         }
 
         String shopId = paramMap.get("shopId");
         if (shopId != null && !"".equals(shopId)) {
-            criatira.and("shopId").is(shopId);
+            criatira.and("shopId").regex(".*?"+shopId+".*");
         }
 
         String platformOrderId = paramMap.get("platformOrderId");

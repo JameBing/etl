@@ -68,59 +68,6 @@
         <constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
     </bean>
 
-    <!-- ===================================   < 帛丝 MQ消息配置 =================================== -->
-    <!-- =========由JMS服务厂商提供 ，用于产生ConnectionFactory============-->
-    <!--<bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="${mq.host.url}" />
-        <property name="userName" value="${mq.host.username}" />
-        <property name="password" value="${mq.host.password}" />
-    </bean>-->
-
-    <!-- Spring用于管理真正的ConnectionFactory的ConnectionFactory 继承了SingleConnectionFactory ====-->
-    <!--<bean id="cachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
-        <property name="targetConnectionFactory" ref="connectionFactory"></property>
-        <property name="sessionCacheSize" value="10"></property>
-    </bean>-->
-
-    <!--========Spring提供的JMS工具类,可以进行消息发送、接收========-->
-    <!--<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory" ref="cachingConnectionFactory" />
-    </bean>-->
-    <!--=============Destination===============-->
-
-
-    <!--================================Queue Begin==========================-->
-    <!--=======Queue 队列目的地========-->
-   <!-- <bean id="jdOrderQueue" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg><value>${mq.queue.sync.jd}</value></constructor-arg>
-    </bean>
-    <bean id="tmallOrderQueue" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg><value>${mq.queue.sync.tm}</value></constructor-arg>
-    </bean>
-    <bean id="jpOrderQueue" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg><value>${mq.queue.sync.jp}</value></constructor-arg>
-    </bean>
-    <bean id="tmallNotifyQueue" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg><value>${mq.queue.quantity.tm}</value></constructor-arg>
-    </bean>
-    <bean id="z8OrderQueue" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg><value>${mq.queue.sync.z8}</value></constructor-arg>
-    </bean>-->
-
-    <!--<bean id="QueueMessageProducer" class="com.wangjunneil.schedule.activemq.Queue.QueueMessageProducer">
-        <property name="jdOrderQueue"       ref="jdOrderQueue"/>
-        <property name="tmallOrderQueue"    ref="tmallOrderQueue"/>
-        <property name="jpOrderQueue"       ref="jpOrderQueue"/>
-        <property name="jmsTemplate"        ref="jmsTemplate"/>
-        <property name="z8OrderQueue"        ref="z8OrderQueue"/>
-    </bean>
-
-    <bean id="QueueMessageConsumer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="destination" ref="tmallNotifyQueue" />
-        <property name="messageListener" ref="tmallFacadeService" />
-    </bean>-->
-
     <!--======================================================ziYan MQ==============================================================================-->
     <!--================Producer 生产者==================================-->
     <!--topic消息发布者  WaiMai Order-->
@@ -158,12 +105,13 @@
     <!--================================================================-->
 
     <!--================Destination 目的地Broker===========================-->
-    <!--order(订单) -->
+    <!--order(订单) 6台MQ目的地址-->
     <bean id="topicDestinationWaiMaiOrder" class="org.apache.activemq.command.ActiveMQTopic">
         <constructor-arg>
             <value>${mq.topic.destination.waimai.order}</value>
         </constructor-arg>
     </bean>
+
     <!--orderStatus(订单状态) -->
     <bean id="topicDestinationWaiMaiOrderStatus" class="org.apache.activemq.command.ActiveMQTopic">
         <constructor-arg>
@@ -193,6 +141,62 @@
         <property name="deliveryMode" value="1" />
         <property name="receiveTimeout" value="30000" />
     </bean>
+    <!-- 第一台模板-->
+    <bean id="topicJmsTemplate1" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory1" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!-- 第二台模板-->
+    <bean id="topicJmsTemplate2" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory2" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!-- 第三台模板-->
+    <bean id="topicJmsTemplate3" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory3" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!-- 第四台模板-->
+    <bean id="topicJmsTemplate4" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory4" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!-- 第五台模板-->
+    <bean id="topicJmsTemplate5" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory5" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!-- 第六台模板-->
+    <bean id="topicJmsTemplate6" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory6" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!--================================================================-->
+
     <!-- JmsTemplate 外卖订单状态 -->
     <bean id="topicJmsTemplate2OrdreStatus" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="topicCachingConnectionFactory" />
@@ -233,6 +237,60 @@
         <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
         <property name="transportListener" ref="topicTransportListenerOrder" />
     </bean>
+    <!--第一台 -->
+    <bean id="topicConnectionFactory1" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${mq.topic.host.url1}" />
+        <property name="userName" value="${mq.topic.host.username}" />
+        <property name="password" value="${mq.topic.host.password}" />
+        <property name="useAsyncSend" value="true"></property>
+        <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
+        <property name="transportListener" ref="topicTransportListenerOrder" />
+    </bean>
+    <!--第二台 -->
+    <bean id="topicConnectionFactory2" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${mq.topic.host.url2}" />
+        <property name="userName" value="${mq.topic.host.username}" />
+        <property name="password" value="${mq.topic.host.password}" />
+        <property name="useAsyncSend" value="true"></property>
+        <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
+        <property name="transportListener" ref="topicTransportListenerOrder" />
+    </bean>
+    <!--第三台 -->
+    <bean id="topicConnectionFactory3" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${mq.topic.host.url3}" />
+        <property name="userName" value="${mq.topic.host.username}" />
+        <property name="password" value="${mq.topic.host.password}" />
+        <property name="useAsyncSend" value="true"></property>
+        <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
+        <property name="transportListener" ref="topicTransportListenerOrder" />
+    </bean>
+    <!--第四台 -->
+    <bean id="topicConnectionFactory4" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${mq.topic.host.url4}" />
+        <property name="userName" value="${mq.topic.host.username}" />
+        <property name="password" value="${mq.topic.host.password}" />
+        <property name="useAsyncSend" value="true"></property>
+        <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
+        <property name="transportListener" ref="topicTransportListenerOrder" />
+    </bean>
+    <!--第五台 -->
+    <bean id="topicConnectionFactory5" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${mq.topic.host.url5}" />
+        <property name="userName" value="${mq.topic.host.username}" />
+        <property name="password" value="${mq.topic.host.password}" />
+        <property name="useAsyncSend" value="true"></property>
+        <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
+        <property name="transportListener" ref="topicTransportListenerOrder" />
+    </bean>
+    <!--第六台 -->
+    <bean id="topicConnectionFactory6" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${mq.topic.host.url6}" />
+        <property name="userName" value="${mq.topic.host.username}" />
+        <property name="password" value="${mq.topic.host.password}" />
+        <property name="useAsyncSend" value="true"></property>
+        <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
+        <property name="transportListener" ref="topicTransportListenerOrder" />
+    </bean>
     <!--Broker   系统异常日志-->
     <bean id="ekpConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="${mq.ekp.exceptionMessage.topic.url}" />
@@ -249,6 +307,38 @@
         <property name="targetConnectionFactory" ref="topicConnectionFactory"></property>
         <property name="sessionCacheSize" value="100"></property>
     </bean>
+    <!--第一台 -->
+    <bean id="topicCachingConnectionFactory1" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="topicConnectionFactory1"></property>
+        <property name="sessionCacheSize" value="100"></property>
+    </bean>
+    <!--第二台 -->
+    <bean id="topicCachingConnectionFactory2" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="topicConnectionFactory2"></property>
+        <property name="sessionCacheSize" value="100"></property>
+    </bean>
+    <!--第三台 -->
+    <bean id="topicCachingConnectionFactory3" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="topicConnectionFactory3"></property>
+        <property name="sessionCacheSize" value="100"></property>
+    </bean>
+    <!--第四台 -->
+    <bean id="topicCachingConnectionFactory4" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="topicConnectionFactory4"></property>
+        <property name="sessionCacheSize" value="100"></property>
+    </bean>
+    <!--第五台 -->
+    <bean id="topicCachingConnectionFactory5" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="topicConnectionFactory5"></property>
+        <property name="sessionCacheSize" value="100"></property>
+    </bean>
+    <!--第六台 -->
+    <bean id="topicCachingConnectionFactory6" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="topicConnectionFactory6"></property>
+        <property name="sessionCacheSize" value="100"></property>
+    </bean>
+    <!--==============================end==================================-->
+
     <bean id="ekpCachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
         <property name="targetConnectionFactory" ref="ekpConnectionFactory"></property>
         <property name="sessionCacheSize" value="100"></property>
@@ -268,6 +358,7 @@
             <null/>
         </property>
     </bean>
+
     <!--消息侦听器-->
     <bean id="topicJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="topicCachingConnectionFactory" />
@@ -279,14 +370,15 @@
         <property name="durableSubscriptionName" value="${mq.topic.clientID.waimai.order}" />
         <property name="subscriptionDurable" value="true"  />
     </bean>
-    <!-- 监听者(Topic) -->
-    <bean id="topicMessageListener" class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener" />
-    <!--================================================================-->
 
 
     <!--=============TransportListener 传输监控============================-->
     <bean id="topicTransportListenerOrder" class="com.wangjunneil.schedule.activemq.MQTransportListener">
         <property name="destination" value="topicDestinationWaiMaiOrder" />
     </bean>
+
+
+    <!-- 监听者(Topic) -->
+    <bean id="topicMessageListener" class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener" />
     <!--================================================================-->
 </beans>
