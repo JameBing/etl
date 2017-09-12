@@ -59,44 +59,58 @@ public class SysFacadeService {
 //    @Qualifier("topicMessageProducerWaiMaiOrder")
 //    private TopicMessageProducer topicMessageProducerWaiMaiOrder;
 
+
     /**生产者*/
     @Autowired
     @Qualifier("topicMessageProducerWaiMaiOrderAsync")
     private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderAsync;
-
+    /**生产者1*/
     @Autowired
-    @Qualifier("topicJmsTemplate")
-    private JmsTemplate topicJmsTemplate;
+    @Qualifier("topicMessageProducerWaiMaiOrderAsync1")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderAsync1;
+    /**生产者2*/
     @Autowired
-    @Qualifier("topicJmsTemplate1")
-    private JmsTemplate topicJmsTemplate1;
+    @Qualifier("topicMessageProducerWaiMaiOrderAsync2")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderAsync2;
+    /**生产者3*/
     @Autowired
-    @Qualifier("topicJmsTemplate2")
-    private JmsTemplate topicJmsTemplate2;
+    @Qualifier("topicMessageProducerWaiMaiOrderAsync3")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderAsync3;
+    /**生产者4*/
     @Autowired
-    @Qualifier("topicJmsTemplate3")
-    private JmsTemplate topicJmsTemplate3;
+    @Qualifier("topicMessageProducerWaiMaiOrderAsync4")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderAsync4;
+    /**生产者5*/
     @Autowired
-    @Qualifier("topicJmsTemplate4")
-    private JmsTemplate topicJmsTemplate4;
+    @Qualifier("topicMessageProducerWaiMaiOrderAsync5")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderAsync5;
+    /**生产者6*/
     @Autowired
-    @Qualifier("topicJmsTemplate5")
-    private JmsTemplate topicJmsTemplate5;
-    @Autowired
-    @Qualifier("topicJmsTemplate6")
-    private JmsTemplate topicJmsTemplate6;
-
-
+    @Qualifier("topicMessageProducerWaiMaiOrderAsync6")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderAsync6;
 
     @Autowired
     @Qualifier("topicMessageProducerWaiMaiOrderStatusAsync")
     private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAsync;
 
-
-
     @Autowired
-    @Qualifier("topicDestinationWaiMaiOrderStatus")
-    private Destination topicDestinationWaiMaiOrderStatus;
+    @Qualifier("topicMessageProducerWaiMaiOrderStatusAsync1")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAsync1;
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrderStatusAsync2")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAsync2;
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrderStatusAsync3")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAsync3;
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrderStatusAsync4")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAsync4;
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrderStatusAsync5")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAsync5;
+    @Autowired
+    @Qualifier("topicMessageProducerWaiMaiOrderStatusAsync6")
+    private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAsync6;
 
 //    @Autowired
 //    @Qualifier("topicMessageProducerWaiMaiOrderStatusAll")
@@ -226,9 +240,7 @@ public class SysFacadeService {
             if (StaticObj.mqTransportTopicOrder){
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
                 //选择MQ地址
-                setMqOrderAddress(orderWaiMai.getSellerShopId());
-                topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
-                new Thread(topicMessageProducerWaiMaiOrderAsync).start();
+                setMqOrderAddress(orderWaiMai.getSellerShopId(),orderWaiMai);
             }
         }catch (ScheduleException ex){
             switch (orderWaiMai.getPlatform()){
@@ -268,9 +280,9 @@ public class SysFacadeService {
                 log.info(formatOrder2Pos(v));
                 if (StaticObj.mqTransportTopicOrder) {
                     //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
-                    setMqOrderAddress(v.getSellerShopId());
-                    topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(v),v.getSellerShopId());
-                    new Thread(topicMessageProducerWaiMaiOrderAsync).start();
+                    setMqOrderAddress(v.getSellerShopId(),v);
+                   /* topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(v),v.getSellerShopId());
+                    new Thread(topicMessageProducerWaiMaiOrderAsync).start();*/
                 }
              }catch (ScheduleException ex){
              }catch (Exception ex){
@@ -1191,9 +1203,8 @@ public class SysFacadeService {
             //topicMessageProducerOrderStatus.sendMessage(topicDestinationWaiMaiOrderStatus,new Gson().toJson(jsonMessage),shop);
             log.info("=====状态过滤器value:"+shop);
             //选择推送订单状态的MQ
-            setMqOrderStatusAddress(shop);
-            topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
-            new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();
+            setMqOrderStatusAddress(shop,jsonMessage,shop);
+
         }
     }
 
@@ -1252,9 +1263,9 @@ public class SysFacadeService {
             log.info("推送配送订单start");
             log.info("=====配送状态过滤器value:"+shop);
             //选择推送订单状态的MQ
-            setMqOrderStatusAddress(shop);
-            topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
-            new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();
+            setMqOrderStatusAddress(shop,jsonMessage,shop);
+            /*topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
+            new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();*/
         }
     }
 
@@ -1269,62 +1280,92 @@ public class SysFacadeService {
 
 
     //选择推送订单的MQ地址
-    private void setMqOrderAddress(String sellerId){
+    private void setMqOrderAddress(String sellerId,OrderWaiMai orderWaiMai){
         if(StringUtil.isEmpty(sellerId)){
             return;
         }
         String shopId = sellerId.substring(0,5);
-        if("80010".equals(shopId)){  //上海 MQ1
-            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate1);
-        }
-        else if("80020".equals(shopId) || "80049".equals(shopId)|| "80042".equals(shopId)){ //合肥 蚌埠 马芜  MQ2
-            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate2);
-        }
-        /*else if("80012".equals(shopId) || "80052".equals(shopId)){ //南京  南昌 MQ3
-            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate3);
-        }
-        else if("80044".equals(shopId) || "80022".equals(shopId) || "80051".equals(shopId)){ //山东 南通 MQ4
-            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate4);
-        }
-        else if("80024".equals(shopId) || "80036".equals(shopId)){ //苏杭 京津  MQ5
-            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate5);
-        }
-        else if("80018".equals(shopId) || "80034".equals(shopId) || "80046".equals(shopId)){ //武汉  郑州  徐州 MQ6
-            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate6);
-        }*/
-        else {
-            topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate);
+        if("80010".equals(shopId)){  //上海 MQ1 130
+            /*topicMessageProducerWaiMaiOrderAsync1.setTopicJmsTemplate(topicJmsTemplate1);
+            topicMessageProducerWaiMaiOrderAsync1.setDestination(topicDestinationWaiMaiOrder1);*/
+            topicMessageProducerWaiMaiOrderAsync1.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
+            new Thread(topicMessageProducerWaiMaiOrderAsync1).start();
+        }else if("80020".equals(shopId) || "80049".equals(shopId)|| "80042".equals(shopId)){ //合肥 蚌埠 马芜  MQ2 44
+           /* topicMessageProducerWaiMaiOrderAsync2.setTopicJmsTemplate(topicJmsTemplate2);
+            topicMessageProducerWaiMaiOrderAsync2.setDestination(topicDestinationWaiMaiOrder2);*/
+            topicMessageProducerWaiMaiOrderAsync2.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
+            new Thread(topicMessageProducerWaiMaiOrderAsync2).start();
+        }else if("80012".equals(shopId) || "80052".equals(shopId) ||"80045".equals(shopId)){ //南京  南昌 MQ3 45
+           /* topicMessageProducerWaiMaiOrderAsync3.setTopicJmsTemplate(topicJmsTemplate3);
+            topicMessageProducerWaiMaiOrderAsync3.setDestination(topicDestinationWaiMaiOrder3);*/
+            topicMessageProducerWaiMaiOrderAsync3.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
+            new Thread(topicMessageProducerWaiMaiOrderAsync3).start();
+        }else if("80044".equals(shopId) || "80022".equals(shopId) || "80051".equals(shopId) ||"80016".equals(shopId) ||"80038".equals(shopId)){ //山东 南通 重庆 贵阳MQ4  46
+           /* topicMessageProducerWaiMaiOrderAsync4.setTopicJmsTemplate(topicJmsTemplate4);
+            topicMessageProducerWaiMaiOrderAsync4.setDestination(topicDestinationWaiMaiOrder4);*/
+            topicMessageProducerWaiMaiOrderAsync4.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
+            new Thread(topicMessageProducerWaiMaiOrderAsync4).start();
+        }else if("80024".equals(shopId) || "80034".equals(shopId)){ //苏杭 郑州  MQ5 42
+           /* topicMessageProducerWaiMaiOrderAsync5.setTopicJmsTemplate(topicJmsTemplate5);
+            topicMessageProducerWaiMaiOrderAsync5.setDestination(topicDestinationWaiMaiOrder5);*/
+            topicMessageProducerWaiMaiOrderAsync5.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
+            new Thread(topicMessageProducerWaiMaiOrderAsync5).start();
+        }else if("80036".equals(shopId)|| "80018".equals(shopId) || "80046".equals(shopId)){ //武汉 京津 徐州 MQ6 43
+            /*topicMessageProducerWaiMaiOrderAsync6.setTopicJmsTemplate(topicJmsTemplate6);
+            topicMessageProducerWaiMaiOrderAsync6.setDestination(topicDestinationWaiMaiOrder6);*/
+            topicMessageProducerWaiMaiOrderAsync6.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
+            new Thread(topicMessageProducerWaiMaiOrderAsync6).start();
+        }else{
+           /* topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate); //MQ 41
+            topicMessageProducerWaiMaiOrderAsync.setDestination(topicDestinationWaiMaiOrder);*/
+            topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
+            new Thread(topicMessageProducerWaiMaiOrderAsync).start();
         }
     }
 
     //选择推送订单的MQ地址
-    private void setMqOrderStatusAddress(String sellerId){
+    private void setMqOrderStatusAddress(String sellerId,JSONObject jsonMessage,String shop){
         if(StringUtil.isEmpty(sellerId)){
             return;
         }
         String shopId = sellerId.substring(0,5);
-        if("80010".equals(shopId)){ //上海
-            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate1);
+        if("80010".equals(shopId)){ //上海 MQ1 130
+           /* topicMessageProducerWaiMaiOrderStatusAsync1.setTopicJmsTemplate(topicJmsTemplate1);
+            topicMessageProducerWaiMaiOrderStatusAsync1.setDestination(topicDestinationWaiMaiOrderStatus1);*/
+            topicMessageProducerWaiMaiOrderStatusAsync1.init(new Gson().toJson(jsonMessage),shop);
+            new Thread(topicMessageProducerWaiMaiOrderStatusAsync1).start();
+        }else if("80020".equals(shopId) || "80049".equals(shopId)|| "80042".equals(shopId)){ //合肥 蚌埠 马芜  MQ2 44
+            /*topicMessageProducerWaiMaiOrderStatusAsync2.setTopicJmsTemplate(topicJmsTemplate2);
+            topicMessageProducerWaiMaiOrderStatusAsync2.setDestination(topicDestinationWaiMaiOrderStatus2);*/
+            topicMessageProducerWaiMaiOrderStatusAsync2.init(new Gson().toJson(jsonMessage),shop);
+            new Thread(topicMessageProducerWaiMaiOrderStatusAsync2).start();
+        }else if("80012".equals(shopId) || "80052".equals(shopId) ||"80045".equals(shopId)){ //南京  南昌 MQ3  45
+          /*  topicMessageProducerWaiMaiOrderStatusAsync3.setTopicJmsTemplate(topicJmsTemplate3);
+            topicMessageProducerWaiMaiOrderStatusAsync3.setDestination(topicDestinationWaiMaiOrderStatus3);*/
+            topicMessageProducerWaiMaiOrderStatusAsync3.init(new Gson().toJson(jsonMessage),shop);
+            new Thread(topicMessageProducerWaiMaiOrderStatusAsync3).start();
+        }else if("80044".equals(shopId) || "80022".equals(shopId) || "80051".equals(shopId) ||"80016".equals(shopId) ||"80038".equals(shopId)){ //山东 南通 重庆 贵阳MQ4  46
+            /*topicMessageProducerWaiMaiOrderStatusAsync4.setTopicJmsTemplate(topicJmsTemplate4);
+            topicMessageProducerWaiMaiOrderStatusAsync4.setDestination(topicDestinationWaiMaiOrderStatus4);*/
+            topicMessageProducerWaiMaiOrderStatusAsync4.init(new Gson().toJson(jsonMessage),shop);
+            new Thread(topicMessageProducerWaiMaiOrderStatusAsync4).start();
+        }else if("80024".equals(shopId) || "80034".equals(shopId)){ //苏杭 郑州  MQ5 42
+            /*topicMessageProducerWaiMaiOrderStatusAsync5.setTopicJmsTemplate(topicJmsTemplate5);
+            topicMessageProducerWaiMaiOrderStatusAsync5.setDestination(topicDestinationWaiMaiOrderStatus5);*/
+            topicMessageProducerWaiMaiOrderStatusAsync5.init(new Gson().toJson(jsonMessage),shop);
+            new Thread(topicMessageProducerWaiMaiOrderStatusAsync5).start();
+        }else if("80036".equals(shopId)|| "80018".equals(shopId) || "80046".equals(shopId)){ //武汉 京津 徐州 MQ6 43
+           /* topicMessageProducerWaiMaiOrderStatusAsync6.setTopicJmsTemplate(topicJmsTemplate6);
+            topicMessageProducerWaiMaiOrderStatusAsync6.setDestination(topicDestinationWaiMaiOrderStatus6);*/
+            topicMessageProducerWaiMaiOrderStatusAsync6.init(new Gson().toJson(jsonMessage),shop);
+            new Thread(topicMessageProducerWaiMaiOrderStatusAsync6).start();
         }
-       else if("80020".equals(shopId) || "80049".equals(shopId)|| "80042".equals(shopId)){ //合肥 蚌埠 马芜  MQ2
-            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate2);
-        }
-       /* else if("80012".equals(shopId) || "80052".equals(shopId)){ //南京  南昌 MQ3
-            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate3);
-        }
-        else if("80044".equals(shopId) || "80022".equals(shopId) || "80051".equals(shopId)){ //山东 南通 MQ4
-            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate4);
-        }
-        else if("80024".equals(shopId) || "80036".equals(shopId)){ //苏杭 京津  MQ5
-            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate5);
-        }
-        else if("80018".equals(shopId) || "80034".equals(shopId) || "80046".equals(shopId)){ //武汉  郑州  徐州 MQ6
-            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate6);
-        }*/
         else {
-            topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate);
+            /*topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate); //MQ 41
+            topicMessageProducerWaiMaiOrderStatusAsync.setDestination(topicDestinationWaiMaiOrderStatus);*/
+            topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
+            new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();
         }
-
     }
 
 }

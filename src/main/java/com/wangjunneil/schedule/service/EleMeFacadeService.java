@@ -254,11 +254,11 @@ public class EleMeFacadeService {
                     rtn.setDynamic(String.valueOf(elemeOrderId));
                     return gson.toJson(rtn);
                 }
-                if(order.getStatus().toString().equals(OOrderStatus.unprocessed)){
+                if(!(OOrderStatus.unprocessed.name()).equals(order.getStatus().toString())){
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("code",Constants.POS_ORDER_NOT_RECEIVED);
                     jsonObject.put("desc","error");
-                    jsonObject.put("remark","订单已确实过，请更新状态");
+                    jsonObject.put("remark","订单已确认过，请更新状态");
                     jsonObject.put("orderId",elemeOrderId);
                     jsonObject.put("orderStatus",new SysFacadeService().tranELOrderStatus(order.getStatus()));
                     return jsonObject.toJSONString();

@@ -80,15 +80,90 @@
         <property name="destination"  ref="topicDestinationWaiMaiOrder"></property>
         <property name="message" value="false" ></property>
     </bean>
+    <!--yyb第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderAsync1" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
+        <property name="topicJmsTemplate" ref="topicJmsTemplate1" ></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrder1"></property>
+        <property name="message" value="false" ></property>
+    </bean>
+    <!--yyb第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderAsync2" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
+        <property name="topicJmsTemplate" ref="topicJmsTemplate2" ></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrder2"></property>
+        <property name="message" value="false" ></property>
+    </bean>
+    <!--yyb第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderAsync3" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
+        <property name="topicJmsTemplate" ref="topicJmsTemplate3" ></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrder3"></property>
+        <property name="message" value="false" ></property>
+    </bean>
+    <!--yyb第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderAsync4" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
+        <property name="topicJmsTemplate" ref="topicJmsTemplate4" ></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrder4"></property>
+        <property name="message" value="false" ></property>
+    </bean>
+    <!--yyb第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderAsync5" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
+        <property name="topicJmsTemplate" ref="topicJmsTemplate5" ></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrder1"></property>
+        <property name="message" value="false" ></property>
+    </bean>
+    <!--yyb第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderAsync6" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
+        <property name="topicJmsTemplate" ref="topicJmsTemplate6" ></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrder6"></property>
+        <property name="message" value="false" ></property>
+    </bean>
+
     <!--topic消息发布者  WaiMai Order Status-->
     <bean id="topicMessageProducerWaiMaiOrderStatus" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer">
         <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus"></property>
     </bean>
     <bean id="topicMessageProducerWaiMaiOrderStatusAsync" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync" >
-        <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus"></property>
-        <property name="destination"  ref="topicDestinationWaiMaiOrderStatus" ></property>
+    <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus"></property>
+    <property name="destination"  ref="topicDestinationWaiMaiOrderStatus" ></property>
+    <property name="message" value="true"></property>
+    </bean>
+    <!--第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderStatusAsync1" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync" >
+        <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus1"></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrderStatus1" ></property>
         <property name="message" value="true"></property>
     </bean>
+    <!--第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderStatusAsync2" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync" >
+        <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus2"></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrderStatus2" ></property>
+        <property name="message" value="true"></property>
+    </bean>
+    <!--第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderStatusAsync3" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync" >
+        <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus3"></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrderStatus3" ></property>
+        <property name="message" value="true"></property>
+    </bean>
+    <!--第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderStatusAsync6" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync" >
+        <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus6"></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrderStatus6" ></property>
+        <property name="message" value="true"></property>
+    </bean>
+    <!--第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderStatusAsync4" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync" >
+        <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus4"></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrderStatus4" ></property>
+        <property name="message" value="true"></property>
+    </bean>
+    <!--第一台 -->
+    <bean id="topicMessageProducerWaiMaiOrderStatusAsync5" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync" >
+        <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatus5"></property>
+        <property name="destination"  ref="topicDestinationWaiMaiOrderStatus5" ></property>
+        <property name="message" value="true"></property>
+    </bean>
+
+
     <!--topic消息发布者  WaiMai Order StatusAll-->
     <bean id="topicMessageProducerWaiMaiOrderStatusAll" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer">
         <property name="topicJmsTemplate" ref="topicJmsTemplate2OrdreStatusAll"></property>
@@ -111,6 +186,44 @@
             <value>${mq.topic.destination.waimai.order}</value>
         </constructor-arg>
     </bean>
+    <!--yyb第一台 -->
+    <bean id="topicDestinationWaiMaiOrder1" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order}</value>
+        </constructor-arg>
+    </bean>
+    <!--第二台 -->
+    <bean id="topicDestinationWaiMaiOrder2" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order}</value>
+        </constructor-arg>
+    </bean>
+    <!--第三台 -->
+    <bean id="topicDestinationWaiMaiOrder3" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order}</value>
+        </constructor-arg>
+    </bean>
+    <!--第四台 -->
+    <bean id="topicDestinationWaiMaiOrder4" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order}</value>
+        </constructor-arg>
+    </bean>
+    <!--第五台 -->
+    <bean id="topicDestinationWaiMaiOrder5" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order}</value>
+        </constructor-arg>
+    </bean>
+    <!--第六台 -->
+    <bean id="topicDestinationWaiMaiOrder6" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order}</value>
+        </constructor-arg>
+    </bean>
+
+
 
     <!--orderStatus(订单状态) -->
     <bean id="topicDestinationWaiMaiOrderStatus" class="org.apache.activemq.command.ActiveMQTopic">
@@ -118,6 +231,43 @@
             <value>${mq.topic.destination.waimai.order.status}</value>
         </constructor-arg>
     </bean>
+    <!-- yyb第一台-->
+    <bean id="topicDestinationWaiMaiOrderStatus1" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order.status}</value>
+        </constructor-arg>
+    </bean>
+    <!-- 第二台-->
+    <bean id="topicDestinationWaiMaiOrderStatus2" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order.status}</value>
+        </constructor-arg>
+    </bean>
+    <!-- 第三台-->
+    <bean id="topicDestinationWaiMaiOrderStatus3" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order.status}</value>
+        </constructor-arg>
+    </bean>
+    <!-- 第四台-->
+    <bean id="topicDestinationWaiMaiOrderStatus4" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order.status}</value>
+        </constructor-arg>
+    </bean>
+    <!-- 第五台-->
+    <bean id="topicDestinationWaiMaiOrderStatus5" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order.status}</value>
+        </constructor-arg>
+    </bean>
+    <!-- 第六台-->
+    <bean id="topicDestinationWaiMaiOrderStatus6" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg>
+            <value>${mq.topic.destination.waimai.order.status}</value>
+        </constructor-arg>
+    </bean>
+
     <!--orderStatusAll(整单) -->
     <bean id="topicDestinationWaiMaiOrderStatusAll" class="org.apache.activemq.command.ActiveMQTopic">
         <constructor-arg>
@@ -144,7 +294,7 @@
     <!-- 第一台模板-->
     <bean id="topicJmsTemplate1" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="topicCachingConnectionFactory1" />
-        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder1" />
         <property name="pubSubDomain" value="true" />
         <property name="pubSubNoLocal" value="true" />
         <property name="deliveryMode" value="1" />
@@ -153,7 +303,7 @@
     <!-- 第二台模板-->
     <bean id="topicJmsTemplate2" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="topicCachingConnectionFactory2" />
-        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder2" />
         <property name="pubSubDomain" value="true" />
         <property name="pubSubNoLocal" value="true" />
         <property name="deliveryMode" value="1" />
@@ -162,7 +312,7 @@
     <!-- 第三台模板-->
     <bean id="topicJmsTemplate3" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="topicCachingConnectionFactory3" />
-        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder3" />
         <property name="pubSubDomain" value="true" />
         <property name="pubSubNoLocal" value="true" />
         <property name="deliveryMode" value="1" />
@@ -171,7 +321,7 @@
     <!-- 第四台模板-->
     <bean id="topicJmsTemplate4" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="topicCachingConnectionFactory4" />
-        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder4" />
         <property name="pubSubDomain" value="true" />
         <property name="pubSubNoLocal" value="true" />
         <property name="deliveryMode" value="1" />
@@ -180,7 +330,7 @@
     <!-- 第五台模板-->
     <bean id="topicJmsTemplate5" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="topicCachingConnectionFactory5" />
-        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder5" />
         <property name="pubSubDomain" value="true" />
         <property name="pubSubNoLocal" value="true" />
         <property name="deliveryMode" value="1" />
@@ -189,7 +339,7 @@
     <!-- 第六台模板-->
     <bean id="topicJmsTemplate6" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="topicCachingConnectionFactory6" />
-        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrder6" />
         <property name="pubSubDomain" value="true" />
         <property name="pubSubNoLocal" value="true" />
         <property name="deliveryMode" value="1" />
@@ -206,6 +356,64 @@
         <property name="deliveryMode" value="1" />
         <property name="receiveTimeout" value="30000" />
     </bean>
+    <!-- 第一台-->
+    <bean id="topicJmsTemplate2OrdreStatus1" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory1" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrderStatus1" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!-- 第二台-->
+    <bean id="topicJmsTemplate2OrdreStatus2" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory2" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrderStatus2" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!-- 第三台-->
+    <bean id="topicJmsTemplate2OrdreStatus3" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory3" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrderStatus3" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!-- 第四台-->
+    <bean id="topicJmsTemplate2OrdreStatus4" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory4" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrderStatus4" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!-- 第五台-->
+    <bean id="topicJmsTemplate2OrdreStatus5" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory5" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrderStatus5" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+    <!-- 第六台-->
+    <bean id="topicJmsTemplate2OrdreStatus6" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory6" />
+        <property name="defaultDestination" ref="topicDestinationWaiMaiOrderStatus6" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+
+
+
+
     <!--  JmsTemplate 外卖订单状态（整单）-->
     <bean id="topicJmsTemplate2OrdreStatusAll" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="topicCachingConnectionFactory" />
@@ -244,7 +452,7 @@
         <property name="password" value="${mq.topic.host.password}" />
         <property name="useAsyncSend" value="true"></property>
         <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
-        <property name="transportListener" ref="topicTransportListenerOrder" />
+        <property name="transportListener" ref="topicTransportListenerOrder1" />
     </bean>
     <!--第二台 -->
     <bean id="topicConnectionFactory2" class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -253,7 +461,7 @@
         <property name="password" value="${mq.topic.host.password}" />
         <property name="useAsyncSend" value="true"></property>
         <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
-        <property name="transportListener" ref="topicTransportListenerOrder" />
+        <property name="transportListener" ref="topicTransportListenerOrder2" />
     </bean>
     <!--第三台 -->
     <bean id="topicConnectionFactory3" class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -262,7 +470,7 @@
         <property name="password" value="${mq.topic.host.password}" />
         <property name="useAsyncSend" value="true"></property>
         <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
-        <property name="transportListener" ref="topicTransportListenerOrder" />
+        <property name="transportListener" ref="topicTransportListenerOrder3" />
     </bean>
     <!--第四台 -->
     <bean id="topicConnectionFactory4" class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -271,7 +479,7 @@
         <property name="password" value="${mq.topic.host.password}" />
         <property name="useAsyncSend" value="true"></property>
         <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
-        <property name="transportListener" ref="topicTransportListenerOrder" />
+        <property name="transportListener" ref="topicTransportListenerOrder4" />
     </bean>
     <!--第五台 -->
     <bean id="topicConnectionFactory5" class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -280,7 +488,7 @@
         <property name="password" value="${mq.topic.host.password}" />
         <property name="useAsyncSend" value="true"></property>
         <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
-        <property name="transportListener" ref="topicTransportListenerOrder" />
+        <property name="transportListener" ref="topicTransportListenerOrder5" />
     </bean>
     <!--第六台 -->
     <bean id="topicConnectionFactory6" class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -289,7 +497,7 @@
         <property name="password" value="${mq.topic.host.password}" />
         <property name="useAsyncSend" value="true"></property>
         <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
-        <property name="transportListener" ref="topicTransportListenerOrder" />
+        <property name="transportListener" ref="topicTransportListenerOrder6" />
     </bean>
     <!--Broker   系统异常日志-->
     <bean id="ekpConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -358,6 +566,72 @@
             <null/>
         </property>
     </bean>
+    <!-- yyb第一台-->
+    <bean id="messageListenerAdapter1" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <property name="delegate">
+            <bean class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener"/>
+        </property>
+        <property name="defaultListenerMethod" value="onMessage"/>
+        <property name="defaultResponseDestination" ref="topicDestinationWaiMaiOrder1"/>
+        <property name="messageConverter">
+            <null/>
+        </property>
+    </bean>
+    <!-- yyb第二台-->
+    <bean id="messageListenerAdapter2" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <property name="delegate">
+            <bean class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener"/>
+        </property>
+        <property name="defaultListenerMethod" value="onMessage"/>
+        <property name="defaultResponseDestination" ref="topicDestinationWaiMaiOrder2"/>
+        <property name="messageConverter">
+            <null/>
+        </property>
+    </bean>
+    <!-- yyb第三台-->
+    <bean id="messageListenerAdapter3" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <property name="delegate">
+            <bean class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener"/>
+        </property>
+        <property name="defaultListenerMethod" value="onMessage"/>
+        <property name="defaultResponseDestination" ref="topicDestinationWaiMaiOrder3"/>
+        <property name="messageConverter">
+            <null/>
+        </property>
+    </bean>
+    <!-- yyb第四台-->
+    <bean id="messageListenerAdapter4" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <property name="delegate">
+            <bean class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener"/>
+        </property>
+        <property name="defaultListenerMethod" value="onMessage"/>
+        <property name="defaultResponseDestination" ref="topicDestinationWaiMaiOrder4"/>
+        <property name="messageConverter">
+            <null/>
+        </property>
+    </bean>
+    <!-- yyb第五台-->
+    <bean id="messageListenerAdapter5" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <property name="delegate">
+            <bean class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener"/>
+        </property>
+        <property name="defaultListenerMethod" value="onMessage"/>
+        <property name="defaultResponseDestination" ref="topicDestinationWaiMaiOrder5"/>
+        <property name="messageConverter">
+            <null/>
+        </property>
+    </bean><!-- yyb第六台-->
+    <bean id="messageListenerAdapter6" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+        <property name="delegate">
+            <bean class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener"/>
+        </property>
+        <property name="defaultListenerMethod" value="onMessage"/>
+        <property name="defaultResponseDestination" ref="topicDestinationWaiMaiOrder6"/>
+        <property name="messageConverter">
+            <null/>
+        </property>
+    </bean>
+
 
     <!--消息侦听器-->
     <bean id="topicJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
@@ -371,10 +645,94 @@
         <property name="subscriptionDurable" value="true"  />
     </bean>
 
+    <bean id="topicJmsContainer1" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory1" />
+        <property name="destination" ref="topicDestinationWaiMaiOrder1" />
+        <property name="messageListener" ref="messageListenerAdapter1" />
+        <property name="clientId" value="${mq.topic.clientID.waimai.order}" />
+        <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="20000"/>
+        <property name="durableSubscriptionName" value="${mq.topic.clientID.waimai.order}" />
+        <property name="subscriptionDurable" value="true"  />
+    </bean>
+    <bean id="topicJmsContainer2" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory2" />
+        <property name="destination" ref="topicDestinationWaiMaiOrder2" />
+        <property name="messageListener" ref="messageListenerAdapter3" />
+        <property name="clientId" value="${mq.topic.clientID.waimai.order}" />
+        <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="20000"/>
+        <property name="durableSubscriptionName" value="${mq.topic.clientID.waimai.order}" />
+        <property name="subscriptionDurable" value="true"  />
+    </bean>
+    <bean id="topicJmsContainer3" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory3" />
+        <property name="destination" ref="topicDestinationWaiMaiOrder3" />
+        <property name="messageListener" ref="messageListenerAdapter3" />
+        <property name="clientId" value="${mq.topic.clientID.waimai.order}" />
+        <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="20000"/>
+        <property name="durableSubscriptionName" value="${mq.topic.clientID.waimai.order}" />
+        <property name="subscriptionDurable" value="true"  />
+    </bean>
+    <bean id="topicJmsContainer4" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory4" />
+        <property name="destination" ref="topicDestinationWaiMaiOrder4" />
+        <property name="messageListener" ref="messageListenerAdapter4" />
+        <property name="clientId" value="${mq.topic.clientID.waimai.order}" />
+        <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="20000"/>
+        <property name="durableSubscriptionName" value="${mq.topic.clientID.waimai.order}" />
+        <property name="subscriptionDurable" value="true"  />
+    </bean>
+    <bean id="topicJmsContainer5" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory5" />
+        <property name="destination" ref="topicDestinationWaiMaiOrder5" />
+        <property name="messageListener" ref="messageListenerAdapter5" />
+        <property name="clientId" value="${mq.topic.clientID.waimai.order}" />
+        <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="20000"/>
+        <property name="durableSubscriptionName" value="${mq.topic.clientID.waimai.order}" />
+        <property name="subscriptionDurable" value="true"  />
+    </bean>
+    <bean id="topicJmsContainer6" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="topicCachingConnectionFactory6" />
+        <property name="destination" ref="topicDestinationWaiMaiOrder6" />
+        <property name="messageListener" ref="messageListenerAdapter6" />
+        <property name="clientId" value="${mq.topic.clientID.waimai.order}" />
+        <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="20000"/>
+        <property name="durableSubscriptionName" value="${mq.topic.clientID.waimai.order}" />
+        <property name="subscriptionDurable" value="true"  />
+    </bean>
 
     <!--=============TransportListener 传输监控============================-->
     <bean id="topicTransportListenerOrder" class="com.wangjunneil.schedule.activemq.MQTransportListener">
         <property name="destination" value="topicDestinationWaiMaiOrder" />
+    </bean>
+    <!-- yyb第一台-->
+    <bean id="topicTransportListenerOrder1" class="com.wangjunneil.schedule.activemq.MQTransportListener">
+        <property name="destination" value="topicDestinationWaiMaiOrder1" />
+    </bean>
+    <!-- yyb第二台-->
+    <bean id="topicTransportListenerOrder2" class="com.wangjunneil.schedule.activemq.MQTransportListener">
+        <property name="destination" value="topicDestinationWaiMaiOrder2" />
+    </bean>
+    <!-- yyb第三台-->
+    <bean id="topicTransportListenerOrder3" class="com.wangjunneil.schedule.activemq.MQTransportListener">
+        <property name="destination" value="topicDestinationWaiMaiOrder3" />
+    </bean>
+    <!-- yyb第四台-->
+    <bean id="topicTransportListenerOrder4" class="com.wangjunneil.schedule.activemq.MQTransportListener">
+        <property name="destination" value="topicDestinationWaiMaiOrder4" />
+    </bean>
+    <!-- yyb第五台-->
+    <bean id="topicTransportListenerOrder5" class="com.wangjunneil.schedule.activemq.MQTransportListener">
+        <property name="destination" value="topicDestinationWaiMaiOrder5" />
+    </bean>
+    <!-- yyb第六台-->
+    <bean id="topicTransportListenerOrder6" class="com.wangjunneil.schedule.activemq.MQTransportListener">
+        <property name="destination" value="topicDestinationWaiMaiOrder6" />
     </bean>
 
 
