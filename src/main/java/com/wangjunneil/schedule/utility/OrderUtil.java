@@ -65,18 +65,23 @@ public class OrderUtil {
 
 
     //格式化饿了么订单状态
-    public static int tranELOrderStatus(int status){
+    public static String tranELOrderStatus(int status){
         switch (status){
             case Constants.POS_ORDER_SUSPENDING:
-                return Constants.EL_STATUS_CODE_UNPROCESSED;
+                return "unprocessed";
             case Constants.POS_ORDER_CONFIRMED:
-                return Constants.EL_STATUS_CODE_PROCESSED_AND_VALID;
+                return "valid";
+            case Constants.POS_ORDER_DISPATCH_GET:
+                return "tobeFetched";
+            case Constants.POS_ORDER_DELIVERY:
+                return "delivering";
             case Constants.POS_ORDER_COMPLETED:
-                return Constants.EL_STATUS_CODE_SUCCESS;
+                return "settled";
             case Constants.POS_ORDER_CANCELED:
-                return Constants.EL_STATUS_CODE_INVALID;
+                return "invalid";
             default:
-                return Constants.POS_ORDER_OTHER;
+                return "";
         }
     }
+
 }

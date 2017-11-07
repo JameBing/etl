@@ -109,6 +109,7 @@ public class JdHomeFacadeService {
         if(StringUtil.isEmpty(shopId)){
             return gson.toJson(rtn);
         }
+
         try {
             String json = jdHomeApiService.getStoreInfoPageBean(shopId);
             log.info("===== 查询门店状态接口返回信息:"+json+"=====");
@@ -205,6 +206,7 @@ public class JdHomeFacadeService {
             jsonObject.put("desc","success");
             jsonObject.put("platformOrderId",orderId);
             jsonObject.put("orderStatus",new SysFacadeService().tranJHOrderStatus(orderInfoDTO.getOrderStatus()));
+            return jsonObject.toJSONString();
         }catch (Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
             log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
@@ -222,8 +224,8 @@ public class JdHomeFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("查询门店{0}状态失败",shopId));
             }
-            return gson.toJson(rtn);
         }
+        return gson.toJson(rtn);
     }
 
 
@@ -741,17 +743,7 @@ public class JdHomeFacadeService {
                 ParsFromPosInner posInner = dishList.get(i);
                 stockRequest.setDoSale(doSale);
                 stockRequest.setStationNo(stationNO);
-                //查询到家商品Id
-                String skuStr = querySkuInfo(posInner);
-                if("".equals(skuStr)){
-                    rtn.setCode(-1);
-                    rtn.setDesc("error");
-                    rtn.setRemark("无此商品");
-                    rtn.setDynamic(posInner.getDishId());
-                    rtnStr = rtnStr+gson.toJson(rtn)+",";
-                    continue;
-                }
-                stockRequest.setSkuId(Long.parseLong(skuStr));
+                stockRequest.setSkuId(Long.parseLong(posInner.getDishId()));
                 requests.add(stockRequest);
                 String json = jdHomeApiService.updateAllStockOn(requests, dishList.get(0).getShopId());
                 log.info("=====批量商品上下架接口返回信息:"+json+"=====");
@@ -815,24 +807,15 @@ public class JdHomeFacadeService {
         }
         try {
             List<BaseStockCenterRequest> requests = new ArrayList<>();
+            //查询商家上传商品
+            JSONArray jsonArray = queryPartySkuInfo(dishList.get(0).getShopId());
             //拼装参数
-            for(int i=0;i<dishList.size();i++){
+            for(int i=0;i<jsonArray.size();i++){
                 BaseStockCenterRequest stock = new BaseStockCenterRequest();
-                ParsFromPosInner posInner = dishList.get(i);
-                //查询到家商品Id
-                String skuStr = querySkuInfo(posInner);
-                if("".equals(skuStr)){
-                    rtn.setCode(-1);
-                    rtn.setDesc("error");
-                    rtn.setRemark("无此商品");
-                    rtn.setDynamic(posInner.getDishId());
-                    rtnStr = rtnStr+gson.toJson(rtn)+",";
-                    continue;
-                }
+                JSONObject json = jsonArray.getJSONObject(i);
                 stock.setStationNo(stationNO);
-                stock.setSkuId(Long.parseLong(skuStr));
+                stock.setSkuId(json.getLong("skuId"));
                 requests.add(stock);
-                tempList.add(dishList.get(i));
             }
             String json  = jdHomeApiService.queryDishStatus(requests, dishList.get(0).getShopId());
             JSONObject jsonObject = JSON.parseObject(json);
@@ -842,8 +825,11 @@ public class JdHomeFacadeService {
                 if(array !=null && array.size()>0){
                     for(int j =0 ;j<array.size();j++){
                         JSONObject son = array.getJSONObject(j);
-                        rtn.setCode(son.getInteger("vendibility"));
-                        rtn.setDynamic(StringUtil.isEmpty(tempList)?"":tempList.get(j).getDishId());
+                        rtn.setCode(0);
+                        rtn.setDesc("success");
+                        rtn.setStatus(son.getInteger("vendibility"));
+                        rtn.setName(jsonArray.getJSONObject(j).getString("skuName"));
+                        rtn.setDynamic(son.getString("skuId"));
                         resStr = resStr+gson.toJson(rtn)+",";
                     }
                 }
@@ -871,22 +857,21 @@ public class JdHomeFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark("批量查询商品状态失败！");
             }
-            if(!StringUtil.isEmpty(resStr) ||!StringUtil.isEmpty(rtnStr)){
-               return rtnStr.substring(0,rtnStr.length()-1)+ resStr.substring(0,resStr.length()-1);
+            if(!StringUtil.isEmpty(resStr)){
+               return resStr.substring(0,resStr.length()-1);
             }
             return gson.toJson(rtn);
         }
     }
 
     /**
-     * 查询商家商品信息列表
+     * 根据商品编码查询商家商品信息列表
      * @param posInner 门店信息
      * @return String
      */
     public String querySkuInfo(ParsFromPosInner posInner){
         String rtn = "";
-        Log log1 = null;
-        try {
+        Log log1 = null; try {
             String json = jdHomeApiService.querySkuInfos(posInner.getDishId(),posInner.getShopId());
             log.info("=====查询商家商品信息接口返回信息:"+json+"=====");
             if(!StringUtil.isEmpty(json)){
@@ -919,6 +904,45 @@ public class JdHomeFacadeService {
             }
         }
         return rtn;
+    }
+
+    /**
+     * 查询商家商品信息列表
+     * @param shopId 门店信息
+     * @return String
+     */
+    public JSONArray queryPartySkuInfo(String shopId){
+        String rtn = "";
+        Log log1 = null;
+        try {
+            String json = jdHomeApiService.querySkuInfos(null,shopId);
+            log.info("=====查询商家商品信息接口返回信息:"+json+"=====");
+            if(!StringUtil.isEmpty(json)){
+                JSONObject jsonObject = JSON.parseObject(json);
+                //判断接口是否调用成功
+                if("0".equals(jsonObject.getString("code")) && "0".equals(JSONObject.parseObject(jsonObject.getString("data")).getString("code"))){
+                    JSONArray array = JSONArray.parseArray(JSONObject.parseObject(JSONObject.parseObject(jsonObject.getString("data")).getString("result")).getString("result"));
+                    return array;
+                }
+            }
+        }catch (JdHomeException ex) {
+            log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException e){
+            log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+        }catch (Exception e){
+            log1 = sysFacadeService.functionRtn.apply(e);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+        }finally {
+            if (log1 !=null){
+                log1.setLogId(log1.getLogId());
+                log1.setTitle(MessageFormat.format("查询商家商品信息{0}失败！", shopId));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"dishId\":{0}", shopId)).concat("}"));
+                sysFacadeService.updSynLog(log1);
+            }
+        }
+        return null;
     }
 
     /**

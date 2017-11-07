@@ -1,15 +1,12 @@
 package com.wangjunneil.schedule.controller.waimai;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
-import com.wangjunneil.schedule.entity.baidu.Order;
 import com.wangjunneil.schedule.entity.common.ParsFormPos2;
 import com.wangjunneil.schedule.entity.common.ParsFromPos;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
@@ -19,8 +16,6 @@ import com.wangjunneil.schedule.utility.StringUtil;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,12 +23,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.jms.Destination;
-import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,7 +44,7 @@ public class WMController {
     @Autowired
     private WMFacadeService wmFacadeService;
 
-    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/73842"})
+    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/314173"})
     public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response)throws  Exception{
 
         String result = "",platform,requestUrl,sid = null;

@@ -362,7 +362,7 @@ public class SysFacadeService {
         jsonObject.put("orderConfirmTime",data.getOrder().getConfirmTime());
         jsonObject.put("orderPurchaseTime", "");
         jsonObject.put("orderAgingType","");
-        jsonObject.put("deliveryImmediately",data.getOrder().getSendImmediately());
+        jsonObject.put("deliveryImmediately",data.getOrder().getSendImmediately());//1 立即送达  2 预约单
         jsonObject.put("expectTimeMode",data.getOrder().getExpectTimeMode());
         jsonObject.put("orderPreDeliveryTime","");
         jsonObject.put("expectSendTime",data.getOrder().getSendTime());
@@ -437,8 +437,8 @@ public class SysFacadeService {
                 jsonObject.put("platOrderId",StringUtil.isEmpty(data.getOrder())?"":data.getOrder().getOrderId());
                 jsonObject.put("skuType",data.getProducts().get(i)[j].getType());
                 jsonObject.put("skuId",data.getProducts().get(i)[j].getBaiduProductId());
-                jsonObject.put("skuName",data.getProducts().get(i)[j].getProductName()+(data.getProducts().get(i)[j].getProductAttr().size()==0?""
-                    :"("+data.getProducts().get(i)[j].getProductAttr().get(0).getOption()+")"));
+                jsonObject.put("skuName",data.getProducts().get(i)[j].getProductName()+(data.getProducts().get(i)[j].getProductFeatures().size()==0?""
+                    :"("+data.getProducts().get(i)[j].getProductFeatures().get(0).getOption()+")"));
                 jsonObject.put("skuIdIsv",data.getProducts().get(i)[j].getBaiduProductId());
                 jsonObject.put("price",StringUtil.isEmpty(data.getProducts().get(i)[j].getProductPrice())?0:Integer.parseInt(data.getProducts().get(i)[j].getProductPrice())*0.01);
                 jsonObject.put("quantity",data.getProducts().get(i)[j].getProductAmount());
@@ -465,8 +465,8 @@ public class SysFacadeService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("platOrderId",StringUtil.isEmpty(data.getOrder().getOrderId())?"":data.getOrder().getOrderId());
             jsonObject.put("discountType",discount.getType());
-            jsonObject.put("discountCode","");
-            jsonObject.put("discountPrice",StringUtil.isEmpty(discount.getFee())?0:discount.getFee());
+            jsonObject.put("discountCode",discount.getType());
+            jsonObject.put("discountPrice",StringUtil.isEmpty(discount.getFee())?0:discount.getFee()*0.01);
             jsonObject.put("skuId","");
             jsonArray.add(jsonObject);
         });
@@ -1316,7 +1316,7 @@ public class SysFacadeService {
             topicMessageProducerWaiMaiOrderAsync6.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
             new Thread(topicMessageProducerWaiMaiOrderAsync6).start();
         }else{
-           /* topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate); //MQ 41
+           /* topicMessageProducerWaiMaiOrderAsync.setTopicJmsTemplate(topicJmsTemplate); //MQ 41 西安 长沙 成都 广深
             topicMessageProducerWaiMaiOrderAsync.setDestination(topicDestinationWaiMaiOrder);*/
             topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
             new Thread(topicMessageProducerWaiMaiOrderAsync).start();
@@ -1361,7 +1361,7 @@ public class SysFacadeService {
             new Thread(topicMessageProducerWaiMaiOrderStatusAsync6).start();
         }
         else {
-            /*topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate); //MQ 41
+            /*topicMessageProducerWaiMaiOrderStatusAsync.setTopicJmsTemplate(topicJmsTemplate); //MQ 41   西安 长沙 成都 广深
             topicMessageProducerWaiMaiOrderStatusAsync.setDestination(topicDestinationWaiMaiOrderStatus);*/
             topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
             new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();

@@ -21,9 +21,15 @@ public class TestC{
         ;
         Calendar cale = Calendar.getInstance();*/
 
-        Integer aa = 1502504992;
+       /* Integer aa = 1502504992;
         Long bb  = Long.parseLong(aa.toString());
-        System.out.println("时间ooooooo:"+DateTimeUtil.dateFormat(new Date(bb*1000), "yyyy-MM-dd HH:mm:ss"));
+        System.out.println("时间ooooooo:"+DateTimeUtil.dateFormat(new Date(bb*1000), "yyyy-MM-dd HH:mm:ss"));*/
+       long time1 = DateTimeUtil.parseDateString("2017-10-17 12:15:00").getTime();
+       long time2 = DateTimeUtil.parseDateString("2017-10-17 12:45:00").getTime();
+       long aa = time2-time1;
+       System.out.println("日期1:"+time1);
+        System.out.println("日期2:"+time2);
+        System.out.println("差值:"+aa);
        /* for(int i=0;i<12;i++){
             cale.set(Calendar.YEAR,2016);
             cale.set(Calendar.MONTH,i+1);

@@ -274,11 +274,11 @@ public class SysInnerService {
             int baidu = OrderUtil.tranBdOrderStatus(Integer.parseInt(orderStatus));
             int jdhome = OrderUtil.tranJHOrderStatus(Integer.parseInt(orderStatus));
             int meituan = OrderUtil.tranMTOrderStatus(Integer.parseInt(orderStatus));
-            int eleme = OrderUtil.tranELOrderStatus(Integer.parseInt(orderStatus));
+            String eleme = OrderUtil.tranELOrderStatus(Integer.parseInt(orderStatus));
             criatira.orOperator(Criteria.where("order.order.type").is(String.valueOf(baidu)),
                 Criteria.where("order.orderStatus").is(jdhome),
                 Criteria.where("order.status").is(meituan),
-                Criteria.where("order.statuscode").is(eleme));
+                Criteria.where("order.status").all(eleme));
         }
 
         String platform = paramMap.get("platform");
@@ -343,11 +343,11 @@ public class SysInnerService {
             int baidu = OrderUtil.tranBdOrderStatus(Integer.parseInt(orderStatus));
             int jdhome = OrderUtil.tranJHOrderStatus(Integer.parseInt(orderStatus));
             int meituan = OrderUtil.tranMTOrderStatus(Integer.parseInt(orderStatus));
-            int eleme = OrderUtil.tranELOrderStatus(Integer.parseInt(orderStatus));
+            String eleme = OrderUtil.tranELOrderStatus(Integer.parseInt(orderStatus));
             criatira.orOperator(Criteria.where("order.order.type").is(String.valueOf(baidu)),
                 Criteria.where("order.orderStatus").is(jdhome),
                 Criteria.where("order.status").is(meituan),
-                Criteria.where("order.statuscode").is(eleme));
+                Criteria.where("order.status").is(eleme));
         }
 
         String platform = paramMap.get("platform");

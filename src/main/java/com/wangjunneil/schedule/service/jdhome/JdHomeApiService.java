@@ -98,7 +98,11 @@ public class JdHomeApiService {
         SignParams signParams = getSignParams(shopId);
         Map<String,Object> param = getSysMap(signParams);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("upcCode",upcCode);
+        if(!StringUtil.isEmpty(upcCode)){
+            jsonObject.put("upcCode",upcCode);
+        }
+        jsonObject.put("pageNo",1);
+        jsonObject.put("pageSize",50);
         jd_param_json = jsonObject.toJSONString();
         signParams.setJd_param_json(jd_param_json);
         param.put("jd_param_json",jd_param_json);
@@ -111,6 +115,7 @@ public class JdHomeApiService {
         log.info("======Params:" + StringUtil.getUrlParamsByMap(param) + "======");
         return HttpUtil.post(Constants.URL_QUERY_SKU_INFO,StringUtil.getUrlParamsByMap(param));
     }
+
 
     //根据查询条件分页获取门店基本信息
     public String getStoreInfoPageBean(String shopId) throws JdHomeException,ScheduleException{
@@ -239,7 +244,7 @@ public class JdHomeApiService {
         sysParam.put("token",signParams.getToken());
         sysParam.put("app_key",signParams.getApp_key());
         sysParam.put("format",signParams.getFormat());
-            sysParam.put("v",signParams.getV());
+        sysParam.put("v",signParams.getV());
         sysParam.put("timestamp",signParams.getTimestamp());
         return  sysParam ;
     }
