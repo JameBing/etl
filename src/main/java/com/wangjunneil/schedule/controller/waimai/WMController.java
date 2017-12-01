@@ -44,7 +44,7 @@ public class WMController {
     @Autowired
     private WMFacadeService wmFacadeService;
 
-    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/314173"})
+    @RequestMapping(value = {"/jdhome","/baidu","/eleme","/meituan","/jdhome/317481"})
     public String  appCallback(PrintWriter out,HttpServletRequest request, HttpServletResponse response)throws  Exception{
 
         String result = "",platform,requestUrl,sid = null;
@@ -307,7 +307,7 @@ public class WMController {
      * @param response  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/new","/jdhome/73842/djsw/newOrder","/jdhome/72171/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/new","/jdhome/317481/djsw/newOrder"}, method = {RequestMethod.GET,RequestMethod.POST})
     public String orderPost(PrintWriter out, HttpServletRequest request,HttpServletResponse response) {
         String result = null, requestUrl, platform = null, sid = null;
         requestUrl = request.getPathInfo().toLowerCase();
@@ -348,7 +348,8 @@ public class WMController {
      * @param request  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/baidu/order/status","/meituan/order/status","/djsw/userCancelOrder","/djsw/deliveryOrder","/djsw/finishOrder"},method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/baidu/order/status","/meituan/order/status","/djsw/userCancelOrder","/djsw/deliveryOrder","/djsw/applyCancelOrder",
+        "/djsw/finishOrder","/djsw/pushDeliveryStatus"},method = {RequestMethod.GET,RequestMethod.POST})
     public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         String platform = null;
         String requestUrl = request.getPathInfo().toLowerCase();

@@ -1225,7 +1225,8 @@ public class JdHomeFacadeService {
         String res = null;
         Result result = new Result();
         Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
-        if(StringUtil.isEmpty(jdParamJson)){
+        return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"\"}";
+        /*if(StringUtil.isEmpty(jdParamJson)){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("订单状态推送接口请求参数为空");
@@ -1263,8 +1264,8 @@ public class JdHomeFacadeService {
                     }
                 }
             }
-        }
-        return  res;
+        }*/
+        //return  res;
     }
 
     /**
