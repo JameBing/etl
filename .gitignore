@@ -1,6 +1,5 @@
 *.iml
 *.swp
-*.properties
 .settings
 .DS_Store
 .idea
