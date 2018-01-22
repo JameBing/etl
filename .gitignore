@@ -1,12 +1,10 @@
 *.iml
 *.swp
-*.properties
 .settings
 .DS_Store
 .idea
 .classpath
 .project
-*.properties
 log/*
 src/main/logs/*
 *.log
