@@ -208,6 +208,9 @@ public class WMFacadeService {
                 delivery.setDispatcher_mobile(stringMap.get("dispatcher_mobile") != null ? stringMap.get("dispatcher_mobile")[0] : "");
                 result = meiTuanFacadeService.getDeliveryOrderStatus(delivery,flag);
                 break;
+            case Constants.PLATFORM_WAIMAI_JDHOME:
+                result = jdHomeFacadeService.deliveryStatus(stringMap.get("jd_param_json")[0]);
+                break;
             default:break;
         }
         return  result;
@@ -466,6 +469,17 @@ public class WMFacadeService {
         Page<Log> returnPage = sysInnerService.getLogsInfo(paramMap, page);
         return JSONObject.toJSONString(returnPage);
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -40,6 +41,8 @@ import java.util.regex.Pattern;
 @MultipartConfig
 @RequestMapping("/waimai")
 public class WMController {
+
+    private static  Logger logger = Logger.getLogger(WMController.class.getName());
 
     @Autowired
     private WMFacadeService wmFacadeService;
@@ -78,7 +81,8 @@ public class WMController {
                 platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             case "/waimai/eleme":  //饿了么
-                if(!StringUtil.isEmpty(sb)){
+                if(!StringUtil.isEmpty(sb) && sb.length()>0){
+                    logger.info("=========饿了么推送数据==========："+sb.toString());
                     jsonObject = JSONObject.parseObject(sb.toString());
                 }
                 stringMap = request.getParameterMap();
@@ -349,7 +353,7 @@ public class WMController {
      * @return
      */
     @RequestMapping(value = {"/baidu/order/status","/meituan/order/status","/djsw/userCancelOrder","/djsw/deliveryOrder","/djsw/applyCancelOrder",
-        "/djsw/finishOrder","/djsw/pushDeliveryStatus"},method = {RequestMethod.GET,RequestMethod.POST})
+        "/djsw/finishOrder","/djsw/orderWaitOutStore"},method = {RequestMethod.GET,RequestMethod.POST})
     public String orderStatus(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         String platform = null;
         String requestUrl = request.getPathInfo().toLowerCase();
@@ -382,7 +386,7 @@ public class WMController {
      * @param request  浏览器请求对象
      * @return
      */
-    @RequestMapping(value = {"/meituan/order/delivery"},method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = {"/meituan/order/delivery","/djsw/pushDeliveryStatus"},method = {RequestMethod.GET,RequestMethod.POST})
     public String orderDelivery(PrintWriter out,HttpServletRequest request,HttpServletResponse response){
         response.setContentType("text/html;charset=utf-8");
         String platform = null;
@@ -394,6 +398,10 @@ public class WMController {
             case "/waimai/meituan/order/delivery": //美团
                 response.setContentType("text/html; charset=utf-8");
                 platform = Constants.PLATFORM_WAIMAI_MEITUAN;
+                break;
+            case "/waimai/djsw"://京东
+                response.setContentType("text/html; charset=utf-8");
+                platform = Constants.PLATFORM_WAIMAI_JDHOME;
                 break;
             default:break;
         }

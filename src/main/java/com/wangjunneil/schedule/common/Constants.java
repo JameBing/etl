@@ -94,7 +94,6 @@ public final class Constants {
      * 天猫消息订阅地址
      */
     public static final String TMALL_MESSAGE_LISTEN_ADDR = "ws://mc.api.taobao.com";
-
     public static final String TMALL_TOPIC_TRADE_SUCCESS = "taobao_trade_TradeSuccess";
     public static final String TMALL_TOPIC_TRADE_CREATE = "taobao_trade_TradeCreate";
     public static final String TMALL_TOPIC_TRADE_CLOSE = "taobao_trade_TradeClose";
@@ -107,7 +106,6 @@ public final class Constants {
     public static final String TMALL_TOPIC_REFUND_SELLERREFUSE = "taobao_refund_RefundSellerRefuseAgreement";
     public static final String TMALL_TOPIC_REFUND_CLOSE = "taobao_refund_RefundClosed";
     public static final String TMALL_TOPIC_REFUND_SUCCESS = "taobao_refund_RefundSuccess";
-
     public static final String TMALL_MESSAGE_TYPE_QUANTITY = "updateQuantity";
 
 
@@ -152,6 +150,12 @@ public final class Constants {
     public static final String  BAIDU_SECRET_GZ = "ff568c025020cb68";
     public static final  String BAIDU_SOURCE_SZH = "32020";
     public static final String  BAIDU_SECRET_SZH = "a8ca78859d984ee2";
+    public static final  String BAIDU_SOURCE_BJ = "32825";
+    public static final String  BAIDU_SECRET_BJ = "1e6d9273e60391c8";
+    public static final  String BAIDU_SOURCE_SHZY = "33118";
+    public static final String  BAIDU_SECRET_SHZY = "3f21ed2ee06edfe1";
+    public static final  String BAIDU_SOURCE_SHNJ = "33119";
+    public static final String  BAIDU_SECRET_SHNJ = "5415ecd808d0136c";
 
 
     public static final  String BOUNDARY = "--ZYETL1234567890--";
@@ -184,6 +188,8 @@ public final class Constants {
     public static final int BD_COMPLETED=9;  // 已完成
 
     public static final int BD_CANCELED=10;  // 已取消
+
+    public static final int BD_DISPATCHER_NOT_GET=-100;  // 已取消
 
 
 
@@ -223,19 +229,30 @@ public final class Constants {
     //京东到家修改门店基本信息
     public static final String UPDATE_STORE_INFO ="https://openo2o.jd.com/djapi/store/updateStoreInfo4Open";
 
+    //京东到家拣货生成众包
+    public static final String URL_JD_ZB_Delivery = "https://openo2o.jd.com/mockapi/bm/open/api/order/OrderJDZBDelivery";
+
     public static final int JH_ORDER_LOCK=20010;  // 锁定
 
     public static final int JH_ORDER_USER_CANCELLED=20020;  // 用户取消
 
+    public static final int JH_ORDER_USER_CANCELLED_APPLY=20030;  // 用户取消
+
     public static final int JH_ORDER_SYS_CANCELLED=20040;  // 系统取消
 
     public static final int JH_ORDER_WAITING=41000;  // 待接单
+
+    public static final int JH_ORDER_WAITING_TO_GET=32001;  // 等待出库
 
     public static final int JH_ORDER_RECEIVED=32000;  // 已接单
 
     public static final int JH_ORDER_DELIVERING=33040;  // 配送中
 
     public static final int JH_ORDER_CONFIRMED=33060;  // 已妥投
+
+    public static final int JH_DELIVERY_DISPACTER=20;  // 运单状态已接单
+
+    public static final int JH_DELIVERY_CONFIRMED=40;  // 已妥投
 
 
     /*******************************************************饿了么******************************************************************/
@@ -353,6 +370,8 @@ public final class Constants {
     public static final int POS_ORDER_DISPATCH_GET = 80;  // 骑手已接单
 
     public static final int POS_ORDER_OTHER = 90;  // 其它
+
+    public static final int POS_ORDER_DIS_NOT_GET = 100;  // 骑手未接单
 
     public static final Integer RETURN_ORDER_CODE=808;
 

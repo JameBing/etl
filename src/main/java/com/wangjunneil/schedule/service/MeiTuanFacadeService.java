@@ -7,10 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sankuai.meituan.waimai.opensdk.exception.ApiOpException;
 import com.sankuai.meituan.waimai.opensdk.exception.ApiSysException;
-import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
-import com.sankuai.meituan.waimai.opensdk.vo.OrderDetailParam;
-import com.sankuai.meituan.waimai.opensdk.vo.OrderParam;
-import com.sankuai.meituan.waimai.opensdk.vo.PoiParam;
+import com.sankuai.meituan.waimai.opensdk.vo.*;
 import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducer;
 import com.wangjunneil.schedule.common.Constants;
@@ -21,6 +18,8 @@ import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.Rtn;
 import com.wangjunneil.schedule.entity.common.RtnSerializer;
 import com.wangjunneil.schedule.entity.meituan.*;
+import com.wangjunneil.schedule.entity.meituan.OrderExtraParam;
+import com.wangjunneil.schedule.entity.meituan.OrderFoodDetailParam;
 import com.wangjunneil.schedule.service.meituan.MeiTuanApiService;
 import com.wangjunneil.schedule.service.meituan.MeiTuanInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
@@ -58,6 +57,8 @@ public class MeiTuanFacadeService {
     //日志配置
     private static Logger log = Logger.getLogger(JdHomeFacadeService.class.getName());
 
+    //计数
+    private static int count =0;
 
     //region 门店开业,歇业
 
@@ -495,7 +496,17 @@ public class MeiTuanFacadeService {
                 rtn.setDesc("success");
                 rtn.setStatus(food.getIs_sold_out());
                 rtn.setName(food.getName());
-                rtn.setDynamic(food.getApp_food_code());
+                //获取sku_id或者app_food_code
+                String foodId = "";
+                if(!StringUtil.isEmpty(food.getApp_food_code())){
+                    foodId = food.getApp_food_code();
+                }else {
+                    List<FoodSkuParam> params = food.getSkus();
+                    if(!StringUtil.isEmpty(params) && params.size()>0){
+                        foodId = params.get(0).getSku_id();
+                    }
+                }
+                rtn.setDynamic(foodId);
                 rtnStr =rtnStr+gson.toJson(rtn)+",";
             }
         }catch (MeiTuanException ex){
@@ -701,6 +712,24 @@ public class MeiTuanFacadeService {
             //美团订单ID
             String platformOrderId = String.valueOf(order.getOrderid());
             OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_MEITUAN,platformOrderId);
+
+            /**自动接单*/
+            if("80010169".equals(shopId) || "80010155".equals(shopId) || "80010514".equals(shopId)){
+                log.info("==============请求确认订单接口Id：============"+order.getOrderid());
+                String confirmJson = getConfirmOrder(order.getOrderid());
+                JSONObject jsonObject1 = JSONObject.parseObject(confirmJson);
+                log.info("==============接单平台返回结果：============"+jsonObject1);
+                if(jsonObject1.getInteger("code")==0){
+                    order.setStatus(Constants.MT_STATUS_CODE_CONFIRMED);
+                }else {
+                    //接单失败 递归调用
+                    count++;
+
+                    if(count<5){
+                        newOrder(jsonObject);
+                    }
+                }
+            }
             //如果订单已经存在则商家订单ID不重新获取
             if (orderWaiMai !=null&&orderWaiMai.getPlatform().equals(Constants.PLATFORM_WAIMAI_MEITUAN)&& orderWaiMai.getPlatformOrderId().equals(platformOrderId)){
                 orderWaiMai.setOrderId(orderWaiMai.getOrderId());
@@ -741,36 +770,49 @@ public class MeiTuanFacadeService {
             .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderExtraParam.class, new OrderExtraParamSerializer())
             .registerTypeAdapter(com.wangjunneil.schedule.entity.meituan.OrderFoodDetailParam.class, new OrderFoodDetailParamSerializer()) .disableHtmlEscaping().create();
         try {
-            String json =gson.toJson(jsonObject);
-            json = java.net.URLDecoder.decode(json,"utf-8");
-            OrderInfo order = gson.fromJson(json, OrderInfo.class);
-            //商家门店ID
-            String shopId = order.getApppoicode();
-            if(StringUtil.isEmpty(shopId)){
-                return  "{\"code\":800,\"msg\":\"未绑定商家门店ID\"}";
-            }
-            //美团订单ID
-            String platformOrderId = String.valueOf(order.getOrderid());
-            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_MEITUAN,platformOrderId);
-            //如果订单已经存在则商家订单ID不重新获取
-            if (orderWaiMai !=null&&orderWaiMai.getPlatform().equals(Constants.PLATFORM_WAIMAI_MEITUAN)&&orderWaiMai.getPlatformOrderId().equals(platformOrderId)){
-                orderWaiMai.setOrderId(orderWaiMai.getOrderId());
+            if("apply".trim().equals(StringUtil.isEmpty(jsonObject.get("notify_type"))?"":jsonObject.get("notify_type").getAsString())){//申请退款
+                OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_MEITUAN,jsonObject.get("order_id").getAsString());
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN,9,jsonObject.get("order_id").toString(),null,orderWaiMai!=null?orderWaiMai.getSellerShopId():null,null);
             }else {
-                orderWaiMai = new OrderWaiMai();
-                //商家订单ID
-                String orderId = sysFacadeService.getOrderNum(shopId);
-                orderWaiMai.setOrderId(orderId);
-            }
-            if(!flag){
-               OrderDetailParam param = getOrderDetail(order.getOrderid());
-                if(StringUtil.isEmpty(param)){
-                   return  "{\"code\":700,\"msg\":\"订单状态推送异常\"}";
+                String json =gson.toJson(jsonObject);
+                json = java.net.URLDecoder.decode(json,"utf-8");
+                OrderInfo order = gson.fromJson(json, OrderInfo.class);
+                //商家门店ID
+                String shopId = order.getApppoicode();
+                if(StringUtil.isEmpty(shopId)){
+                    OrderDetailParam  orderDetail = getOrderDetail(order.getOrderid());
+                    if(StringUtil.isEmpty(orderDetail)){
+                        return  "{\"code\":800,\"msg\":\"未绑定商家门店ID\"}";
+                    }
+                    String poiCode = orderDetail.getApp_poi_code();
+                    Integer status = orderDetail.getStatus();
+                    if(status==9){
+                        sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN,status,order.getOrderid().toString(),poiCode,null,null);
+                    }
                 }
-                mtInnerService.updateStatus(String.valueOf(order.getOrderid()),param.getStatus());
-                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN,Integer.valueOf(param.getStatus()),platformOrderId,null,shopId,null);
-            }else {
-                sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
-                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId,null);
+                //美团订单ID
+                String platformOrderId = String.valueOf(order.getOrderid());
+                OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_MEITUAN,platformOrderId);
+                //如果订单已经存在则商家订单ID不重新获取
+                if (orderWaiMai !=null&&orderWaiMai.getPlatform().equals(Constants.PLATFORM_WAIMAI_MEITUAN)&&orderWaiMai.getPlatformOrderId().equals(platformOrderId)){
+                    orderWaiMai.setOrderId(orderWaiMai.getOrderId());
+                }else {
+                    orderWaiMai = new OrderWaiMai();
+                    //商家订单ID
+                    String orderId = sysFacadeService.getOrderNum(shopId);
+                    orderWaiMai.setOrderId(orderId);
+                }
+                if(!flag){
+                    OrderDetailParam param = getOrderDetail(order.getOrderid());
+                    if(StringUtil.isEmpty(param)){
+                        return  "{\"code\":700,\"msg\":\"订单状态推送异常\"}";
+                    }
+                    mtInnerService.updateStatus(String.valueOf(order.getOrderid()),param.getStatus());
+                    sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN,Integer.valueOf(param.getStatus()),platformOrderId,null,shopId,null);
+                }else {
+                    sysFacadeService.updateWaiMaiOrder(String.valueOf(order.getOrderid()), orderWaiMai);
+                    sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN, order.getStatus(),order.getOrderid().toString(),orderWaiMai.getOrderId(),shopId,null);
+                }
             }
             result = "{\"data\" : \"ok\"}" ;
         }catch (Exception ex){
@@ -815,6 +857,10 @@ public class MeiTuanFacadeService {
                 sysFacadeService.topicMessageOrderDelivery(Constants.PLATFORM_WAIMAI_MEITUAN, delivery.getLogistics_status(), delivery.getOrder_id().toString(),
                     delivery.getDispatcher_mobile(), delivery.getDispatcher_name(), param.getApp_poi_code());
             }
+            /*//顾客退单
+            if(delivery.getLogistics_status()==Constants.MT_STATUS_CODE_DISPACHER_CANCELED){
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_MEITUAN,delivery.getLogistics_status(),delivery.getOrder_id().toString(),null,param.getApp_poi_code(),null);
+            }*/
             return "{\"data\" : \"ok\"}";
         }catch (Exception ex){
             rtn.setCode(-998);

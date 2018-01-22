@@ -445,14 +445,23 @@ public class EleMeFacadeService {
             orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             orderWaiMai.setPlatformOrderId(jsonObject.getString("orderId"));
             String wmOrderId = sysFacadeService.getOrderNum(String.valueOf(jsonObject.getString("shopId")));
-            orderWaiMai.setOrder(order);
             orderWaiMai.setOrderId(wmOrderId);
             orderWaiMai.setPlatformOrderId(orderId);
             //获取中台门店Id
             ShopEle shopEle = eleMeInnerService.getShop(jsonObject.getString("shopId"));
-            orderWaiMai.setSellerShopId(shopEle==null?jsonObject.getString("shopId"):shopEle.getSellerId());
-            orderWaiMai.setShopId(shopEle==null?jsonObject.getString("shopId"):shopEle.getSellerId());
+            String sellerId = shopEle==null?jsonObject.getString("shopId"):shopEle.getSellerId();
+            orderWaiMai.setSellerShopId(sellerId);
+            orderWaiMai.setShopId(sellerId);
             orderWaiMai.setCreateTime(new Date());
+            /**自动接单*/
+            if("80010169".equals(sellerId) || "80010155".equals(sellerId) || "80010514".equals(sellerId)){
+                String json = upOrderStatus(orderId,"2",sellerId,null);
+                JSONObject jsonObject1 = JSONObject.parseObject(json);
+                if(jsonObject1.getInteger("code")==0){
+                    order.setStatus("valid");
+                }
+            }
+            orderWaiMai.setOrder(order);
             rtnStr = "{\"message\": \"ok\"}";
             sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
         }catch (ElemeException ex){
@@ -1325,6 +1334,7 @@ public class EleMeFacadeService {
         order.setBook(jsonObject.getBoolean("book"));
         order.setConsignee(jsonObject.getString("consignee"));
         order.setCreatedAt(DateTimeUtil.formatDateString(jsonObject.getString("createdAt"),"yyyy-MM-dd\'T\'HH:mm:ss"));
+        order.setDeliverTime(DateTimeUtil.formatDateString(jsonObject.getString("createdAt"),"yyyy-MM-dd\'T\'HH:mm:ss"));
         order.setDaySn(jsonObject.getByte("daySn"));
         order.setDeliverFee(jsonObject.getDouble("deliverFee"));
         order.setDeliveryGeo(jsonObject.getString("deliveryGeo"));

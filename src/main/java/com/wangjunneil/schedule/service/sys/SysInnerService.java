@@ -2,10 +2,7 @@ package com.wangjunneil.schedule.service.sys;
 
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.common.ScheduleException;
-import com.wangjunneil.schedule.entity.common.FlowNum;
-import com.wangjunneil.schedule.entity.common.Log;
-import com.wangjunneil.schedule.entity.common.OrderWaiMai;
-import com.wangjunneil.schedule.entity.common.OrderWaiMaiHistory;
+import com.wangjunneil.schedule.entity.common.*;
 import com.wangjunneil.schedule.entity.eleme.ShopEle;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jp.JPAccessToken;
@@ -16,6 +13,7 @@ import com.wangjunneil.schedule.entity.tm.TmallAccessToken;
 import com.wangjunneil.schedule.entity.z8.Z8AccessToken;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
 import com.wangjunneil.schedule.utility.OrderUtil;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -208,6 +206,29 @@ public class SysInnerService {
         return  orderWaiMai;
     }
 
+
+    //订单查询列表
+    public List<OrderWaiMai> findOrderWaiMaiList(String platform ,String startDate, String endDate){
+        Criteria criteria = new Criteria();
+        criteria.andOperator(Criteria.where("platform").is(platform));
+        if(startDate != null && !"".equals(startDate) && endDate != null && !"".equals(endDate)){
+            criteria.and("createTime")
+                .gte(DateTimeUtil.formatDateString(startDate, "yyyy-MM-dd HH:mm:ss"))
+                .lte(DateTimeUtil.formatDateString(endDate, "yyyy-MM-dd HH:mm:ss"));
+        }
+        Query query = new Query(criteria);
+        List<OrderWaiMai> orderWaiMaiList = mongoTemplate.find(query,OrderWaiMai.class);
+        return  orderWaiMaiList;
+    }
+
+    //订单查询by紫燕订单号
+    public OrderWaiMai findOrderWaiMaiByOrderId(String orderId){
+        Query query = new Query(Criteria.where("orderId").is(orderId));
+        OrderWaiMai orderWaiMai = mongoTemplate.findOne(query,OrderWaiMai.class);
+        return  orderWaiMai;
+    }
+
+
     //订单插入
     public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws ScheduleException {
         Query  query = new Query(Criteria.where("platform").is(orderWaiMai.getPlatformOrderId()).where("platformOrderId").is(orderWaiMai.getPlatformOrderId()));
@@ -220,6 +241,46 @@ public class SysInnerService {
             .set("order",orderWaiMai.getOrder())
             .set("createTime",orderWaiMai.getCreateTime());
             mongoTemplate.upsert(query, update, OrderWaiMai.class);
+    }
+
+    //订单推送记录
+    public void addPushRecords(String orderId,Integer type){
+        Query  query = new Query(Criteria.where("orderId").is(orderId).and("type").is(type));
+        PushRecord record = mongoTemplate.findOne(query,PushRecord.class);
+        Integer status = 0;
+        Integer times = 1;
+        Update update = new Update()
+            .set("orderId",orderId)
+            .set("type",type)
+            .set("status",status)
+            .set("pushTimes",times)
+            .set("createTime",new Date());
+        mongoTemplate.upsert(query,update,PushRecord.class);
+    }
+
+    //订单推送记录
+    public void updatePushRecords(String orderId,Integer type){
+        Query  query = new Query(Criteria.where("orderId").is(orderId).and("type").is(type));
+        Integer status = 1;
+        Update update = new Update()
+            .set("status",status)
+            .set("createTime",new Date());
+        mongoTemplate.upsert(query,update,PushRecord.class);
+    }
+
+    //订单推送次数
+    public void updatePushTimes(OrderWaiMai orderWaiMai,Integer type){
+        Query  query = new Query(Criteria.where("orderId").is(orderWaiMai.getOrderId()).and("type").is(type));
+        PushRecord record = mongoTemplate.findOne(query,PushRecord.class);
+        if(StringUtil.isEmpty(record)){
+            return;
+        }
+        Integer times = record.getPushTimes();
+        Update update = new Update()
+            .set("orderId",orderWaiMai.getOrderId())
+            .set("pushTimes",++times)
+            .set("createTime",new Date());
+        mongoTemplate.upsert(query,update,PushRecord.class);
     }
 
     //修改外卖订单

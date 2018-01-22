@@ -86,31 +86,31 @@
         <property name="destination"  ref="topicDestinationWaiMaiOrder1"></property>
         <property name="message" value="false" ></property>
     </bean>
-    <!--yyb第一台 -->
+    <!--yyb第二台 -->
     <bean id="topicMessageProducerWaiMaiOrderAsync2" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
         <property name="topicJmsTemplate" ref="topicJmsTemplate2" ></property>
         <property name="destination"  ref="topicDestinationWaiMaiOrder2"></property>
         <property name="message" value="false" ></property>
     </bean>
-    <!--yyb第一台 -->
+    <!--yyb第三台 -->
     <bean id="topicMessageProducerWaiMaiOrderAsync3" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
         <property name="topicJmsTemplate" ref="topicJmsTemplate3" ></property>
         <property name="destination"  ref="topicDestinationWaiMaiOrder3"></property>
         <property name="message" value="false" ></property>
     </bean>
-    <!--yyb第一台 -->
+    <!--yyb第四台 -->
     <bean id="topicMessageProducerWaiMaiOrderAsync4" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
         <property name="topicJmsTemplate" ref="topicJmsTemplate4" ></property>
         <property name="destination"  ref="topicDestinationWaiMaiOrder4"></property>
         <property name="message" value="false" ></property>
     </bean>
-    <!--yyb第一台 -->
+    <!--yyb第五台 -->
     <bean id="topicMessageProducerWaiMaiOrderAsync5" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
         <property name="topicJmsTemplate" ref="topicJmsTemplate5" ></property>
         <property name="destination"  ref="topicDestinationWaiMaiOrder1"></property>
         <property name="message" value="false" ></property>
     </bean>
-    <!--yyb第一台 -->
+    <!--yyb第六台 -->
     <bean id="topicMessageProducerWaiMaiOrderAsync6" class="com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync">
         <property name="topicJmsTemplate" ref="topicJmsTemplate6" ></property>
         <property name="destination"  ref="topicDestinationWaiMaiOrder6"></property>
@@ -739,4 +739,118 @@
     <!-- 监听者(Topic) -->
     <bean id="topicMessageListener" class="com.wangjunneil.schedule.activemq.Topic.ConsumerMessageListener" />
     <!--================================================================-->
+
+
+    <!--==========================================CRM start============================================================-->
+
+    <!--===================CachingConnectionFactory=======================-->
+    <!-- Spring用于管理真正的ConnectionFactory的ConnectionFactory 继承了SingleConnectionFactory -->
+    <bean id="queueCachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="queueConnectionFactory"></property>
+        <property name="sessionCacheSize" value="100"></property>
+    </bean>
+
+    <!--===================ActiveMQConnectionFactory======================-->
+    <!--Broker  外卖订单-->
+    <bean id="queueConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${mq.queue.host.url}" />
+        <property name="userName" value="${mq.queue.host.username}" />
+        <property name="password" value="${mq.queue.host.password}" />
+        <property name="useAsyncSend" value="true"></property>
+        <property name="clientIDPrefix"  value="${mq.topic.clientIDPrefix}" />
+        <property name="transportListener" ref="topicTransportListenerOrder" />
+    </bean>
+
+    <!--================Producer 生产者==================================-->
+    <!--queue消息发布者  WaiMai Order To Crm-->
+    <bean id="queueMessageProducerWaiMaiOrderToCrm" class="com.wangjunneil.schedule.activemq.Queue.QueueMessageProducerAsync">
+        <property name="queueJmsTemplate" ref="queueJmsTemplateToCrm"></property>
+        <property name="destination"  ref="queueDestinationWaiMaiOrderToCrm"></property>
+        <property name="message" value="false" ></property>
+    </bean>
+
+    <!--================JmsTemplate====================================-->
+    <!-- JmsTemplate  外卖订单 To Crm-->
+    <bean id="queueJmsTemplateToCrm" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="queueCachingConnectionFactory" />
+        <property name="defaultDestination" ref="queueDestinationWaiMaiOrderToCrm" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+
+    <!--================Destination 目的地Broker===========================-->
+    <!--order(订单) MQ目的地址 to Crm-->
+    <bean id="queueDestinationWaiMaiOrderToCrm" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg>
+            <value>${mq.queue.destination.waimai.order.crm}</value>
+        </constructor-arg>
+    </bean>
+
+    <!--order(订单) from Crm-->
+    <bean id="queueDestinationWaiMaiOrderCrmRtn" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg>
+            <value>${mq.queue.destination.waimai.order.crm.rtn}</value>
+        </constructor-arg>
+    </bean>
+
+    <!--消息侦听适配器 crm-->
+    <bean id="messageListenerAdapterCrm" class="com.wangjunneil.schedule.activemq.Queue.QueueMessageConsumer">
+    </bean>
+
+   <!-- &lt;!&ndash;消息侦听器 crm&ndash;&gt;
+    <bean id="queueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="queueCachingConnectionFactory" />
+        <property name="destination" ref="queueDestinationWaiMaiOrderCrmRtn" />
+        <property name="messageListener" ref="messageListenerAdapterCrm" />
+        <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="20000"/>
+    </bean>-->
+
+    <!--==========================================ZT start============================================================-->
+    <!--queue消息发布者  WaiMai Order To ZT-->
+    <bean id="queueMessageProducerWaiMaiOrderToZt" class="com.wangjunneil.schedule.activemq.Queue.QueueMessageProducerAsync">
+        <property name="queueJmsTemplate" ref="queueJmsTemplateToZt"></property>
+        <property name="destination"  ref="queueDestinationWaiMaiOrderToZt"></property>
+        <property name="message" value="false" ></property>
+    </bean>
+
+    <!-- JmsTemplate  外卖订单 To ZT-->
+    <bean id="queueJmsTemplateToZt" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="queueCachingConnectionFactory" />
+        <property name="defaultDestination" ref="queueDestinationWaiMaiOrderToZt" />
+        <property name="pubSubDomain" value="true" />
+        <property name="pubSubNoLocal" value="true" />
+        <property name="deliveryMode" value="1" />
+        <property name="receiveTimeout" value="30000" />
+    </bean>
+
+    <!--order(订单) MQ目的地址 to Zt-->
+    <bean id="queueDestinationWaiMaiOrderToZt" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg>
+            <value>${mq.queue.destination.waimai.order.zt}</value>
+        </constructor-arg>
+    </bean>
+
+    <!--order(订单) from Zt-->
+    <bean id="queueDestinationWaiMaiOrderZtRtn" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg>
+            <value>${mq.queue.destination.waimai.order.zt.rtn}</value>
+        </constructor-arg>
+    </bean>
+
+    <!--消息侦听适配器 zt-->
+    <bean id="messageListenerAdapterZt" class="com.wangjunneil.schedule.activemq.Queue.QueueMessageConsumerZt">
+    </bean>
+
+    <!--消息侦听器 zt-->
+    <!--<bean id="queueJmsContainerZt" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="queueCachingConnectionFactory" />
+        <property name="destination" ref="queueDestinationWaiMaiOrderZtRtn" />
+        <property name="messageListener" ref="messageListenerAdapterZt" />
+        <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
+        <property name="receiveTimeout" value="20000"/>
+    </bean>-->
+
 </beans>

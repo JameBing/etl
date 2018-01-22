@@ -1,4 +1,4 @@
-package com.wangjunneil.schedule.activemq.Topic;
+package com.wangjunneil.schedule.activemq.Queue;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
@@ -12,11 +12,11 @@ import javax.jms.*;
  * Created by yangwanbin on 2017-01-04.
  */
 @Component
-public class TopicMessageProducerAsync implements Runnable {
+public class QueueMessageProducerAsync implements Runnable {
 
-    private static Logger log = Logger.getLogger(TopicMessageProducerAsync.class.getName());
-    private JmsTemplate topicJmsTemplate;
-    private  Destination destination ;
+    private static Logger log = Logger.getLogger(QueueMessageProducerAsync.class.getName());
+    private JmsTemplate queueJmsTemplate;
+    private Destination destination ;
     private JSONObject jsonObject ;
     private String selector ;
     private String message ;
@@ -26,18 +26,18 @@ public class TopicMessageProducerAsync implements Runnable {
     public void run() {
         synchronized (this){
             log.info("===================Start:生产者发送了一条TextMessage消息===================================");
-            log.info("订单信息:"+message);
-            topicJmsTemplate.send(destination, new MessageCreator() {
+            log.info(""+jsonObject);
+            queueJmsTemplate.send(destination, new MessageCreator() {
                 @Override
                 public Message createMessage(Session session) throws JMSException {
                     TextMessage textMessage = null;
                     if (isMessage){
-                        textMessage = session.createTextMessage(message);
+                        textMessage = session.createTextMessage(jsonObject.toJSONString());
                     }else {
                         textMessage =  session.createTextMessage(new Gson().toJson(jsonObject) );//如果是jsonObject转为String发送
                     }
-                    textMessage.setStringProperty("Selector",selector);
-                    textMessage.setJMSExpiration(180000);
+                   /* textMessage.setStringProperty("Selector",selector);
+                    textMessage.setJMSExpiration(180000);*/
                     //   textMessage.setJMSReplyTo(destination);
                     return textMessage;
                 }
@@ -49,16 +49,16 @@ public class TopicMessageProducerAsync implements Runnable {
 
     public void  init(String message,String selector){
          this.message = message;
-        this.selector = selector;
+       /* this.selector = selector;*/
     }
 
-    public    void  init(JSONObject jsonObject1,String selector){
+    public  void  init(JSONObject jsonObject1,String selector){
         this.jsonObject = jsonObject1;
-        this.selector = selector;
+        /*this.selector = selector;*/
     }
 
-    public void setTopicJmsTemplate(JmsTemplate topicJmsTemplate){
-        this.topicJmsTemplate = topicJmsTemplate;
+    public void setQueueJmsTemplate(JmsTemplate queueJmsTemplate) {
+        this.queueJmsTemplate = queueJmsTemplate;
     }
 
     public void  setDestination(Destination destination){

@@ -13,10 +13,12 @@ import com.wangjunneil.schedule.entity.jdhome.*;
 import com.wangjunneil.schedule.service.jdhome.JdHomeApiService;
 import com.wangjunneil.schedule.service.jdhome.JdHomeInnerService;
 import com.wangjunneil.schedule.utility.StringUtil;
+import com.wangjunneil.schedule.utility.URL;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +64,9 @@ public class JdHomeFacadeService {
             return gson.toJson(rtn);
         }
         String operator = "zybwjzb";
+        String standByPhone ="18916628656";
         try {
-            String json = jdHomeApiService.changeCloseStatus(shopId,stationNo,operator,status);
+            String json = jdHomeApiService.changeCloseStatus(shopId,stationNo,operator,standByPhone,status);
             log.info("=====门店开业/歇业接口返回信息:"+json+"=====");
             //format返回结果
             getResult(json,rtn,shopId);
@@ -414,18 +417,18 @@ public class JdHomeFacadeService {
                 }
                 if(orders !=null && orders.size()>0){
                     log.info("=====MongoDb insert Order start====");
-                    List<OrderWaiMai> orderWaiMaiList = new ArrayList<OrderWaiMai>();
-                    orders.forEach(o->{
-                        OrderWaiMai orderWaiMai = new OrderWaiMai();
-                        orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
-                        orderWaiMai.setShopId(o.getProduceStationNoIsv());
-                        orderWaiMai.setOrderId(sysFacadeService.getOrderNum(o.getProduceStationNoIsv()));
-                        orderWaiMai.setPlatformOrderId(String.valueOf(o.getOrderId()));
-                        orderWaiMai.setOrder(o);
-                        orderWaiMaiList.add(orderWaiMai);
-                    });
-                    sysFacadeService.updSynWaiMaiOrder(orderWaiMaiList);
-                    //jdHomeInnerService.addOrUpdateSyncOrder(orders);
+                    OrderInfoDTO o = orders.get(0);
+                    OrderWaiMai orderWaiMai = new OrderWaiMai();
+                    orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+                    orderWaiMai.setShopId(o.getProduceStationNoIsv());
+                    orderWaiMai.setOrderId(sysFacadeService.getOrderNum(o.getProduceStationNoIsv()));
+                    orderWaiMai.setPlatformOrderId(String.valueOf(o.getOrderId()));
+                    orderWaiMai.setSellerShopId(o.getProduceStationNoIsv());
+                    orderWaiMai.setOrder(o);
+                    //自动接单
+                    //orderAcceptOperate(o.getSrcOrderId(),o.getProduceStationNoIsv(),true);
+                    sysFacadeService.updSynWaiMaiOrder(orderWaiMai);
+                    jdHomeInnerService.addOrUpdateSyncOrder(orders);
                     log.info("=====MongoDb insert Order end====");
                     result.setCode(0);
                     result.setMsg("success");
@@ -617,7 +620,7 @@ public class JdHomeFacadeService {
                 rtn.setDynamic(String.valueOf(orderId));
                 return gson.toJson(rtn);
             }
-            if(orderInfoDTO.getOrderStatus()==Constants.JH_ORDER_WAITING){
+            if(orderInfoDTO.getOrderStatus()==Constants.JH_ORDER_RECEIVED){
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("code",Constants.POS_ORDER_NOT_RECEIVED);
                 jsonObject.put("desc","error");
@@ -630,6 +633,8 @@ public class JdHomeFacadeService {
             String operator = "admin";
             String json = jdHomeApiService.orderAcceptOperate(orderId,shopId,isAgree,operator);
             log.info("=====商家确认/取消接口返回信息:"+json+"=====");
+            //自动拣货
+            OrderJDZBDelivery(orderId,shopId);
             //format返回结果
             getResult(json,rtn,orderId);
             if(!StringUtil.isEmpty(rtn.getCode()) && rtn.getCode()==-1){
@@ -676,8 +681,8 @@ public class JdHomeFacadeService {
                 rtn.setLogId(log1.getLogId());
                 rtn.setRemark(MessageFormat.format("订单:{0}确认失败！",orderId));
             }
-            return gson.toJson(rtn);
         }
+        return gson.toJson(rtn);
     }
 
 
@@ -811,6 +816,18 @@ public class JdHomeFacadeService {
             JSONArray jsonArray = queryPartySkuInfo(dishList.get(0).getShopId());
             //拼装参数
             for(int i=0;i<jsonArray.size();i++){
+                JSONObject json = jsonArray.getJSONObject(i);
+                if(json.getInteger("fixedStatus")==4){
+                    continue;
+                }
+                rtn.setCode(0);
+                rtn.setDesc("success");
+                rtn.setStatus(json.getInteger("fixedStatus")==2?1:0);
+                rtn.setName(json.getString("skuName"));
+                rtn.setDynamic(StringUtil.isEmpty(json.getString("outSkuId"))?json.getString("skuId"):json.getString("outSkuId"));
+                resStr = resStr+gson.toJson(rtn)+",";
+            }
+            /*for(int i=0;i<jsonArray.size();i++){
                 BaseStockCenterRequest stock = new BaseStockCenterRequest();
                 JSONObject json = jsonArray.getJSONObject(i);
                 stock.setStationNo(stationNO);
@@ -833,14 +850,7 @@ public class JdHomeFacadeService {
                         resStr = resStr+gson.toJson(rtn)+",";
                     }
                 }
-            }
-        }catch (JdHomeException ex) {
-            rtn.setCode(-997);
-            log1 = sysFacadeService.functionRtn.apply(ex);
-        }catch (ScheduleException ex){
-            rtn.setCode(-999);
-            log1 = sysFacadeService.functionRtn.apply(ex);
-            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            }*/
         }catch(Exception ex){
             log1 = sysFacadeService.functionRtn.apply(ex);
             log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
@@ -1112,12 +1122,7 @@ public class JdHomeFacadeService {
         String statusId = jsonObject.getString("statusId");
 
         int status = Integer.parseInt(statusId);
-        if(StringUtil.isEmpty(billId)){
-            result.setCode(-1);
-            result.setMsg("failure");
-            result.setData("订单妥投消息接口订单号为空");
-            return gson.toJson(result);
-        }
+
         Long orderId = Long.parseLong(billId);
         OrderWaiMai orderWaiMai = jdHomeInnerService.getOrder(billId);
         if(StringUtil.isEmpty(orderWaiMai)){
@@ -1169,14 +1174,7 @@ public class JdHomeFacadeService {
         Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
         String billId = jsonObject.getString("billId");
         String statusId = jsonObject.getString("statusId");
-
         int status = Integer.parseInt(statusId);
-        if(StringUtil.isEmpty(billId)){
-            result.setCode(-1);
-            result.setMsg("failure");
-            result.setData("用户取消消息接口订单号为空");
-            return gson.toJson(result);
-        }
         OrderWaiMai orderWaiMai = jdHomeInnerService.getOrder(billId);
         if(StringUtil.isEmpty(orderWaiMai)){
             result.setCode(-1);
@@ -1225,47 +1223,110 @@ public class JdHomeFacadeService {
         String res = null;
         Result result = new Result();
         Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
-        return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"\"}";
-        /*if(StringUtil.isEmpty(jdParamJson)){
+        String json = URLDecoder.decode(jdParamJson);
+        if(StringUtil.isEmpty(json)){
             result.setCode(-1);
             result.setMsg("failure");
             result.setData("订单状态推送接口请求参数为空");
             res = gson.toJson(result);
         }else {
-            JSONObject jsonObject  = JSONObject.parseObject(jdParamJson);
+            JSONObject jsonObject  = JSONObject.parseObject(json);
             String statusId = jsonObject.getString("statusId");
+            String billId = jsonObject.getString("billId");
             if(StringUtil.isEmpty(statusId)){
                 result.setCode(-1);
                 result.setMsg("failure");
                 result.setData("订单状态推送接口订单状态为空");
                 res =  gson.toJson(result);
-            }else    {
-                //配送中……
-                if(Integer.parseInt(statusId)==Constants.JH_ORDER_DELIVERING){
-                   res = this.deliveryOrder(jsonObject,flag);
-                    //妥投成功
-                }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_CONFIRMED){
-                    res = this.finishOrder(jsonObject,flag);
-                    //用户取消
-                }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_USER_CANCELLED){
-                   res = this.userCancelOrder(jsonObject,flag);
+                return res;
+            }
+
+            if(StringUtil.isEmpty(billId)){
+                result.setCode(-1);
+                result.setMsg("failure");
+                result.setData("订单号为空");
+                return gson.toJson(result);
+            }
+            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_JDHOME,jsonObject.getString("billId"));
+            log.info("=============================订单状态："+statusId);
+            if(Integer.parseInt(statusId)==Constants.JH_ORDER_DELIVERING){//配送中……
+               res = this.deliveryOrder(jsonObject,flag);
+            }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_CONFIRMED){ //妥投成功
+                res = this.finishOrder(jsonObject,flag);
+            }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_USER_CANCELLED){ //用户取消
+               res = this.userCancelOrder(jsonObject,flag);
+            }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_USER_CANCELLED_APPLY){ //用户取消申请
+                res = this.userCancelOrder(jsonObject,flag);
+            }else if(Integer.parseInt(statusId)==Constants.JH_ORDER_RECEIVED) {//已接单
+                sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,orderWaiMai.getSellerShopId(),null);
+            }else{
+                result.setCode(-1);
+                result.setMsg("error");
+                result.setData("此订单状态无需修改");
+                res = gson.toJson(result);
+            }
+            if (!StringUtil.isEmpty(res) && (new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create().fromJson(res,Result.class).getCode() == 0)){
+                if(flag){
+                    sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,orderWaiMai.getSellerShopId(),null);
                 }else {
-                    result.setCode(-1);
-                    result.setMsg("error");
-                    result.setData("此订单状态无需修改");
-                    res = gson.toJson(result);
-                }
-                if (!StringUtil.isEmpty(res) && (new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create().fromJson(res,Result.class).getCode() == 0)){
-                    OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_JDHOME,jsonObject.getString("billId"));
-                    if(!flag){
-                        sysFacadeService.topicMessageOrderStatus(Constants.PLATFORM_WAIMAI_JDHOME,Integer.valueOf(jsonObject.getString("statusId")), jsonObject.getString("billId"),null,orderWaiMai.getSellerShopId(),null);
-                    }else {
-                        sysFacadeService.topicMessageOrderStatusAll(Constants.PLATFORM_WAIMAI_JDHOME,orderWaiMai.getSellerShopId(),orderWaiMai);
-                    }
+                    sysFacadeService.topicMessageOrderStatusAll(Constants.PLATFORM_WAIMAI_JDHOME,orderWaiMai.getSellerShopId(),orderWaiMai);
                 }
             }
-        }*/
-        //return  res;
+        }
+        return  res;
+    }
+
+
+    /**
+     * 配送单状态
+     * @param jdParamJson
+     * @return
+     */
+    public String deliveryStatus(String jdParamJson){
+        String res = null;
+        Result result = new Result();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Result.class,new ResultSerializer()).disableHtmlEscaping().create();
+        String json = URLDecoder.decode(jdParamJson);
+        if(StringUtil.isEmpty(json)){
+            result.setCode(-1);
+            result.setMsg("failure");
+            result.setData("运单状态推送接口请求参数为空");
+            res = gson.toJson(result);
+        }else {
+            JSONObject jsonObject  = JSONObject.parseObject(json);
+            String statusId = jsonObject.getString("deliveryStatus");
+            String billId = jsonObject.getString("orderId");
+            if(StringUtil.isEmpty(statusId)){
+                result.setCode(-1);
+                result.setMsg("failure");
+                result.setData("运单状态推送接口订单状态为空");
+                res =  gson.toJson(result);
+                return res;
+            }
+            if(StringUtil.isEmpty(billId)){
+                result.setCode(-1);
+                result.setMsg("failure");
+                result.setData("运单号为空");
+                return gson.toJson(result);
+            }
+            OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai(Constants.PLATFORM_WAIMAI_JDHOME,billId);
+            if(StringUtil.isEmpty(orderWaiMai)){
+                return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"\"}";
+            }
+            if(Integer.parseInt(statusId)==Constants.JH_DELIVERY_DISPACTER){//骑手接单
+                String deliveryManName = jsonObject.getString("deliveryManName");
+                String deliveryManPhone = jsonObject.getString("deliveryManPhone");
+                sysFacadeService.topicMessageOrderDelivery(Constants.PLATFORM_WAIMAI_JDHOME, Integer.parseInt(statusId), billId,
+                    deliveryManPhone, deliveryManName, orderWaiMai.getSellerShopId());
+            }else{
+                result.setCode(-1);
+                result.setMsg("error");
+                result.setData("此订单状态无需修改");
+                res = gson.toJson(result);
+                return "{\"code\":\"0\",\"msg\":\"success\",\"data\":\"\"}";
+            }
+        }
+        return  res;
     }
 
     /**
@@ -1308,6 +1369,61 @@ public class JdHomeFacadeService {
             }
         }
         return rtnOrder;
+    }
+
+    /**
+     * 拣货完成且众包配送接口
+     * @param billId 单号
+     * @param shopId 门店编号
+     * @return
+     */
+    public String OrderJDZBDelivery(String billId,String shopId){
+        Rtn rtn = new Rtn();
+        Log log1 = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Rtn.class,new RtnSerializer()).disableHtmlEscaping().create();
+        if(StringUtil.isEmpty(billId)){
+            return gson.toJson(rtn);
+        }
+        try {
+            String operator = "admin";
+            String json = jdHomeApiService.orderJDZBDelivery(billId,shopId,operator);
+            log.info("=====商家拣货接口返回信息:"+json+"=====");
+
+            //返回成功/失败 若成功修改mongodb订单状态
+            JSONObject jsonObject = JSONObject.parseObject(json);
+            //业务接口返回结果
+            JSONObject apiJson = JSONObject.parseObject(jsonObject.getString("data")) ;
+            if("0".equals(jsonObject.getString("code")) && "0".equals(apiJson.getString("code"))){
+                rtn.setCode(0);
+                rtn.setDesc("success");
+                rtn.setRemark("调用成功");
+                return gson.toJson(rtn);
+            }
+        }catch (JdHomeException ex) {
+            rtn.setCode(-997);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+        }catch (ScheduleException ex){
+            rtn.setCode(-999);
+            log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+        }catch(Exception ex){
+            log1 = sysFacadeService.functionRtn.apply(ex);
+            log1.setPlatform(Constants.PLATFORM_WAIMAI_JDHOME);
+            rtn.setCode(-998);
+        }finally {
+            if (log1 !=null){
+                log1.setLogId(billId.concat(log1.getLogId()));
+                log1.setTitle(MessageFormat.format("订单:{0}拣货失败！", billId));
+                if (StringUtil.isEmpty(log1.getRequest()))
+                    log1.setRequest("{".concat(MessageFormat.format("\"orderId\":{0}", billId)).concat("}"));
+                sysFacadeService.updSynLog(log1);
+                rtn.setDynamic(billId);
+                rtn.setDesc("发生异常");
+                rtn.setLogId(log1.getLogId());
+                rtn.setRemark(MessageFormat.format("订单:{0}拣货失败！",billId));
+            }
+            return gson.toJson(rtn);
+        }
     }
 
 

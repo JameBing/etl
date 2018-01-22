@@ -95,7 +95,7 @@ adminLteApp.filter("elemeOrderStatus",function(){
         } else if (val == 'valid') {
             return '已确定';
         } else if (val == 'invalid') {
-            return '已取消';
+            return '已拒单';
         }else if (val == 'tobeFetched') {
             return '骑手已接单';
         }else if (val == 'delivering'){
@@ -379,7 +379,7 @@ adminLteApp.controller('WMOrderCtrl', function ($scope, $http) {
         {status:'送货中',value:'30'},
         {status:'已完成',value:'40'},
         {status:'已取消',value:'50'},
-       /* {status:'已拒绝',value:'60'},*/
+        {status:'已拒绝',value:'60'},
         {status:'骑手已接单',value:'80'},
         {status:'其它',value:'90'}
     ];
@@ -538,7 +538,7 @@ adminLteApp.controller('WMHistoryOrderCtrl', function ($scope, $http) {
         {status:'送货中',value:'30'},
         {status:'已完成',value:'40'},
         {status:'已取消',value:'50'},
-        /*{status:'已拒绝',value:'60'},*/
+        {status:'已拒绝',value:'60'},
         {status:'骑手已接单',value:'80'},
         {status:'其它',value:'90'}
     ];

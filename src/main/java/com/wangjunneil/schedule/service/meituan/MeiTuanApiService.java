@@ -27,6 +27,8 @@ public class MeiTuanApiService {
 
     //系统参数.（app_id 和 secret）
     private static final SystemParam sysPram = new SystemParam("459", "5ca2cf48c1d6dc4253f9d491b2246091");
+    //测试门店参数
+   // private static final SystemParam sysPram = new SystemParam("816", "9ab863a35a325041abaf753b12dc2f93");
 
 
     //region 门店的开业及歇业

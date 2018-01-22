@@ -3,6 +3,8 @@ package com.wangjunneil.schedule.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.wangjunneil.schedule.activemq.Queue.QueueMessageProducer;
+import com.wangjunneil.schedule.activemq.Queue.QueueMessageProducerAsync;
 import com.wangjunneil.schedule.activemq.StaticObj;
 import com.wangjunneil.schedule.activemq.Topic.EkpMessageProducer;
 import com.wangjunneil.schedule.activemq.Topic.TopicMessageProducerAsync;
@@ -11,6 +13,7 @@ import com.wangjunneil.schedule.entity.baidu.Data;
 import com.wangjunneil.schedule.entity.baidu.OrderShop;
 import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
+import com.wangjunneil.schedule.entity.common.PushRecord;
 import com.wangjunneil.schedule.entity.eleme.OrderEle;
 import com.wangjunneil.schedule.entity.jd.JdAccessToken;
 import com.wangjunneil.schedule.entity.jdhome.OrderExtend;
@@ -54,10 +57,6 @@ public class SysFacadeService {
 
     @Autowired
     private SysFacadeService sysFacadeService;
-
-//    @Autowired
-//    @Qualifier("topicMessageProducerWaiMaiOrder")
-//    private TopicMessageProducer topicMessageProducerWaiMaiOrder;
 
 
     /**生产者*/
@@ -112,26 +111,20 @@ public class SysFacadeService {
     @Qualifier("topicMessageProducerWaiMaiOrderStatusAsync6")
     private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAsync6;
 
-//    @Autowired
-//    @Qualifier("topicMessageProducerWaiMaiOrderStatusAll")
-//    private TopicMessageProducer topicMessageProducerOrderStatusAll;
-//
-//    @Autowired
-//    @Qualifier("topicDestinationWaiMaiOrderStatusAll")
-//    private Destination topicDestinationWaiMaiOrderStatusAll;
 
     @Autowired
     @Qualifier("topicMessageProducerWaiMaiOrderStatusAllSync")
     private TopicMessageProducerAsync topicMessageProducerWaiMaiOrderStatusAllSync;
 
+    //Crm生产者
     @Autowired
-    @Qualifier("ekpDestinationException")
-    private Destination ekpDestinationException;
+    @Qualifier("queueMessageProducerWaiMaiOrderToCrm")
+    private QueueMessageProducerAsync queueMessageProducerWaiMaiOrderToCrm;
 
+    //ZT生产者
     @Autowired
-    @Qualifier("ekpMessageProducerMessage")
-    private EkpMessageProducer ekpMessageProducerMessage;
-
+    @Qualifier("queueMessageProducerWaiMaiOrderToZt")
+    private QueueMessageProducerAsync queueMessageProducerWaiMaiOrderToZt;
 
 
     public Cfg findJdCfg() {
@@ -241,6 +234,20 @@ public class SysFacadeService {
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
                 //选择MQ地址
                 setMqOrderAddress(orderWaiMai.getSellerShopId(),orderWaiMai);
+
+                /*//推送订单to CRM
+                JSONObject crm = formatOrder2Pos(orderWaiMai);
+                crm.put("orderId",orderWaiMai.getOrderId());
+                queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
+                new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
+                //插入推送记录表
+                sysInnerService.addPushRecords(orderWaiMai.getOrderId(),1);//1.crm 2.zt
+
+                //推送订单 to 中台
+                queueMessageProducerWaiMaiOrderToZt.init(crm,orderWaiMai.getSellerShopId());
+                new Thread(queueMessageProducerWaiMaiOrderToZt).start();
+                //插入推送记录表
+                sysInnerService.addPushRecords(orderWaiMai.getOrderId(),2);//1.crm 2.zt*/
             }
         }catch (ScheduleException ex){
             switch (orderWaiMai.getPlatform()){
@@ -272,22 +279,38 @@ public class SysFacadeService {
         return sysInnerService.findOrderWaiMai(platform,platformOrderId);
     }
 
+    //订单查询
+    public List<OrderWaiMai> findOrderWaiMaiList(String  platform,String start,String end){
+        return sysInnerService.findOrderWaiMaiList(platform,start,end);
+    }
+
     //订单插入 list
     public  void  updSynWaiMaiOrder(List<OrderWaiMai> orderWaiMaiList) throws JdHomeException{
         orderWaiMaiList.forEach(v->{
             try {
                 sysInnerService.updSynWaiMaiOrder(v);
                 log.info(formatOrder2Pos(v));
-                if (StaticObj.mqTransportTopicOrder) {
-                    //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
-                    setMqOrderAddress(v.getSellerShopId(),v);
-                   /* topicMessageProducerWaiMaiOrderAsync.init(formatOrder2Pos(v),v.getSellerShopId());
-                    new Thread(topicMessageProducerWaiMaiOrderAsync).start();*/
-                }
+                //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
+                setMqOrderAddress(v.getSellerShopId(),v);
+
+               /* //推送订单to CRM
+                JSONObject crm = formatOrder2Pos(v);
+                crm.put("orderId",v.getOrderId());
+                queueMessageProducerWaiMaiOrderToCrm.init(crm,v.getSellerShopId());
+                new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
+                //插入推送记录表
+                sysInnerService.addPushRecords(v.getOrderId(),1);//1.crm 2.zt
+
+                //推送订单 to 中台
+                queueMessageProducerWaiMaiOrderToZt.init(crm,v.getSellerShopId());
+                new Thread(queueMessageProducerWaiMaiOrderToZt).start();
+                //插入推送记录表
+                sysInnerService.addPushRecords(v.getOrderId(),2);//1.crm 2.zt*/
              }catch (ScheduleException ex){
              }catch (Exception ex){
              }});
     }
+
 
     //修改外卖订单
     public void updateWaiMaiOrder(String orderId,OrderWaiMai orderWaiMai){
@@ -296,6 +319,32 @@ public class SysFacadeService {
         topicMessageProducerWaiMaiOrderStatusAllSync.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
         new Thread(topicMessageProducerWaiMaiOrderStatusAllSync).start();
     }
+
+    //推送CRM
+    public void push2Crm(String orderId){
+        OrderWaiMai orderWaiMai = sysInnerService.findOrderWaiMaiByOrderId(orderId);
+        //推送订单to CRM
+        JSONObject crm = formatOrder2Pos(orderWaiMai);
+        crm.put("orderId",orderWaiMai.getOrderId());
+        queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
+        new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
+        //插入推送记录表
+        sysInnerService.updatePushTimes(orderWaiMai,1);//1.crm 2.zt
+    }
+
+    //推送中台
+    public void push2ZT(String orderId){
+        OrderWaiMai orderWaiMai = sysInnerService.findOrderWaiMaiByOrderId(orderId);
+        //推送订单to CRM
+        JSONObject crm = formatOrder2Pos(orderWaiMai);
+        crm.put("orderId",orderWaiMai.getOrderId());
+        //推送订单 to 中台
+        queueMessageProducerWaiMaiOrderToZt.init(crm,orderWaiMai.getSellerShopId());
+        new Thread(queueMessageProducerWaiMaiOrderToZt).start();
+        //插入推送记录表
+        sysInnerService.updatePushTimes(orderWaiMai,2);//1.crm 2.zt
+    }
+
 
     //格式化订单返回给Pos
     public JSONObject formatOrder2Pos(OrderWaiMai orderWaiMai){
@@ -311,7 +360,7 @@ public class SysFacadeService {
             case Constants.PLATFORM_WAIMAI_BAIDU :
                 rtn =  formatBaiDuOrder((Data) orderWaiMai.getOrder(), jsonObject);
                 break;
-                case Constants.PLATFORM_WAIMAI_JDHOME :
+            case Constants.PLATFORM_WAIMAI_JDHOME :
                 rtn =  formatJdHomeOrder((OrderInfoDTO)orderWaiMai.getOrder(),jsonObject);
                 break;
             case Constants.PLATFORM_WAIMAI_MEITUAN :
@@ -331,6 +380,7 @@ public class SysFacadeService {
             data = new Data();
         }
         JSONObject rtnJson = new JSONObject();
+        //rtnJson.put("orderId",jsonObject.getString("orderId"));
         rtnJson.put("header",getBaiDuHeader(data, jsonObject));
         rtnJson.put("user",getBaiDuUsers(data));
         rtnJson.put("productList",getBaiDuProducts(data));
@@ -372,7 +422,7 @@ public class SysFacadeService {
         jsonObject.put("riderPhone","");
         jsonObject.put("orderCancelTime",data.getOrder().getCancelTime());
         jsonObject.put("orderCancelRemark","");
-        jsonObject.put("is_third_shipping",data.getOrder().getDeliveryParty());
+        jsonObject.put("isThirdShipping",data.getOrder().getDeliveryParty());
         jsonObject.put("deliveryStationNo",data.getShop().getShopId());
         jsonObject.put("deliveryStationName",data.getShop().getName());
         jsonObject.put("deliveryCarrierNo","");
@@ -439,7 +489,7 @@ public class SysFacadeService {
                 jsonObject.put("skuId",data.getProducts().get(i)[j].getBaiduProductId());
                 jsonObject.put("skuName",data.getProducts().get(i)[j].getProductName()+(data.getProducts().get(i)[j].getProductFeatures().size()==0?""
                     :"("+data.getProducts().get(i)[j].getProductFeatures().get(0).getOption()+")"));
-                jsonObject.put("skuIdIsv",data.getProducts().get(i)[j].getBaiduProductId());
+                jsonObject.put("skuIdIsv",data.getProducts().get(i)[j].getOtherDishId());
                 jsonObject.put("price",StringUtil.isEmpty(data.getProducts().get(i)[j].getProductPrice())?0:Integer.parseInt(data.getProducts().get(i)[j].getProductPrice())*0.01);
                 jsonObject.put("quantity",data.getProducts().get(i)[j].getProductAmount());
                 jsonObject.put("isGift","");
@@ -515,7 +565,7 @@ public class SysFacadeService {
         jsonObject.put("riderPhone","");
         jsonObject.put("orderCancelTime",StringUtil.isEmpty(orderInfo.getOrderCancelTime())?"":DateTimeUtil.dateFormat(orderInfo.getOrderCancelTime(),"yyyy-MM-dd HH:mm:ss"));
         jsonObject.put("orderCancelRemark",orderInfo.getOrderCancelRemark());
-        jsonObject.put("is_third_shipping","");
+        jsonObject.put("isThirdShipping","");
         jsonObject.put("deliveryStationNo",orderInfo.getProduceStationNoIsv());
         jsonObject.put("deliveryStationName","");
         jsonObject.put("deliveryCarrierNo",orderInfo.getProduceStationNoIsv());
@@ -874,7 +924,7 @@ public class SysFacadeService {
                     spec=spec+order.getGroups().get(i).getItems().get(j).getNewSpecs().get(k).toString()+",";
                 }
                 jsonObject.put("skuName",order.getGroups().get(i).getItems().get(j).getName()+(StringUtil.isEmpty(spec)?"":"("+spec+")"));
-                jsonObject.put("skuIdIsv",order.getGroups().get(i).getItems().get(i).getSkuId());
+                jsonObject.put("skuIdIsv",order.getGroups().get(i).getItems().get(i).getExtendCode());
                 jsonObject.put("price",order.getGroups().get(i).getItems().get(j).getPrice());
                 jsonObject.put("quantity",order.getGroups().get(i).getItems().get(j).getQuantity());
                 jsonObject.put("isGift","");
@@ -1021,6 +1071,8 @@ public class SysFacadeService {
                 return Constants.POS_ORDER_COMPLETED;
             case Constants.BD_CANCELED:
                 return Constants.POS_ORDER_CANCELED;
+            case Constants.BD_DISPATCHER_NOT_GET:
+                return Constants.POS_ORDER_DIS_NOT_GET;
             default:
                 return Constants.POS_ORDER_OTHER;
         }
@@ -1033,12 +1085,22 @@ public class SysFacadeService {
                 return Constants.POS_ORDER_SUSPENDING;
             case Constants.JH_ORDER_RECEIVED:
                 return Constants.POS_ORDER_CONFIRMED;
+            case Constants.JH_ORDER_WAITING_TO_GET:
+                return Constants.POS_ORDER_CONFIRMED;
             case Constants.JH_ORDER_DELIVERING:
                 return Constants.POS_ORDER_DELIVERY;
             case Constants.JH_ORDER_CONFIRMED:
                 return Constants.POS_ORDER_COMPLETED;
             case Constants.JH_ORDER_USER_CANCELLED:
                 return Constants.POS_ORDER_CANCELED;
+            case Constants.JH_ORDER_USER_CANCELLED_APPLY:
+                return Constants.POS_ORDER_CANCELED;
+            case Constants.BD_DISPATCHER_NOT_GET:
+                return Constants.POS_ORDER_DIS_NOT_GET;
+            case Constants.JH_DELIVERY_DISPACTER:
+                return Constants.POS_ORDER_DISPATCH_GET;
+            case Constants.JH_DELIVERY_CONFIRMED:
+                return Constants.POS_ORDER_COMPLETED;
             default:
                 return Constants.POS_ORDER_OTHER;
         }
@@ -1065,6 +1127,8 @@ public class SysFacadeService {
                 return Constants.POS_ORDER_COMPLETED;
             case Constants.MT_STATUS_CODE_DISPACHER_CANCELED:
                 return Constants.POS_ORDER_CANCELED;
+            case Constants.BD_DISPATCHER_NOT_GET:
+                return Constants.POS_ORDER_DIS_NOT_GET;
             default:
                 return Constants.POS_ORDER_OTHER;
         }
@@ -1254,6 +1318,23 @@ public class SysFacadeService {
                 jsonMessage.put("meituan", jsonObjectEmpty);
                 jsonMessage.put("eleme", jsonObject);
                 break;
+            case  Constants.PLATFORM_WAIMAI_JDHOME:
+                orderWaiMai = findOrderWaiMai(Constants.PLATFORM_WAIMAI_JDHOME,platformOrderId);
+                if (orderWaiMai==null){
+                    boolSend = false;  //不发送message
+                }else   {
+                    shop = orderWaiMai.getShopId();
+                }
+                jsonMessage.put("baidu", jsonObjectEmpty);
+                jsonMessage.put("jdhome", jsonObject);
+                jsonObject.put("orderId", orderWaiMai == null ? "" : platformOrderId);
+                jsonObject.put("orderStatus", tranJHOrderStatus(status));
+                jsonObject.put("shopId", shop);
+                jsonObject.put("dispatcherMobile",dispatcherMobile);
+                jsonObject.put("dispatcherName",dispatcherName);
+                jsonMessage.put("meituan", jsonObjectEmpty);
+                jsonMessage.put("eleme", jsonObjectEmpty);
+                break;
             default:
                 boolSend = false;
                 break;
@@ -1286,8 +1367,6 @@ public class SysFacadeService {
         }
         String shopId = sellerId.substring(0,5);
         if("80010".equals(shopId)){  //上海 MQ1 130
-            /*topicMessageProducerWaiMaiOrderAsync1.setTopicJmsTemplate(topicJmsTemplate1);
-            topicMessageProducerWaiMaiOrderAsync1.setDestination(topicDestinationWaiMaiOrder1);*/
             topicMessageProducerWaiMaiOrderAsync1.init(formatOrder2Pos(orderWaiMai),orderWaiMai.getSellerShopId());
             new Thread(topicMessageProducerWaiMaiOrderAsync1).start();
         }else if("80020".equals(shopId) || "80049".equals(shopId)|| "80042".equals(shopId)){ //合肥 蚌埠 马芜  MQ2 44

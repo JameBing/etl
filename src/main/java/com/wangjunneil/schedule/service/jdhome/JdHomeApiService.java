@@ -35,12 +35,13 @@ public class JdHomeApiService {
     private JdHomeInnerService jdHomeInnerService;
 
     //开业/歇业
-    public String changeCloseStatus(String shopId,String stationNo,String operator,int status) throws JdHomeException,ScheduleException{
+    public String changeCloseStatus(String shopId,String stationNo,String operator,String standByPhone,int status) throws JdHomeException,ScheduleException{
         SignParams signParams = getSignParams(shopId);
         Map<String,Object> param = getSysMap(signParams);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("stationNo",stationNo);
         jsonObject.put("operator",operator);
+        jsonObject.put("standByPhone",standByPhone);
         jsonObject.put("closeStatus",status);
         jd_param_json = jsonObject.toJSONString();
         signParams.setJd_param_json(jd_param_json);
@@ -237,6 +238,26 @@ public class JdHomeApiService {
         log.info("======Params:"+StringUtil.getUrlParamsByMap(param)+"======");
         return HttpUtil.post(Constants.URL_ORDER_ACCEPT_OPERATE,StringUtil.getUrlParamsByMap(param));
     }
+
+    //商家拣货接口
+    public String orderJDZBDelivery(String orderId,String shopId,String operator)throws JdHomeException,ScheduleException{
+        SignParams signParams = getSignParams(shopId);//签名参数
+        Map<String,Object> param = getSysMap(signParams); //系统参数
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("orderId",orderId);
+        jsonObject.put("operator",operator);
+        signParams.setJd_param_json(jsonObject.toJSONString());
+        param.put("jd_param_json",jsonObject);
+        try {
+            sign = SignUtils.getSign(signParams,appSecret);
+            param.put("sign",sign);
+        }catch (Exception e){
+            throw new JdHomeException("签名失败",e);
+        }
+        log.info("======Params:"+StringUtil.getUrlParamsByMap(param)+"======");
+        return HttpUtil.post(Constants.URL_JD_ZB_Delivery,StringUtil.getUrlParamsByMap(param));
+    }
+
 
     //获取系统参数map对象
     private Map<String,Object> getSysMap(SignParams signParams){

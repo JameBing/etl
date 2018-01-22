@@ -518,6 +518,15 @@ public class BaiDuFacadeService {
                 //百度订单ID
                 String platformOrderId = data.getOrder().getOrderId();
                 orderWaiMai.setPlatformOrderId(platformOrderId);
+                /**自动接单*/
+                if("80010169".equals(sellerId) ||"80010155".equals(sellerId)){
+                    String json = orderConfirm(platformOrderId,sellerId);
+                    JSONObject jsonObject2 = JSONObject.parseObject(json);
+                    if(jsonObject2.getInteger("code")==0){
+                        data.getOrder().setStatus(Constants.BD_CONFIRMED);
+                    }
+                }
+
                 //商家订单ID
                 String orderId = sysFacadeService.getOrderNum(shopId);
                 orderWaiMai.setOrderId(orderId);
@@ -593,7 +602,7 @@ public class BaiDuFacadeService {
 
     //接收百度外卖推送过来的订单状态[order.status.push] flag 是否推送整个订单 true 推送  false不推送
     public String orderStatus(SysParams sysParams,Boolean flag){
-        Body result = new Body();
+       Body result = new Body();
         try{
         Body body = new Body();JSONObject jsonObject1 = JSONObject.parseObject(sysParams.getBody().toString());
        //？是否多个订单号存在

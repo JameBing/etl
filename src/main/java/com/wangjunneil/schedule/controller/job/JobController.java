@@ -36,6 +36,13 @@ public class JobController {
     @Resource(name = "orderSync")
     private  JobService jobServiceOrderSync;
 
+    @Resource(name = "dispatcherNotGet")
+    private  JobService jobServiceDispatcherNotGet;
+
+    @Resource(name = "orderSync2Crm2Zt")
+    private  JobService jobServiceOrderSync2Crm2Zt;
+
+
     //开启Job
     @RequestMapping(value = "/scheduler/job/{name}/start", method = RequestMethod.GET)
     public String startJob(@PathVariable("name") String name, HttpServletRequest request, HttpServletResponse response, PrintWriter out) throws Exception {

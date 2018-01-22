@@ -170,14 +170,14 @@ public class EleMeInnerService {
         return authToken;
     }
 
-    //根据门店Id获取token值
+    //根据平台门店Id获取token值
     public ShopEle getShop(String shopId){
         Query query = new Query(Criteria.where("platForm").is(Constants.PLATFORM_WAIMAI_ELEME).and("shopId").is(shopId));
         ShopEle shopEle = mongoTemplate.findOne(query, ShopEle.class);
         return shopEle;
     }
 
-    //根据门店Id获取token值
+    //根据中台门店Id获取token值
     public ShopEle getSellerId(String shopId){
         Query query = new Query(Criteria.where("platForm").is(Constants.PLATFORM_WAIMAI_ELEME).and("sellerId").is(shopId));
         ShopEle shopEle = mongoTemplate.findOne(query, ShopEle.class);

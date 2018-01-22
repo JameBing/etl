@@ -211,11 +211,10 @@ public class JdHomeController {
         posInner4.setShopId("2063064");
         dishList.add(posInner3);
         dishList.add(posInner4);*/
+        String json = jdHomeFacadeService.OrderJDZBDelivery("1111111","80010309");
 
-
-        jdHomeFacadeService.orderAcceptOperate("4444","2063064",true);
+        /*jdHomeFacadeService.orderAcceptOperate("4444","2063064",true);*/
         //out.println(json);
-        out.close();
         return null;
     }
 
@@ -256,27 +255,22 @@ public class JdHomeController {
     public String addShop(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception {
         resp.setContentType("text/html;charset=utf-8");
         String aa = "[\n" +
-            "{\"shopId\":\"1923581\",\"shopName\":\"长沙人民路店\",\"sellerId\":\"80040001\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923569\",\"shopName\":\"长沙曙光路店\",\"sellerId\":\"80040002\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923574\",\"shopName\":\"长沙法院路店\",\"sellerId\":\"80040003\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"159337154\",\"shopName\":\"长沙板仓路店\",\"sellerId\":\"80040004\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923586\",\"shopName\":\"长沙扫把塘店\",\"sellerId\":\"80040007\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923567\",\"shopName\":\"长沙德雅路店\",\"sellerId\":\"80040010\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923582\",\"shopName\":\"长沙赤岗冲店\",\"sellerId\":\"80040012\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923573\",\"shopName\":\"长沙蔡锷路店\",\"sellerId\":\"80040013\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923580\",\"shopName\":\"长沙望岳路店\",\"sellerId\":\"80040014\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923587\",\"shopName\":\"长沙梓园路店\",\"sellerId\":\"80040015\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"159337157\",\"shopName\":\"长沙格林星城店\",\"sellerId\":\"80040017\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923583\",\"shopName\":\"长沙朝阳路店\",\"sellerId\":\"80040018\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923590\",\"shopName\":\"长沙书院南路店\",\"sellerId\":\"80040022\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923593\",\"shopName\":\"长沙汽车东站店\",\"sellerId\":\"80040024\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"159337180\",\"shopName\":\"长沙金帆路店\",\"sellerId\":\"80040025\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"159337114\",\"shopName\":\"长沙古汉路店\",\"sellerId\":\"80040026\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"159337165\",\"shopName\":\"长沙正圆店\",\"sellerId\":\"80040028\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923585\",\"shopName\":\"长沙植物园路店\",\"sellerId\":\"80040029\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"1923568\",\"shopName\":\"长沙新建路店\",\"sellerId\":\"80040031\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"159337041\",\"shopName\":\"长沙八字曹店\",\"sellerId\":\"80040034\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
-            "{\"shopId\":\"159337119\",\"shopName\":\"长沙德政园路店\",\"sellerId\":\"80040036\",\"platForm\":\"eleme\",\"city\":\"长沙\"},\n" +
+            "{\"shopId\":\"161630609\",\"shopName\":\"紫燕百味鸡（万源路店）\",\"sellerId\":\"80036100\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630614\",\"shopName\":\"紫燕百味鸡（大梅江店）\",\"sellerId\":\"80036104\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630617\",\"shopName\":\"紫燕百味鸡（万隆店）\",\"sellerId\":\"80036105\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630620\",\"shopName\":\"紫燕百味鸡（文静路店）\",\"sellerId\":\"80036106\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630623\",\"shopName\":\"紫燕百味鸡（均胜路店）\",\"sellerId\":\"80036107\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630636\",\"shopName\":\"紫燕百味鸡（锦堂店）\",\"sellerId\":\"80036108\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630638\",\"shopName\":\"紫燕百味鸡（曲江路店）\",\"sellerId\":\"80036109\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630643\",\"shopName\":\"紫燕百味鸡（双峰道店）\",\"sellerId\":\"80036112\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630644\",\"shopName\":\"紫燕百味鸡（小南河店）\",\"sellerId\":\"80036113\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630647\",\"shopName\":\"紫燕百味鸡（中山路店）\",\"sellerId\":\"80036115\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630662\",\"shopName\":\"紫燕百味鸡（集贤店）\",\"sellerId\":\"80036116\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630495\",\"shopName\":\"紫燕百味鸡（二纬路店）\",\"sellerId\":\"80036054\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630498\",\"shopName\":\"紫燕百味鸡（江都路店）\",\"sellerId\":\"80036055\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630506\",\"shopName\":\"紫燕百味鸡（东五道店）\",\"sellerId\":\"80036061\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630414\",\"shopName\":\"紫燕百味鸡（三马路店）\",\"sellerId\":\"80036026\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"161630370\",\"shopName\":\"紫燕百味鸡（秀川路店）\",\"sellerId\":\"80036015\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
             "\n" +
             "]";
 

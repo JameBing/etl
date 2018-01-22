@@ -47,7 +47,20 @@ public class BaiDuApiService {
             String bodyStr = gson.toJson(sysParams.getBody());
             if(!StringUtil.isEmpty(sellerId) && sellerId.length()>5){
                 String shopId = sellerId.substring(0,5);
-                getSourceAndSecret(shopId,sysParams);
+                if("80010".equals(shopId)){
+                    getSourceAndSecret(sellerId,sysParams);
+                }else {
+                    if("80036".equals(shopId)){
+                        String BJshopId = sellerId.substring(0,6);
+                        if("800362".equals(BJshopId)){//判断是否是北京门店
+                            getSourceAndSecret(BJshopId,sysParams);
+                        }else {
+                            getSourceAndSecret(shopId,sysParams);
+                        }
+                    }else {
+                        getSourceAndSecret(shopId,sysParams);
+                    }
+                }
             }
             if(sellerId.length()==5) {
                 getSourceAndSecretBySource(sellerId,sysParams);
@@ -623,45 +636,81 @@ public class BaiDuApiService {
 
     //获取合作方ID和密钥
     private  void getSourceAndSecret(String shopId ,SysParams sysParams){
-        if("80010".equals(shopId)){
-            sysParams.setSource(Constants.BAIDU_SOURCE_SH);
-            sysParams.setSecret(Constants.BAIDU_SECRET_SH);
-        }
         if("80024".equals(shopId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_SZ);
             sysParams.setSecret(Constants.BAIDU_SECRET_SZ);
+            return;
         }
         if("80036".equals(shopId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_TJ);
             sysParams.setSecret(Constants.BAIDU_SECRET_TJ);
+            return;
         }
         if("80034".equals(shopId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_ZZ);
             sysParams.setSecret(Constants.BAIDU_SECRET_ZZ);
+            return;
         }
         if("80020".equals(shopId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_HF);
             sysParams.setSecret(Constants.BAIDU_SECRET_HF);
+            return;
         }
         if("80052".equals(shopId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_NC);
             sysParams.setSecret(Constants.BAIDU_SECRET_NC);
+            return;
         }
         if("80016".equals(shopId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_CQ);
             sysParams.setSecret(Constants.BAIDU_SECRET_CQ);
+            return;
         }
         if("80038".equals(shopId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_GY);
             sysParams.setSecret(Constants.BAIDU_SECRET_GY);
+            return;
         }
         if("80028".equals(shopId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_GZ);
             sysParams.setSecret(Constants.BAIDU_SECRET_GZ);
+            return;
         }
         if("80050".equals(shopId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_SZH);
             sysParams.setSecret(Constants.BAIDU_SECRET_SZH);
+            return;
+
+        }
+        if("800362".equals(shopId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_BJ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_BJ);
+            return;
+        }
+        if("800362".equals(shopId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_BJ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_BJ);
+            return;
+        }
+        if("800362".equals(shopId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_BJ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_BJ);
+            return;
+        }
+        if("80010999".equals(shopId)){//测试
+            sysParams.setSource(Constants.BAIDU_SOURCE);
+            sysParams.setSecret(Constants.BAIDU_SECRET);
+            return;
+        }
+        if(jungeStoreZy(shopId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_SHZY);
+            sysParams.setSecret(Constants.BAIDU_SECRET_SHZY);
+            return;
+        }
+        if(jungeStoreJm(shopId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_SHNJ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_SHNJ);
+            return;
         }
     }
 
@@ -670,48 +719,107 @@ public class BaiDuApiService {
         if("30618".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_SH);
             sysParams.setSecret(Constants.BAIDU_SECRET_SH);
+            return;
         }
         if("30916".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_SZ);
             sysParams.setSecret(Constants.BAIDU_SECRET_SZ);
+            return;
         }
         if("31485".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_TJ);
             sysParams.setSecret(Constants.BAIDU_SECRET_TJ);
+            return;
         }
         if("31522".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_ZZ);
             sysParams.setSecret(Constants.BAIDU_SECRET_ZZ);
+            return;
         }
         if("31661".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_HF);
             sysParams.setSecret(Constants.BAIDU_SECRET_HF);
+            return;
         }
         if("31772".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_NC);
             sysParams.setSecret(Constants.BAIDU_SECRET_NC);
+            return;
         }
         if("31891".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_CQ);
             sysParams.setSecret(Constants.BAIDU_SECRET_CQ);
+            return;
         }
         if("31919".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_GY);
             sysParams.setSecret(Constants.BAIDU_SECRET_GY);
+            return;
         }
         if("32019".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_GZ);
             sysParams.setSecret(Constants.BAIDU_SECRET_GZ);
+            return;
         }
         if("32020".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE_SZH);
             sysParams.setSecret(Constants.BAIDU_SECRET_SZH);
+            return;
+        }
+        if("32825".equals(sourceId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_BJ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_BJ);
+            return;
+        }
+        if("33118".equals(sourceId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_SHZY);
+            sysParams.setSecret(Constants.BAIDU_SECRET_SHZY);
+            return;
+        }
+        if("33119".equals(sourceId)){
+            sysParams.setSource(Constants.BAIDU_SOURCE_SHNJ);
+            sysParams.setSecret(Constants.BAIDU_SECRET_SHNJ);
+            return;
         }
         //测试
         if("65062".equals(sourceId)){
             sysParams.setSource(Constants.BAIDU_SOURCE);
             sysParams.setSecret(Constants.BAIDU_SECRET);
+            return;
         }
+    }
+
+    //判断门店直营
+    private boolean jungeStoreZy(String sellerId){
+        if("80010381".equals(sellerId) || "80010262".equals(sellerId) || "80010261".equals(sellerId) || "80010210".equals(sellerId)
+            || "80010209".equals(sellerId)|| "80010185".equals(sellerId)|| "80010147".equals(sellerId)|| "80010129".equals(sellerId)
+            || "80010111".equals(sellerId)|| "80010072".equals(sellerId)|| "80010060".equals(sellerId)|| "80010027".equals(sellerId)){
+            return true;
+        }
+        return false;
+    }
+
+    //判断门店直营
+    private boolean jungeStoreJm(String sellerId){
+        if("80010010".equals(sellerId) || "80010023".equals(sellerId) || "80010028".equals(sellerId) || "80010029".equals(sellerId) ||
+            "80010031".equals(sellerId) || "80010070".equals(sellerId) || "80010084".equals(sellerId) || "80010088".equals(sellerId) ||
+            "80010131".equals(sellerId) || "80010145".equals(sellerId) || "80010157".equals(sellerId) || "80010186".equals(sellerId) ||
+            "80010230".equals(sellerId) || "80010270".equals(sellerId) || "80010275".equals(sellerId) || "80010282".equals(sellerId) ||
+            "80010293".equals(sellerId) || "80010300".equals(sellerId) || "80010311".equals(sellerId) || "80010435".equals(sellerId) ||
+            "80010521".equals(sellerId) || "80010547".equals(sellerId) || "80010167".equals(sellerId) || "80010013".equals(sellerId) ||
+            "80010171".equals(sellerId) || "80010172".equals(sellerId) || "80010175".equals(sellerId) || "80010176".equals(sellerId) ||
+            "80010179".equals(sellerId) || "80010180".equals(sellerId) || "80010181".equals(sellerId) || "80010039".equals(sellerId) ||
+            "80010201".equals(sellerId) || "80010202".equals(sellerId) || "80010214".equals(sellerId) || "80010215".equals(sellerId) ||
+            "80010223".equals(sellerId) || "80010231".equals(sellerId) || "80010233".equals(sellerId) || "80010257".equals(sellerId) ||
+            "80010258".equals(sellerId) || "80010259".equals(sellerId) || "80010274".equals(sellerId) || "80010280".equals(sellerId) ||
+            "80010301".equals(sellerId) || "80010324".equals(sellerId) || "80010422".equals(sellerId) || "80010344".equals(sellerId) ||
+            "80010159".equals(sellerId) || "80010158".equals(sellerId) || "80010151".equals(sellerId) || "80010130".equals(sellerId) ||
+            "80010092".equals(sellerId) || "80010071".equals(sellerId) || "80010065".equals(sellerId) || "80010046".equals(sellerId) ||
+            "80010042".equals(sellerId) || "80010040".equals(sellerId) || "80010007".equals(sellerId) || "80010361".equals(sellerId) ||
+            "80010269".equals(sellerId) || "80010177".equals(sellerId) || "80010216".equals(sellerId)){
+            return true;
+        }
+        return false;
     }
 }
 
