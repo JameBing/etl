@@ -799,14 +799,14 @@
     <bean id="messageListenerAdapterCrm" class="com.wangjunneil.schedule.activemq.Queue.QueueMessageConsumer">
     </bean>
 
-   <!-- &lt;!&ndash;消息侦听器 crm&ndash;&gt;
+    <!--消息侦听器 crm-->
     <bean id="queueJmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="queueCachingConnectionFactory" />
         <property name="destination" ref="queueDestinationWaiMaiOrderCrmRtn" />
         <property name="messageListener" ref="messageListenerAdapterCrm" />
         <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
         <property name="receiveTimeout" value="20000"/>
-    </bean>-->
+    </bean>
 
     <!--==========================================ZT start============================================================-->
     <!--queue消息发布者  WaiMai Order To ZT-->
@@ -845,12 +845,12 @@
     </bean>
 
     <!--消息侦听器 zt-->
-    <!--<bean id="queueJmsContainerZt" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+    <bean id="queueJmsContainerZt" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="queueCachingConnectionFactory" />
         <property name="destination" ref="queueDestinationWaiMaiOrderZtRtn" />
         <property name="messageListener" ref="messageListenerAdapterZt" />
         <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
         <property name="receiveTimeout" value="20000"/>
-    </bean>-->
+    </bean>
 
 </beans>

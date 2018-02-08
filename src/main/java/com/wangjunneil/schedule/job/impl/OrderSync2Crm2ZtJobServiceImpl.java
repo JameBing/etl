@@ -11,7 +11,9 @@ import com.wangjunneil.schedule.service.baidu.BaiDuInnerService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
 import com.wangjunneil.schedule.service.jdhome.JdHomeInnerService;
 import com.wangjunneil.schedule.service.meituan.MeiTuanInnerService;
+import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
+import com.wangjunneil.schedule.utility.StringUtil;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,7 @@ import java.util.logging.Logger;
 
 /**
  * Job
- * Created by 杨大山 on 2017-04-11.
+ * Created by yangyb on 2017-12-11.
  * 获取骑手15分钟未接单的订单
  */
 @Service("orderSync2Crm2Zt")
@@ -39,6 +41,9 @@ public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private SysInnerService sysInnerService;
 
     @Autowired
     private SysFacadeService sysFacadeService;
@@ -165,6 +170,53 @@ public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
                     logger.info("==========推送状态为0的订单to Zt end=============");
                 }
             }
+
+            //推送mq宕机订单
+            /*Criteria criteria1 = new Criteria();
+            criteria1.where("1").is("1");
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            Date todayStart = calendar.getTime();
+            calendar.add(Calendar.DATE, 1);
+            Date endStart = calendar.getTime();
+            criteria1.and("createTime").gte(todayStart).lte(endStart);
+            Query query1 = new Query(criteria1);
+            List<OrderWaiMai> orderBD = mongoTemplate.find(query1, OrderWaiMai.class);
+            if(orderBD!=null && orderBD.size()>0){
+                for (int i = 0; i < orderBD.size(); i++) {
+                    OrderWaiMai orderWaiMai  = orderBD.get(i);
+                    PushRecord pushRecord = sysInnerService.getPushRecord(orderWaiMai.getOrderId());
+                    if(!StringUtil.isEmpty(pushRecord)){
+                        continue;
+                    }
+                    sysInnerService.addPushRecords(orderWaiMai.getOrderId(),1);
+                }
+            }*/
+
+           /*//推送历史数据 暂时使用
+            Criteria criteria1 = new Criteria();
+            criteria1.where("1").is("1");
+            String start = "2018-01-01 00:00:00";
+            String end = "2018-01-31 23:59:59";
+            Date todayStart = DateTimeUtil.formatDateString(start,"yyyy-MM-dd HH:mm:ss");
+            Date endStart = DateTimeUtil.formatDateString(end,"yyyy-MM-dd HH:mm:ss");
+            criteria1.and("createTime").gte(todayStart).lte(endStart);
+            //criteria1.andOperator(Criteria.where("orderId").is("W8001099170428005668"));
+            Query query1 = new Query(criteria1);
+            List<OrderWaiMai> orders = mongoTemplate.find(query1, OrderWaiMai.class);
+            if (orders != null && orders.size() > 0) {
+                for (int i = 0; i < orders.size(); i++) {
+                    OrderWaiMai orderWaiMai  = orders.get(i);
+                    if("80010".equals(orderWaiMai.getSellerShopId().substring(0,5))){
+                        logger.info("==========推送状态为0的订单to Crm start=============");
+                        sysFacadeService.pushHistoryOrder2Crm(orderWaiMai);
+                        logger.info("==========推送状态为0的订单to Crm end=============");
+                    }
+                }
+            }*/
+
             JOB_LOCK = false;
             logger.info("============================" + DateTimeUtil.nowDateString("yyyy-MM-dd HH:mm:ss") + "同步外卖订单2CRM&ZT....===============");
         }

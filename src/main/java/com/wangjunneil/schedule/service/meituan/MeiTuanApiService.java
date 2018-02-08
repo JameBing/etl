@@ -67,7 +67,8 @@ public class MeiTuanApiService {
         List<FoodParam> foodList = APIFactory.getFoodAPI().foodList(sysPram, appPoiCode);
         if(foodList !=null && foodList.size()>0){
             for(FoodParam food :foodList){
-                if(food.getApp_food_code().equals(foodCode)){
+                if(food.getApp_food_code().equals(foodCode) || foodCode.equals(StringUtil.isEmpty(food.getSkus())?"":food.getSkus().get(0).getSku_id())){
+                    food.setApp_food_code(foodCode);
                     return food;
                 }
             }
@@ -87,7 +88,11 @@ public class MeiTuanApiService {
         foodParam.setPrice(food.getPrice());
         foodParam.setCategory_name(food.getCategory_name());
         foodParam.setIs_sold_out(0);
-        foodParam.setName(food.getName());
+        foodParam.setName(food.getName()+" ");
+        foodParam.setUnit(food.getUnit());
+        foodParam.setMin_order_count(food.getMin_order_count());
+        foodParam.setBox_num(food.getBox_num());
+        foodParam.setBox_price(food.getBox_price());
         return APIFactory.getFoodAPI().foodInitData(sysPram,foodParam);
     }
 
@@ -104,7 +109,11 @@ public class MeiTuanApiService {
         foodParam.setPrice(food.getPrice());
         foodParam.setCategory_name(food.getCategory_name());
         foodParam.setIs_sold_out(1);
-        foodParam.setName(food.getName());
+        foodParam.setName(food.getName()+" ");
+        foodParam.setUnit(food.getUnit());
+        foodParam.setMin_order_count(food.getMin_order_count());
+        foodParam.setBox_num(food.getBox_num());
+        foodParam.setBox_price(food.getBox_price());
         return APIFactory.getFoodAPI().foodInitData(sysPram,foodParam);
     }
 

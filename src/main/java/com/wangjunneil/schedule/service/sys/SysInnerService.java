@@ -258,6 +258,13 @@ public class SysInnerService {
         mongoTemplate.upsert(query,update,PushRecord.class);
     }
 
+    //查询推送记录
+    public PushRecord getPushRecord(String orderId){
+        Query  query = new Query(Criteria.where("orderId").is(orderId));
+        PushRecord record = mongoTemplate.findOne(query,PushRecord.class);
+        return record;
+    }
+
     //订单推送记录
     public void updatePushRecords(String orderId,Integer type){
         Query  query = new Query(Criteria.where("orderId").is(orderId).and("type").is(type));

@@ -228,26 +228,23 @@ public class SysFacadeService {
             //order Insert/update
             sysInnerService.updSynWaiMaiOrder(orderWaiMai);
             //topic message to MQ Server
-            log.info(formatOrder2Pos(orderWaiMai));
-            System.out.print(formatOrder2Pos(orderWaiMai));
             if (StaticObj.mqTransportTopicOrder){
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
                 //选择MQ地址
                 setMqOrderAddress(orderWaiMai.getSellerShopId(),orderWaiMai);
-
-                /*//推送订单to CRM
+                //插入推送记录表
+                sysInnerService.addPushRecords(orderWaiMai.getOrderId(),1);//1.crm 2.zt
+                //推送订单to CRM
                 JSONObject crm = formatOrder2Pos(orderWaiMai);
                 crm.put("orderId",orderWaiMai.getOrderId());
                 queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
                 new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
-                //插入推送记录表
-                sysInnerService.addPushRecords(orderWaiMai.getOrderId(),1);//1.crm 2.zt
 
                 //推送订单 to 中台
                 queueMessageProducerWaiMaiOrderToZt.init(crm,orderWaiMai.getSellerShopId());
                 new Thread(queueMessageProducerWaiMaiOrderToZt).start();
                 //插入推送记录表
-                sysInnerService.addPushRecords(orderWaiMai.getOrderId(),2);//1.crm 2.zt*/
+                sysInnerService.addPushRecords(orderWaiMai.getOrderId(),2);//1.crm 2.zt
             }
         }catch (ScheduleException ex){
             switch (orderWaiMai.getPlatform()){
@@ -293,19 +290,20 @@ public class SysFacadeService {
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
                 setMqOrderAddress(v.getSellerShopId(),v);
 
-               /* //推送订单to CRM
+                //插入推送记录表
+                sysInnerService.addPushRecords(v.getOrderId(),1);//1.crm 2.zt
+                //推送订单to CRM
                 JSONObject crm = formatOrder2Pos(v);
                 crm.put("orderId",v.getOrderId());
                 queueMessageProducerWaiMaiOrderToCrm.init(crm,v.getSellerShopId());
                 new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
-                //插入推送记录表
-                sysInnerService.addPushRecords(v.getOrderId(),1);//1.crm 2.zt
 
                 //推送订单 to 中台
                 queueMessageProducerWaiMaiOrderToZt.init(crm,v.getSellerShopId());
                 new Thread(queueMessageProducerWaiMaiOrderToZt).start();
                 //插入推送记录表
-                sysInnerService.addPushRecords(v.getOrderId(),2);//1.crm 2.zt*/
+                sysInnerService.addPushRecords(v.getOrderId(),2);//1.crm 2.zt
+
              }catch (ScheduleException ex){
              }catch (Exception ex){
              }});
@@ -323,7 +321,19 @@ public class SysFacadeService {
     //推送CRM
     public void push2Crm(String orderId){
         OrderWaiMai orderWaiMai = sysInnerService.findOrderWaiMaiByOrderId(orderId);
-        //推送订单to CRM
+        if(!StringUtil.isEmpty(orderWaiMai)){
+            //推送订单to CRM
+            JSONObject crm = formatOrder2Pos(orderWaiMai);
+            crm.put("orderId",orderWaiMai.getOrderId());
+            queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
+            new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
+            //插入推送记录表
+            sysInnerService.updatePushTimes(orderWaiMai,1);//1.crm 2.zt
+        }
+    }
+
+    //推送历史订单CRM
+    public void pushHistoryOrder2Crm(OrderWaiMai orderWaiMai){
         JSONObject crm = formatOrder2Pos(orderWaiMai);
         crm.put("orderId",orderWaiMai.getOrderId());
         queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
@@ -438,7 +448,7 @@ public class SysFacadeService {
         jsonObject.put("packagingMoney",StringUtil.isEmpty(data.getOrder().getPackageFee())?0:data.getOrder().getPackageFee()*0.01);
         jsonObject.put("orderBuyerPayableMoney",StringUtil.isEmpty(data.getOrder().getUserFee())?0:data.getOrder().getUserFee()*0.01);
         jsonObject.put("orderShopFee",StringUtil.isEmpty(data.getOrder().getShopFee())?0:data.getOrder().getShopFee()*0.01);
-        jsonObject.put("orderOriginPrice","");
+        jsonObject.put("orderOriginPrice",StringUtil.isEmpty(data.getOrder().getTotalFee())?0:data.getOrder().getTotalFee()*0.01);
         jsonObject.put("serviceRate","");
         jsonObject.put("serviceFee","");
         jsonObject.put("hongbao","");
@@ -515,7 +525,7 @@ public class SysFacadeService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("platOrderId",StringUtil.isEmpty(data.getOrder().getOrderId())?"":data.getOrder().getOrderId());
             jsonObject.put("discountType",discount.getType());
-            jsonObject.put("discountCode",discount.getType());
+            jsonObject.put("discountCode",discount.getDesc());
             jsonObject.put("discountPrice",StringUtil.isEmpty(discount.getFee())?0:discount.getFee()*0.01);
             jsonObject.put("skuId","");
             jsonArray.add(jsonObject);
@@ -581,7 +591,7 @@ public class SysFacadeService {
         jsonObject.put("packagingMoney",StringUtil.isEmpty(orderInfo.getPackagingMoney())?0:orderInfo.getPackagingMoney()*0.01);
         jsonObject.put("orderBuyerPayableMoney",StringUtil.isEmpty(orderInfo.getOrderBuyerPayableMoney())?0:orderInfo.getOrderBuyerPayableMoney()*0.01);
         jsonObject.put("orderShopFee","");
-        jsonObject.put("orderOriginPrice","");
+        jsonObject.put("orderOriginPrice",StringUtil.isEmpty(orderInfo.getOrderTotalMoney())?0:orderInfo.getOrderTotalMoney()*0.01);
         jsonObject.put("serviceRate","");
         jsonObject.put("serviceFee","");
         jsonObject.put("hongbao","");
@@ -744,7 +754,7 @@ public class SysFacadeService {
         jsonObject.put("buyerFullName",orderInfo.getRecipientname());
         jsonObject.put("buyerFullAddress",orderInfo.getRecipientaddress());
         jsonObject.put("buyerTelephone",orderInfo.getRecipientphone());
-        jsonObject.put("buyerMobile",orderInfo.getRecipientphone());
+        jsonObject.put("buyerMobile",StringUtil.isEmpty(orderInfo.getRecipientphone())?"":orderInfo.getRecipientphone().substring(11));
         jsonObject.put("province","");
         jsonObject.put("city",orderInfo.getCityid());
         jsonObject.put("district","");
@@ -854,7 +864,7 @@ public class SysFacadeService {
         jsonObject.put("deliveryConfirmTime", "");
         jsonObject.put("orderFinishTime","");
         jsonObject.put("orderPayType",order.getOnlinePaid()==true?2:1);
-        jsonObject.put("orderTotalMoney",order.getTotalPrice());
+        jsonObject.put("orderTotalMoney",order.getOriginalPrice());
         jsonObject.put("orderDiscountMoney","");
         jsonObject.put("orderFreightMoney",order.getDeliverFee());
         jsonObject.put("packagingMoney",order.getPackageFee());
@@ -924,7 +934,7 @@ public class SysFacadeService {
                     spec=spec+order.getGroups().get(i).getItems().get(j).getNewSpecs().get(k).toString()+",";
                 }
                 jsonObject.put("skuName",order.getGroups().get(i).getItems().get(j).getName()+(StringUtil.isEmpty(spec)?"":"("+spec+")"));
-                jsonObject.put("skuIdIsv",order.getGroups().get(i).getItems().get(i).getExtendCode());
+                jsonObject.put("skuIdIsv",order.getGroups().get(i).getItems().get(j).getExtendCode());
                 jsonObject.put("price",order.getGroups().get(i).getItems().get(j).getPrice());
                 jsonObject.put("quantity",order.getGroups().get(i).getItems().get(j).getQuantity());
                 jsonObject.put("isGift","");
@@ -953,7 +963,7 @@ public class SysFacadeService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("platOrderId", order.getId());
             jsonObject.put("discountType", "");
-            jsonObject.put("discountCode",order.getOrderActivities().get(i).getId());
+            jsonObject.put("discountCode",order.getOrderActivities().get(i).getName());
             jsonObject.put("discountPrice", order.getOrderActivities().get(i).getAmount());
             jsonObject.put("skuId", "");
             jsonArray.add(jsonObject);

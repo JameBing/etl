@@ -211,7 +211,9 @@ public class JdHomeController {
         posInner4.setShopId("2063064");
         dishList.add(posInner3);
         dishList.add(posInner4);*/
-        String json = jdHomeFacadeService.OrderJDZBDelivery("1111111","80010309");
+       // String json = jdHomeFacadeService.OrderJDZBDelivery("1111111","80010309");
+        OrderWaiMai orderWaiMai = sysFacadeService.findOrderWaiMai("eleme","3019184111443869746");
+        JSONObject jsonObject = sysFacadeService.formatOrder2Pos(orderWaiMai);
 
         /*jdHomeFacadeService.orderAcceptOperate("4444","2063064",true);*/
         //out.println(json);
@@ -220,9 +222,9 @@ public class JdHomeController {
 
     public static void main(String[] args) throws Exception{
 
-        /**
+       /* *//**
          * 计算签名实体
-         */
+         *//*
         WebRequestDTO w = new WebRequestDTO();
         w.setApp_key("1e51b69a380948e9a7697006beae0c92");
         w.setFormat("json");
@@ -231,11 +233,11 @@ public class JdHomeController {
         w.setToken("e22bb0bc-2b3e-4b35-9dfe-0234be439066");
         w.setV("1.0");
         w.setJd_param_json(null);
-      /*  try {
+      *//*  try {
             System.out.println(SignUtils.getSign(w, "d0200b5d27b14ff7b875ce1c6f0cf753"));
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }*//*
         String sign = SignUtils.getSign(w, "d0200b5d27b14ff7b875ce1c6f0cf753");
         System.out.println(SignUtils.getSign(w, "d0200b5d27b14ff7b875ce1c6f0cf753"));
         Map<String, Object> param = new HashMap<String, Object>();
@@ -248,7 +250,8 @@ public class JdHomeController {
         //param.put("jd_param_json","{\"pageNo\":\"1\",\"pageSize\":\"100\",\"beginOrderStartTime\":\"2015-09-29 00:00:00\",\"endOrderStartTime\":\"2015-09-29 23:59:59\", \"orderStatus\":\"90000\"}");
 
         String result = HttpsUtil.post(Constants.URL_JDHOME_STORE_ON, StringUtil.getUrlParamsByMap(param));
-        System.out.println(result);
+        System.out.println(result);*/
+
     }
 
     @RequestMapping(value = "/addShop",method = RequestMethod.GET)

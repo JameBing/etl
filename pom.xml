@@ -6,17 +6,6 @@
     <version>1.0.0-snapshot</version>
     <packaging>jar</packaging>
 
-    <name>schedule-center</name>
-    <url>http://maven.apache.org</url>
-
-    <developers>
-        <developer>
-            <name>Evan Wang</name>
-            <email>wangjunneil@gmail.com</email>
-            <url>http://www.wangjunneil.com</url>
-        </developer>
-    </developers>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jetty.dependency.version>9.3.4.RC1</jetty.dependency.version>
