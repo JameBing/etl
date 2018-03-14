@@ -1,26 +1,18 @@
 package com.wangjunneil.schedule.controller.jdhome;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
 import com.wangjunneil.schedule.entity.common.ParsFromPosInner;
 import com.wangjunneil.schedule.entity.eleme.ShopEle;
 import com.wangjunneil.schedule.entity.jdhome.OrderAcceptOperate;
-import com.wangjunneil.schedule.entity.jdhome.QueryStockRequest;
 import com.wangjunneil.schedule.entity.jdhome.shopCategory;
 import com.wangjunneil.schedule.service.EleMeFacadeService;
 import com.wangjunneil.schedule.service.JdHomeFacadeService;
 import com.wangjunneil.schedule.service.MeiTuanFacadeService;
 import com.wangjunneil.schedule.service.SysFacadeService;
 import com.wangjunneil.schedule.service.eleme.EleMeInnerService;
-import com.wangjunneil.schedule.utility.DateTimeUtil;
-import com.wangjunneil.schedule.utility.HttpsUtil;
-import com.wangjunneil.schedule.utility.StringUtil;
-import o2o.openplatform.sdk.dto.WebRequestDTO;
-import o2o.openplatform.sdk.util.SignUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,7 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author yangyongbing
@@ -258,22 +251,44 @@ public class JdHomeController {
     public String addShop(PrintWriter out,HttpServletRequest req, HttpServletResponse resp)throws Exception {
         resp.setContentType("text/html;charset=utf-8");
         String aa = "[\n" +
-            "{\"shopId\":\"161630609\",\"shopName\":\"紫燕百味鸡（万源路店）\",\"sellerId\":\"80036100\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630614\",\"shopName\":\"紫燕百味鸡（大梅江店）\",\"sellerId\":\"80036104\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630617\",\"shopName\":\"紫燕百味鸡（万隆店）\",\"sellerId\":\"80036105\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630620\",\"shopName\":\"紫燕百味鸡（文静路店）\",\"sellerId\":\"80036106\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630623\",\"shopName\":\"紫燕百味鸡（均胜路店）\",\"sellerId\":\"80036107\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630636\",\"shopName\":\"紫燕百味鸡（锦堂店）\",\"sellerId\":\"80036108\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630638\",\"shopName\":\"紫燕百味鸡（曲江路店）\",\"sellerId\":\"80036109\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630643\",\"shopName\":\"紫燕百味鸡（双峰道店）\",\"sellerId\":\"80036112\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630644\",\"shopName\":\"紫燕百味鸡（小南河店）\",\"sellerId\":\"80036113\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630647\",\"shopName\":\"紫燕百味鸡（中山路店）\",\"sellerId\":\"80036115\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630662\",\"shopName\":\"紫燕百味鸡（集贤店）\",\"sellerId\":\"80036116\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630495\",\"shopName\":\"紫燕百味鸡（二纬路店）\",\"sellerId\":\"80036054\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630498\",\"shopName\":\"紫燕百味鸡（江都路店）\",\"sellerId\":\"80036055\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630506\",\"shopName\":\"紫燕百味鸡（东五道店）\",\"sellerId\":\"80036061\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630414\",\"shopName\":\"紫燕百味鸡（三马路店）\",\"sellerId\":\"80036026\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
-            "{\"shopId\":\"161630370\",\"shopName\":\"紫燕百味鸡（秀川路店）\",\"sellerId\":\"80036015\",\"platForm\":\"eleme\",\"city\":\"天津\"},\n" +
+            "{\"shopId\":\"2135849\",\"shopName\":\"紫燕百味鸡（中桥店）\",\"sellerId\":\"80048011\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135850\",\"shopName\":\"紫燕百味鸡(沁扬店)\",\"sellerId\":\"80048010\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135852\",\"shopName\":\"紫燕百味鸡（稻香店）\",\"sellerId\":\"80048016\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135853\",\"shopName\":\"紫燕百味鸡(梅村店)\",\"sellerId\":\"80048008\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135854\",\"shopName\":\"紫燕百味鸡（五星店）\",\"sellerId\":\"80048002\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135855\",\"shopName\":\"紫燕百味鸡（新永丰）\",\"sellerId\":\"80048019\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135856\",\"shopName\":\"紫燕百味鸡（城色店）\",\"sellerId\":\"80048037\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135861\",\"shopName\":\"紫燕百味鸡(太湖店)\",\"sellerId\":\"80048005\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135862\",\"shopName\":\"紫燕百味鸡（叙康店）\",\"sellerId\":\"80048038\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135864\",\"shopName\":\"紫燕百味鸡(南湖店)\",\"sellerId\":\"80048040\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135867\",\"shopName\":\"紫燕百味鸡（盛岸店）\",\"sellerId\":\"80048032\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135869\",\"shopName\":\"紫燕百味鸡(山北店)\",\"sellerId\":\"80048023\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135872\",\"shopName\":\"紫燕百味鸡(蓉湖店)\",\"sellerId\":\"80048021\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2135873\",\"shopName\":\"紫燕百味鸡（颐和湾店）\",\"sellerId\":\"80048028\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146239\",\"shopName\":\"紫燕百味鸡(上马墩店)\",\"sellerId\":\"80048034\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146241\",\"shopName\":\"紫燕百味鸡（兴源店）\",\"sellerId\":\"80048027\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146244\",\"shopName\":\"紫燕百味鸡(东亭店)\",\"sellerId\":\"80048004\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146247\",\"shopName\":\"紫燕百味鸡（春潮店）\",\"sellerId\":\"80048006\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146249\",\"shopName\":\"紫燕百味鸡（五爱店）\",\"sellerId\":\"80048020\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146251\",\"shopName\":\"紫燕百味鸡(蠡湖店)\",\"sellerId\":\"80048014\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146256\",\"shopName\":\"紫燕百味鸡（民丰店）\",\"sellerId\":\"80048025\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146257\",\"shopName\":\"紫燕百味鸡（学士店）\",\"sellerId\":\"80048042\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146258\",\"shopName\":\"紫燕百味鸡(春江店)\",\"sellerId\":\"80048043\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146261\",\"shopName\":\"紫燕百味鸡（瑞江店）\",\"sellerId\":\"80048046\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146262\",\"shopName\":\"紫燕百味鸡（新坊前店）\",\"sellerId\":\"80048048\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146264\",\"shopName\":\"紫燕百味鸡（湖滨店）\",\"sellerId\":\"80048049\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146266\",\"shopName\":\"紫燕百味鸡（东绛店）\",\"sellerId\":\"80048050\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146267\",\"shopName\":\"紫燕百味鸡（西漳店）\",\"sellerId\":\"80048051\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146270\",\"shopName\":\"紫燕百味鸡(堰桥店)\",\"sellerId\":\"80048053\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146282\",\"shopName\":\"紫燕百味鸡（定安店）\",\"sellerId\":\"80048100\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146283\",\"shopName\":\"紫燕百味鸡（湖塘店）\",\"sellerId\":\"80048103\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146285\",\"shopName\":\"紫燕百味鸡（北直街店）\",\"sellerId\":\"80048109\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146289\",\"shopName\":\"紫燕百味鸡(翠竹店)\",\"sellerId\":\"80048102\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146295\",\"shopName\":\"紫燕百味鸡（紫阳店）\",\"sellerId\":\"80048114\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146296\",\"shopName\":\"紫燕百味鸡(河海店)\",\"sellerId\":\"80048116\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146297\",\"shopName\":\"紫燕百味鸡（锦绣店）\",\"sellerId\":\"80048117\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"2146298\",\"shopName\":\"紫燕百味鸡（浦南店）\",\"sellerId\":\"80048115\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
+            "{\"shopId\":\"157660212\",\"shopName\":\"紫燕百味鸡（柏庄店）\",\"sellerId\":\"80048059\",\"platForm\":\"eleme\",\"city\":\"无锡\"},\n" +
             "\n" +
             "]";
 

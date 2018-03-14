@@ -528,7 +528,7 @@ public class BaiDuFacadeService {
                 }
 
                 //商家订单ID
-                String orderId = sysFacadeService.getOrderNum(shopId);
+                String orderId = sysFacadeService.getOrderNum(sellerId);
                 orderWaiMai.setOrderId(orderId);
                 orderWaiMai.setOrder(data);
                 orderWaiMai.setShopId(sellerId);

@@ -260,7 +260,7 @@ public class SysInnerService {
 
     //查询推送记录
     public PushRecord getPushRecord(String orderId){
-        Query  query = new Query(Criteria.where("orderId").is(orderId));
+        Query  query = new Query(Criteria.where("orderId").is(orderId).and("type").is(2).and("status").is(1));
         PushRecord record = mongoTemplate.findOne(query,PushRecord.class);
         return record;
     }
@@ -280,14 +280,23 @@ public class SysInnerService {
         Query  query = new Query(Criteria.where("orderId").is(orderWaiMai.getOrderId()).and("type").is(type));
         PushRecord record = mongoTemplate.findOne(query,PushRecord.class);
         if(StringUtil.isEmpty(record)){
-            return;
+            Integer status = 0;
+            Integer times = 1;
+            Update update = new Update()
+                .set("orderId",orderWaiMai.getOrderId())
+                .set("type",type)
+                .set("status",status)
+                .set("pushTimes",times)
+                .set("createTime",new Date());
+            mongoTemplate.upsert(query,update,PushRecord.class);
+        }else {
+            Integer times = StringUtil.isEmpty(record.getPushTimes())?0:record.getPushTimes();
+            Update update = new Update()
+                .set("orderId",orderWaiMai.getOrderId())
+                .set("pushTimes",++times)
+                .set("createTime",new Date());
+            mongoTemplate.upsert(query,update,PushRecord.class);
         }
-        Integer times = record.getPushTimes();
-        Update update = new Update()
-            .set("orderId",orderWaiMai.getOrderId())
-            .set("pushTimes",++times)
-            .set("createTime",new Date());
-        mongoTemplate.upsert(query,update,PushRecord.class);
     }
 
     //修改外卖订单

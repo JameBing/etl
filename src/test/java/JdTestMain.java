@@ -25,9 +25,18 @@ public class JdTestMain {
     private static final String sessionKey = "cf5c6772-d49a-4fa6-870f-eca8f7ba5c3a";
 
     public static void main(String[] args) throws Exception {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance();
+        String shopId = "80010001";
+        String strShopId = shopId.length() >= 8 ? shopId.substring(3, 8) : shopId;
+        String date = DateTimeUtil.nowDateString("yyyyMMddHHmmss");
+        Integer integerShopId;
+        try {
+            integerShopId = Integer.valueOf(strShopId);
+        } catch (Exception ex) {
+            integerShopId = 99999;
+        }
+        String aa =  "SW" + String.format("%05d", integerShopId) + "01" + date ;
 
-        System.out.println(numberFormat.format(123456789));
+        System.out.println(aa);
 
     }
 

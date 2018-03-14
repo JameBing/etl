@@ -27,6 +27,7 @@ import com.wangjunneil.schedule.entity.z8.Z8AccessToken;
 import com.wangjunneil.schedule.service.jp.JpApiService;
 import com.wangjunneil.schedule.service.sys.SysInnerService;
 import com.wangjunneil.schedule.utility.DateTimeUtil;
+import com.wangjunneil.schedule.utility.RandomUtil;
 import com.wangjunneil.schedule.utility.StringUtil;
 import eleme.openapi.sdk.api.enumeration.order.OOrderStatus;
 import org.apache.log4j.Logger;
@@ -39,6 +40,7 @@ import javax.jms.Destination;
 import javax.management.JMException;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 /**
  *
@@ -211,15 +213,15 @@ public class SysFacadeService {
 
     //生成外卖订单编号
     public String getOrderNum(String shopId) {
-        String strShopId = shopId.length() > 5 ? shopId.substring(0, 5) : shopId;
-        String date = DateTimeUtil.nowDateString("yyyyMMdd").substring(2, 8);
+        String strShopId = shopId.length() >= 8 ? shopId.substring(3, 8) : shopId;
+        String date = DateTimeUtil.nowDateString("yyyyMMddHHmmss");
         Integer integerShopId;
         try {
             integerShopId = Integer.valueOf(strShopId);
         } catch (Exception ex) {
             integerShopId = 99999;
         }
-        return "W" + String.format("%05d", integerShopId) + "99" + date + String.format("%06d", Integer.valueOf(getSerialNum(date, "order")));
+        return "SW" + String.format("%05d", integerShopId) + "01" + date + RandomUtil.generateNumber(2);
     }
 
     //订单插入
@@ -232,19 +234,38 @@ public class SysFacadeService {
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
                 //选择MQ地址
                 setMqOrderAddress(orderWaiMai.getSellerShopId(),orderWaiMai);
-                //插入推送记录表
-                sysInnerService.addPushRecords(orderWaiMai.getOrderId(),1);//1.crm 2.zt
-                //推送订单to CRM
-                JSONObject crm = formatOrder2Pos(orderWaiMai);
-                crm.put("orderId",orderWaiMai.getOrderId());
-                queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
-                new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
 
-                //推送订单 to 中台
-                queueMessageProducerWaiMaiOrderToZt.init(crm,orderWaiMai.getSellerShopId());
-                new Thread(queueMessageProducerWaiMaiOrderToZt).start();
-                //插入推送记录表
-                sysInnerService.addPushRecords(orderWaiMai.getOrderId(),2);//1.crm 2.zt
+                //推送crm&zt
+                if(!StringUtil.isEmpty(orderWaiMai.getShopId()) && "800".equals(orderWaiMai.getShopId().substring(0,3))){
+                    JSONObject crm = formatOrder2Pos(orderWaiMai);
+                    //线程给crm用
+                    Runnable runCrm = new Runnable() {
+                        @Override
+                        public void run() {
+                            //插入推送记录表
+                            sysInnerService.addPushRecords(orderWaiMai.getOrderId(),1);//1.crm 2.zt
+                            //推送订单to CRM
+                            crm.put("orderId",orderWaiMai.getOrderId());
+                            queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
+                            new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
+                        }
+                    };
+                    Thread threadCrm = new Thread(runCrm);
+                    threadCrm.start();
+                    //线程给中台用
+                    Runnable runZt = new Runnable() {
+                        @Override
+                        public void run() {
+                            //推送订单 to 中台
+                            queueMessageProducerWaiMaiOrderToZt.init(crm,orderWaiMai.getSellerShopId());
+                            new Thread(queueMessageProducerWaiMaiOrderToZt).start();
+                            //插入推送记录表
+                            sysInnerService.addPushRecords(orderWaiMai.getOrderId(),2);//1.crm 2.zt
+                        }
+                    };
+                    Thread threadZt = new Thread(runZt);
+                    threadZt.start();
+                }
             }
         }catch (ScheduleException ex){
             switch (orderWaiMai.getPlatform()){
@@ -290,19 +311,37 @@ public class SysFacadeService {
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
                 setMqOrderAddress(v.getSellerShopId(),v);
 
-                //插入推送记录表
-                sysInnerService.addPushRecords(v.getOrderId(),1);//1.crm 2.zt
-                //推送订单to CRM
-                JSONObject crm = formatOrder2Pos(v);
-                crm.put("orderId",v.getOrderId());
-                queueMessageProducerWaiMaiOrderToCrm.init(crm,v.getSellerShopId());
-                new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
-
-                //推送订单 to 中台
-                queueMessageProducerWaiMaiOrderToZt.init(crm,v.getSellerShopId());
-                new Thread(queueMessageProducerWaiMaiOrderToZt).start();
-                //插入推送记录表
-                sysInnerService.addPushRecords(v.getOrderId(),2);//1.crm 2.zt
+                //推送crm&zt
+                if(!StringUtil.isEmpty(v.getShopId()) && "800".equals(v.getShopId().substring(0,3))){
+                    JSONObject crm = formatOrder2Pos(v);
+                    //线程给crm用
+                    Runnable runCrm = new Runnable() {
+                        @Override
+                        public void run() {
+                            //插入推送记录表
+                            sysInnerService.addPushRecords(v.getOrderId(),1);//1.crm 2.zt
+                            //推送订单to CRM
+                            crm.put("orderId",v.getOrderId());
+                            queueMessageProducerWaiMaiOrderToCrm.init(crm,v.getSellerShopId());
+                            new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
+                        }
+                    };
+                    Thread threadCrm = new Thread(runCrm);
+                    threadCrm.start();
+                    //线程给中台用
+                    Runnable runZt = new Runnable() {
+                        @Override
+                        public void run() {
+                            //推送订单 to 中台
+                            queueMessageProducerWaiMaiOrderToZt.init(crm,v.getSellerShopId());
+                            new Thread(queueMessageProducerWaiMaiOrderToZt).start();
+                            //插入推送记录表
+                            sysInnerService.addPushRecords(v.getOrderId(),2);//1.crm 2.zt
+                        }
+                    };
+                    Thread threadZt = new Thread(runZt);
+                    threadZt.start();
+                }
 
              }catch (ScheduleException ex){
              }catch (Exception ex){
@@ -334,12 +373,14 @@ public class SysFacadeService {
 
     //推送历史订单CRM
     public void pushHistoryOrder2Crm(OrderWaiMai orderWaiMai){
-        JSONObject crm = formatOrder2Pos(orderWaiMai);
-        crm.put("orderId",orderWaiMai.getOrderId());
-        queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
-        new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
-        //插入推送记录表
-        sysInnerService.updatePushTimes(orderWaiMai,1);//1.crm 2.zt
+        if(!StringUtil.isEmpty(orderWaiMai.getShopId()) && "800".equals(orderWaiMai.getShopId().substring(0,3))){
+            JSONObject crm = formatOrder2Pos(orderWaiMai);
+            crm.put("orderId",orderWaiMai.getOrderId());
+            queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
+            new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
+            //插入推送记录表
+            sysInnerService.updatePushTimes(orderWaiMai,1);//1.crm 2.zt
+        }
     }
 
     //推送中台
@@ -506,7 +547,7 @@ public class SysFacadeService {
                 jsonObject.put("upcCode",data.getProducts().get(i)[j].getUpc());
                 jsonObject.put("boxNum",data.getProducts().get(i)[j].getPackageAmount());
                 jsonObject.put("boxPrice",StringUtil.isEmpty(data.getProducts().get(i)[j].getPackagePrice())?0:data.getProducts().get(i)[j].getPackagePrice()*0.01);
-                jsonObject.put("productFee",StringUtil.isEmpty(data.getProducts().get(i)[j].getProductFee())?0:data.getProducts().get(i)[j].getProductFee());
+                jsonObject.put("productFee",StringUtil.isEmpty(data.getProducts().get(i)[j].getProductFee())?0:data.getProducts().get(i)[j].getProductFee()*0.01);
                 jsonObject.put("unit","");
                 jsonArray.add(jsonObject);
             }
@@ -754,7 +795,7 @@ public class SysFacadeService {
         jsonObject.put("buyerFullName",orderInfo.getRecipientname());
         jsonObject.put("buyerFullAddress",orderInfo.getRecipientaddress());
         jsonObject.put("buyerTelephone",orderInfo.getRecipientphone());
-        jsonObject.put("buyerMobile",StringUtil.isEmpty(orderInfo.getRecipientphone())?"":orderInfo.getRecipientphone().substring(11));
+        jsonObject.put("buyerMobile",StringUtil.isEmpty(orderInfo.getRecipientphone())?"":orderInfo.getRecipientphone().substring(0,11));
         jsonObject.put("province","");
         jsonObject.put("city",orderInfo.getCityid());
         jsonObject.put("district","");
@@ -786,7 +827,7 @@ public class SysFacadeService {
             jsonObject.put("upcCode","");
             jsonObject.put("boxNum",orderInfo.getDetail()[i].getBox_num());
             jsonObject.put("boxPrice",orderInfo.getDetail()[i].getBox_price());
-            jsonObject.put("productFee","");
+            jsonObject.put("productFee",orderInfo.getDetail()[i].getPrice());
             jsonObject.put("unit",orderInfo.getDetail()[i].getUnit());
             jsonArray.add(jsonObject);
         }
@@ -941,7 +982,7 @@ public class SysFacadeService {
                 jsonObject.put("upcCode","");
                 jsonObject.put("boxNum","");
                 jsonObject.put("boxPrice","");
-                jsonObject.put("productFee","");
+                jsonObject.put("productFee",order.getGroups().get(i).getItems().get(j).getPrice());
                 jsonObject.put("unit","");
                 jsonArray.add(jsonObject);
             }

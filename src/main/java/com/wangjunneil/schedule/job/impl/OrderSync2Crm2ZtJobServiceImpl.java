@@ -3,6 +3,7 @@ package com.wangjunneil.schedule.job.impl;
 import com.wangjunneil.schedule.common.Constants;
 import com.wangjunneil.schedule.entity.common.Log;
 import com.wangjunneil.schedule.entity.common.OrderWaiMai;
+import com.wangjunneil.schedule.entity.common.OrderWaiMaiHistory;
 import com.wangjunneil.schedule.entity.common.PushRecord;
 import com.wangjunneil.schedule.job.JobFactory;
 import com.wangjunneil.schedule.job.JobService;
@@ -141,7 +142,7 @@ public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
         if (!JOB_LOCK) {
             //查询当天订单
 
-            Criteria criteria1 = new Criteria();
+            /*Criteria criteria1 = new Criteria();
             criteria1.where("1").is("1");
             Criteria criteria2 = new Criteria();
             criteria2.where("1").is("1");
@@ -169,7 +170,7 @@ public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
                     sysFacadeService.push2ZT(pushRecord.getOrderId());
                     logger.info("==========推送状态为0的订单to Zt end=============");
                 }
-            }
+            }*/
 
             //推送mq宕机订单
             /*Criteria criteria1 = new Criteria();
@@ -195,27 +196,50 @@ public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
                 }
             }*/
 
-           /*//推送历史数据 暂时使用
+           //推送历史数据 暂时使用
             Criteria criteria1 = new Criteria();
             criteria1.where("1").is("1");
-            String start = "2018-01-01 00:00:00";
-            String end = "2018-01-31 23:59:59";
+            String start = "2018-03-13 00:00:00";
+            String end = "2018-03-13 23:59:59";
             Date todayStart = DateTimeUtil.formatDateString(start,"yyyy-MM-dd HH:mm:ss");
             Date endStart = DateTimeUtil.formatDateString(end,"yyyy-MM-dd HH:mm:ss");
             criteria1.and("createTime").gte(todayStart).lte(endStart);
             //criteria1.andOperator(Criteria.where("orderId").is("W8001099170428005668"));
             Query query1 = new Query(criteria1);
+
+            //历史表订单
+            /*List<OrderWaiMaiHistory> orders = mongoTemplate.find(query1, OrderWaiMaiHistory.class);
+            if (orders != null && orders.size() > 0) {
+                for (int i = 0; i < orders.size(); i++) {
+                    OrderWaiMaiHistory history  = orders.get(i);
+                    OrderWaiMai orderWaiMai = new OrderWaiMai();
+                    orderWaiMai.setSellerShopId(history.getSellerShopId());
+                    orderWaiMai.setPlatformOrderId(history.getPlatformOrderId());
+                    orderWaiMai.setPlatform(history.getPlatform());
+                    orderWaiMai.setCreateTime(history.getCreateTime());
+                    orderWaiMai.setIsReceived(history.getIsReceived());
+                    orderWaiMai.setOrderId(history.getOrderId());
+                    orderWaiMai.setOrder(history.getOrder());
+                    orderWaiMai.setShopId(history.getShopId());
+                    logger.info("==========推送状态为0的订单to Crm start=============");
+                    sysFacadeService.pushHistoryOrder2Crm(orderWaiMai);
+                    logger.info("==========推送状态为0的订单to Crm end=============");
+                }
+            }*/
+            //实时表订单
             List<OrderWaiMai> orders = mongoTemplate.find(query1, OrderWaiMai.class);
             if (orders != null && orders.size() > 0) {
                 for (int i = 0; i < orders.size(); i++) {
                     OrderWaiMai orderWaiMai  = orders.get(i);
-                    if("80010".equals(orderWaiMai.getSellerShopId().substring(0,5))){
-                        logger.info("==========推送状态为0的订单to Crm start=============");
-                        sysFacadeService.pushHistoryOrder2Crm(orderWaiMai);
-                        logger.info("==========推送状态为0的订单to Crm end=============");
-                    }
+                   /* PushRecord pushRecord = sysInnerService.getPushRecord(orderWaiMai.getOrderId());
+                    if(!StringUtil.isEmpty(pushRecord)){
+                        continue;
+                    }*/
+                    logger.info("==========推送状态为0的订单to Crm start=============");
+                    sysFacadeService.pushHistoryOrder2Crm(orderWaiMai);
+                    logger.info("==========推送状态为0的订单to Crm end=============");
                 }
-            }*/
+            }
 
             JOB_LOCK = false;
             logger.info("============================" + DateTimeUtil.nowDateString("yyyy-MM-dd HH:mm:ss") + "同步外卖订单2CRM&ZT....===============");

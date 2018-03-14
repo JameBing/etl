@@ -1,7 +1,5 @@
 package com.wangjunneil.schedule.entity.meituan;
 
-import com.sankuai.meituan.waimai.opensdk.vo.FoodParam;
-
 /**
  * @author liuxin
  * @since 2016.12.1

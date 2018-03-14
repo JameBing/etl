@@ -444,12 +444,12 @@ public class EleMeFacadeService {
             OrderWaiMai orderWaiMai = new OrderWaiMai();
             orderWaiMai.setPlatform(Constants.PLATFORM_WAIMAI_ELEME);
             orderWaiMai.setPlatformOrderId(jsonObject.getString("orderId"));
-            String wmOrderId = sysFacadeService.getOrderNum(String.valueOf(jsonObject.getString("shopId")));
-            orderWaiMai.setOrderId(wmOrderId);
             orderWaiMai.setPlatformOrderId(orderId);
             //获取中台门店Id
             ShopEle shopEle = eleMeInnerService.getShop(jsonObject.getString("shopId"));
             String sellerId = shopEle==null?jsonObject.getString("shopId"):shopEle.getSellerId();
+            String wmOrderId = sysFacadeService.getOrderNum(sellerId);
+            orderWaiMai.setOrderId(wmOrderId);
             orderWaiMai.setSellerShopId(sellerId);
             orderWaiMai.setShopId(sellerId);
             orderWaiMai.setCreateTime(new Date());

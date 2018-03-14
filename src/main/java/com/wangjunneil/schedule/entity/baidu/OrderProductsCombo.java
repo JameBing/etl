@@ -1,7 +1,6 @@
 package com.wangjunneil.schedule.entity.baidu;
 
 import com.google.gson.annotations.SerializedName;
-import com.jd.open.api.sdk.domain.stock.StoreService.StockInResult;
 
 import java.util.List;
 

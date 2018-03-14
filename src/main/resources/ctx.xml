@@ -810,7 +810,8 @@
 
     <!--==========================================ZT start============================================================-->
     <!--queue消息发布者  WaiMai Order To ZT-->
-    <bean id="queueMessageProducerWaiMaiOrderToZt" class="com.wangjunneil.schedule.activemq.Queue.QueueMessageProducerAsync">
+    <bean id="queueMessageProducerWaiMaiOrderToZt"
+          class="com.wangjunneil.schedule.activemq.Queue.QueueMessageProducerAsync">
         <property name="queueJmsTemplate" ref="queueJmsTemplateToZt"></property>
         <property name="destination"  ref="queueDestinationWaiMaiOrderToZt"></property>
         <property name="message" value="false" ></property>
