@@ -225,6 +225,20 @@ public class SysInnerService {
     public OrderWaiMai findOrderWaiMaiByOrderId(String orderId){
         Query query = new Query(Criteria.where("orderId").is(orderId));
         OrderWaiMai orderWaiMai = mongoTemplate.findOne(query,OrderWaiMai.class);
+        if(StringUtil.isEmpty(orderWaiMai)){
+            OrderWaiMaiHistory history = mongoTemplate.findOne(query,OrderWaiMaiHistory.class);
+            if(!StringUtil.isEmpty(history)){
+                orderWaiMai = new OrderWaiMai();
+                orderWaiMai.setSellerShopId(history.getSellerShopId());
+                orderWaiMai.setPlatformOrderId(history.getPlatformOrderId());
+                orderWaiMai.setPlatform(history.getPlatform());
+                orderWaiMai.setCreateTime(history.getCreateTime());
+                orderWaiMai.setIsReceived(history.getIsReceived());
+                orderWaiMai.setOrderId(history.getOrderId());
+                orderWaiMai.setOrder(history.getOrder());
+                orderWaiMai.setShopId(history.getShopId());
+            }
+        }
         return  orderWaiMai;
     }
 
@@ -297,6 +311,28 @@ public class SysInnerService {
                 .set("createTime",new Date());
             mongoTemplate.upsert(query,update,PushRecord.class);
         }
+    }
+
+    //订单推送状态记录
+    public void insertOrderStatusCrmAndZt(String orderId){
+        Query  query = new Query(Criteria.where("orderId").is(orderId));
+        OrderCrmZt crmZt = mongoTemplate.findOne(query,OrderCrmZt.class);
+        if(StringUtil.isEmpty(crmZt)){
+            Update update = new Update()
+                .set("orderId",orderId)
+                .set("status",0)
+                .set("createTime",new Date());
+            mongoTemplate.upsert(query,update,OrderCrmZt.class);
+        }
+    }
+
+    //订单推送状态记录
+    public void updateOrderStatusCrmAndZt(String orderId){
+        Query  query = new Query(Criteria.where("orderId").is(orderId));
+        Update update = new Update()
+            .set("status",1)
+            .set("createTime",new Date());
+        mongoTemplate.upsert(query,update,OrderCrmZt.class);
     }
 
     //修改外卖订单

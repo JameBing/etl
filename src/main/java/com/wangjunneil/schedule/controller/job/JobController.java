@@ -42,6 +42,9 @@ public class JobController {
     @Resource(name = "orderSync2Crm2Zt")
     private  JobService jobServiceOrderSync2Crm2Zt;
 
+    @Resource(name = "orderSync2Crm2ZtException")
+    private  JobService jobServiceOrderSync2Crm2ZtException;
+
 
     //开启Job
     @RequestMapping(value = "/scheduler/job/{name}/start", method = RequestMethod.GET)

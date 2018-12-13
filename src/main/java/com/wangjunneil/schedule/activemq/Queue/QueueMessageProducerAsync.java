@@ -36,9 +36,6 @@ public class QueueMessageProducerAsync implements Runnable {
                     }else {
                         textMessage =  session.createTextMessage(new Gson().toJson(jsonObject) );//如果是jsonObject转为String发送
                     }
-                   /* textMessage.setStringProperty("Selector",selector);
-                    textMessage.setJMSExpiration(180000);*/
-                    //   textMessage.setJMSReplyTo(destination);
                     return textMessage;
                 }
             });

@@ -28,6 +28,9 @@ public class JobFactory extends SpringBeanJobFactory  implements ApplicationCont
     @Resource(name = "orderSync2Crm2Zt")
     public JobService orderSync2Crm2ZtJobService;
 
+    @Resource(name = "orderSync2Crm2ZtException")
+    public JobService orderSync2Crm2ZtExceptionJobService;
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;

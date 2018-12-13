@@ -227,45 +227,12 @@ public class SysFacadeService {
     //订单插入
     public void updSynWaiMaiOrder(OrderWaiMai orderWaiMai) throws  BaiDuException,JdHomeException,ElemeException,MeiTuanException,JMException{
         try{
-            //order Insert/update
             sysInnerService.updSynWaiMaiOrder(orderWaiMai);
             //topic message to MQ Server
             if (StaticObj.mqTransportTopicOrder){
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(orderWaiMai),orderWaiMai.getShopId());
                 //选择MQ地址
                 setMqOrderAddress(orderWaiMai.getSellerShopId(),orderWaiMai);
-
-                //推送crm&zt
-                if(!StringUtil.isEmpty(orderWaiMai.getShopId()) && "800".equals(orderWaiMai.getShopId().substring(0,3))){
-                    JSONObject crm = formatOrder2Pos(orderWaiMai);
-                    //线程给crm用
-                    Runnable runCrm = new Runnable() {
-                        @Override
-                        public void run() {
-                            //插入推送记录表
-                            sysInnerService.addPushRecords(orderWaiMai.getOrderId(),1);//1.crm 2.zt
-                            //推送订单to CRM
-                            crm.put("orderId",orderWaiMai.getOrderId());
-                            queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
-                            new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
-                        }
-                    };
-                    Thread threadCrm = new Thread(runCrm);
-                    threadCrm.start();
-                    //线程给中台用
-                    Runnable runZt = new Runnable() {
-                        @Override
-                        public void run() {
-                            //推送订单 to 中台
-                            queueMessageProducerWaiMaiOrderToZt.init(crm,orderWaiMai.getSellerShopId());
-                            new Thread(queueMessageProducerWaiMaiOrderToZt).start();
-                            //插入推送记录表
-                            sysInnerService.addPushRecords(orderWaiMai.getOrderId(),2);//1.crm 2.zt
-                        }
-                    };
-                    Thread threadZt = new Thread(runZt);
-                    threadZt.start();
-                }
             }
         }catch (ScheduleException ex){
             switch (orderWaiMai.getPlatform()){
@@ -311,7 +278,7 @@ public class SysFacadeService {
                 //topicMessageProducerWaiMaiOrder.sendMessage(topicDestinationWaiMaiOrder, formatOrder2Pos(v), v.getShopId());
                 setMqOrderAddress(v.getSellerShopId(),v);
 
-                //推送crm&zt
+                /*//推送crm&zt
                 if(!StringUtil.isEmpty(v.getShopId()) && "800".equals(v.getShopId().substring(0,3))){
                     JSONObject crm = formatOrder2Pos(v);
                     //线程给crm用
@@ -341,7 +308,7 @@ public class SysFacadeService {
                     };
                     Thread threadZt = new Thread(runZt);
                     threadZt.start();
-                }
+                }*/
 
              }catch (ScheduleException ex){
              }catch (Exception ex){
@@ -358,12 +325,12 @@ public class SysFacadeService {
     }
 
     //推送CRM
-    public void push2Crm(String orderId){
+    public synchronized void push2Crm(String orderId){
         OrderWaiMai orderWaiMai = sysInnerService.findOrderWaiMaiByOrderId(orderId);
-        if(!StringUtil.isEmpty(orderWaiMai)){
+        if(!StringUtil.isEmpty(orderWaiMai) && "800".equals(orderWaiMai.getShopId().substring(0,3))){
             //推送订单to CRM
             JSONObject crm = formatOrder2Pos(orderWaiMai);
-            crm.put("orderId",orderWaiMai.getOrderId());
+            crm.put("orderId",orderId);
             queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
             new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
             //插入推送记录表
@@ -379,21 +346,23 @@ public class SysFacadeService {
             queueMessageProducerWaiMaiOrderToCrm.init(crm,orderWaiMai.getSellerShopId());
             new Thread(queueMessageProducerWaiMaiOrderToCrm).start();
             //插入推送记录表
-            sysInnerService.updatePushTimes(orderWaiMai,1);//1.crm 2.zt
+            //sysInnerService.updatePushTimes(orderWaiMai,1);//1.crm 2.zt
         }
     }
 
     //推送中台
-    public void push2ZT(String orderId){
+    public synchronized void push2ZT(String orderId){
         OrderWaiMai orderWaiMai = sysInnerService.findOrderWaiMaiByOrderId(orderId);
-        //推送订单to CRM
-        JSONObject crm = formatOrder2Pos(orderWaiMai);
-        crm.put("orderId",orderWaiMai.getOrderId());
-        //推送订单 to 中台
-        queueMessageProducerWaiMaiOrderToZt.init(crm,orderWaiMai.getSellerShopId());
-        new Thread(queueMessageProducerWaiMaiOrderToZt).start();
-        //插入推送记录表
-        sysInnerService.updatePushTimes(orderWaiMai,2);//1.crm 2.zt
+        if(!StringUtil.isEmpty(orderWaiMai) && "800".equals(orderWaiMai.getShopId().substring(0,3))){
+            //推送订单to CRM
+            JSONObject crm = formatOrder2Pos(orderWaiMai);
+            crm.put("orderId",orderId);
+            //推送订单 to 中台
+            queueMessageProducerWaiMaiOrderToZt.init(crm,orderWaiMai.getSellerShopId());
+            new Thread(queueMessageProducerWaiMaiOrderToZt).start();
+            //插入推送记录表
+            sysInnerService.updatePushTimes(orderWaiMai,2);//1.crm 2.zt
+        }
     }
 
 
@@ -1213,6 +1182,8 @@ public class SysFacadeService {
                 return Constants.POS_ORDER_COMPLETED;
             case "refunding":
                 return Constants.POS_ORDER_CANCELED;
+            case "invalid":
+                return Constants.POS_ORDER_CANCELED;
             default:
                 return Constants.POS_ORDER_OTHER;
         }
@@ -1271,7 +1242,6 @@ public class SysFacadeService {
                 }else   {
                     shop = orderWaiMai.getShopId();
                 }
-
                 jsonMessage.put("baidu", jsonObjectEmpty);
                 jsonObject.put("orderId", orderWaiMai == null ? "" : platformOrderId);
                 jsonObject.put("orderStatus", orderWaiMai == null ? "" : String.valueOf(tranJHOrderStatus(status)));
@@ -1320,6 +1290,8 @@ public class SysFacadeService {
             //选择推送订单状态的MQ
             setMqOrderStatusAddress(shop,jsonMessage,shop);
 
+            //成功订单插入状态表crm&zt
+            sysInnerService.insertOrderStatusCrmAndZt(orderWaiMai.getOrderId());
         }
     }
 
@@ -1396,8 +1368,9 @@ public class SysFacadeService {
             log.info("=====配送状态过滤器value:"+shop);
             //选择推送订单状态的MQ
             setMqOrderStatusAddress(shop,jsonMessage,shop);
-            /*topicMessageProducerWaiMaiOrderStatusAsync.init(new Gson().toJson(jsonMessage),shop);
-            new Thread(topicMessageProducerWaiMaiOrderStatusAsync).start();*/
+
+            //成功订单插入状态表crm&zt
+            sysInnerService.insertOrderStatusCrmAndZt(orderWaiMai.getOrderId());
         }
     }
 

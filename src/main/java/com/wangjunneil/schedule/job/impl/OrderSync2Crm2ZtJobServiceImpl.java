@@ -1,10 +1,8 @@
 package com.wangjunneil.schedule.job.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wangjunneil.schedule.common.Constants;
-import com.wangjunneil.schedule.entity.common.Log;
-import com.wangjunneil.schedule.entity.common.OrderWaiMai;
-import com.wangjunneil.schedule.entity.common.OrderWaiMaiHistory;
-import com.wangjunneil.schedule.entity.common.PushRecord;
+import com.wangjunneil.schedule.entity.common.*;
 import com.wangjunneil.schedule.job.JobFactory;
 import com.wangjunneil.schedule.job.JobService;
 import com.wangjunneil.schedule.service.SysFacadeService;
@@ -32,7 +30,7 @@ import java.util.logging.Logger;
 /**
  * Job
  * Created by yangyb on 2017-12-11.
- * 获取骑手15分钟未接单的订单
+ * 推送成功订单至中台和crm
  */
 @Service("orderSync2Crm2Zt")
 public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
@@ -48,18 +46,6 @@ public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
 
     @Autowired
     private SysFacadeService sysFacadeService;
-
-    @Autowired
-    private BaiDuInnerService baiDuInnerService;
-
-    @Autowired
-    private JdHomeInnerService jdHomeInnerService;
-
-    @Autowired
-    private MeiTuanInnerService meiTuanInnerService;
-
-    @Autowired
-    private EleMeInnerService eleMeInnerService;
 
     private static Logger logger = Logger.getLogger(OrderSync2Crm2ZtJobServiceImpl.class.getName());
 
@@ -142,35 +128,50 @@ public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
         if (!JOB_LOCK) {
             //查询当天订单
 
-            /*Criteria criteria1 = new Criteria();
+            Criteria criteria1 = new Criteria();
             criteria1.where("1").is("1");
-            Criteria criteria2 = new Criteria();
-            criteria2.where("1").is("1");
+            Calendar calendar = Calendar.getInstance(); calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            Date todayStart = calendar.getTime();
+            calendar.add(Calendar.DATE, 1);
+            Date endStart = calendar.getTime();
+            criteria1.and("createTime").gte(todayStart).lte(endStart);
 
-            criteria1.andOperator(Criteria.where("type").is(1).and("status").is(0));//CRM
-            criteria2.andOperator(Criteria.where("type").is(2).and("status").is(0));//ZT
+            criteria1.andOperator(Criteria.where("status").is(0));//CRM
             Query query1 = new Query(criteria1);
-            Query query2 = new Query(criteria2);
-            List<PushRecord> orderCrmList = mongoTemplate.find(query1, PushRecord.class);
-            List<PushRecord> orderZtList = mongoTemplate.find(query2, PushRecord.class);
+            List<OrderCrmZt> orderCrmList = mongoTemplate.find(query1, OrderCrmZt.class);
             //CRM
             if (orderCrmList != null && orderCrmList.size() > 0) {
                 for (int i = 0; i < orderCrmList.size(); i++) {
-                    PushRecord pushRecord = orderCrmList.get(i);
-                    logger.info("==========推送状态为0的订单to Crm start=============");
-                    sysFacadeService.push2Crm(pushRecord.getOrderId());
-                    logger.info("==========推送状态为0的订单to Crm end=============");
+                    OrderCrmZt crmZt = orderCrmList.get(i);
+                    /*//线程给crm用
+                    Runnable runCrm = new Runnable() {
+                        @Override
+                        public void run() {
+                            logger.info("==========推送状态为0的订单to Crm start=============");
+                            sysFacadeService.push2Crm(crmZt.getOrderId());
+                            logger.info("==========推送状态为0的订单to Crm end=============");
+                        }
+                    };
+                    Thread threadCrm = new Thread(runCrm);
+                    threadCrm.start();*/
+
+                    //线程给中台用
+                    Runnable runZt = new Runnable() {
+                        @Override
+                        public void run() {
+                            logger.info("==========推送状态为0的订单to Zt start=============");
+                            sysFacadeService.push2ZT(crmZt.getOrderId());
+                            logger.info("==========推送状态为0的订单to Zt end=============");
+                        }
+                    };
+                    Thread threadZt = new Thread(runZt);
+                    threadZt.start();
+                    //修改推送状态
+                    sysInnerService.updateOrderStatusCrmAndZt(crmZt.getOrderId());
                 }
             }
-            //ZT
-            if (orderZtList != null && orderZtList.size() > 0) {
-                for (int i = 0; i < orderZtList.size(); i++) {
-                    PushRecord pushRecord = orderZtList.get(i);
-                    logger.info("==========推送状态为0的订单to Zt start=============");
-                    sysFacadeService.push2ZT(pushRecord.getOrderId());
-                    logger.info("==========推送状态为0的订单to Zt end=============");
-                }
-            }*/
 
             //推送mq宕机订单
             /*Criteria criteria1 = new Criteria();
@@ -197,7 +198,7 @@ public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
             }*/
 
            //推送历史数据 暂时使用
-            Criteria criteria1 = new Criteria();
+            /*Criteria criteria1 = new Criteria();
             criteria1.where("1").is("1");
             String start = "2018-03-13 00:00:00";
             String end = "2018-03-13 23:59:59";
@@ -205,7 +206,7 @@ public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
             Date endStart = DateTimeUtil.formatDateString(end,"yyyy-MM-dd HH:mm:ss");
             criteria1.and("createTime").gte(todayStart).lte(endStart);
             //criteria1.andOperator(Criteria.where("orderId").is("W8001099170428005668"));
-            Query query1 = new Query(criteria1);
+            Query query1 = new Query(criteria1);*/
 
             //历史表订单
             /*List<OrderWaiMaiHistory> orders = mongoTemplate.find(query1, OrderWaiMaiHistory.class);
@@ -227,19 +228,19 @@ public class OrderSync2Crm2ZtJobServiceImpl implements JobService {
                 }
             }*/
             //实时表订单
-            List<OrderWaiMai> orders = mongoTemplate.find(query1, OrderWaiMai.class);
-            if (orders != null && orders.size() > 0) {
-                for (int i = 0; i < orders.size(); i++) {
-                    OrderWaiMai orderWaiMai  = orders.get(i);
-                   /* PushRecord pushRecord = sysInnerService.getPushRecord(orderWaiMai.getOrderId());
-                    if(!StringUtil.isEmpty(pushRecord)){
-                        continue;
-                    }*/
-                    logger.info("==========推送状态为0的订单to Crm start=============");
-                    sysFacadeService.pushHistoryOrder2Crm(orderWaiMai);
-                    logger.info("==========推送状态为0的订单to Crm end=============");
-                }
-            }
+//            List<OrderWaiMai> orders = mongoTemplate.find(query1, OrderWaiMai.class);
+//            if (orders != null && orders.size() > 0) {
+//                for (int i = 0; i < orders.size(); i++) {
+//                    OrderWaiMai orderWaiMai  = orders.get(i);
+//                   /* PushRecord pushRecord = sysInnerService.getPushRecord(orderWaiMai.getOrderId());
+//                    if(!StringUtil.isEmpty(pushRecord)){
+//                        continue;
+//                    }*/
+//                    logger.info("==========推送状态为0的订单to Crm start=============");
+//                    sysFacadeService.pushHistoryOrder2Crm(orderWaiMai);
+//                    logger.info("==========推送状态为0的订单to Crm end=============");
+//                }
+//            }
 
             JOB_LOCK = false;
             logger.info("============================" + DateTimeUtil.nowDateString("yyyy-MM-dd HH:mm:ss") + "同步外卖订单2CRM&ZT....===============");

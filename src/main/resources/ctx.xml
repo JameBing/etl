@@ -745,11 +745,11 @@
 
     <!--===================CachingConnectionFactory=======================-->
     <!-- Spring用于管理真正的ConnectionFactory的ConnectionFactory 继承了SingleConnectionFactory -->
+
     <bean id="queueCachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
         <property name="targetConnectionFactory" ref="queueConnectionFactory"></property>
         <property name="sessionCacheSize" value="100"></property>
     </bean>
-
     <!--===================ActiveMQConnectionFactory======================-->
     <!--Broker  外卖订单-->
     <bean id="queueConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -853,5 +853,7 @@
         <property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE"/>
         <property name="receiveTimeout" value="20000"/>
     </bean>
+
+
 
 </beans>
